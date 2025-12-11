@@ -89,10 +89,11 @@
     /* الشريط العلوي: تسجيل دخول + اختيار اللغة */
     .top-bar {
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start; /* ثابت على اليسار */
       align-items: center;
       gap: 10px;
       margin-bottom: 10px;
+      direction: ltr; /* يخلي ترتيب العناصر من اليسار لليمين دائماً */
     }
 
     .top-login-link {
@@ -262,14 +263,7 @@
       position: relative;
       z-index: 5;
     }
-
-    /* ✅ نتحكم باتجاه القوائم حسب اللغة */
-    .top-nav--rtl {
-      flex-direction: row-reverse;
-    }
-    .top-nav--ltr {
-      flex-direction: row;
-    }
+    /* ما في top-nav--rtl / top-nav--ltr الآن */
 
     .top-nav-item {
       position: relative;
@@ -448,8 +442,6 @@
     .hero-slide.is-active {
       opacity: 1;
     }
-
-    /* (السهمين متشالين من الـ HTML، الكود بس يتأكد إذا موجودين أو لا) */
 
     .hero-slider-dots {
       position: absolute;
@@ -708,7 +700,7 @@
         box-shadow 0.18s ease,
         border-color 0.18s ease,
         background 0.18s ease,
-        color 0.18s ease;
+        color 0.18s.ease;
       overflow: hidden;
     }
 
@@ -724,8 +716,8 @@
       opacity: 0;
       transform: translateX(-10px);
       transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+        opacity 0.2s.ease,
+        transform 0.2s.ease;
       pointer-events: none;
       mix-blend-mode: screen;
     }
@@ -775,12 +767,6 @@
       .social-links {
         justify-content: flex-start;
       }
-
-      .hero-slider-arrow {
-        width: 36px;
-        height: 36px;
-        font-size: 1.1rem;
-      }
     }
 
     /* شاشة التحميل (Preloader) */
@@ -824,7 +810,7 @@
       pointer-events: none;
       transition:
         opacity 0.25s ease,
-        transform 0.25s ease;
+        transform 0.25s.ease;
     }
 
     .subscribe-toast.subscribe-toast--visible {
@@ -924,7 +910,7 @@
         transform 0.2s ease,
         background 0.15s ease,
         color 0.15s ease,
-        box-shadow 0.15s ease;
+        box-shadow 0.15s.ease;
       z-index: 55;
     }
 
@@ -947,7 +933,6 @@
   <!-- شاشة تحميل قبل فتح الموقع (لوغو) -->
   <div id="preloader">
     <div class="preloader-logo">
-      <!-- 🔻 حط هنا مسار صورة اللوغو تبعك -->
       <img src="logo.png" alt="MLO5 Logo">
     </div>
   </div>
@@ -981,12 +966,14 @@
           <div class="divider-glow"></div>
         </div>
 
-        <!-- القوائم -->
-        <nav class="top-nav top-nav--rtl">
-          <!-- ✅ ترتيب العناصر ثابت - الروابط ثابتة -->
+        <!-- القوائم (نفس الترتيب دائماً: 1-2-3-4-5) -->
+        <nav class="top-nav">
+          <!-- قائمة 1 / Home -->
           <a href="index.html" class="top-nav-item" id="menu1">قائمة 1</a>
+          <!-- قائمة 2 / Chat Room -->
           <a href="chat.html" class="top-nav-item" id="menu2">قائمة 2</a>
 
+          <!-- قائمة 3 منسدلة -->
           <div class="top-nav-item top-nav-dropdown" id="menu3-wrap">
             <span class="top-nav-label" id="menu3-label">قائمة 3</span>
             <div class="dropdown-menu">
@@ -996,7 +983,9 @@
             </div>
           </div>
 
+          <!-- قائمة 4 -->
           <a href="#" class="top-nav-item" id="menu4">قائمة 4</a>
+          <!-- قائمة 5 / Contact Me -->
           <a href="contact.html" class="top-nav-item" id="menu5">قائمة 5</a>
         </nav>
 
@@ -1006,7 +995,6 @@
             <div class="video-inner">
               <div id="hero-slider" class="hero-slider">
                 <div class="hero-slider-track">
-                  <!-- 🔻 غيّر مسارات الصور (حد أقصى 8 صور) -->
                   <div class="hero-slide is-active">
                     <img src="slide1.jpg" alt="صورة 1">
                   </div>
@@ -1066,7 +1054,6 @@
 
         <!-- الأقسام -->
         <section class="sections">
-          <!-- ✅ حذف كلمة "الأقسام الرئيسية" -->
           <div class="sections-grid">
             <a href="section1.html" class="section-card">
               <div class="section-label" id="section-label-1">قسم</div>
@@ -1112,7 +1099,6 @@
         <section class="about-section">
           <div class="about-card">
             <div class="about-avatar">
-              <!-- 🔻 حط مسار صورتك الشخصية بدل هذا الرابط -->
               <img src="me.jpg" alt="صورة mlo5">
             </div>
             <div class="about-text">
@@ -1169,10 +1155,8 @@
     </div>
   </div>
 
-  <!-- صوت اشعار التذكير بالاشتراك: حط ملف toast.mp3 جنب index.html -->
   <audio id="toast-sound" src="toast.mp3" preload="auto"></audio>
 
-  <!-- زر الرجوع لأعلى الصفحة -->
   <button id="scroll-top" class="scroll-top-btn" aria-label="العودة للأعلى">↑</button>
 
   <script>
@@ -1206,7 +1190,7 @@
       }, 700);
     });
 
-    // حيلة بسيطة لتحسين فرصة تشغيل الصوت (أول كليك يفتح الباب)
+    // حيلة بسيطة لتحسين فرصة تشغيل الصوت
     let userInteracted = false;
     document.addEventListener(
       "click",
@@ -1287,13 +1271,6 @@
       document.title = strings.title;
       document.documentElement.lang = lang === "en" ? "en" : "ar";
       document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
-
-      // ✅ التحكم باتجاه القوائم
-      const topNav = document.querySelector(".top-nav");
-      if (topNav) {
-        topNav.classList.toggle("top-nav--rtl", lang !== "en");
-        topNav.classList.toggle("top-nav--ltr", lang === "en");
-      }
 
       const loginLink = document.getElementById("login-link");
       const heroSub = document.getElementById("hero-sub");
@@ -1419,20 +1396,18 @@
       });
     }
 
-    // ✅ سلايدر: سحب + تشغيل تلقائي كل 2 ثانية (غيّر AUTO_DELAY لو حاب)
+    // ✅ سلايدر: نقاط + سحب + تشغيل تلقائي كل 3 ثواني (تقدر تغيّر AUTO_DELAY)
     (function initHeroSlider() {
       const slider = document.getElementById("hero-slider");
       if (!slider) return;
 
       const slides = Array.from(slider.querySelectorAll(".hero-slide"));
       const dots = Array.from(slider.querySelectorAll(".hero-slider-dot"));
-      const prevBtn = slider.querySelector(".hero-slider-arrow--prev");
-      const nextBtn = slider.querySelector(".hero-slider-arrow--next");
       if (!slides.length) return;
 
       let current = 0;
       let autoTimer = null;
-      const AUTO_DELAY = 2000; 
+      const AUTO_DELAY = 3000; // 3 ثواني
 
       function goTo(index) {
         const total = slides.length;
@@ -1450,10 +1425,6 @@
         goTo(current + 1);
       }
 
-      function goPrev() {
-        goTo(current - 1);
-      }
-
       function stopAuto() {
         if (autoTimer !== null) {
           clearInterval(autoTimer);
@@ -1464,21 +1435,6 @@
       function startAuto() {
         stopAuto();
         autoTimer = setInterval(goNext, AUTO_DELAY);
-      }
-
-      // أزرار السابق / التالي (مش موجودين حاليًا، بس لو أضفتهم يشتغلوا)
-      if (nextBtn) {
-        nextBtn.addEventListener("click", () => {
-          goNext();
-          startAuto();
-        });
-      }
-
-      if (prevBtn) {
-        prevBtn.addEventListener("click", () => {
-          goPrev();
-          startAuto();
-        });
       }
 
       // النقاط
@@ -1510,7 +1466,7 @@
           if (diff < 0) {
             goNext();
           } else {
-            goPrev();
+            goTo(current - 1);
           }
         }
 
@@ -1532,7 +1488,6 @@
         startX = null;
       });
 
-      // تشغيل مبدئي مرتب من أول صورة
       goTo(0);
       startAuto();
     })();
@@ -1560,7 +1515,7 @@
       if (!loginLink) return;
 
       const currentEmail = mlo5IndexGetCurrentUserEmail();
-      if (!currentEmail) return; // ما في حدا داخل
+      if (!currentEmail) return;
 
       const users = mlo5IndexLoadUsers();
       const currentUser =
@@ -1576,7 +1531,6 @@
       const topBar = loginLink.parentElement;
       if (!topBar) return;
 
-      // عنصر جديد مكان "تسجيل دخول" بنفس ستايل القوائم
       const wrapper = document.createElement("div");
       wrapper.className = "top-nav-item top-nav-dropdown";
 
@@ -1619,7 +1573,6 @@
       wrapper.appendChild(label);
       wrapper.appendChild(menu);
 
-      // استبدال زر تسجيل دخول بالقائمة الجديدة
       topBar.replaceChild(wrapper, loginLink);
     })();
   </script>
