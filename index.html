@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>M L O 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- خطوط -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #020202;
+      --yellow: #facc15;
+      --white: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(156, 163, 175, 0.35);
+      --radius-lg: 20px;
+      --radius-full: 999px;
+      --grid-x: 0px;
+      --grid-y: 0px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--bg-dark);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      transition: background 0.3s ease, color 0.3s ease;
+      position: relative;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1100px;
+      padding: 32px 16px 40px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* خلفية نقاط متحركة مع الماوس */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: radial-gradient(
+        circle,
+        rgba(249, 250, 251, 0.55) 1px,
+        transparent 1px
+      );
+      background-size: 30px 30px;
+      background-position:
+        calc(50% + var(--grid-x))
+        calc(50% + var(--grid-y));
+      opacity: 0.25;
+      mix-blend-mode: screen;
+    }
+
+    .card-shell {
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      border: none;
+    }
+
+    .card-shell-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* الشريط العلوي: تسجيل دخول + اختيار اللغة */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .top-login-link {
+      font-size: 0.9rem;
+      color: var(--white);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.6);
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition:
+        background 0.15s ease,
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .top-login-link:hover {
+      background: rgba(250, 204, 21, 0.15);
+      transform: translateY(-1px);
+      box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(250, 204, 21, 0.7);
+    }
+
+    .lang-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: var(--yellow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition:
+        background 0.15s ease,
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .lang-toggle:hover {
+      transform: translateY(-1px);
+      background: radial-gradient(circle at top, #facc15, #fbbf24);
+      color: #000;
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 1),
+        0 0 0 1px rgba(250, 204, 21, 0.8);
+    }
+
+    /* العنوان */
+    .hero-title {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .hero-title h1 {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.6rem, 5vw, 3.6rem);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--white);
+      text-shadow: none;
+      white-space: nowrap;
+      direction: ltr;        
+  unicode-bidi: bidi-override;
+    }
+
+    /* حروف اللوغو المنفصلة للأنيميشن */
+    .hero-title h1 .logo-letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    .hero-title h1.hero-logo-animate .logo-letter {
+      animation: logo-bounce 0.7s cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+    }
+
+    .hero-title h1.hero-logo-animate .logo-letter:nth-child(1) {
+      animation-delay: 0s;
+    }
+    .hero-title h1.hero-logo-animate .logo-letter:nth-child(2) {
+      animation-delay: 0.08s;
+    }
+    .hero-title h1.hero-logo-animate .logo-letter:nth-child(3) {
+      animation-delay: 0.16s;
+    }
+    .hero-title h1.hero-logo-animate .logo-letter:nth-child(4) {
+      animation-delay: 0.24s;
+    }
+
+    @keyframes logo-bounce {
+      0% {
+        transform: translateY(18px);
+        opacity: 0;
+      }
+      40% {
+        transform: translateY(-6px);
+        opacity: 1;
+      }
+      70% {
+        transform: translateY(4px);
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .hero-sub {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .divider {
+      width: 100%;
+      margin: 18px auto;
+      position: relative;
+      height: 1px;
+    }
+
+    .divider-line {
+      height: 1px;
+      width: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(156, 163, 175, 0.4),
+        transparent
+      );
+    }
+
+    .divider-glow {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      height: 12px;
+      width: 40%;
+      background: radial-gradient(
+        circle,
+        rgba(250, 204, 21, 0.5),
+        transparent 70%
+      );
+      opacity: 0.7;
+      filter: blur(3px);
+      pointer-events: none;
+    }
+
+    /* القوائم أعلى الصفحة */
+    .top-nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .top-nav-item {
+      position: relative;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.5);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--white);
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: none;
+      transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .top-nav-item:hover {
+      transform: translateY(-1px);
+      background: rgba(250, 204, 21, 0.08);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+    }
+
+    .top-nav-dropdown {
+      padding-right: 18px;
+      padding-left: 18px;
+    }
+
+    .top-nav-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .top-nav-label::after {
+      content: "▾";
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 115%;
+      right: 0;
+      min-width: 150px;
+      padding: 6px;
+      border-radius: 14px;
+      background: rgba(10, 10, 10, 0.96);
+      border: 1px solid rgba(250, 204, 21, 0.5);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
+      backdrop-filter: blur(10px);
+      z-index: 10;
+    }
+
+    .top-nav-dropdown:hover .dropdown-menu {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .dropdown-item {
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 10px;
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(250, 204, 21, 0.12);
+      color: var(--yellow);
+    }
+
+    /* منطقة الفيديو */
+    .video-section {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at top, #111111, #020202);
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(148, 163, 184, 0.2);
+      overflow: hidden;
+      padding: 10px;
+      z-index: 1;
+      border: 2px solid #f9fafb;
+      transition:
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+    }
+
+    /* هالة مضيئة حول الفيديو عند الهوفر */
+    .video-wrapper::before {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: inherit;
+      border: 1px solid rgba(250, 204, 21, 0);
+      box-shadow: 0 0 0 rgba(250, 204, 21, 0);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        opacity 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+    }
+
+    .video-wrapper:hover {
+      border-color: rgba(250, 204, 21, 0.8);
+      box-shadow:
+        0 22px 55px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(250, 204, 21, 0.35);
+    }
+
+    .video-wrapper:hover::before {
+      opacity: 1;
+      border-color: rgba(250, 204, 21, 0.85);
+      box-shadow: 0 0 26px rgba(250, 204, 21, 0.75);
+    }
+
+    .video-inner {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 16 / 9;
+    }
+
+    .video-inner iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* إعلان تجريبي تحت الفيديو */
+    .ad-slot {
+      margin-top: 18px;
+      margin-bottom: 10px;
+      border-radius: 18px;
+      border: 1px dashed rgba(250, 204, 21, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 12px 14px;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .ad-slot-label {
+      font-size: 0.75rem;
+      color: #facc15;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+    }
+
+    .ad-slot-body {
+      flex: 1;
+      text-align: right;
+    }
+
+    .ad-slot-cta {
+      font-size: 0.8rem;
+      color: #facc15;
+      text-decoration: none;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.7);
+      padding: 4px 10px;
+      white-space: nowrap;
+      background: rgba(0, 0, 0, 0.5);
+      transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+
+    .ad-slot-cta:hover {
+      background: #facc15;
+      color: #111827;
+      transform: translateY(-1px);
+    }
+
+    /* الأقسام */
+    .sections {
+      margin-top: 24px;
+    }
+
+    .sections-title {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      text-align: right;
+    }
+
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .section-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: linear-gradient(145deg, #020202, #050505);
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(55, 65, 81, 0.5);
+      position: relative;
+      overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .section-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.18),
+        transparent 55%
+      );
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .section-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(250, 204, 21, 0.9);
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(250, 204, 21, 0.5);
+    }
+
+    .section-card:hover::before {
+      opacity: 1;
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--yellow);
+      margin-bottom: 6px;
+    }
+
+    .section-body {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* نبذة عنّي */
+    .about-section {
+      margin-top: 26px;
+    }
+
+    .about-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 14px 14px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #020202, #050505);
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(55, 65, 81, 0.6);
+    }
+
+    .about-avatar {
+      flex: 0 0 64px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(250, 204, 21, 0.9);
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .about-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .about-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .about-title {
+      font-size: 0.95rem;
+      color: var(--yellow);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .about-body {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* السوشال ميديا */
+    .footer {
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .social-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: var(--yellow);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: "Poppins", system-ui, sans-serif;
+      box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease;
+      overflow: hidden;
+    }
+
+    .social-link::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.15),
+        transparent 60%
+      );
+      opacity: 0;
+      transform: translateX(-10px);
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .social-link:hover {
+      transform: translateY(-2px) scale(1.07) rotate(-6deg);
+      border-color: rgba(250, 204, 21, 0.95);
+      background: radial-gradient(circle at top, #facc15, #fbbf24);
+      color: #000;
+      box-shadow:
+        0 18px 42px rgba(0, 0, 0, 1),
+        0 0 0 1px rgba(250, 204, 21, 0.8);
+    }
+
+    .social-link:hover::after {
+      opacity: 1;
+      transform: translateX(6px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(107, 114, 128, 0.9);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 900px) {
+      .sections-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-title h1 {
+        letter-spacing: 0.28em;
+      }
+
+      .sections-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .social-links {
+        justify-content: flex-start;
+      }
+    }
+
+    /* شاشة التحميل (Preloader) */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    #preloader.preloader-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .preloader-logo img {
+      max-width: 200px;
+      height: auto;
+      animation: preloader-blink 0.35s infinite alternate;
+    }
+
+    @keyframes preloader-blink {
+      0% { opacity: 0.35; }
+      100% { opacity: 1; }
+    }
+
+    /* Toast الاشتراك */
+    .subscribe-toast {
+      position: fixed;
+      left: 18px;
+      bottom: 72px;
+      z-index: 40;
+      max-width: 320px;
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    .subscribe-toast.subscribe-toast--visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .subscribe-toast-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(250, 204, 21, 0.85);
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(17, 24, 39, 0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    .subscribe-toast-text {
+      flex: 1;
+    }
+
+    .subscribe-toast-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--yellow);
+      margin-bottom: 2px;
+    }
+
+    .subscribe-toast-body {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .subscribe-toast-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      background: #facc15;
+      color: #111827;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
+
+    .subscribe-toast-btn:hover {
+      filter: brightness(1.05);
+    }
+
+    .subscribe-toast-close {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 2px;
+    }
+
+    .subscribe-toast-close:hover {
+      color: var(--white);
+    }
+
+    /* زر شات AI ثابت في الزاوية */
+    .ai-chat-launcher {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 60;
+    }
+
+    .ai-chat-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      border: 2px solid #facc15;
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: #facc15;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(0, 0, 0, 1);
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease,
+        color 0.15s ease;
+    }
+
+    .ai-chat-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      background: radial-gradient(circle at top, #facc15, #fbbf24);
+      color: #000;
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 1),
+        0 0 0 1px rgba(250, 204, 21, 0.85);
+    }
+
+    .ai-chat-tooltip {
+      position: absolute;
+      right: 52px;
+      bottom: 50%;
+      transform: translateY(50%);
+      background: rgba(15, 23, 42, 0.96);
+      color: #f9fafb;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      white-space: nowrap;
+      box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(0, 0, 0, 0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    .ai-chat-launcher:hover .ai-chat-tooltip {
+      opacity: 1;
+    }
+
+    /* زر الرجوع لأعلى الصفحة */
+    .scroll-top-btn {
+      position: fixed;
+      right: 18px;
+      bottom: 78px; /* فوق زر الشات */
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.9);
+      background: rgba(0, 0, 0, 0.9);
+      color: #facc15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(0, 0, 0, 1);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        background 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease;
+      z-index: 55;
+    }
+
+    .scroll-top-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .scroll-top-btn:hover {
+      background: #facc15;
+      color: #000;
+      box-shadow:
+        0 14px 32px rgba(0, 0, 0, 1),
+        0 0 0 1px rgba(250, 204, 21, 0.9);
+    }
+  </style>
+</head>
+<body>
+  <!-- شاشة تحميل قبل فتح الموقع (لوغو) -->
+  <div id="preloader">
+    <div class="preloader-logo">
+      <!-- 🔻 حط هنا مسار صورة اللوغو تبعك -->
+      <img src="logo.png" alt="MLO5 Logo">
+    </div>
+  </div>
+
+  <!-- خلفية نقاط متحركة -->
+  <div class="bg-grid"></div>
+
+  <main class="page">
+    <div class="card-shell">
+      <div class="card-shell-inner">
+
+        <!-- الشريط العلوي: تسجيل دخول + اختيار اللغة -->
+        <div class="top-bar">
+          <a id="login-link" href="login.html" class="top-login-link">تسجيل دخول</a>
+          <button id="lang-toggle" class="lang-toggle" title="العربية">
+            🌐
+          </button>
+        </div>
+
+        <!-- العنوان الرئيسي -->
+        <header class="hero-title">
+          <h1 id="hero-logo" aria-label="M L O 5">
+            <span class="logo-letter">M</span><span class="logo-letter">L</span><span class="logo-letter">O</span><span class="logo-letter">5</span>
+          </h1>
+          <p id="hero-sub" class="hero-sub"> يتم تعديل هذا النص لاحقًا </p>
+        </header>
+
+        <!-- خط فاصل -->
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-glow"></div>
+        </div>
+
+        <!-- القوائم -->
+        <nav class="top-nav">
+          <a href="file:///C:/Users/Mlo5/Desktop/New%20folder/index.html" class="top-nav-item" id="menu1">قائمة 1</a>
+          <a href="file:///C:/Users/Mlo5/Desktop/New%20folder/chat.html" class="top-nav-item" id="menu2">قائمة 2</a>
+
+          <div class="top-nav-item top-nav-dropdown" id="menu3-wrap">
+            <span class="top-nav-label" id="menu3-label">قائمة 3</span>
+            <div class="dropdown-menu">
+              <a href="submenu1.html" class="dropdown-item" id="submenu1">قائمة فرعية 1</a>
+              <a href="submenu2.html" class="dropdown-item" id="submenu2">قائمة فرعية 2</a>
+              <a href="submenu3.html" class="dropdown-item" id="submenu3">قائمة فرعية 3</a>
+            </div>
+          </div>
+
+          <a href="menu4.html" class="top-nav-item" id="menu4">قائمة 4</a>
+          <a href="file:///C:/Users/Mlo5/Desktop/New%20folder/contact.html" class="top-nav-item" id="menu5">قائمة 5</a>
+        </nav>
+
+        <!-- الفيديو -->
+        <section class="video-section">
+          <div class="video-wrapper">
+            <div class="video-inner">
+              <!-- Streamable Embed -->
+              <div style="position:relative; width:100%; height:100%; overflow:hidden;">
+                <iframe
+                  allow="fullscreen;autoplay"
+                  allowfullscreen
+                  src="https://streamable.com/e/jkpumb?autoplay=1&muted=1&nocontrols=1"
+                  style="
+                    border:none;
+                    width:100%;
+                    height:100%;
+                    position:absolute;
+                    left:0;
+                    top:0;
+                    overflow:hidden;
+                  ">
+                </iframe>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- إعلان تجريبي تحت الفيديو -->
+        <section class="ad-slot">
+          <div class="ad-slot-body">
+            مساحة إعلانية تجريبية لمحتوى أو شريك مرتبط بالجيمينغ؛ مثل المايك اللي بستخدمه، شاشة اللعب، أو كود خصم خاص لمتابعين MLO5.
+          </div>
+          <a href="#" class="ad-slot-cta">تفاصيل أكثر</a>
+          <div class="ad-slot-label">إعلان</div>
+        </section>
+
+        <!-- خط فاصل -->
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-glow"></div>
+        </div>
+
+        <!-- الأقسام -->
+        <section class="sections">
+          <p id="sections-title" class="sections-title">الأقسام الرئيسية:</p>
+          <div class="sections-grid">
+            <a href="section1.html" class="section-card">
+              <div class="section-label" id="section-label-1">قسم</div>
+              <h2 class="section-title" id="section-title-1">قسم 1</h2>
+              <p class="section-body" id="section-body-1">
+                مساحة لوصف قسم معيّن مثل: من أنا، أو نبذة عن المحتوى اللي بقدّمه.
+              </p>
+            </a>
+
+            <a href="section2.html" class="section-card">
+              <div class="section-label" id="section-label-2">قسم</div>
+              <h2 class="section-title" id="section-title-2">قسم 2</h2>
+              <p class="section-body" id="section-body-2">
+                تقدر تغيّر النص لاحقًا لأي شيء: خدمات، ألعاب، أو مشاريع أشتغل عليها.
+              </p>
+            </a>
+
+            <a href="section3.html" class="section-card">
+              <div class="section-label" id="section-label-3">قسم</div>
+              <h2 class="section-title" id="section-title-3">قسم 3</h2>
+              <p class="section-body" id="section-body-3">
+                ممكن يكون قسم للروابط المهمة، أو فيديوهات مميزة، أو أعمال مختارة.
+              </p>
+            </a>
+
+            <a href="section4.html" class="section-card">
+              <div class="section-label" id="section-label-4">قسم</div>
+              <h2 class="section-title" id="section-title-4">قسم 4</h2>
+              <p class="section-body" id="section-body-4">
+                أي قسم إضافي تحب تضيفه: تواصل، أسئلة شائعة، أو خطط قادمة.
+              </p>
+            </a>
+          </div>
+        </section>
+
+        <!-- خط فاصل قبل النبذة -->
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-glow"></div>
+        </div>
+
+        <!-- نبذة عنّي -->
+        <section class="about-section">
+          <div class="about-card">
+            <div class="about-avatar">
+              <!-- 🔻 حط مسار صورتك الشخصية بدل هذا الرابط -->
+              <img src="me.jpg" alt="صورة mlo5">
+            </div>
+            <div class="about-text">
+              <div id="about-title" class="about-title">نبذة عنّي</div>
+              <p id="about-body" class="about-body">
+                هذا نص تعريفي مؤقت عنّي. أقدّم محتوى جيمينغ، أفكار كرياتيف، وتجارب مختلفة على منصات
+                التواصل. رح أعدّل هذا النص لاحقًا بحيث يعكس أسلوبي وشخصيتي بالشكل اللي بحبّه.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- الفوتر + السوشال ميديا -->
+        <footer class="footer">
+          <div class="footer-top">
+            <p id="footer-text" class="footer-text">
+              تابعني على السوشال ميديا:
+            </p>
+
+            <div class="social-links">
+              <!-- غيّر # بروابطك الفعلية -->
+              <a href="https://www.youtube.com/@mlo5ya" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
+                Y
+              </a>
+              <a href="https://www.instagram.com/i.mlo5/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                IG
+              </a>
+              <a href="https://www.facebook.com/hkafeh" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">
+                f
+              </a>
+            </div>
+          </div>
+
+          <div class="footer-bottom">
+            © <span id="year-span">2025</span> · صنع بحب 💛.
+          </div>
+        </footer>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast الاشتراك -->
+  <div id="subscribe-toast" class="subscribe-toast" aria-live="polite">
+    <div class="subscribe-toast-inner">
+      <button class="subscribe-toast-close" aria-label="إغلاق التنبيه">×</button>
+      <div class="subscribe-toast-text">
+        <div id="toast-title" class="subscribe-toast-title">اشترك بقناتي على يوتيوب</div>
+        <p id="toast-body" class="subscribe-toast-body">
+          محتوى جيمينغ وكرياتيف مع MLO5. اشترك الآن وخليك معنا في الرحلة 👇
+        </p>
+        <a id="toast-btn" href="https://www.youtube.com/@mlo5ya" target="_blank" rel="noopener" class="subscribe-toast-btn">
+          اشترك الآن
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- صوت اشعار التذكير بالاشتراك: حط ملف toast.mp3 جنب index.html -->
+  <audio id="toast-sound" src="toast.mp3" preload="auto"></audio>
+
+  <!-- زر شات مع AI -->
+  <div class="ai-chat-launcher">
+    <!-- 🔻 غيّر الرابط للأداة اللي بدك إياها -->
+    <a
+      href="https://chat.openai.com"
+      target="_blank"
+      rel="noopener"
+      class="ai-chat-btn"
+      title="تحدّث مع المساعد الذكي"
+    >
+      🤖
+    </a>
+    <div class="ai-chat-tooltip">شات مع AI</div>
+  </div>
+
+  <!-- زر الرجوع لأعلى الصفحة -->
+  <button id="scroll-top" class="scroll-top-btn" aria-label="العودة للأعلى">↑</button>
+
+  <script>
+    // سنة الحقوق
+    const y = document.getElementById("year-span");
+    if (y) y.textContent = new Date().getFullYear();
+
+    // تحريك شبكة النقاط مع الماوس
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      const xShift = xRatio * maxShift;
+      const yShift = yRatio * maxShift;
+      root.style.setProperty("--grid-x", xShift.toFixed(1) + "px");
+      root.style.setProperty("--grid-y", yShift.toFixed(1) + "px");
+    });
+
+    // شاشة التحميل + أنيميشن اللوغو
+    const preloader = document.getElementById("preloader");
+    const heroLogo = document.getElementById("hero-logo");
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        if (preloader) {
+          preloader.classList.add("preloader-hidden");
+        }
+        if (heroLogo) {
+          heroLogo.classList.add("hero-logo-animate");
+        }
+      }, 700); // 0.7 ثانية تقريباً
+    });
+
+    // حيلة بسيطة لتحسين فرصة تشغيل الصوت (أول كليك يفتح الباب)
+    let userInteracted = false;
+    document.addEventListener(
+      "click",
+      () => {
+        userInteracted = true;
+      },
+      { once: true }
+    );
+
+    // اختيار اللغة (عربي / إنجليزي)
+    const langToggle = document.getElementById("lang-toggle");
+    const LANG_KEY = "mlo5-lang";
+    const l10n = {
+      ar: {
+        title: "M L O 5",
+        login: "تسجيل دخول",
+        heroSub: "هُـنـا تـجـتـمـع الأسـاطـير ✨😎",
+        menu1: "الرئيسية",
+        menu2: "غرف الدردشة",
+        menu3: "قائمة 3",
+        menu4: "قائمة 4",
+        menu5: "اتصل بي",
+        submenu1: "قائمة فرعية 1",
+        submenu2: "قائمة فرعية 2",
+        submenu3: "قائمة فرعية 3",
+        sectionsTitle: "الأقسام الرئيسية:",
+        secLabel: "قسم",
+        sec1: "مين أنا",
+        sec2: "قسم 2",
+        sec3: "قسم 3",
+        sec4: "قسم 4",
+        secBody1: "مساحة لوصف قسم معيّن مثل: من أنا، أو نبذة عن المحتوى اللي بقدّمه.",
+        secBody2: "تقدر تغيّر النص لاحقًا لأي شيء: خدمات، ألعاب، أو مشاريع أشتغل عليها.",
+        secBody3: "ممكن يكون قسم للروابط المهمة، أو فيديوهات مميزة، أو أعمال مختارة.",
+        secBody4: "أي قسم إضافي تحب تضيفه: تواصل، أسئلة شائعة، أو خطط قادمة.",
+        aboutTitle: "نبذة عنّي",
+        aboutBody:
+          "هذا نص تعريفي مؤقت عنّي. أقدّم محتوى جيمينغ، أفكار كرياتيف، وتجارب مختلفة على منصات التواصل. رح أعدّل هذا النص لاحقًا بحيث يعكس أسلوبي وشخصيتي بالشكل اللي بحبّه.",
+        footerText: "تابعني على السوشال ميديا:",
+        toastTitle: "اشترك بقناتي على يوتيوب",
+        toastBody: " اشترك الآن وخليك معنا بالرحلة 👇💥",
+        toastBtn: "اشترك الآن",
+        langTitle: "العربية",
+      },
+      en: {
+        title: "M L O 5",
+        login: "Login",
+        heroSub: "✨😎 Here, Legends Converge",
+        menu1: "Home",
+        menu2: "Chat Room",
+        menu3: "Menu 3",
+        menu4: "Menu 4",
+        menu5: "Contact Me",
+        submenu1: "Submenu 1",
+        submenu2: "Submenu 2",
+        submenu3: "Submenu 3",
+        sectionsTitle: "Main Sections:",
+        secLabel: "Section",
+        sec1: "Who am I",
+        sec2: "Section 2",
+        sec3: "Section 3",
+        sec4: "Section 4",
+        secBody1: "A space to describe who I am or the type of content I create.",
+        secBody2: "You can later change this to services, games, or projects I work on.",
+        secBody3: "Can be used for important links, highlighted videos, or selected work.",
+        secBody4: "Any extra section you want: contact, FAQ, or future plans.",
+        aboutTitle: "About Me",
+        aboutBody:
+          "This is a temporary bio. I create gaming content, creative ideas, and different experiences across platforms. I’ll update this text later so it reflects my style and personality.",
+        footerText: "Follow me on social media:",
+        toastTitle: "Subscribe to my YouTube channel",
+        toastBody: "👇💥 Subscribe now and stay with us on the journey",
+        toastBtn: "Subscribe now",
+        langTitle: "English",
+      },
+    };
+
+    function applyLang(lang) {
+      const strings = l10n[lang] || l10n["ar"];
+      document.title = strings.title;
+      document.documentElement.lang = lang === "en" ? "en" : "ar";
+      const loginLink = document.getElementById("login-link");
+      const heroSub = document.getElementById("hero-sub");
+      const sectionsTitle = document.getElementById("sections-title");
+      const aboutTitle = document.getElementById("about-title");
+      const aboutBody = document.getElementById("about-body");
+      const footerText = document.getElementById("footer-text");
+      const toastTitle = document.getElementById("toast-title");
+      const toastBody = document.getElementById("toast-body");
+      const toastBtn = document.getElementById("toast-btn");
+
+      const menu1 = document.getElementById("menu1");
+      const menu2 = document.getElementById("menu2");
+      const menu3Label = document.getElementById("menu3-label");
+      const menu4 = document.getElementById("menu4");
+      const menu5 = document.getElementById("menu5");
+      const submenu1 = document.getElementById("submenu1");
+      const submenu2 = document.getElementById("submenu2");
+      const submenu3 = document.getElementById("submenu3");
+
+      if (loginLink) loginLink.textContent = strings.login;
+      if (heroSub) heroSub.textContent = strings.heroSub;
+
+      if (menu1) menu1.textContent = strings.menu1;
+      if (menu2) menu2.textContent = strings.menu2;
+      if (menu3Label) menu3Label.textContent = strings.menu3;
+      if (menu4) menu4.textContent = strings.menu4;
+      if (menu5) menu5.textContent = strings.menu5;
+      if (submenu1) submenu1.textContent = strings.submenu1;
+      if (submenu2) submenu2.textContent = strings.submenu2;
+      if (submenu3) submenu3.textContent = strings.submenu3;
+
+      if (sectionsTitle) sectionsTitle.textContent = strings.sectionsTitle;
+
+      const sLabel1 = document.getElementById("section-label-1");
+      const sLabel2 = document.getElementById("section-label-2");
+      const sLabel3 = document.getElementById("section-label-3");
+      const sLabel4 = document.getElementById("section-label-4");
+      if (sLabel1) sLabel1.textContent = strings.secLabel;
+      if (sLabel2) sLabel2.textContent = strings.secLabel;
+      if (sLabel3) sLabel3.textContent = strings.secLabel;
+      if (sLabel4) sLabel4.textContent = strings.secLabel;
+
+      const sTitle1 = document.getElementById("section-title-1");
+      const sTitle2 = document.getElementById("section-title-2");
+      const sTitle3 = document.getElementById("section-title-3");
+      const sTitle4 = document.getElementById("section-title-4");
+      if (sTitle1) sTitle1.textContent = strings.sec1;
+      if (sTitle2) sTitle2.textContent = strings.sec2;
+      if (sTitle3) sTitle3.textContent = strings.sec3;
+      if (sTitle4) sTitle4.textContent = strings.sec4;
+
+      const sBody1 = document.getElementById("section-body-1");
+      const sBody2 = document.getElementById("section-body-2");
+      const sBody3 = document.getElementById("section-body-3");
+      const sBody4 = document.getElementById("section-body-4");
+      if (sBody1) sBody1.textContent = strings.secBody1;
+      if (sBody2) sBody2.textContent = strings.secBody2;
+      if (sBody3) sBody3.textContent = strings.secBody3;
+      if (sBody4) sBody4.textContent = strings.secBody4;
+
+      if (aboutTitle) aboutTitle.textContent = strings.aboutTitle;
+      if (aboutBody) aboutBody.textContent = strings.aboutBody;
+      if (footerText) footerText.textContent = strings.footerText;
+      if (toastTitle) toastTitle.textContent = strings.toastTitle;
+      if (toastBody) toastBody.textContent = strings.toastBody;
+      if (toastBtn) toastBtn.textContent = strings.toastBtn;
+
+      if (langToggle) {
+        langToggle.title = strings.langTitle;
+      }
+    }
+
+    let savedLang = localStorage.getItem(LANG_KEY) || "ar";
+    applyLang(savedLang);
+
+    if (langToggle) {
+      langToggle.addEventListener("click", () => {
+        savedLang = savedLang === "ar" ? "en" : "ar";
+        localStorage.setItem(LANG_KEY, savedLang);
+        applyLang(savedLang);
+      });
+    }
+
+    // Toast الاشتراك بعد 7 ثواني + صوت
+    const toast = document.getElementById("subscribe-toast");
+    const toastClose = toast ? toast.querySelector(".subscribe-toast-close") : null;
+    const toastSound = document.getElementById("toast-sound");
+    const SUB_KEY = "mlo5-sub-toast-v2";
+
+    if (toast && !localStorage.getItem(SUB_KEY)) {
+      setTimeout(() => {
+        toast.classList.add("subscribe-toast--visible");
+        if (userInteracted && toastSound && typeof toastSound.play === "function") {
+          try {
+            toastSound.currentTime = 0;
+            toastSound.play().catch(() => {});
+          } catch (e) {}
+        }
+      }, 7000); // 7 ثواني
+    }
+
+    if (toastClose) {
+      toastClose.addEventListener("click", () => {
+        toast.classList.remove("subscribe-toast--visible");
+        localStorage.setItem(SUB_KEY, "1");
+      });
+    }
+
+    // زر الرجوع لأعلى الصفحة
+    const scrollTopBtn = document.getElementById("scroll-top");
+    if (scrollTopBtn) {
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 250) {
+          scrollTopBtn.classList.add("visible");
+        } else {
+          scrollTopBtn.classList.remove("visible");
+        }
+      });
+
+      scrollTopBtn.addEventListener("click", () => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      });
+    }
+  </script>
+  <script>
+  const MLO5_USERS_KEY = "mlo5-users";
+  const MLO5_CURRENT_USER_KEY = "mlo5-current-user-email";
+
+  function mlo5IndexLoadUsers() {
+    try {
+      const raw = localStorage.getItem(MLO5_USERS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function mlo5IndexGetCurrentUserEmail() {
+    return localStorage.getItem(MLO5_CURRENT_USER_KEY) || null;
+  }
+
+  (function () {
+    const loginLink = document.getElementById("login-link");
+    if (!loginLink) return;
+
+    const currentEmail = mlo5IndexGetCurrentUserEmail();
+    if (!currentEmail) return; // ما في حدا داخل
+
+    const users = mlo5IndexLoadUsers();
+    const currentUser =
+      users.find((u) => u.email === currentEmail) || null;
+
+    const rawName =
+      (currentUser && currentUser.name && currentUser.name.trim()) ||
+      currentEmail;
+
+    const displayName =
+      rawName.length > 16 ? rawName.slice(0, 14) + "…" : rawName;
+
+    const topBar = loginLink.parentElement;
+    if (!topBar) return;
+
+    // عنصر جديد مكان "تسجيل دخول" بنفس ستايل القوائم
+    const wrapper = document.createElement("div");
+    wrapper.className = "top-nav-item top-nav-dropdown";
+
+    const label = document.createElement("span");
+    label.className = "top-nav-label";
+    label.textContent = displayName;
+
+    const menu = document.createElement("div");
+    menu.className = "dropdown-menu";
+
+    function makeItem(text, href, isButton) {
+      const el = isButton ? document.createElement("button") : document.createElement("a");
+      el.className = "dropdown-item";
+      if (!isButton && href) el.href = href;
+      el.textContent = text;
+      if (isButton) {
+        el.type = "button";
+        el.style.textAlign = "right";
+        el.style.width = "100%";
+        el.style.background = "transparent";
+        el.style.border = "none";
+        el.style.cursor = "pointer";
+      }
+      return el;
+    }
+
+    const profileItem = makeItem("الملف الشخصي", "profile.html", false);
+    const settingsItem = makeItem("الإعدادات", "settings.html", false);
+    const logoutItem = makeItem("تسجيل خروج", "", true);
+
+    logoutItem.addEventListener("click", () => {
+      localStorage.removeItem(MLO5_CURRENT_USER_KEY);
+      // نرجع لنفس الصفحة بس كـ ضيف
+      window.location.href = "index.html";
+    });
+
+    menu.appendChild(profileItem);
+    menu.appendChild(settingsItem);
+    menu.appendChild(logoutItem);
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(menu);
+
+    // استبدال زر تسجيل دخول بالقائمة الجديدة
+    topBar.replaceChild(wrapper, loginLink);
+  })();
+</script>
+
+</body>
+</html>
