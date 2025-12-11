@@ -5,6 +5,10 @@
   <title>M L O 5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- ✅ أيقونة الموقع (حمّل favicon.png في نفس المجلد) -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
   <!-- خطوط -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
 
@@ -161,8 +165,8 @@
       color: var(--white);
       text-shadow: none;
       white-space: nowrap;
-      direction: ltr;        
-  unicode-bidi: bidi-override;
+      direction: ltr;
+      unicode-bidi: bidi-override;
     }
 
     /* حروف اللوغو المنفصلة للأنيميشن */
@@ -259,6 +263,14 @@
       z-index: 5;
     }
 
+    /* ✅ نتحكم باتجاه القوائم حسب اللغة */
+    .top-nav--rtl {
+      flex-direction: row-reverse;
+    }
+    .top-nav--ltr {
+      flex-direction: row;
+    }
+
     .top-nav-item {
       position: relative;
       padding: 8px 18px;
@@ -343,7 +355,7 @@
       color: var(--yellow);
     }
 
-    /* منطقة الفيديو */
+    /* منطقة السلايدر (بدل الفيديو) */
     .video-section {
       margin-top: 10px;
       margin-bottom: 10px;
@@ -366,7 +378,6 @@
         border-color 0.25s ease;
     }
 
-    /* هالة مضيئة حول الفيديو عند الهوفر */
     .video-wrapper::before {
       content: "";
       position: absolute;
@@ -404,11 +415,69 @@
       aspect-ratio: 16 / 9;
     }
 
-    .video-inner iframe {
+    /* ✅ سلايدر الصور */
+    .hero-slider {
+      position: relative;
       width: 100%;
       height: 100%;
-      border: none;
+      touch-action: pan-y;
+    }
+
+    .hero-slider-track {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
+    }
+
+    .hero-slide.is-active {
+      opacity: 1;
+    }
+
+    /* (السهمين متشالين من الـ HTML، الكود بس يتأكد إذا موجودين أو لا) */
+
+    .hero-slider-dots {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 4;
+    }
+
+    .hero-slider-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(249, 250, 251, 0.8);
+      background: rgba(15, 23, 42, 0.8);
+      cursor: pointer;
+      transition:
+        background 0.15s ease,
+        transform 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .hero-slider-dot.is-active {
+      background: #facc15;
+      border-color: #facc15;
+      transform: scale(1.15);
     }
 
     /* إعلان تجريبي تحت الفيديو */
@@ -461,13 +530,6 @@
     /* الأقسام */
     .sections {
       margin-top: 24px;
-    }
-
-    .sections-title {
-      font-size: 1rem;
-      color: var(--muted);
-      margin-bottom: 10px;
-      text-align: right;
     }
 
     .sections-grid {
@@ -713,6 +775,12 @@
       .social-links {
         justify-content: flex-start;
       }
+
+      .hero-slider-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+      }
     }
 
     /* شاشة التحميل (Preloader) */
@@ -829,74 +897,11 @@
       color: var(--white);
     }
 
-    /* زر شات AI ثابت في الزاوية */
-    .ai-chat-launcher {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 60;
-    }
-
-    .ai-chat-btn {
-      width: 46px;
-      height: 46px;
-      border-radius: 999px;
-      border: 2px solid #facc15;
-      background: radial-gradient(circle at top, #111111, #020202);
-      color: #facc15;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      cursor: pointer;
-      box-shadow:
-        0 12px 30px rgba(0, 0, 0, 0.95),
-        0 0 0 1px rgba(0, 0, 0, 1);
-      transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        background 0.15s ease,
-        color 0.15s ease;
-    }
-
-    .ai-chat-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      background: radial-gradient(circle at top, #facc15, #fbbf24);
-      color: #000;
-      box-shadow:
-        0 16px 40px rgba(0, 0, 0, 1),
-        0 0 0 1px rgba(250, 204, 21, 0.85);
-    }
-
-    .ai-chat-tooltip {
-      position: absolute;
-      right: 52px;
-      bottom: 50%;
-      transform: translateY(50%);
-      background: rgba(15, 23, 42, 0.96);
-      color: #f9fafb;
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      white-space: nowrap;
-      box-shadow:
-        0 10px 26px rgba(0, 0, 0, 0.95),
-        0 0 0 1px rgba(0, 0, 0, 0.9);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.15s ease;
-    }
-
-    .ai-chat-launcher:hover .ai-chat-tooltip {
-      opacity: 1;
-    }
-
     /* زر الرجوع لأعلى الصفحة */
     .scroll-top-btn {
       position: fixed;
       right: 18px;
-      bottom: 78px; /* فوق زر الشات */
+      bottom: 18px;
       width: 40px;
       height: 40px;
       border-radius: 999px;
@@ -977,9 +982,10 @@
         </div>
 
         <!-- القوائم -->
-        <nav class="top-nav">
-          <a href="https://mlo5.github.io/site/" class="top-nav-item" id="menu1">قائمة 1</a>
-          <a href="file:///C:/Users/Mlo5/Desktop/New%20folder/chat.html" class="top-nav-item" id="menu2">قائمة 2</a>
+        <nav class="top-nav top-nav--rtl">
+          <!-- ✅ ترتيب العناصر ثابت - الروابط ثابتة -->
+          <a href="index.html" class="top-nav-item" id="menu1">قائمة 1</a>
+          <a href="chat.html" class="top-nav-item" id="menu2">قائمة 2</a>
 
           <div class="top-nav-item top-nav-dropdown" id="menu3-wrap">
             <span class="top-nav-label" id="menu3-label">قائمة 3</span>
@@ -990,30 +996,54 @@
             </div>
           </div>
 
-          <a href="menu4.html" class="top-nav-item" id="menu4">قائمة 4</a>
+          <a href="#" class="top-nav-item" id="menu4">قائمة 4</a>
           <a href="contact.html" class="top-nav-item" id="menu5">قائمة 5</a>
         </nav>
 
-        <!-- الفيديو -->
+        <!-- ✅ السلايدر بدل الفيديو -->
         <section class="video-section">
           <div class="video-wrapper">
             <div class="video-inner">
-              <!-- Streamable Embed -->
-              <div style="position:relative; width:100%; height:100%; overflow:hidden;">
-                <iframe
-                  allow="fullscreen;autoplay"
-                  allowfullscreen
-                  src="https://streamable.com/e/jkpumb?autoplay=1&muted=1&nocontrols=1"
-                  style="
-                    border:none;
-                    width:100%;
-                    height:100%;
-                    position:absolute;
-                    left:0;
-                    top:0;
-                    overflow:hidden;
-                  ">
-                </iframe>
+              <div id="hero-slider" class="hero-slider">
+                <div class="hero-slider-track">
+                  <!-- 🔻 غيّر مسارات الصور (حد أقصى 8 صور) -->
+                  <div class="hero-slide is-active">
+                    <img src="slide1.jpg" alt="صورة 1">
+                  </div>
+                  <div class="hero-slide">
+                    <img src="slide2.jpg" alt="صورة 2">
+                  </div>
+                  <div class="hero-slide">
+                    <img src="slide3.jpg" alt="صورة 3">
+                  </div>
+                  <div class="hero-slide">
+                    <img src="slide4.jpg" alt="صورة 4">
+                  </div>
+                  <div class="hero-slide">
+                    <img src="slide5.jpg" alt="صورة 5">
+                  </div>
+                  <div class="hero-slide">
+                    <img src="slide6.jpg" alt="صورة 6">
+                  </div>
+                  <div class="hero-slide">
+                    <img src="slide7.jpg" alt="صورة 7">
+                  </div>
+                  <div class="hero-slide">
+                    <img src="slide8.jpg" alt="صورة 8">
+                  </div>
+                </div>
+
+                <!-- النقاط -->
+                <div class="hero-slider-dots">
+                  <button class="hero-slider-dot is-active" data-index="0" type="button"></button>
+                  <button class="hero-slider-dot" data-index="1" type="button"></button>
+                  <button class="hero-slider-dot" data-index="2" type="button"></button>
+                  <button class="hero-slider-dot" data-index="3" type="button"></button>
+                  <button class="hero-slider-dot" data-index="4" type="button"></button>
+                  <button class="hero-slider-dot" data-index="5" type="button"></button>
+                  <button class="hero-slider-dot" data-index="6" type="button"></button>
+                  <button class="hero-slider-dot" data-index="7" type="button"></button>
+                </div>
               </div>
             </div>
           </div>
@@ -1036,7 +1066,7 @@
 
         <!-- الأقسام -->
         <section class="sections">
-          <p id="sections-title" class="sections-title">الأقسام الرئيسية:</p>
+          <!-- ✅ حذف كلمة "الأقسام الرئيسية" -->
           <div class="sections-grid">
             <a href="section1.html" class="section-card">
               <div class="section-label" id="section-label-1">قسم</div>
@@ -1103,7 +1133,6 @@
             </p>
 
             <div class="social-links">
-              <!-- غيّر # بروابطك الفعلية -->
               <a href="https://www.youtube.com/@mlo5ya" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
                 Y
               </a>
@@ -1143,21 +1172,6 @@
   <!-- صوت اشعار التذكير بالاشتراك: حط ملف toast.mp3 جنب index.html -->
   <audio id="toast-sound" src="toast.mp3" preload="auto"></audio>
 
-  <!-- زر شات مع AI -->
-  <div class="ai-chat-launcher">
-    <!-- 🔻 غيّر الرابط للأداة اللي بدك إياها -->
-    <a
-      href="https://chat.openai.com"
-      target="_blank"
-      rel="noopener"
-      class="ai-chat-btn"
-      title="تحدّث مع المساعد الذكي"
-    >
-      🤖
-    </a>
-    <div class="ai-chat-tooltip">شات مع AI</div>
-  </div>
-
   <!-- زر الرجوع لأعلى الصفحة -->
   <button id="scroll-top" class="scroll-top-btn" aria-label="العودة للأعلى">↑</button>
 
@@ -1189,7 +1203,7 @@
         if (heroLogo) {
           heroLogo.classList.add("hero-logo-animate");
         }
-      }, 700); // 0.7 ثانية تقريباً
+      }, 700);
     });
 
     // حيلة بسيطة لتحسين فرصة تشغيل الصوت (أول كليك يفتح الباب)
@@ -1218,7 +1232,6 @@
         submenu1: "قائمة فرعية 1",
         submenu2: "قائمة فرعية 2",
         submenu3: "قائمة فرعية 3",
-        sectionsTitle: "الأقسام الرئيسية:",
         secLabel: "قسم",
         sec1: "مين أنا",
         sec2: "قسم 2",
@@ -1249,7 +1262,6 @@
         submenu1: "Submenu 1",
         submenu2: "Submenu 2",
         submenu3: "Submenu 3",
-        sectionsTitle: "Main Sections:",
         secLabel: "Section",
         sec1: "Who am I",
         sec2: "Section 2",
@@ -1274,9 +1286,17 @@
       const strings = l10n[lang] || l10n["ar"];
       document.title = strings.title;
       document.documentElement.lang = lang === "en" ? "en" : "ar";
+      document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
+
+      // ✅ التحكم باتجاه القوائم
+      const topNav = document.querySelector(".top-nav");
+      if (topNav) {
+        topNav.classList.toggle("top-nav--rtl", lang !== "en");
+        topNav.classList.toggle("top-nav--ltr", lang === "en");
+      }
+
       const loginLink = document.getElementById("login-link");
       const heroSub = document.getElementById("hero-sub");
-      const sectionsTitle = document.getElementById("sections-title");
       const aboutTitle = document.getElementById("about-title");
       const aboutBody = document.getElementById("about-body");
       const footerText = document.getElementById("footer-text");
@@ -1304,8 +1324,6 @@
       if (submenu1) submenu1.textContent = strings.submenu1;
       if (submenu2) submenu2.textContent = strings.submenu2;
       if (submenu3) submenu3.textContent = strings.submenu3;
-
-      if (sectionsTitle) sectionsTitle.textContent = strings.sectionsTitle;
 
       const sLabel1 = document.getElementById("section-label-1");
       const sLabel2 = document.getElementById("section-label-2");
@@ -1372,7 +1390,7 @@
             toastSound.play().catch(() => {});
           } catch (e) {}
         }
-      }, 7000); // 7 ثواني
+      }, 7000);
     }
 
     if (toastClose) {
@@ -1400,95 +1418,210 @@
         });
       });
     }
-  </script>
-  <script>
-  const MLO5_USERS_KEY = "mlo5-users";
-  const MLO5_CURRENT_USER_KEY = "mlo5-current-user-email";
 
-  function mlo5IndexLoadUsers() {
-    try {
-      const raw = localStorage.getItem(MLO5_USERS_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      return [];
-    }
-  }
+    // ✅ سلايدر: سحب + تشغيل تلقائي كل 2 ثانية (غيّر AUTO_DELAY لو حاب)
+    (function initHeroSlider() {
+      const slider = document.getElementById("hero-slider");
+      if (!slider) return;
 
-  function mlo5IndexGetCurrentUserEmail() {
-    return localStorage.getItem(MLO5_CURRENT_USER_KEY) || null;
-  }
+      const slides = Array.from(slider.querySelectorAll(".hero-slide"));
+      const dots = Array.from(slider.querySelectorAll(".hero-slider-dot"));
+      const prevBtn = slider.querySelector(".hero-slider-arrow--prev");
+      const nextBtn = slider.querySelector(".hero-slider-arrow--next");
+      if (!slides.length) return;
 
-  (function () {
-    const loginLink = document.getElementById("login-link");
-    if (!loginLink) return;
+      let current = 0;
+      let autoTimer = null;
+      const AUTO_DELAY = 2000; 
 
-    const currentEmail = mlo5IndexGetCurrentUserEmail();
-    if (!currentEmail) return; // ما في حدا داخل
+      function goTo(index) {
+        const total = slides.length;
+        current = (index + total) % total;
 
-    const users = mlo5IndexLoadUsers();
-    const currentUser =
-      users.find((u) => u.email === currentEmail) || null;
-
-    const rawName =
-      (currentUser && currentUser.name && currentUser.name.trim()) ||
-      currentEmail;
-
-    const displayName =
-      rawName.length > 16 ? rawName.slice(0, 14) + "…" : rawName;
-
-    const topBar = loginLink.parentElement;
-    if (!topBar) return;
-
-    // عنصر جديد مكان "تسجيل دخول" بنفس ستايل القوائم
-    const wrapper = document.createElement("div");
-    wrapper.className = "top-nav-item top-nav-dropdown";
-
-    const label = document.createElement("span");
-    label.className = "top-nav-label";
-    label.textContent = displayName;
-
-    const menu = document.createElement("div");
-    menu.className = "dropdown-menu";
-
-    function makeItem(text, href, isButton) {
-      const el = isButton ? document.createElement("button") : document.createElement("a");
-      el.className = "dropdown-item";
-      if (!isButton && href) el.href = href;
-      el.textContent = text;
-      if (isButton) {
-        el.type = "button";
-        el.style.textAlign = "right";
-        el.style.width = "100%";
-        el.style.background = "transparent";
-        el.style.border = "none";
-        el.style.cursor = "pointer";
+        slides.forEach((slide, i) => {
+          slide.classList.toggle("is-active", i === current);
+        });
+        dots.forEach((dot, i) => {
+          dot.classList.toggle("is-active", i === current);
+        });
       }
-      return el;
+
+      function goNext() {
+        goTo(current + 1);
+      }
+
+      function goPrev() {
+        goTo(current - 1);
+      }
+
+      function stopAuto() {
+        if (autoTimer !== null) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+        }
+      }
+
+      function startAuto() {
+        stopAuto();
+        autoTimer = setInterval(goNext, AUTO_DELAY);
+      }
+
+      // أزرار السابق / التالي (مش موجودين حاليًا، بس لو أضفتهم يشتغلوا)
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          goNext();
+          startAuto();
+        });
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+          goPrev();
+          startAuto();
+        });
+      }
+
+      // النقاط
+      dots.forEach((dot) => {
+        dot.addEventListener("click", () => {
+          const idx = Number(dot.getAttribute("data-index") || "0");
+          goTo(idx);
+          startAuto();
+        });
+      });
+
+      // سحب باللمس / الماوس
+      let startX = null;
+      let isTouching = false;
+
+      function onPointerStart(e) {
+        isTouching = true;
+        startX = e.touches ? e.touches[0].clientX : e.clientX;
+        stopAuto();
+      }
+
+      function onPointerEnd(e) {
+        if (!isTouching || startX === null) return;
+        const endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        const diff = endX - startX;
+
+        const threshold = 50;
+        if (Math.abs(diff) > threshold) {
+          if (diff < 0) {
+            goNext();
+          } else {
+            goPrev();
+          }
+        }
+
+        isTouching = false;
+        startX = null;
+        startAuto();
+      }
+
+      slider.addEventListener("touchstart", onPointerStart, { passive: true });
+      slider.addEventListener("touchend", onPointerEnd);
+
+      slider.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        onPointerStart(e);
+      });
+      slider.addEventListener("mouseup", onPointerEnd);
+      slider.addEventListener("mouseleave", () => {
+        isTouching = false;
+        startX = null;
+      });
+
+      // تشغيل مبدئي مرتب من أول صورة
+      goTo(0);
+      startAuto();
+    })();
+  </script>
+
+  <script>
+    const MLO5_USERS_KEY = "mlo5-users";
+    const MLO5_CURRENT_USER_KEY = "mlo5-current-user-email";
+
+    function mlo5IndexLoadUsers() {
+      try {
+        const raw = localStorage.getItem(MLO5_USERS_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
     }
 
-    const profileItem = makeItem("الملف الشخصي", "profile.html", false);
-    const settingsItem = makeItem("الإعدادات", "settings.html", false);
-    const logoutItem = makeItem("تسجيل خروج", "", true);
+    function mlo5IndexGetCurrentUserEmail() {
+      return localStorage.getItem(MLO5_CURRENT_USER_KEY) || null;
+    }
 
-    logoutItem.addEventListener("click", () => {
-      localStorage.removeItem(MLO5_CURRENT_USER_KEY);
-      // نرجع لنفس الصفحة بس كـ ضيف
-      window.location.href = "index.html";
-    });
+    (function () {
+      const loginLink = document.getElementById("login-link");
+      if (!loginLink) return;
 
-    menu.appendChild(profileItem);
-    menu.appendChild(settingsItem);
-    menu.appendChild(logoutItem);
+      const currentEmail = mlo5IndexGetCurrentUserEmail();
+      if (!currentEmail) return; // ما في حدا داخل
 
-    wrapper.appendChild(label);
-    wrapper.appendChild(menu);
+      const users = mlo5IndexLoadUsers();
+      const currentUser =
+        users.find((u) => u.email === currentEmail) || null;
 
-    // استبدال زر تسجيل دخول بالقائمة الجديدة
-    topBar.replaceChild(wrapper, loginLink);
-  })();
-</script>
+      const rawName =
+        (currentUser && currentUser.name && currentUser.name.trim()) ||
+        currentEmail;
 
+      const displayName =
+        rawName.length > 16 ? rawName.slice(0, 14) + "…" : rawName;
+
+      const topBar = loginLink.parentElement;
+      if (!topBar) return;
+
+      // عنصر جديد مكان "تسجيل دخول" بنفس ستايل القوائم
+      const wrapper = document.createElement("div");
+      wrapper.className = "top-nav-item top-nav-dropdown";
+
+      const label = document.createElement("span");
+      label.className = "top-nav-label";
+      label.textContent = displayName;
+
+      const menu = document.createElement("div");
+      menu.className = "dropdown-menu";
+
+      function makeItem(text, href, isButton) {
+        const el = isButton ? document.createElement("button") : document.createElement("a");
+        el.className = "dropdown-item";
+        if (!isButton && href) el.href = href;
+        el.textContent = text;
+        if (isButton) {
+          el.type = "button";
+          el.style.textAlign = "right";
+          el.style.width = "100%";
+          el.style.background = "transparent";
+          el.style.border = "none";
+          el.style.cursor = "pointer";
+        }
+        return el;
+      }
+
+      const profileItem = makeItem("الملف الشخصي", "profile.html", false);
+      const settingsItem = makeItem("الإعدادات", "settings.html", false);
+      const logoutItem = makeItem("تسجيل خروج", "", true);
+
+      logoutItem.addEventListener("click", () => {
+        localStorage.removeItem(MLO5_CURRENT_USER_KEY);
+        window.location.href = "index.html";
+      });
+
+      menu.appendChild(profileItem);
+      menu.appendChild(settingsItem);
+      menu.appendChild(logoutItem);
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(menu);
+
+      // استبدال زر تسجيل دخول بالقائمة الجديدة
+      topBar.replaceChild(wrapper, loginLink);
+    })();
+  </script>
 </body>
 </html>
-
-
