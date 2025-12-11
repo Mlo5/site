@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>اتصل بنا - M L O 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #020202;
+      --yellow: #facc15;
+      --white: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(156, 163, 175, 0.35);
+      --radius-lg: 20px;
+      --radius-full: 999px;
+      --grid-x: 0px;
+      --grid-y: 0px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--bg-dark);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      position: relative;
+      padding: 16px;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: radial-gradient(
+        circle,
+        rgba(249, 250, 251, 0.55) 1px,
+        transparent 1px
+      );
+      background-size: 30px 30px;
+      background-position:
+        calc(50% + var(--grid-x))
+        calc(50% + var(--grid-y));
+      opacity: 0.25;
+      mix-blend-mode: screen;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    /* الشريط العلوي */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .back-link {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(10, 10, 10, 0.9);
+      border: 1px solid rgba(30, 30, 30, 0.95);
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(0, 0, 0, 0.9);
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .back-link:hover {
+      background: rgba(20, 20, 20, 0.95);
+      transform: translateY(-1px);
+    }
+
+    .lang-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: var(--yellow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0, 0, 0, 0.9);
+      transition:
+        background 0.15s ease,
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .lang-toggle:hover {
+      transform: translateY(-1px);
+      background: radial-gradient(circle at top, #facc15, #fbbf24);
+      color: #000;
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 1),
+        0 0 0 1px rgba(250, 204, 21, 0.8);
+    }
+
+    /* الهيدر */
+    .page-header {
+      margin-bottom: 16px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* الكارد */
+    .card {
+      background: radial-gradient(circle at top, #111111, #020202);
+      border-radius: 22px;
+      border: 1px solid rgba(20,20,20,0.95);
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(0, 0, 0, 0.95);
+      padding: 18px 16px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.16),
+        transparent 55%
+      );
+      opacity: 0.7;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 800px) {
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* الفورم */
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .input,
+    .textarea {
+      background: rgba(10,10,10,0.96);
+      border-radius: 999px;
+      border: 1px solid rgba(35,35,35,0.96);
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      color: var(--white);
+      outline: none;
+      width: 100%;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .textarea {
+      border-radius: 16px;
+      min-height: 110px;
+      resize: vertical;
+      padding-top: 10px;
+    }
+
+    .input::placeholder,
+    .textarea::placeholder {
+      color: rgba(148,163,184,0.75);
+    }
+
+    .input:focus,
+    .textarea:focus {
+      border-color: rgba(250,204,21,0.9);
+      box-shadow:
+        0 0 0 1px rgba(250,204,21,0.7),
+        0 0 0 6px rgba(250,204,21,0.18);
+      background: rgba(12,12,12,0.98);
+    }
+
+    .btn {
+      margin-top: 4px;
+      padding: 9px 18px;
+      border-radius: 999px;
+      border: 2px solid #000;
+      background: #facc15;
+      color: #111827;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      align-self: flex-start;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.75);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.8);
+    }
+
+    .error-text {
+      font-size: 0.78rem;
+      color: #f97373;
+      min-height: 14px;
+    }
+
+    .success-text {
+      font-size: 0.8rem;
+      color: #22c55e;
+      min-height: 16px;
+      margin-top: 4px;
+    }
+
+    /* معلومات التواصل */
+    .contact-box {
+      border-radius: 18px;
+      border: 1px solid rgba(55,65,81,0.7);
+      background: rgba(7, 10, 18, 0.96);
+      padding: 10px 12px;
+      box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(15, 23, 42, 1);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .contact-title {
+      font-size: 0.95rem;
+      color: var(--yellow);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .contact-row {
+      margin-bottom: 6px;
+    }
+
+    .contact-label {
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: var(--white);
+    }
+
+    .contact-value {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .contact-note {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <main class="page">
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+      <a href="index.html" class="back-link" id="back-link">
+        ← عودة للصفحة الرئيسية
+      </a>
+      <button id="lang-toggle" class="lang-toggle" title="العربية">
+        🌐
+      </button>
+    </div>
+
+    <!-- الهيدر -->
+    <header class="page-header">
+      <h1 class="page-title" id="page-title">اتصل بي</h1>
+      <p class="page-subtitle" id="page-subtitle">
+        عندك سؤال، فكرة تعاون، أو اقتراح للمحتوى؟ ابعتلي رسالة من هنا مباشرة.
+      </p>
+    </header>
+
+    <!-- الكارد -->
+    <section class="card">
+      <div class="card-inner">
+        <div class="card-grid">
+          <!-- الفورم -->
+          <form id="contact-form" class="form" novalidate>
+            <div class="form-row">
+              <label class="label" for="name" id="label-name">الاسم</label>
+              <input
+                id="name"
+                type="text"
+                class="input"
+                placeholder="اكتب اسمك"
+              />
+              <div id="error-name" class="error-text"></div>
+            </div>
+
+            <div class="form-row">
+              <label class="label" for="email" id="label-email">البريد الإلكتروني</label>
+              <input
+                id="email"
+                type="email"
+                class="input"
+                placeholder="example@email.com"
+              />
+              <div id="error-email" class="error-text"></div>
+            </div>
+
+            <div class="form-row">
+              <label class="label" for="subject" id="label-subject">موضوع الرسالة</label>
+              <input
+                id="subject"
+                type="text"
+                class="input"
+                placeholder="مثلاً: اقتراح لفيديو، تعاون، استفسار..."
+              />
+              <div id="error-subject" class="error-text"></div>
+            </div>
+
+            <div class="form-row">
+              <label class="label" for="message" id="label-message">الرسالة</label>
+              <textarea
+                id="message"
+                class="textarea"
+                placeholder="اكتب رسالتك بالتفصيل…"
+              ></textarea>
+              <div id="error-message" class="error-text"></div>
+            </div>
+
+            <button type="submit" class="btn" id="send-btn">
+              إرسال الرسالة
+            </button>
+
+            <div id="success-message" class="success-text"></div>
+          </form>
+
+          <!-- معلومات التواصل الجانبية -->
+          <div class="contact-box">
+            <div class="contact-title" id="contact-title">
+              طرق تواصل أخرى
+            </div>
+
+            <div class="contact-row">
+              <div class="contact-label" id="contact-email-label">الإيميل الرسمي:</div>
+              <div class="contact-value" id="contact-email-value">
+                example@mlo5.com
+              </div>
+            </div>
+
+            <div class="contact-row">
+              <div class="contact-label" id="contact-social-label">السوشال ميديا:</div>
+              <div class="contact-value" id="contact-social-value">
+                YouTube · Instagram · TikTok (تقدر تعدّل النص لاحقًا)
+              </div>
+            </div>
+
+            <div class="contact-note" id="contact-note">
+              ملاحظة: نموذج "اتصل بنا" تجريبي حالياً – الرسالة تُحفظ في المتصفح (localStorage). لما تطلع
+              بسيرفر حقيقي، تقدر تربطه بإرسال الإيميل فعلياً.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // تحريك شبكة النقاط
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      const xShift = xRatio * maxShift;
+      const yShift = yRatio * maxShift;
+      root.style.setProperty("--grid-x", xShift.toFixed(1) + "px");
+      root.style.setProperty("--grid-y", yShift.toFixed(1) + "px");
+    });
+
+    // لغة الموقع (نفس المفتاح اللي استخدمناه بالموقع الرئيسي)
+    const LANG_KEY = "mlo5-lang";
+    const langToggle = document.getElementById("lang-toggle");
+
+    const l10n = {
+      ar: {
+        back: "← عودة للصفحة الرئيسية",
+        title: "اتصل بي",
+        subtitle: "عندك سؤال، فكرة تعاون، أو اقتراح للمحتوى؟ ابعتلي رسالة من هنا مباشرة.",
+        labelName: "الاسم",
+        labelEmail: "البريد الإلكتروني",
+        labelSubject: "موضوع الرسالة",
+        labelMessage: "الرسالة",
+        placeholderName: "اكتب اسمك",
+        placeholderEmail: "example@email.com",
+        placeholderSubject: "مثلاً: اقتراح لفيديو، تعاون، استفسار...",
+        placeholderMessage: "اكتب رسالتك بالتفصيل…",
+        errorName: "الاسم لازم يكون 2 أحرف أو أكثر.",
+        errorEmail: "رجاءً أدخل بريد إلكتروني صحيح.",
+        errorSubject: "موضوع الرسالة لازم يكون 3 أحرف أو أكثر.",
+        errorMessage: "الرسالة لازم تكون 10 أحرف أو أكثر.",
+        sendBtn: "إرسال الرسالة",
+        success: "تم استلام رسالتك (تجريبيًا) ✅ شكراً لتواصلك.",
+        contactTitle: "طرق تواصل أخرى",
+        contactEmailLabel: "الإيميل الرسمي:",
+        contactEmailValue: "example@mlo5.com",
+        contactSocialLabel: "السوشال ميديا:",
+        contactSocialValue: "YouTube · Instagram · TikTok (تقدر تعدّل النص لاحقًا)",
+        contactNote: "ملاحظة: نموذج \"اتصل بنا\" تجريبي حالياً – الرسالة تُحفظ في المتصفح (localStorage). لما تطلع بسيرفر حقيقي، تقدر تربطه بإرسال الإيميل فعلياً.",
+        langTitle: "العربية",
+        pageTitle: "اتصل بنا - M L O 5",
+      },
+      en: {
+        back: "← Back to home",
+        title: "Contact Me",
+        subtitle: "Have a question, collab idea, or content suggestion? Send me a message directly here.",
+        labelName: "Name",
+        labelEmail: "Email",
+        labelSubject: "Subject",
+        labelMessage: "Message",
+        placeholderName: "Type your name",
+        placeholderEmail: "example@email.com",
+        placeholderSubject: "e.g. video idea, collaboration, question...",
+        placeholderMessage: "Write your message in detail…",
+        errorName: "Name must be at least 2 characters.",
+        errorEmail: "Please enter a valid email address.",
+        errorSubject: "Subject must be at least 3 characters.",
+        errorMessage: "Message must be at least 10 characters.",
+        sendBtn: "Send message",
+        success: "Your message has been received (demo only) ✅ Thank you!",
+        contactTitle: "Other contact methods",
+        contactEmailLabel: "Official email:",
+        contactEmailValue: "example@mlo5.com",
+        contactSocialLabel: "Social media:",
+        contactSocialValue: "YouTube · Instagram · TikTok (you can edit this text later).",
+        contactNote: "Note: This contact form is demo-only – messages are stored locally (localStorage). When you move to a real server, you can wire it to send real emails.",
+        langTitle: "English",
+        pageTitle: "Contact - M L O 5",
+      },
+    };
+
+    let currentLang = localStorage.getItem(LANG_KEY) || "ar";
+
+    function applyLang() {
+      const s = l10n[currentLang] || l10n.ar;
+
+      document.title = s.pageTitle;
+
+      const backLink = document.getElementById("back-link");
+      const pageTitle = document.getElementById("page-title");
+      const pageSubtitle = document.getElementById("page-subtitle");
+      const labelName = document.getElementById("label-name");
+      const labelEmail = document.getElementById("label-email");
+      const labelSubject = document.getElementById("label-subject");
+      const labelMessage = document.getElementById("label-message");
+      const nameInput = document.getElementById("name");
+      const emailInput = document.getElementById("email");
+      const subjectInput = document.getElementById("subject");
+      const messageInput = document.getElementById("message");
+      const sendBtn = document.getElementById("send-btn");
+
+      const contactTitle = document.getElementById("contact-title");
+      const contactEmailLabel = document.getElementById("contact-email-label");
+      const contactEmailValue = document.getElementById("contact-email-value");
+      const contactSocialLabel = document.getElementById("contact-social-label");
+      const contactSocialValue = document.getElementById("contact-social-value");
+      const contactNote = document.getElementById("contact-note");
+
+      if (backLink) backLink.textContent = s.back;
+      if (pageTitle) pageTitle.textContent = s.title;
+      if (pageSubtitle) pageSubtitle.textContent = s.subtitle;
+
+      if (labelName) labelName.textContent = s.labelName;
+      if (labelEmail) labelEmail.textContent = s.labelEmail;
+      if (labelSubject) labelSubject.textContent = s.labelSubject;
+      if (labelMessage) labelMessage.textContent = s.labelMessage;
+
+      if (nameInput) nameInput.placeholder = s.placeholderName;
+      if (emailInput) emailInput.placeholder = s.placeholderEmail;
+      if (subjectInput) subjectInput.placeholder = s.placeholderSubject;
+      if (messageInput) messageInput.placeholder = s.placeholderMessage;
+
+      if (sendBtn) sendBtn.textContent = s.sendBtn;
+
+      if (contactTitle) contactTitle.textContent = s.contactTitle;
+      if (contactEmailLabel) contactEmailLabel.textContent = s.contactEmailLabel;
+      if (contactEmailValue) contactEmailValue.textContent = s.contactEmailValue;
+      if (contactSocialLabel) contactSocialLabel.textContent = s.contactSocialLabel;
+      if (contactSocialValue) contactSocialValue.textContent = s.contactSocialValue;
+      if (contactNote) contactNote.textContent = s.contactNote;
+
+      if (langToggle) {
+        langToggle.title = s.langTitle;
+      }
+
+      document.documentElement.lang = currentLang === "en" ? "en" : "ar";
+      document.documentElement.dir = "rtl";
+    }
+
+    applyLang();
+
+    if (langToggle) {
+      langToggle.addEventListener("click", () => {
+        currentLang = currentLang === "ar" ? "en" : "ar";
+        localStorage.setItem(LANG_KEY, currentLang);
+        applyLang();
+      });
+    }
+
+    // فورم الاتصال
+    const contactForm = document.getElementById("contact-form");
+
+    function setError(id, msg) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = msg || "";
+    }
+
+    function setSuccess(msg) {
+      const el = document.getElementById("success-message");
+      if (el) el.textContent = msg || "";
+    }
+
+    const CONTACT_STORAGE_KEY = "mlo5-contact-messages";
+
+    function saveMessage(data) {
+      try {
+        const raw = localStorage.getItem(CONTACT_STORAGE_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        list.push(data);
+        localStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify(list));
+      } catch (e) {
+        console.error("Failed to save contact message", e);
+      }
+    }
+
+    if (contactForm) {
+      contactForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const s = l10n[currentLang] || l10n.ar;
+
+        setError("error-name", "");
+        setError("error-email", "");
+        setError("error-subject", "");
+        setError("error-message", "");
+        setSuccess("");
+
+        const nameInput = document.getElementById("name");
+        const emailInput = document.getElementById("email");
+        const subjectInput = document.getElementById("subject");
+        const messageInput = document.getElementById("message");
+
+        const name = nameInput ? nameInput.value.trim() : "";
+        const email = emailInput ? emailInput.value.trim() : "";
+        const subject = subjectInput ? subjectInput.value.trim() : "";
+        const message = messageInput ? messageInput.value.trim() : "";
+
+        let isValid = true;
+
+        if (name.length < 2) {
+          setError("error-name", s.errorName);
+          isValid = false;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          setError("error-email", s.errorEmail);
+          isValid = false;
+        }
+
+        if (subject.length < 3) {
+          setError("error-subject", s.errorSubject);
+          isValid = false;
+        }
+
+        if (message.length < 10) {
+          setError("error-message", s.errorMessage);
+          isValid = false;
+        }
+
+        if (!isValid) return;
+
+        // نخزنها محلياً كتجربة
+        saveMessage({
+          name,
+          email,
+          subject,
+          message,
+          createdAt: new Date().toISOString(),
+        });
+
+        if (contactForm) {
+          contactForm.reset();
+        }
+
+        setSuccess(s.success);
+      });
+    }
+  </script>
+</body>
+</html>
