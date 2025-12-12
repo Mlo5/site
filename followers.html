@@ -75,17 +75,20 @@
       text-transform:uppercase; white-space:nowrap;
     }
     .title small{letter-spacing:0;font-weight:700;color:var(--muted)}
+
+    /* ✅ الترتيب الجديد: مربع النشر فوق + المنشورات تحت */
     .wrap{
-      display:grid;
-      grid-template-columns: 1fr 360px;
+      display:flex;
+      flex-direction:column;
       gap:14px;
       height: calc(var(--vh, 1vh) * 100 - 32px - 40px - 14px - 44px);
       min-height:0;
     }
+
     @media (max-width: 980px){
       body{overflow:hidden}
       .page{padding:16px 12px 18px}
-      .wrap{grid-template-columns:1fr; height:calc(var(--vh, 1vh) * 100 - 90px)}
+      .wrap{height:calc(var(--vh, 1vh) * 100 - 90px)}
     }
 
     .panel-head{
@@ -165,6 +168,7 @@
       direction:rtl;
       font-weight:900;
       color:var(--white);
+      min-width:0;
     }
     .postHead .who span.name{
       color:var(--yellow);
@@ -199,6 +203,10 @@
       border-color:rgba(34,197,94,.85);
       color:rgba(34,197,94,.95);
     }
+    .miniBtn.danger{
+      border-color:rgba(239,68,68,.65);
+      color:rgba(239,68,68,.95);
+    }
     .countPill{
       border-radius:999px;
       border:1px solid rgba(148,163,184,.5);
@@ -225,6 +233,7 @@
       border-radius:16px;
       padding:10px;
       line-height:1.7;
+      position:relative;
     }
     .commentMeta{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -233,9 +242,22 @@
       margin-bottom:6px;
       direction:ltr;
     }
-    .commentMeta .who{direction:rtl; font-weight:900; color:var(--white)}
+    .commentMeta .who{direction:rtl; font-weight:900; color:var(--white); min-width:0}
     .commentMeta .who .name{color:var(--yellow)}
     .commentText{white-space:pre-wrap; word-break:break-word}
+    .commentDelBtn{
+      border:1px solid rgba(239,68,68,.55);
+      background:rgba(0,0,0,.35);
+      color:rgba(239,68,68,.95);
+      border-radius:999px;
+      padding:6px 10px;
+      cursor:pointer;
+      font-weight:900;
+      user-select:none;
+      height:34px;
+      display:inline-flex;align-items:center;gap:6px;
+      white-space:nowrap;
+    }
 
     /* Modal (زي تبويب الدردشة) */
     #modal{
@@ -346,23 +368,12 @@
     </div>
 
     <div class="wrap">
-      <section class="card" style="display:flex;flex-direction:column;min-height:0;">
-        <div class="panel-head">
-          <div class="h">
-            <b>منشورات المتابعين</b>
-            <span>اكتب رأيك… خلّي الشباب <span style="color:#facc15;font-weight:900">تستفاد</span></span>
-          </div>
-          <div class="badge" id="meBadge">أنت: —</div>
-        </div>
-
-        <div class="posts" id="postsList"></div>
-      </section>
-
+      <!-- ✅ مربع النشر فوق -->
       <aside class="card" style="display:flex;flex-direction:column;gap:12px;min-height:0;">
         <div class="panel-head">
           <div class="h">
             <b>انشر بوست</b>
-            <span>بدون صور (مجانًا)</span>
+            <span>( مَا يَلْفِظُ مِنْ قَوْلٍ إِلا لَدَيْهِ رَقِيبٌ عَتِيدٌ )</span>
           </div>
           <div class="badge" id="postsCount">0 بوست</div>
         </div>
@@ -382,9 +393,23 @@
           </div>
         </div>
       </aside>
+
+      <!-- ✅ المنشورات تحت -->
+      <section class="card" style="display:flex;flex-direction:column;min-height:0;">
+        <div class="panel-head">
+          <div class="h">
+            <b>منشورات المتابعين</b>
+            <span>اكتب رأيك… خلّي الشباب <span style="color:#facc15;font-weight:900">تستفاد</span></span>
+          </div>
+          <div class="badge" id="meBadge">أنت: —</div>
+        </div>
+
+        <div class="posts" id="postsList"></div>
+      </section>
     </div>
   </main>
 
+  <!-- Modal الدخول (زي تبويب الدردشة) -->
   <div id="modal">
     <div id="modalBox">
       <div class="modalGrid">
@@ -420,10 +445,22 @@
           <div class="hintErr" id="modalErr"></div>
         </div>
 
+        <!-- ✅ ADMIN مثل الشات -->
         <div class="modalCard">
-          <h3>ملاحظة</h3>
-          <p>المنتدى يشتغل على نفس Firebase تبع موقعك بدون ما يخرب الدردشة.</p>
-          <div class="badge" style="justify-content:center">🔥 نفس الستايل… نفس الهوية</div>
+          <h3>ADMIN</h3>
+
+          <div class="modalRow one">
+            <input id="adminUser" placeholder="Username" autocomplete="off" />
+          </div>
+          <div class="modalRow one">
+            <input id="adminPass" placeholder="Password" type="password" autocomplete="off" />
+          </div>
+
+          <button id="adminLoginBtn" class="modalBtn" type="button">تفعيل الأدمن</button>
+          <div class="hintErr" id="adminErr"></div>
+
+          <p style="margin-top:10px">(الأدمن يقدر يحذف منشورات وتعليقات الجميع)</p>
+          <div class="badge" style="justify-content:center">🔥 بدون صور (مجانًا)</div>
         </div>
       </div>
     </div>
@@ -435,10 +472,11 @@
   import {
     getFirestore, collection, addDoc, serverTimestamp,
     query, orderBy, onSnapshot, doc, updateDoc,
-    arrayUnion, arrayRemove
+    arrayUnion, arrayRemove, deleteDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
+  // ✅ نفس مشروعك
   const firebaseConfig = {
     apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
     authDomain: "mlo5-users.firebaseapp.com",
@@ -447,11 +485,17 @@
     appId: "1:142086858806:web:64c50f3a8d6250a2049097"
   };
 
+  // ✅ ADMIN مثل الشات
+  const ADMIN_UIDS = ["VFjSs6kH2jcFJnddE7SXIpipzDi2"];
+  const ADMIN_USERNAME = "MLO5";
+  const ADMIN_PASSWORD = "APRIL3049";
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
   const rtdb = getDatabase(app);
 
+  // UI
   const connDot = document.getElementById("connDot");
   const connText = document.getElementById("connText");
   const exitBtn = document.getElementById("exitBtn");
@@ -477,6 +521,12 @@
   const genderInput = document.getElementById("genderInput");
   const ageInput = document.getElementById("ageInput");
 
+  const adminUser = document.getElementById("adminUser");
+  const adminPass = document.getElementById("adminPass");
+  const adminLoginBtn = document.getElementById("adminLoginBtn");
+  const adminErr = document.getElementById("adminErr");
+
+  // Helpers
   function setVh(){
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -514,19 +564,26 @@
     return `${h}:${m} ${ampm}`;
   }
 
+  // فلتر كلمات (مثل الدردشة)
   const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
   function isProfane(text){
     const t = String(text||"").toLowerCase();
     return BAD_WORDS.some(w => t.includes(w));
   }
 
+  // Session
   let user = null;
   let profile = null;
+  let isAdmin = false;
+  let isGuest = false;
+
   const profKey = (uid) => `followersProfile_${uid}`;
+  const adminSessionKey = (uid) => `forumAdminSession_${uid}`;
 
   function showForm(){ formBox.style.display = "block"; }
   function hideForm(){ formBox.style.display = "none"; }
 
+  // ✅ اتصال Firebase (RTDB info)
   function watchConnection(){
     const connRef = ref(rtdb, ".info/connected");
     onValue(connRef, (snap)=>{
@@ -536,12 +593,14 @@
     });
   }
 
+  // Auth flow (زي الدردشة)
   chooseLogin.addEventListener("click", ()=>{
     setErr(modalErr,"");
     if (!user || user.isAnonymous){
       location.href = "login.html";
       return;
     }
+    isGuest = false;
     showForm();
   });
 
@@ -549,6 +608,7 @@
     setErr(modalErr,"");
     try{
       if (!user) await signInAnonymously(auth);
+      isGuest = true;
       showForm();
     }catch(err){
       console.error(err);
@@ -565,8 +625,36 @@
     location.href = "index.html";
   });
 
+  // ✅ تفعيل الأدمن (مثل الشات)
+  adminLoginBtn.addEventListener("click", ()=>{
+    setErr(adminErr,"");
+    if (!user) return;
+
+    const uidAllowed = ADMIN_UIDS.includes(user.uid);
+    if (!uidAllowed){
+      setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
+      return;
+    }
+    if (user.isAnonymous){
+      setErr(adminErr, "الأدمن لا يعمل على حساب ضيف.");
+      return;
+    }
+
+    const u = (adminUser.value || "").trim();
+    const p = (adminPass.value || "").trim();
+    if (u !== ADMIN_USERNAME || p !== ADMIN_PASSWORD){
+      setErr(adminErr, "بيانات ADMIN غير صحيحة.");
+      return;
+    }
+
+    localStorage.setItem(adminSessionKey(user.uid), "1");
+    setErr(adminErr, "✅ تم تفعيل الأدمن.");
+    isAdmin = true;
+  });
+
+  // دخول المنتدى بعد تعبئة البيانات
   enterBtn.addEventListener("click", async ()=>{
-    setErr(modalErr, "");
+    setErr(modalErr,"");
     const rawName = collapseSpaces(nameInput.value);
     const g = genderInput.value;
     const age = Number(ageInput.value);
@@ -586,14 +674,20 @@
   });
 
   async function enterForum(){
+    // تحديد حالة الأدمن الآن
+    isGuest = !!user?.isAnonymous;
+    isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
+
     modal.style.display = "none";
-    meBadge.textContent = `أنت: ${profile?.name || "—"}`;
+
+    meBadge.textContent = `أنت: ${profile?.name || "—"}${isAdmin ? " • ADMIN" : ""}`;
     postText.disabled = false;
     publishBtn.disabled = false;
+
     startPostsListener();
   }
 
-  // ✅ مهم: نخليها نفس الـRules اللي عندك
+  // ✅ نفس اسم الكولكشن اللي بالرولز عندك: forumPosts
   const POSTS_COL = "forumPosts";
 
   let unsubPosts = null;
@@ -637,9 +731,12 @@
     const likedByMe = !!user && likesArr.includes(user.uid);
     const likesCount = likesArr.length;
 
+    const isOwnerPost = !!user && (p.uid === user.uid);
+    const canDeletePost = isOwnerPost || isAdmin;
+
     post.innerHTML = `
       <div class="postHead">
-        <div class="who">👤 <span class="name">${escapeHtml(p.name || "مستخدم")}</span></div>
+        <div class="who">👤 <span class="name">${escapeHtml(p.name || "مستخدم")}</span>${(p.uid && isAdmin && ADMIN_UIDS.includes(p.uid)) ? "" : ""}</div>
         <div>${escapeHtml(time)}</div>
       </div>
 
@@ -647,12 +744,13 @@
 
       <div class="postActions">
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="miniBtn likeBtn ${likedByMe ? "liked":""}" type="button">👍 <span class="likeText">${likedByMe ? "معجب" : "أعجبني"}</span></button>
+          <button class="miniBtn likeBtn ${likedByMe ? "liked":""}" type="button">💛 <span class="likeText">${likedByMe ? "أحببته" : "أحببته"}</span></button>
           <button class="miniBtn cToggleBtn" type="button">💬 تعليقات</button>
+          ${canDeletePost ? `<button class="miniBtn danger delPostBtn" type="button">🗑 حذف البوست</button>` : ``}
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
-          <div class="countPill">👍 <b class="likesCount" style="color:var(--white)">${likesCount}</b></div>
+          <div class="countPill">💛 <b class="likesCount" style="color:var(--white)">${likesCount}</b></div>
           <div class="countPill">💬 <b class="commentsCount" style="color:var(--white)">0</b></div>
         </div>
       </div>
@@ -679,12 +777,12 @@
         if (nowLiked){
           await updateDoc(refDoc, { likes: arrayRemove(user.uid) });
           likeBtn.classList.remove("liked");
-          likeText.textContent = "أعجبني";
+          likeText.textContent = "أحببته";
           likesCountEl.textContent = String(Math.max(0, Number(likesCountEl.textContent||0) - 1));
         }else{
           await updateDoc(refDoc, { likes: arrayUnion(user.uid) });
           likeBtn.classList.add("liked");
-          likeText.textContent = "معجب";
+          likeText.textContent = "أحببته";
           likesCountEl.textContent = String(Number(likesCountEl.textContent||0) + 1);
         }
       }catch(err){
@@ -692,6 +790,20 @@
       }
     });
 
+    // ✅ حذف البوست (المالك أو الأدمن)
+    const delPostBtn = post.querySelector(".delPostBtn");
+    if (delPostBtn){
+      delPostBtn.addEventListener("click", async ()=>{
+        if (!user) return;
+        try{
+          await deleteDoc(doc(db, POSTS_COL, p.id));
+        }catch(err){
+          console.error(err);
+        }
+      });
+    }
+
+    // Comments
     const cWrap = post.querySelector(".commentsWrap");
     const cToggleBtn = post.querySelector(".cToggleBtn");
     const cList = post.querySelector(".cList");
@@ -707,10 +819,11 @@
       cWrap.style.display = commentsOpen ? "flex" : "none";
       if (commentsOpen){
         cInput.focus();
-        ensureCommentsListener(p.id, cList, cCountEl);
+        ensureCommentsListener(p, cList, cCountEl);
       }
     });
 
+    // Send comment
     cSendBtn.addEventListener("click", async ()=>{
       setErr(cErr,"");
       if (!user || !profile) return;
@@ -744,7 +857,9 @@
     return post;
   }
 
-  function ensureCommentsListener(postId, listEl, countEl){
+  // ✅ التعليقات: حذف (كاتب التعليق) أو (صاحب البوست) أو (الأدمن)
+  function ensureCommentsListener(postData, listEl, countEl){
+    const postId = postData.id;
     if (commentUnsubs.has(postId)) return;
 
     const q = query(collection(db, POSTS_COL, postId, "comments"), orderBy("createdAtMs","asc"));
@@ -754,26 +869,45 @@
 
       snap.forEach(d=>{
         const c = d.data() || {};
+        const cid = d.id;
         const t = Number(c.createdAt?.toMillis ? c.createdAt.toMillis() : c.createdAtMs || 0);
+
+        const isOwnerPost = !!user && (postData.uid === user.uid);
+        const isOwnerComment = !!user && (c.uid === user.uid);
+        const canDeleteComment = isAdmin || isOwnerComment || isOwnerPost;
 
         const row = document.createElement("div");
         row.className = "commentRow";
         row.innerHTML = `
           <div class="commentMeta">
             <div class="who">👤 <span class="name">${escapeHtml(c.name || "مستخدم")}</span></div>
-            <div>${escapeHtml(formatTime(t))}</div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <span>${escapeHtml(formatTime(t))}</span>
+              ${canDeleteComment ? `<button class="commentDelBtn" type="button">🗑 حذف</button>` : ``}
+            </div>
           </div>
           <div class="commentText">${escapeHtml(c.text || "")}</div>
         `;
+
+        const delBtn = row.querySelector(".commentDelBtn");
+        if (delBtn){
+          delBtn.addEventListener("click", async ()=>{
+            try{
+              await deleteDoc(doc(db, POSTS_COL, postId, "comments", cid));
+            }catch(err){
+              console.error(err);
+            }
+          });
+        }
+
         listEl.appendChild(row);
       });
-    }, (err)=>{
-      console.error(err);
     });
 
     commentUnsubs.set(postId, unsub);
   }
 
+  // Publish new post
   publishBtn.addEventListener("click", async ()=>{
     setErr(postErr,"");
     if (!user || !profile) return;
@@ -812,14 +946,17 @@
     startPostsListener();
   });
 
+  // Exit
   exitBtn.addEventListener("click", ()=>{
     location.href = "index.html";
   });
 
+  // Auth boot
   onAuthStateChanged(auth, async (u)=>{
     user = u || null;
     watchConnection();
 
+    // حمّل بروفايل لو مسجل بالبريد
     if (user && !user.isAnonymous){
       const saved = localStorage.getItem(profKey(user.uid));
       if (saved){
@@ -832,8 +969,10 @@
       }
     }
 
+    // افتح المودال دائمًا
     hideForm();
     setErr(modalErr,"");
+    setErr(adminErr,"");
     modal.style.display = "flex";
   });
 </script>
