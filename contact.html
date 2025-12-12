@@ -346,32 +346,38 @@
 <div class="card-inner">
 <div class="card-grid">
 <!-- الفورم -->
-<form accept-charset="UTF-8" action="https://formspree.io/f/xeoypvvj" class="form" id="contact-form" method="POST" novalidate=""><input id="hidden-subject" name="_subject" type="hidden" value="New message from MLO5 contact form"/>
-<div class="form-row">
-<label class="label" for="name" id="label-name">الاسم</label>
-<input autocomplete="name" class="input" id="name" name="name" placeholder="اكتب اسمك" required="" type="text"/>
-<div class="error-text" id="error-name"></div>
-</div>
-<div class="form-row">
-<label class="label" for="email" id="label-email">البريد الإلكتروني</label>
-<input autocomplete="email" class="input" id="email" name="email" placeholder="ih4.mlo5@gmail.com" required="" type="email"/>
-<div class="error-text" id="error-email"></div>
-</div>
-<div class="form-row">
-<label class="label" for="subject" id="label-subject">موضوع الرسالة</label>
-<input autocomplete="off" class="input" id="subject" name="subject" placeholder="مثلاً: اقتراح لفيديو، تعاون، استفسار..." required="" type="text"/>
-<div class="error-text" id="error-subject"></div>
-</div>
-<div class="form-row">
-<label class="label" for="message" id="label-message">الرسالة</label>
-<textarea autocomplete="off" class="textarea" id="message" name="message" placeholder="اكتب رسالتك بالتفصيل…" required=""></textarea>
-<div class="error-text" id="error-message"></div>
-</div>
-<button class="btn" id="send-btn" type="submit">
-              إرسال الرسالة
-            </button>
-<div class="success-text" id="success-message"></div>
+<form accept-charset="UTF-8" action="https://formspree.io/f/xeoypvvj" class="form" id="contact-form" method="POST" novalidate="">
+  <input id="hidden-subject" name="_subject" type="hidden" value="New message from MLO5 contact form"/>
+
+  <div class="form-row">
+    <label class="label" for="name" id="label-name">الاسم</label>
+    <input autocomplete="name" class="input" id="name" name="name" placeholder="اكتب اسمك" required="" type="text"/>
+    <div class="error-text" id="error-name"></div>
+  </div>
+
+  <div class="form-row">
+    <label class="label" for="email" id="label-email">البريد الإلكتروني</label>
+    <input autocomplete="email" class="input" id="email" name="email" placeholder="ih4.mlo5@gmail.com" required="" type="email"/>
+    <div class="error-text" id="error-email"></div>
+  </div>
+
+  <div class="form-row">
+    <label class="label" for="subject" id="label-subject">موضوع الرسالة</label>
+    <input autocomplete="off" class="input" id="subject" name="subject" placeholder="مثلاً: اقتراح لفيديو، تعاون، استفسار..." required="" type="text"/>
+    <div class="error-text" id="error-subject"></div>
+  </div>
+
+  <div class="form-row">
+    <label class="label" for="message" id="label-message">الرسالة</label>
+    <textarea autocomplete="off" class="textarea" id="message" name="message" placeholder="اكتب رسالتك بالتفصيل…" required=""></textarea>
+    <div class="error-text" id="error-message"></div>
+  </div>
+
+  <button class="btn" id="send-btn" type="submit">إرسال الرسالة</button>
+
+  <div class="success-text" id="success-message"></div>
 </form>
+
 <!-- معلومات التواصل الجانبية -->
 <div class="contact-box">
 <div class="contact-title" id="contact-title">
@@ -398,6 +404,7 @@
 </div>
 </section>
 </main>
+
 <script>
     // تحريك شبكة النقاط
     const root = document.documentElement;
@@ -411,7 +418,7 @@
       root.style.setProperty("--grid-y", yShift.toFixed(1) + "px");
     });
 
-    // لغة الموقع (نفس المفتاح اللي استخدمناه بالموقع الرئيسي)
+    // لغة الموقع
     const LANG_KEY = "mlo5-lang";
     const langToggle = document.getElementById("lang-toggle");
 
@@ -433,7 +440,9 @@
         errorSubject: "موضوع الرسالة لازم يكون 3 أحرف أو أكثر.",
         errorMessage: "الرسالة لازم تكون 10 أحرف أو أكثر.",
         sendBtn: "إرسال الرسالة",
-        success: "تم استلام رسالتك (تجريبيًا) ✅ شكراً لتواصلك.",
+        sending: "جارٍ الإرسال...",
+        success: "✅ تم إرسال رسالتك بنجاح! شكراً لتواصلك.",
+        fail: "Failed to send.",
         contactTitle: "طرق تواصل أخرى",
         contactEmailLabel: "الإيميل الرسمي:",
         contactEmailValue: "ih4.mlo5@gmail.com",
@@ -460,7 +469,9 @@
         errorSubject: "Subject must be at least 3 characters.",
         errorMessage: "Message must be at least 10 characters.",
         sendBtn: "Send message",
-        success: "Your message has been received (demo only) ✅ Thank you!",
+        sending: "Sending...",
+        success: "✅ Your message was sent successfully! Thank you.",
+        fail: "Failed to send.",
         contactTitle: "Other contact methods",
         contactEmailLabel: "Official email:",
         contactEmailValue: "ih4.mlo5@gmail.com",
@@ -522,12 +533,10 @@
       if (contactSocialValue) contactSocialValue.textContent = s.contactSocialValue;
       if (contactNote) contactNote.textContent = s.contactNote;
 
-      if (langToggle) {
-        langToggle.title = s.langTitle;
-      }
+      if (langToggle) langToggle.title = s.langTitle;
 
       document.documentElement.lang = currentLang === "en" ? "en" : "ar";
-      document.documentElement.dir = "rtl";
+      document.documentElement.dir = currentLang === "en" ? "ltr" : "rtl";
     }
 
     applyLang();
@@ -553,29 +562,20 @@
       if (el) el.textContent = msg || "";
     }
 
-    const CONTACT_STORAGE_KEY = "mlo5-contact-messages";
-
-    function saveMessage(data) {
-      try {
-        const raw = localStorage.getItem(CONTACT_STORAGE_KEY);
-        const list = raw ? JSON.parse(raw) : [];
-        list.push(data);
-        localStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify(list));
-      } catch (e) {
-        console.error("Failed to save contact message", e);
-      }
+    function clearAllMessages() {
+      setError("error-name", "");
+      setError("error-email", "");
+      setError("error-subject", "");
+      setError("error-message", "");
+      setSuccess("");
     }
 
     if (contactForm) {
       contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const s = l10n[currentLang] || l10n.ar;
 
-        setError("error-name", "");
-        setError("error-email", "");
-        setError("error-subject", "");
-        setError("error-message", "");
-        setSuccess("success-msg", "");
+        const s = l10n[currentLang] || l10n.ar;
+        clearAllMessages();
 
         const name = (contactForm.querySelector("#name")?.value || "").trim();
         const email = (contactForm.querySelector("#email")?.value || "").trim();
@@ -583,20 +583,35 @@
         const message = (contactForm.querySelector("#message")?.value || "").trim();
 
         let ok = true;
-        if (!name) { setError("error-name", s.errors.name); ok = false; }
-        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("error-email", s.errors.email); ok = false; }
-        if (!subject) { setError("error-subject", s.errors.subject); ok = false; }
-        if (!message) { setError("error-message", s.errors.message); ok = false; }
+
+        if (!name || name.length < 2) {
+          setError("error-name", s.errorName);
+          ok = false;
+        }
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          setError("error-email", s.errorEmail);
+          ok = false;
+        }
+
+        if (!subject || subject.length < 3) {
+          setError("error-subject", s.errorSubject);
+          ok = false;
+        }
+
+        if (!message || message.length < 10) {
+          setError("error-message", s.errorMessage);
+          ok = false;
+        }
+
         if (!ok) return;
 
-        // ✅ Formspree / Getform: جهّز البيانات
-        const fd = new FormData(contactForm);
-
-        // ✅ نخلي عنوان الإيميل واضح
+        // جهّز البيانات
         const hiddenSubject = contactForm.querySelector("#hidden-subject");
         if (hiddenSubject) hiddenSubject.value = `MLO5 Contact: ${subject}`;
 
-        // ✅ تعطيل زر الإرسال أثناء الطلب
+        const fd = new FormData(contactForm);
+
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -612,27 +627,12 @@
           });
 
           if (res.ok) {
-            // ✅ نجاح الإرسال
-            setSuccess("success-msg", s.success);
-
-            // (اختياري) نخزن نسخة محلياً بنفس المتصفح
-            const all = loadMessages();
-            all.unshift({
-              id: Date.now(),
-              name,
-              email,
-              subject,
-              message,
-              createdAt: new Date().toISOString(),
-            });
-            saveMessages(all);
-            renderMessages();
-
+            setSuccess(s.success);
             contactForm.reset();
           } else {
             let data = null;
             try { data = await res.json(); } catch (e) {}
-            const msg = (data && data.error) ? data.error : (s.fail || "Failed to send.");
+            const msg = (data && (data.error || data.message)) ? (data.error || data.message) : (s.fail || "Failed to send.");
             setError("error-message", msg);
           }
         } catch (err) {
@@ -640,7 +640,7 @@
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = submitBtn.dataset.prevText || (s.send || "Send");
+            submitBtn.textContent = submitBtn.dataset.prevText || (s.sendBtn || "Send");
           }
         }
       });
