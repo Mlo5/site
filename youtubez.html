@@ -589,54 +589,73 @@
     });
 
     // ======= Data (EDIT ME) =======
-    // ضع رابط القناة هنا:
     const CHANNEL_URL = "https://www.youtube.com/@mlo5ya";
 
-   // فيديوهاتك (تلقائي من latest-videos.json)
-let videos = [];
+    // Videos (auto)
+    let videos = [];      // currently displayed (after filter + slice)
+    let allVideos = [];   // raw list from latest-videos.json
 
-async function loadVideos(){
-  const grid = document.getElementById("videos-grid");
-  const empty = document.getElementById("videos-empty");
+    async function loadVideos(){
+      const grid = document.getElementById("videos-grid");
+      const empty = document.getElementById("videos-empty");
 
-  if (grid) {
-    grid.innerHTML = `<div class="empty">⏳ جارِ تحميل أحدث الفيديوهات...</div>`;
-  }
-  if (empty) empty.classList.add("hidden");
+      if (grid) {
+        grid.innerHTML = `<div class="empty">⏳ جارِ تحميل أحدث الفيديوهات...</div>`;
+      }
+      if (empty) empty.classList.add("hidden");
 
-  try{
-    const res = await fetch("./latest-videos.json", { cache: "no-store" });
-    if(!res.ok) throw new Error("latest-videos.json not found");
+      try{
+        const res = await fetch("./latest-videos.json", { cache: "no-store" });
+        if(!res.ok) throw new Error("latest-videos.json not found");
 
-    const data = await res.json();
-    const list = Array.isArray(data?.videos) ? data.videos : [];
+        const data = await res.json();
+        const list = Array.isArray(data?.videos) ? data.videos : [];
 
-    // ✅ استبعاد الشورتس
-    const filtered = list.filter(v => {
+        allVideos = list;
+        applyFilter();
+      }catch(e){
+        allVideos = [];
+        videos = [];
+        setCounts();
+        renderVideos();
+      }
+    }
+
+    function guessType(v){
       const url = (v.url || "").toLowerCase();
-      return !url.includes("/shorts/");
-    });
+      const title = (v.title || "").toLowerCase();
 
-    videos = filtered.slice(0, 15);
-  }catch(e){
-    videos = [];
-  }
+      if (url.includes("/shorts/")) return "short";
+      if (title.includes("live") || title.includes("بث") || title.includes("مباشر") || url.includes("live")) return "live";
+      return "long";
+    }
 
-  setCounts();
-  renderVideos();
-}
+    function applyFilter(){
+      const enriched = (allVideos || []).map(v => ({
+        ...v,
+        type: v.type || guessType(v)
+      }));
 
+      let filtered = enriched;
 
-    // ثمبنيلات (ضع رابط الصورة + اسم/وصف + تصنيف اختياري)
+      if (currentFilter === "long") filtered = enriched.filter(v => v.type === "long");
+      else if (currentFilter === "short") filtered = enriched.filter(v => v.type === "short");
+      else if (currentFilter === "live") filtered = enriched.filter(v => v.type === "live");
+
+      videos = filtered.slice(0, 15);
+
+      setCounts();
+      renderVideos();
+    }
+
+    // Thumbnails
     const thumbs = [
       { name: "Thumbnail 1 — Geometry Dash", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+1", tag:"Geometry Dash" },
       { name: "Thumbnail 2 — RoK",           img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+2", tag:"RoK" },
       { name: "Thumbnail 3 — Hollow Knight", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+3", tag:"Hollow Knight" }
     ];
 
-    // أفكار قادمة (kanban)
-    // status: "soon" | "making" | "shelf"
-    // kind: "Long" | "Short" | "Live"
+    // Ideas
     const ideas = [
       { title:"سلسلة جديدة: تحديات Geometry Dash (موبايل)", game:"Geometry Dash", kind:"Long", status:"soon" },
       { title:"Shorts: Quiz Time (سؤال/تحدي سريع)", game:"Mixed", kind:"Short", status:"making" },
@@ -647,7 +666,6 @@ async function loadVideos(){
     const $ = (id) => document.getElementById(id);
 
     function fmtDate(dateStr){
-      // عرض بسيط بدون تعقيد
       if(!dateStr) return "";
       return dateStr;
     }
@@ -698,15 +716,14 @@ async function loadVideos(){
               <span class="badge">📅 ${escapeHTML(fmtDate(v.date))}</span>
             </div>
             <div class="actions">
-              <a class="mini yellow" href="${escapeHTML(v.url || "#")}" target="_blank" rel="noopener">▶ شاهد الآن</a>
-              <button class="mini" data-copy="${escapeHTML(v.url || "")}">📋 نسخ الرابط</button>
+              <a class="mini yellow" href="${escapeHTML(v.url || "#")}" target="_blank" rel="noopener">${currentLang === "en" ? "▶ Watch" : "▶ شاهد الآن"}</a>
+              <button class="mini" data-copy="${escapeHTML(v.url || "")}">${currentLang === "en" ? "📋 Copy link" : "📋 نسخ الرابط"}</button>
             </div>
           </div>
         `;
         grid.appendChild(card);
       });
 
-      // copy handlers
       grid.querySelectorAll("[data-copy]").forEach(btn=>{
         btn.addEventListener("click", async ()=>{
           const url = btn.getAttribute("data-copy") || "";
@@ -813,7 +830,6 @@ async function loadVideos(){
       $("panel-thumbs").classList.toggle("hidden", tab !== "thumbs");
       $("panel-ideas").classList.toggle("hidden", tab !== "ideas");
 
-      // toolbar يظهر فقط في الفيديوهات
       $("toolbar").classList.toggle("hidden", tab !== "videos");
     }
 
@@ -829,7 +845,7 @@ async function loadVideos(){
         currentFilter = chip.getAttribute("data-filter") || "all";
         document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
         chip.classList.add("active");
-        renderVideos();
+        applyFilter();
       });
     });
 
@@ -844,7 +860,6 @@ async function loadVideos(){
       const btn = $("btn-latest");
       if(!btn) return;
 
-      // UI hint
       btn.disabled = true;
       btn.style.opacity = "0.75";
       btn.title = (currentLang === "en") ? "Loading latest video..." : "جارِ تحميل أحدث فيديو...";
@@ -854,7 +869,6 @@ async function loadVideos(){
         if(!res.ok) throw new Error("latest-long.json not found");
         const data = await res.json();
 
-        // script creates: { latestLong: { url, videoId, title, publishedAt, ... } }
         const url = data?.latestLong?.url;
         if(!url) throw new Error("Missing latestLong.url");
 
@@ -863,7 +877,6 @@ async function loadVideos(){
         btn.onclick = () => window.open(url, "_blank", "noopener");
         btn.title = (currentLang === "en") ? "Open latest long video" : "افتح أحدث فيديو طويل تلقائيًا";
       }catch(e){
-        // fallback to channel videos page
         btn.disabled = false;
         btn.style.opacity = "1";
         btn.onclick = () => window.open(CHANNEL_URL + "/videos", "_blank", "noopener");
@@ -918,11 +931,7 @@ async function loadVideos(){
         tEmpty: "لسا ما أضفت ثمبنيلات. حط روابط الصور داخل مصفوفة thumbs.",
         iEmpty: "لسا ما أضفت أفكار. حطها داخل مصفوفة ideas.",
         lastUpdate: "آخر تحديث: 12 ديسمبر 2025",
-        langTitle: "العربية",
-        copy: "📋 نسخ الرابط",
-        copied: "✅ تم النسخ",
-        copyFail: "❌ فشل",
-        watch: "▶ شاهد الآن"
+        langTitle: "العربية"
       },
       en: {
         docTitle: "YouTube - Mlo5",
@@ -941,11 +950,7 @@ async function loadVideos(){
         tEmpty: "No thumbnails yet. Add image links in the thumbs array.",
         iEmpty: "No ideas yet. Add them in the ideas array.",
         lastUpdate: "Last updated: December 12, 2025",
-        langTitle: "English",
-        copy: "📋 Copy link",
-        copied: "✅ Copied",
-        copyFail: "❌ Failed",
-        watch: "▶ Watch"
+        langTitle: "English"
       }
     };
 
@@ -977,15 +982,11 @@ async function loadVideos(){
 
       langToggle.title = s.langTitle;
 
-      // dir/lang
       document.documentElement.lang = currentLang === "en" ? "en" : "ar";
       document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
 
-      // re-render to update labels
       renderVideos();
       renderIdeas();
-
-      // re-bind latest button (updates tooltip language too)
       bindLatestLongButton();
     }
 
@@ -1003,13 +1004,11 @@ async function loadVideos(){
     }
 
     // ======= Init =======
-renderThumbs();
-renderIdeas();
-applyLang(); // calls bindLatestLongButton() as well
-loadVideos(); // تحميل وعرض آخر 15 فيديو تلقائيًا
-bindLatestLongButton();
+    renderThumbs();
+    renderIdeas();
+    applyLang();
+    loadVideos();
+    bindLatestLongButton();
   </script>
 </body>
 </html>
-
-
