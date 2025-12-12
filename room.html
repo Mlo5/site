@@ -2,24 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>غرف الدردشة - M L O 5</title>
+  <title>الدردشة العامة - M L O 5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
-    :root {
-      --bg-dark: #020202;
-      --yellow: #facc15;
-      --white: #f9fafb;
-      --muted: #9ca3af;
-      --border-subtle: rgba(156, 163, 175, 0.35);
-      --grid-x: 0px;
-      --grid-y: 0px;
+    :root{
+      --bg-dark:#020202;
+      --yellow:#facc15;
+      --white:#f9fafb;
+      --muted:#9ca3af;
+      --border-subtle:rgba(156,163,175,.35);
+      --grid-x:0px; --grid-y:0px;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    *{box-sizing:border-box;margin:0;padding:0}
     body{
       font-family:"Tajawal",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:var(--bg-dark);
@@ -31,16 +27,13 @@
       position:relative;
       cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
     }
-
     .bg-grid{
       position:fixed; inset:0; z-index:0; pointer-events:none;
       background-image:radial-gradient(circle, rgba(249,250,251,.55) 1px, transparent 1px);
       background-size:30px 30px;
       background-position:calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
-      opacity:.25;
-      mix-blend-mode:screen;
+      opacity:.25; mix-blend-mode:screen;
     }
-
     .page{
       width:100%;
       max-width:1100px;
@@ -49,7 +42,6 @@
       position:relative;
       z-index:1;
     }
-
     .card{
       background:linear-gradient(145deg,#020202,#050505);
       border-radius:18px;
@@ -60,40 +52,25 @@
       overflow:hidden;
       min-height:0;
     }
-
     .top-bar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom:14px;
-      direction:ltr;
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px; margin-bottom:14px; direction:ltr;
     }
-
     .top-chip{
-      font-size:.9rem;
-      color:var(--white);
-      padding:6px 14px;
-      border-radius:999px;
+      font-size:.9rem; color:var(--white);
+      padding:6px 14px; border-radius:999px;
       border:1px solid rgba(250,204,21,.6);
       background:rgba(0,0,0,.6);
       box-shadow:0 8px 20px rgba(0,0,0,.8),0 0 0 1px rgba(15,23,42,.9);
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      user-select:none;
-      cursor:pointer;
+      display:inline-flex; align-items:center; gap:8px;
+      user-select:none; cursor:pointer;
     }
-
     .dot{width:8px;height:8px;border-radius:50%;background:rgba(239,68,68,.9)}
     .dot.on{background:rgba(34,197,94,.95)}
-
     .title{
       font-family:"Poppins",system-ui,sans-serif;
-      font-weight:800;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      white-space:nowrap;
+      font-weight:800; letter-spacing:.12em;
+      text-transform:uppercase; white-space:nowrap;
     }
     .title small{letter-spacing:0;font-weight:700;color:var(--muted)}
 
@@ -106,11 +83,8 @@
     }
 
     .panel-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; margin-bottom:10px;
     }
     .panel-head .h{display:flex;flex-direction:column;gap:2px}
     .panel-head .h b{color:var(--yellow);font-size:1rem}
@@ -122,36 +96,29 @@
       padding:6px 10px;
       font-size:.85rem;
       background:rgba(0,0,0,.45);
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+      display:inline-flex; align-items:center; gap:8px;
       white-space:nowrap;
     }
 
     .onlineCard{display:flex;flex-direction:column;height:100%}
     #onlineList{display:flex;flex-direction:column;gap:10px;overflow:auto;min-height:0;flex:1;padding-right:4px}
-
     .userRow{
       display:flex;align-items:center;justify-content:space-between;gap:10px;
       padding:10px;border-radius:16px;border:1px solid var(--border-subtle);
       background:rgba(0,0,0,.55);box-shadow:0 10px 22px rgba(0,0,0,.6);
       cursor:pointer;
     }
-
     .userMeta{display:flex;flex-direction:column;gap:3px;min-width:0}
     .userMeta b{
-      font-size:.92rem;
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;
-      display:flex;align-items:center;gap:6px;
+      font-size:.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:190px;
+      display:flex; align-items:center; gap:8px;
     }
     .userMeta span{font-size:.8rem;color:var(--muted);display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
-
     .miniPill{
       border-radius:999px;border:1px solid rgba(148,163,184,.7);
       padding:3px 8px;font-size:.75rem;background:rgba(0,0,0,.4);
       color:var(--yellow);white-space:nowrap;
     }
-
     .ignoreBtn{
       border:1px solid rgba(250,204,21,.55);
       background:rgba(0,0,0,.45);
@@ -163,53 +130,35 @@
       user-select:none;
     }
     .ignoreBtn.ignored{border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)}
+    .ignoreBtn:disabled{opacity:.5;cursor:not-allowed}
 
     .statusWrap{display:flex;align-items:center;gap:8px;justify-content:flex-end;direction:rtl}
 
-    /* خلفية الحالات أسود */
     select,input{
       border-radius:999px;
       border:1px solid rgba(250,204,21,.55);
-      background:#000;
+      background:#000; /* طلبك */
       color:var(--white);
       padding:8px 12px;
       outline:none;
       font-size:.9rem;
     }
 
-    .chatCard{
-      display:flex;
-      flex-direction:column;
-      height:100%;
-      min-height:0;
-      position:relative;
-    }
+    .chatCard{display:flex;flex-direction:column;height:100%;min-height:0;position:relative}
 
-    /* ✅ منطقة الشات تنقسم لعمودين فقط عند فتح خاص */
     .chatSplit{
-      flex:1;
-      min-height:0;
+      flex:1; min-height:0;
       display:grid;
-      grid-template-columns: 1fr 0fr;
+      grid-template-columns:1fr 0fr;
       gap:12px;
     }
-    .chatSplit.hasDm{grid-template-columns: 1fr 0.9fr;}
+    .chatSplit.hasDm{grid-template-columns:1fr 0.9fr}
 
-    .chatCol{
-      min-height:0;
-      display:flex;
-      flex-direction:column;
-    }
+    .chatCol{min-height:0;display:flex;flex-direction:column}
 
     #messages, #dmMessages{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      overflow:auto;
-      min-height:0;
-      flex:1;
-      padding-right:4px;
-      padding-bottom:6px;
+      display:flex;flex-direction:column;gap:10px;overflow:auto;
+      min-height:0;flex:1;padding-right:4px;padding-bottom:6px;
     }
 
     .msg{
@@ -228,24 +177,10 @@
       box-shadow:0 14px 32px rgba(0,0,0,.75),0 0 0 1px rgba(250,204,21,.35);
     }
 
-    .msgHead{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      margin-bottom:6px;color:var(--muted);font-size:.85rem;
-    }
+    .msgHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;color:var(--muted);font-size:.85rem}
+    .nameTag{font-weight:900;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
 
-    .nameTag{
-      font-weight:900;
-      display:inline-flex;align-items:center;gap:6px;
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px;
-    }
-
-    .msgTimeUnder{
-      margin-top:6px;
-      font-size:.78rem;
-      color:rgba(156,163,175,.92);
-      text-align:left;
-      direction:ltr;
-    }
+    .msgTimeUnder{margin-top:6px;font-size:.78rem;color:rgba(156,163,175,.92);text-align:left;direction:ltr}
 
     .system{
       align-self:center;
@@ -258,12 +193,10 @@
       max-width:100%;
     }
 
-    .composer{
-      display:flex;align-items:center;gap:10px;margin-top:12px;direction:rtl;
-    }
-    #msgInput, #dmInput{flex:1;border-radius:999px}
+    .composer{display:flex;align-items:center;gap:10px;margin-top:12px;direction:rtl}
+    #msgInput,#dmInput{flex:1;border-radius:999px}
 
-    .sendBtn,.emojiBtn,.clearBtn{
+    .sendBtn,.emojiBtn,.clearBtn,.adminClearBtn{
       border-radius:999px;
       border:1px solid rgba(250,204,21,.75);
       background:rgba(0,0,0,.75);
@@ -278,6 +211,7 @@
       user-select:none;
     }
     .emojiBtn,.clearBtn{width:40px;padding:0}
+    .adminClearBtn{width:40px;padding:0;display:none} /* يظهر للأدمن فقط */
 
     .emojiPicker{
       position:absolute;
@@ -294,23 +228,12 @@
       z-index:50;
       backdrop-filter:blur(10px);
     }
-
     .emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;max-height:200px;overflow:auto;padding-right:4px}
-    .emojiItem{
-      border:1px solid rgba(148,163,184,.35);
-      background:rgba(0,0,0,.55);
-      border-radius:12px;
-      padding:6px 0;
-      text-align:center;
-      cursor:pointer;
-      user-select:none;
-    }
+    .emojiItem{border:1px solid rgba(148,163,184,.35);background:rgba(0,0,0,.55);border-radius:12px;padding:6px 0;text-align:center;cursor:pointer;user-select:none}
 
-    /* gender colors */
     .gMale{color:#3b82f6;font-weight:900}
     .gFemale{color:#ec4899;font-weight:900}
 
-    /* DM panel */
     .dmBox{
       border:1px solid rgba(250,204,21,.35);
       border-radius:16px;
@@ -321,13 +244,7 @@
       flex-direction:column;
       overflow:hidden;
     }
-    .dmHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
-    }
+    .dmHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
     .dmHead b{color:var(--yellow)}
     .dmClose{
       border:1px solid rgba(250,204,21,.75);
@@ -339,15 +256,13 @@
       display:inline-flex;align-items:center;justify-content:center;
     }
 
-    /* context menu */
     .menu{
-      position:fixed;
-      z-index:9999;
+      position:fixed; z-index:9999;
       background:rgba(0,0,0,.92);
       border:1px solid rgba(250,204,21,.55);
       border-radius:14px;
       padding:8px;
-      min-width:170px;
+      min-width:190px;
       display:none;
       box-shadow:0 18px 40px rgba(0,0,0,.9);
     }
@@ -361,9 +276,29 @@
       border-radius:12px;
       cursor:pointer;
       font-family:inherit;
-      font-weight:800;
+      font-weight:900;
     }
     .menu button:hover{background:rgba(250,204,21,.12); color:var(--yellow)}
+
+    /* ADMIN tag */
+    .adminTag{
+      font-size:1.05rem;
+      filter:drop-shadow(0 0 8px rgba(250,204,21,.55));
+      animation:blink 1s infinite;
+    }
+    @keyframes blink{
+      0%,100%{opacity:1}
+      50%{opacity:.35}
+    }
+
+    /* Admin name style */
+    .adminNameBadge{
+      background:var(--yellow);
+      color:#000;
+      padding:2px 8px;
+      border-radius:999px;
+      font-weight:900;
+    }
 
     /* Modal */
     #modal{
@@ -373,7 +308,7 @@
       padding:16px;
     }
     #modalBox{
-      width:min(460px,96vw);
+      width:min(860px,96vw);
       border-radius:18px;
       border:1px solid rgba(250,204,21,.55);
       background:rgba(0,0,0,.92);
@@ -381,10 +316,28 @@
       padding:14px;
       backdrop-filter:blur(10px);
     }
-    #modalBox h3{margin-bottom:8px;color:var(--yellow);text-align:center;font-weight:900}
-    #modalBox p{color:var(--muted);text-align:center;font-size:.9rem;margin-bottom:12px;line-height:1.7}
+    .modalGrid{
+      display:grid;
+      grid-template-columns: 1fr 340px;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 900px){
+      .modalGrid{grid-template-columns:1fr}
+    }
+
+    .modalCard{
+      border:1px solid rgba(250,204,21,.35);
+      border-radius:16px;
+      background:rgba(0,0,0,.45);
+      padding:12px;
+    }
+    .modalCard h3{margin-bottom:8px;color:var(--yellow);text-align:center;font-weight:900}
+    .modalCard p{color:var(--muted);text-align:center;font-size:.9rem;margin-bottom:12px;line-height:1.7}
+
     .modalRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
     .modalRow.one{grid-template-columns:1fr}
+
     .modalBtn{
       width:100%;
       border-radius:999px;
@@ -397,24 +350,6 @@
     }
     .hintErr{margin-top:8px;color:rgba(239,68,68,.95);font-size:.85rem;text-align:center;display:none}
 
-    .colorRow{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:8px;
-    }
-    .colorBox{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      border:1px solid rgba(250,204,21,.35);
-      border-radius:999px;
-      padding:6px 10px;
-      background:rgba(0,0,0,.45);
-      color:var(--white);
-      font-size:.85rem;
-    }
-    .colorBox input{width:44px;height:28px;padding:0;border-radius:10px;border:1px solid rgba(250,204,21,.55); background:#000}
-
-    /* emoji next to name in modal */
     .nameWrap{display:flex;gap:10px;align-items:center}
     .nameWrap input{flex:1}
     .nameEmojiBtn{
@@ -428,10 +363,31 @@
       user-select:none;
     }
 
+    .colorRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+    .colorBox{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      border:1px solid rgba(250,204,21,.35);
+      border-radius:999px;
+      padding:6px 10px;
+      background:rgba(0,0,0,.45);
+      color:var(--white);
+      font-size:.85rem;
+    }
+    .colorBox input{width:44px;height:28px;padding:0;border-radius:10px;border:1px solid rgba(250,204,21,.55); background:#000}
+
+    /* ADMIN panel */
+    .adminNote{
+      color:var(--muted);
+      font-size:.85rem;
+      line-height:1.6;
+      text-align:center;
+      margin-top:8px;
+    }
+
     @media (max-width:900px){
       .wrap{grid-template-columns:1fr;height:auto}
-      .chatSplit.hasDm{grid-template-columns: 1fr;}
-      .dmBox{display:none;}
+      .chatSplit.hasDm{grid-template-columns:1fr}
+      .dmBox{display:none}
     }
   </style>
 </head>
@@ -487,19 +443,20 @@
         </div>
 
         <div class="chatSplit" id="chatSplit">
-          <!-- Global column -->
+          <!-- Global -->
           <div class="chatCol">
             <div id="messages"></div>
 
             <form id="chatForm" class="composer">
               <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled />
-              <button class="clearBtn" id="clearBtn" type="button" title="مسح النص">✖</button>
+              <button class="clearBtn" id="clearBtn" type="button" title="مسح النص عندك فقط">✖</button>
+              <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع (Admin)">🧹</button>
               <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
               <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
             </form>
           </div>
 
-          <!-- DM column (hidden until open) -->
+          <!-- DM -->
           <div class="chatCol" id="dmCol" style="display:none;">
             <div class="dmBox">
               <div class="dmHead">
@@ -531,44 +488,74 @@
   <!-- Modal -->
   <div id="modal">
     <div id="modalBox">
-      <h3>بيانات الدخول</h3>
-      <p>( مَا يَلْفِظُ مِنْ قَوْلٍ إِلا لَدَيْهِ رَقِيبٌ عَتِيدٌ )</p>
+      <div class="modalGrid">
+        <!-- User info -->
+        <div class="modalCard">
+          <h3>بيانات الدخول</h3>
+          <p>( مَا يَلْفِظُ مِنْ قَوْلٍ إِلا لَدَيْهِ رَقِيبٌ عَتِيدٌ )</p>
 
-      <div class="modalRow one">
-        <div class="nameWrap">
-          <input id="nameInput" placeholder="اسمك (3+)" />
-          <button class="nameEmojiBtn" id="nameEmojiBtn" type="button" title="إيموجي">😊</button>
+          <div class="modalRow one">
+            <div class="nameWrap">
+              <input id="nameInput" placeholder="اسمك (3+)" />
+              <button class="nameEmojiBtn" id="nameEmojiBtn" type="button" title="إيموجي">😊</button>
+            </div>
+          </div>
+
+          <div class="modalRow">
+            <select id="genderInput">
+              <option value="">الجنس</option>
+              <option value="male">ذكر ♂️</option>
+              <option value="female">أنثى ♀️</option>
+            </select>
+            <input id="ageInput" type="number" min="10" max="99" placeholder="العمر (10+)" />
+          </div>
+
+          <div class="colorRow">
+            <div class="colorBox">
+              <span>لون الاسم</span>
+              <input id="nameColor" type="color" value="#facc15" />
+            </div>
+            <div class="colorBox">
+              <span>لون النص</span>
+              <input id="textColor" type="color" value="#f9fafb" />
+            </div>
+          </div>
+
+          <button id="enterBtn" class="modalBtn" type="button">دخول الشات</button>
+          <div class="hintErr" id="modalErr"></div>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="modalCard">
+          <h3>ADMIN</h3>
+
+          <div class="modalRow one">
+            <input id="adminUser" placeholder="Username" autocomplete="off" />
+          </div>
+          <div class="modalRow one">
+            <input id="adminPass" placeholder="Password" type="password" autocomplete="off" />
+          </div>
+
+          <button id="adminLoginBtn" class="modalBtn" type="button">تفعيل الأدمن</button>
+          <div class="hintErr" id="adminErr"></div>
+
+          <div class="adminNote">
+            تفعيل الأدمن لن يعمل إلا لحسابك (UID).<br>
+            حتى لو عرف أحد البيانات، لن يحصل على صلاحيات.
+          </div>
         </div>
       </div>
-
-      <div class="modalRow">
-        <select id="genderInput">
-          <option value="">الجنس</option>
-          <option value="male">ذكر ♂️</option>
-          <option value="female">أنثى ♀️</option>
-        </select>
-        <input id="ageInput" type="number" min="10" max="99" placeholder="العمر (10+)" />
-      </div>
-
-      <div class="colorRow">
-        <div class="colorBox">
-          <span>لون الاسم</span>
-          <input id="nameColor" type="color" value="#facc15" />
-        </div>
-        <div class="colorBox">
-          <span>لون النص</span>
-          <input id="textColor" type="color" value="#f9fafb" />
-        </div>
-      </div>
-
-      <button id="enterBtn" class="modalBtn" type="button">دخول الشات</button>
-      <div class="hintErr" id="modalErr"></div>
     </div>
   </div>
 
   <!-- Context menu -->
   <div class="menu" id="ctxMenu">
     <button id="ctxDmBtn">محادثة خاصة</button>
+    <div id="adminActions" style="display:none;margin-top:6px;border-top:1px solid rgba(250,204,21,.25);padding-top:6px;">
+      <button id="ctxBanBtn">حظر</button>
+      <button id="ctxKickBtn">طرد</button>
+      <button id="ctxMuteBtn">كتم (5 دقائق)</button>
+    </div>
   </div>
 
 <script type="module">
@@ -576,12 +563,11 @@
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, serverTimestamp,
-    query, where, orderBy, onSnapshot
+    query, where, orderBy, onSnapshot, doc, setDoc, getDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-  import {
-    getDatabase, ref, set, onDisconnect, onValue, remove, runTransaction
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+  import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
+  // ✅ Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
     authDomain: "mlo5-users.firebaseapp.com",
@@ -589,6 +575,12 @@
     projectId: "mlo5-users",
     appId: "1:142086858806:web:64c50f3a8d6250a2049097"
   };
+
+  // ✅ Admin config (UID-based)
+  const ADMIN_UIDS = ["VFjSs6kH2jcFJnddE7SXIpipzDi2"];
+  // ⚠️ Note: putting these in client is not secret on GitHub Pages
+  const ADMIN_USERNAME = "MLO5";
+  const ADMIN_PASSWORD = "APRIL3049";
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -599,23 +591,21 @@
   const connDot = document.getElementById("connDot");
   const connText = document.getElementById("connText");
   const exitBtn = document.getElementById("exitBtn");
-
   const onlineList = document.getElementById("onlineList");
   const onlineCount = document.getElementById("onlineCount");
   const meBadge = document.getElementById("meBadge");
   const statusSelect = document.getElementById("statusSelect");
   const ignoreCount = document.getElementById("ignoreCount");
-
-  const chatSplit = document.getElementById("chatSplit");
   const messagesDiv = document.getElementById("messages");
   const chatForm = document.getElementById("chatForm");
   const msgInput = document.getElementById("msgInput");
   const sendBtn = document.getElementById("sendBtn");
   const clearBtn = document.getElementById("clearBtn");
+  const adminClearBtn = document.getElementById("adminClearBtn");
   const emojiBtn = document.getElementById("emojiBtn");
 
+  const chatSplit = document.getElementById("chatSplit");
   const dmCol = document.getElementById("dmCol");
-  const dmTitle = document.getElementById("dmTitle");
   const dmSub = document.getElementById("dmSub");
   const dmClose = document.getElementById("dmClose");
   const dmMessages = document.getElementById("dmMessages");
@@ -637,10 +627,19 @@
   const textColorInput = document.getElementById("textColor");
   const enterBtn = document.getElementById("enterBtn");
 
+  const adminUser = document.getElementById("adminUser");
+  const adminPass = document.getElementById("adminPass");
+  const adminLoginBtn = document.getElementById("adminLoginBtn");
+  const adminErr = document.getElementById("adminErr");
+
   const ctxMenu = document.getElementById("ctxMenu");
   const ctxDmBtn = document.getElementById("ctxDmBtn");
+  const adminActions = document.getElementById("adminActions");
+  const ctxBanBtn = document.getElementById("ctxBanBtn");
+  const ctxKickBtn = document.getElementById("ctxKickBtn");
+  const ctxMuteBtn = document.getElementById("ctxMuteBtn");
 
-  // Audio join/leave only
+  // join/leave only sound
   const toastSound = new Audio("toast.mp3");
   toastSound.preload = "auto";
   toastSound.volume = 1.0;
@@ -652,30 +651,29 @@
   let initialLoaded = false;
   let lastSoundAt = 0;
 
-  // Selected context user (for menu)
-  let ctxUser = null; // {uid,name,gender,nameColor,textColor}
-
-  // DM state
-  let dmPeer = null;        // peer object
-  let dmKey = null;         // participantsKey
+  let ctxUser = null;      // selected user from online list
+  let dmPeer = null;
+  let dmKey = null;
   let dmUnsub = null;
 
-  // Ignore windows (no backfill when unignore)
+  // Admin session (extra step)
+  const adminSessionKey = (uid) => `adminSession_${uid}`;
+  let isAdmin = false;
+
+  // ignore windows
   const ignoreKey = (uid) => `chatIgnoreWindows_${uid}`;
   const profKey   = (uid) => `chatProfile_${uid}`;
   const statusKey = (uid) => `chatStatus_${uid}`;
-  const nameKey   = (uid) => `chatNameKey_${uid}`;
+  let ignoreWindows = {};
 
-  let ignoreWindows = {}; // {peerUid:[{start,end}]}
-
-  // Profanity for GLOBAL only
+  // profanity (GLOBAL only)
   const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
 
   const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎👏🙏🔥💛⭐⚡🎮💀".split("");
 
-  // Grid parallax
+  // grid parallax
   const root = document.documentElement;
-  document.addEventListener("mousemove", (e) => {
+  document.addEventListener("mousemove", (e)=>{
     const xRatio = e.clientX / window.innerWidth - 0.5;
     const yRatio = e.clientY / window.innerHeight - 0.5;
     const maxShift = 40;
@@ -683,20 +681,16 @@
     root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
   });
 
-  function setModalError(msg){
-    modalErr.style.display = msg ? "block" : "none";
-    modalErr.textContent = msg || "";
+  function setErr(el, msg){
+    el.style.display = msg ? "block" : "none";
+    el.textContent = msg || "";
   }
-
-  function collapseSpaces(s){
-    return String(s || "").replace(/\s+/g, " ").trim();
+  function collapseSpaces(s){ return String(s||"").replace(/\s+/g," ").trim(); }
+  function escapeHtml(s=""){
+    return String(s).replace(/[&<>"']/g, (m)=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+    }[m]));
   }
-
-  function isProfane(text){
-    const t = String(text||"").toLowerCase();
-    return BAD_WORDS.some(w => t.includes(w));
-  }
-
   function formatTime(tsMs){
     if (!tsMs || Number.isNaN(tsMs)) return "";
     const d = new Date(tsMs);
@@ -706,13 +700,11 @@
     h = h % 12; if (h === 0) h = 12;
     return `${h}:${m} ${ampm}`;
   }
-
   function genderSymbolHtml(g){
     if (g === "male") return `<span class="gMale">♂️</span>`;
     if (g === "female") return `<span class="gFemale">♀️</span>`;
     return "";
   }
-
   function statusLabel(s){
     switch(s){
       case "online": return "🟢 متصل";
@@ -724,14 +716,13 @@
       default: return "🟢 متصل";
     }
   }
-
-  function escapeHtml(s=""){
-    return String(s).replace(/[&<>"']/g, (m)=>({
-      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
-    }[m]));
+  function isProfane(text){
+    const t = String(text||"").toLowerCase();
+    return BAD_WORDS.some(w => t.includes(w));
   }
 
   // Emoji picker (shared)
+  let activeEmojiTarget = null;
   function buildEmojiGrid(){
     emojiGrid.innerHTML = "";
     EMOJIS.forEach(em=>{
@@ -746,8 +737,6 @@
     });
   }
   buildEmojiGrid();
-
-  let activeEmojiTarget = null;
   function showEmojiFor(inputEl){
     activeEmojiTarget = inputEl;
     emojiPicker.style.display = "block";
@@ -758,11 +747,6 @@
     emojiPicker.setAttribute("aria-hidden","true");
     activeEmojiTarget = null;
   }
-  document.addEventListener("click",(e)=>{
-    if (!emojiPicker.contains(e.target) && e.target !== emojiBtn && e.target !== dmEmojiBtn && e.target !== nameEmojiBtn) hideEmoji();
-    if (!ctxMenu.contains(e.target)) hideCtxMenu();
-  });
-
   function insertAtCursor(input, text){
     const start = input.selectionStart ?? input.value.length;
     const end   = input.selectionEnd ?? input.value.length;
@@ -771,34 +755,23 @@
     input.setSelectionRange(pos,pos);
     input.focus();
   }
+  document.addEventListener("click",(e)=>{
+    if (!emojiPicker.contains(e.target) &&
+        e.target !== emojiBtn && e.target !== dmEmojiBtn && e.target !== nameEmojiBtn) hideEmoji();
+    if (!ctxMenu.contains(e.target)) hideCtxMenu();
+  });
 
-  // ✅ clear text local only
-  clearBtn.addEventListener("click", (e)=>{ e.preventDefault(); msgInput.value=""; msgInput.focus(); });
-
-  emojiBtn.addEventListener("click", (e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+  emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
   dmEmojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(dmInput); });
   nameEmojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(nameInput); });
 
-  // Context menu
-  function showCtxMenu(x,y){
-    ctxMenu.style.left = x + "px";
-    ctxMenu.style.top  = y + "px";
-    ctxMenu.style.display = "block";
-  }
-  function hideCtxMenu(){
-    ctxMenu.style.display = "none";
-    ctxUser = null;
-  }
+  // Local clear
+  clearBtn.addEventListener("click",(e)=>{ e.preventDefault(); msgInput.value=""; msgInput.focus(); });
 
-  ctxDmBtn.addEventListener("click", ()=>{
-    if (ctxUser) openDmWith(ctxUser);
-    hideCtxMenu();
-  });
-
-  // Ignore windows helpers
+  // Ignore windows
   function loadIgnoreWindows(){
-    try { ignoreWindows = JSON.parse(localStorage.getItem(ignoreKey(user.uid)) || "{}"); }
-    catch { ignoreWindows = {}; }
+    try{ ignoreWindows = JSON.parse(localStorage.getItem(ignoreKey(user.uid)) || "{}"); }
+    catch{ ignoreWindows = {}; }
     refreshIgnoreCount();
   }
   function saveIgnoreWindows(){
@@ -827,6 +800,9 @@
     return false;
   }
   function toggleIgnore(uid){
+    // prevent ignoring admin
+    if (ADMIN_UIDS.includes(uid)) return;
+
     ignoreWindows[uid] = ignoreWindows[uid] || [];
     const arr = ignoreWindows[uid];
     const activeIdx = arr.findIndex(w => w.end == null);
@@ -836,33 +812,72 @@
     saveIgnoreWindows();
   }
 
-  // ✅ Username uniqueness among ONLINE
-  function normalizeNameKey(name){
-    return collapseSpaces(name).toLowerCase();
+  // Context menu
+  function showCtxMenu(x,y){
+    ctxMenu.style.left = x + "px";
+    ctxMenu.style.top  = y + "px";
+    ctxMenu.style.display = "block";
+  }
+  function hideCtxMenu(){
+    ctxMenu.style.display = "none";
+    ctxUser = null;
   }
 
-  async function claimNameOrFail(name){
-    const key = normalizeNameKey(name);
-    const regRef = ref(rtdb, "nameRegistry/" + encodeURIComponent(key));
-    const res = await runTransaction(regRef, (current)=>{
-      if (current == null) return { uid: user.uid };
-      if (current && current.uid === user.uid) return current;
-      return; // abort
+  // DM participants key
+  function participantsKey(a,b){ return [a,b].sort().join("_"); }
+
+  // Admin moderation actions (RTDB)
+  async function adminKick(targetUid){
+    const actionRef = ref(rtdb, `moderation/${targetUid}`);
+    await update(actionRef, {
+      kickedAt: Date.now(),
+      reason: "kick",
+      by: user.uid
     });
-    if (!res.committed) return { ok:false, key };
-    localStorage.setItem(nameKey(user.uid), key);
-    // ensure release on disconnect
-    onDisconnect(regRef).remove();
-    return { ok:true, key };
+  }
+  async function adminBan(targetUid){
+    const actionRef = ref(rtdb, `moderation/${targetUid}`);
+    await update(actionRef, {
+      banned: true,
+      bannedAt: Date.now(),
+      reason: "ban",
+      by: user.uid
+    });
+  }
+  async function adminMute5(targetUid){
+    const actionRef = ref(rtdb, `moderation/${targetUid}`);
+    await update(actionRef, {
+      mutedUntil: Date.now() + 5*60*1000,
+      reason: "mute5",
+      by: user.uid
+    });
   }
 
-  async function releaseName(){
-    try{
-      const key = localStorage.getItem(nameKey(user.uid));
-      if (!key) return;
-      await remove(ref(rtdb, "nameRegistry/" + encodeURIComponent(key)));
-    }catch{}
+  // Admin clear for all (Firestore meta)
+  async function adminClearForAll(){
+    if (!isAdmin) return;
+    const clearedAtMs = Date.now();
+    await setDoc(doc(db, "globalMeta", "clear"), {
+      clearedAtMs,
+      byUid: user.uid,
+      byName: profile?.name || "Admin",
+      createdAt: serverTimestamp()
+    }, { merge:true });
+
+    await addDoc(collection(db, "globalMessages"), {
+      system:true,
+      type:"clear",
+      text:`تم مسح الشات بواسطة الأدمن`,
+      actorUid:user.uid,
+      actorName:profile?.name || "Admin",
+      createdAt: serverTimestamp(),
+      createdAtMs: Date.now()
+    });
   }
+  adminClearBtn.addEventListener("click",(e)=>{
+    e.preventDefault();
+    adminClearForAll();
+  });
 
   // Presence
   async function updatePresenceStatus(statusVal, first=false){
@@ -875,13 +890,14 @@
       nameColor: profile.nameColor,
       textColor: profile.textColor,
       status: statusVal || "online",
-      statusText: statusLabel(statusVal || "online")
+      statusText: statusLabel(statusVal || "online"),
+      isAdmin: isAdmin
     };
     await set(onlineRef, payload);
     if (first) onDisconnect(onlineRef).remove();
   }
 
-  // System messages
+  // System join/leave
   async function writeSystem(type){
     const text =
       type === "join" ? `${profile.name} دخل الشات` :
@@ -899,113 +915,57 @@
     });
   }
 
-  // Auth
-  onAuthStateChanged(auth, async (u)=>{
-    if (!u){ location.href = "login.html"; return; }
-    user = u;
-    meBadge.textContent = "أنت";
-
-    loadIgnoreWindows();
-    watchConnection();
-
-    const savedProfile = localStorage.getItem(profKey(user.uid));
-    if (savedProfile){
-      profile = JSON.parse(savedProfile);
-      const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
-      statusSelect.value = savedStatus;
-      await enterChat(savedStatus, true);
-    } else {
-      modal.style.display = "flex";
-    }
-  });
-
-  // Exit (no signOut)
-  exitBtn.addEventListener("click", async ()=>{
-    try{
-      if (user && profile){
-        await writeSystem("leave");
-        await remove(ref(rtdb, "onlineUsers/" + user.uid));
-        await releaseName();
-      }
-    }catch{}
-    location.href = "index.html";
-  });
-
-  statusSelect.addEventListener("change", async ()=>{
-    if (!user || !profile) return;
-    const s = statusSelect.value || "online";
-    localStorage.setItem(statusKey(user.uid), s);
-    await updatePresenceStatus(s);
-  });
-
-  // Enter modal
-  enterBtn.addEventListener("click", async ()=>{
-    setModalError("");
-
-    const rawName = collapseSpaces(nameInput.value);
-    const g = genderInput.value;
-    const age = Number(ageInput.value);
-
-    if (!rawName || rawName.length < 3){
-      setModalError("الاسم لازم يكون 3 أحرف على الأقل.");
-      return;
-    }
-    if (!g){ setModalError("اختار الجنس."); return; }
-    if (!Number.isFinite(age) || age < 10){
-      setModalError("العمر لازم يكون 10 أو أكثر.");
-      return;
-    }
-
-    // ✅ منع تكرار الاسم بين الموجودين الآن
-    const claim = await claimNameOrFail(rawName);
-    if (!claim.ok){
-      setModalError("في اسم مستخدم داخل الروم. اختار اسم مختلف.");
-      return;
-    }
-
-    profile = {
-      name: rawName,
-      gender: g,
-      age,
-      nameColor: nameColorInput.value || "#facc15",
-      textColor: textColorInput.value || "#f9fafb"
-    };
-
-    localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
-
-    const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
-    statusSelect.value = savedStatus;
-
-    await enterChat(savedStatus, false);
-  });
-
-  async function enterChat(statusVal, fromSavedProfile){
-    // ✅ إذا جاي من بروفايل محفوظ: لازم نحجز الاسم لو كان متاح
-    if (fromSavedProfile){
-      const claim = await claimNameOrFail(profile.name);
-      if (!claim.ok){
-        // لو الاسم محجوز الآن: رجّع المستخدم للمودال ليغيره
-        modal.style.display = "flex";
-        setModalError("اسمك مستخدم الآن داخل الروم. غيره للدخول.");
-        return;
-      }
-    }
-
-    msgInput.disabled = false;
-    sendBtn.disabled = false;
-
-    joinAtMs = Date.now();
-
-    await updatePresenceStatus(statusVal, true);
-    await writeSystem("join");
-
-    modal.style.display = "none";
-
-    startOnlineListener();
-    startGlobalMessagesListener();
+  // Connection
+  function watchConnection(){
+    const connRef = ref(rtdb, ".info/connected");
+    onValue(connRef, (snap)=>{
+      const connected = snap.val() === true;
+      connDot.classList.toggle("on", connected);
+      connText.textContent = connected ? "متصل" : "غير متصل";
+    });
   }
 
-  // RTDB online list
+  // Moderation listener (self)
+  function startModerationListener(){
+    const myModRef = ref(rtdb, `moderation/${user.uid}`);
+    onValue(myModRef, async (snap)=>{
+      const m = snap.val();
+      if (!m) return;
+
+      // banned
+      if (m.banned === true){
+        alert("تم حظرك من الشات.");
+        try{
+          await remove(ref(rtdb, "onlineUsers/" + user.uid));
+        }catch{}
+        location.href = "index.html";
+        return;
+      }
+
+      // kicked (single event)
+      if (m.kickedAt && Date.now() - m.kickedAt < 15000){
+        alert("تم طردك من الشات.");
+        try{
+          await remove(ref(rtdb, "onlineUsers/" + user.uid));
+        }catch{}
+        location.href = "index.html";
+        return;
+      }
+
+      // muted
+      const until = m.mutedUntil || 0;
+      const muted = Date.now() < until;
+      msgInput.disabled = muted;
+      sendBtn.disabled = muted;
+      if (muted){
+        msgInput.placeholder = "تم كتمك لمدة 5 دقائق";
+      } else {
+        msgInput.placeholder = "اكتب رسالتك...";
+      }
+    });
+  }
+
+  // Start Online list
   function startOnlineListener(){
     const allOnlineRef = ref(rtdb, "onlineUsers");
     onValue(allOnlineRef, (snap)=>{
@@ -1020,40 +980,46 @@
           const row = document.createElement("div");
           row.className = "userRow";
 
-          // left
           const left = document.createElement("div");
           left.className = "userMeta";
 
-          const g = u.gender;
-          const gHtml = genderSymbolHtml(g);
-          const nameColor = u.nameColor || "#facc15";
-          const nameHtml = `${gHtml} <span style="color:${escapeHtml(nameColor)};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span>`;
+          const gHtml = genderSymbolHtml(u.gender);
+          const nColor = u.nameColor || "#facc15";
+          const tColor = u.textColor || "#f9fafb";
+
+          const adminVisual = u.isAdmin ? `
+            <span class="adminTag">🏷️</span>
+            <span class="adminNameBadge">${escapeHtml(u.name||"Admin")}</span>
+          ` : `
+            <span style="color:${escapeHtml(nColor)};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span>
+          `;
 
           left.innerHTML = `
-            <b>${nameHtml}</b>
+            <b>${gHtml} ${adminVisual}</b>
             <span>
               <span class="miniPill">${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
               ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile.nameColor)};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
             </span>
           `;
-
           row.appendChild(left);
 
-          // right: ignore button (not for self) + stop showing ignore icon near your own name
           if (u.uid !== user.uid){
             const btn = document.createElement("button");
             btn.type = "button";
             btn.className = "ignoreBtn";
 
+            const targetIsAdmin = ADMIN_UIDS.includes(u.uid) || u.isAdmin === true;
             const ignored = isCurrentlyIgnored(u.uid);
+
             btn.textContent = ignored ? "🚫" : "⛔";
             btn.classList.toggle("ignored", ignored);
-            btn.title = ignored ? "إلغاء التجاهل" : "تجاهل";
+            btn.disabled = targetIsAdmin; // ✅ لا يمكن تجاهل الأدمن
+            btn.title = targetIsAdmin ? "لا يمكن تجاهل الأدمن" : (ignored ? "إلغاء التجاهل" : "تجاهل");
 
-            btn.addEventListener("click", (e)=>{
+            btn.addEventListener("click",(e)=>{
               e.stopPropagation();
+              if (targetIsAdmin) return;
               toggleIgnore(u.uid);
-              // فوراً تحديث الزر
               const nowIgnored = isCurrentlyIgnored(u.uid);
               btn.textContent = nowIgnored ? "🚫" : "⛔";
               btn.classList.toggle("ignored", nowIgnored);
@@ -1061,19 +1027,22 @@
 
             row.appendChild(btn);
 
-            // click name -> menu
-            row.addEventListener("click", (e)=>{
+            // click user -> menu
+            row.addEventListener("click",(e)=>{
               ctxUser = {
                 uid: u.uid,
                 name: u.name,
                 gender: u.gender,
                 nameColor: u.nameColor || "#facc15",
-                textColor: u.textColor || "#f9fafb"
+                textColor: u.textColor || "#f9fafb",
+                isAdmin: u.isAdmin === true
               };
+
+              // menu options
+              adminActions.style.display = (isAdmin && ctxUser.uid !== user.uid) ? "block" : "none";
               showCtxMenu(e.clientX, e.clientY);
             });
           } else {
-            // self: no context menu
             row.style.cursor = "default";
           }
 
@@ -1082,7 +1051,17 @@
     });
   }
 
-  // Global chat
+  // Global meta: clearAtMs
+  let globalClearedAtMs = 0;
+  function startClearMetaListener(){
+    onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
+      if (!snap.exists()) return;
+      const d = snap.data() || {};
+      globalClearedAtMs = Number(d.clearedAtMs || 0);
+    });
+  }
+
+  // Global messages (since joinAtMs + after clearAtMs)
   function startGlobalMessagesListener(){
     initialLoaded = false;
 
@@ -1095,11 +1074,14 @@
     onSnapshot(q, (snap)=>{
       messagesDiv.innerHTML = "";
       const isFirst = !initialLoaded;
+      const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
 
-      snap.forEach((doc)=>{
-        const m = doc.data();
+      snap.forEach((docx)=>{
+        const m = docx.data();
+        const t = Number(m.createdAtMs || 0);
+        if (t < cutoff) return;
 
-        if (!m.system && m.uid && isInIgnoreWindow(m.uid, m.createdAtMs || 0)) return;
+        if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) return;
 
         if (m.system){
           const div = document.createElement("div");
@@ -1107,7 +1089,7 @@
           div.textContent = m.text || "";
           messagesDiv.appendChild(div);
 
-          // 🔊 join/leave only (NOT messages)
+          // sound only join/leave
           if (!isFirst && (m.type==="join" || m.type==="leave") && m.actorUid && m.actorUid !== user.uid){
             const now = Date.now();
             if (now - lastSoundAt > 800){
@@ -1121,20 +1103,19 @@
           div.className = "msg" + (m.uid === user.uid ? " me" : "");
 
           const gHtml = genderSymbolHtml(m.gender);
-          const nColor = m.nameColor || "#facc15";
+          const nColor = m.isAdmin ? "#000" : (m.nameColor || "#facc15");
           const tColor = m.textColor || "#f9fafb";
+          const nameHtml = m.isAdmin
+            ? `<span class="adminTag">🏷️</span> <span class="adminNameBadge">${escapeHtml(m.name||"Admin")}</span>`
+            : `<span style="color:${escapeHtml(nColor)}">${escapeHtml(m.name||"مستخدم")}</span>`;
 
           div.innerHTML = `
             <div class="msgHead">
-              <div class="nameTag">
-                ${gHtml}
-                <span style="color:${escapeHtml(nColor)}">${escapeHtml(m.name || "مستخدم")}</span>
-              </div>
+              <div class="nameTag">${gHtml} ${nameHtml}</div>
             </div>
-            <div style="color:${escapeHtml(tColor)}">${escapeHtml(m.text || "")}</div>
-            <div class="msgTimeUnder">${escapeHtml(formatTime(m.createdAtMs))}</div>
+            <div style="color:${escapeHtml(tColor)}">${escapeHtml(m.text||"")}</div>
+            <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
           `;
-
           messagesDiv.appendChild(div);
         }
       });
@@ -1144,7 +1125,7 @@
     });
   }
 
-  // Send GLOBAL (with profanity block)
+  // Send GLOBAL (with profanity filter)
   chatForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     if (!user || !profile) return;
@@ -1152,7 +1133,10 @@
     const text = collapseSpaces(msgInput.value);
     if (!text) return;
 
-    if (isProfane(text)){
+    // mute handled by listener disables input, but keep safe:
+    if (msgInput.disabled) return;
+
+    if (!isAdmin && isProfane(text)){
       alert("❌ الرسالة مرفوضة (كلام غير لائق).");
       return;
     }
@@ -1168,21 +1152,17 @@
       age:profile.age,
       nameColor:profile.nameColor,
       textColor:profile.textColor,
+      isAdmin:isAdmin,
       createdAt: serverTimestamp(),
       createdAtMs: Date.now()
     });
   });
 
-  // ✅ Private Chat
-  function participantsKey(a,b){
-    return [a,b].sort().join("_");
-  }
-
+  // DM open
   function openDmWith(peer){
     dmPeer = peer;
     dmKey = participantsKey(user.uid, peer.uid);
 
-    dmTitle.textContent = "محادثة خاصة";
     dmSub.innerHTML = `${genderSymbolHtml(peer.gender)} <span style="color:${escapeHtml(peer.nameColor)};font-weight:900">${escapeHtml(peer.name)}</span>`;
 
     dmCol.style.display = "block";
@@ -1190,12 +1170,9 @@
     dmInput.disabled = false;
     dmSendBtn.disabled = false;
 
-    // reset messages
     dmMessages.innerHTML = "";
-    // unsubscribe previous
     if (dmUnsub) dmUnsub();
 
-    // listen DM messages (ONLY for this key)
     const q = query(
       collection(db, "dmMessages"),
       where("participantsKey", "==", dmKey),
@@ -1204,31 +1181,26 @@
 
     dmUnsub = onSnapshot(q, (snap)=>{
       dmMessages.innerHTML = "";
-      snap.forEach((doc)=>{
-        const m = doc.data();
-        // show only messages for these two (key already ensures)
+      snap.forEach((d)=>{
+        const m = d.data();
         const div = document.createElement("div");
         div.className = "msg" + (m.fromUid === user.uid ? " me" : "");
 
-        const fromName = m.fromUid === user.uid ? profile.name : (peer.name || "مستخدم");
-        const fromGender = m.fromUid === user.uid ? profile.gender : peer.gender;
-        const fromNameColor = m.fromUid === user.uid ? profile.nameColor : (peer.nameColor || "#facc15");
-        const fromTextColor = m.fromUid === user.uid ? profile.textColor : (peer.textColor || "#f9fafb");
-        const gHtml = genderSymbolHtml(fromGender);
+        const fromMe = m.fromUid === user.uid;
+        const gHtml = genderSymbolHtml(fromMe ? profile.gender : peer.gender);
+        const name = fromMe ? profile.name : (peer.name || "مستخدم");
+        const nColor = fromMe ? profile.nameColor : (peer.nameColor || "#facc15");
+        const tColor = fromMe ? profile.textColor : (peer.textColor || "#f9fafb");
 
         div.innerHTML = `
           <div class="msgHead">
-            <div class="nameTag">
-              ${gHtml}
-              <span style="color:${escapeHtml(fromNameColor)}">${escapeHtml(fromName)}</span>
-            </div>
+            <div class="nameTag">${gHtml} <span style="color:${escapeHtml(nColor)}">${escapeHtml(name)}</span></div>
           </div>
-          <div style="color:${escapeHtml(fromTextColor)}">${escapeHtml(m.text || "")}</div>
-          <div class="msgTimeUnder">${escapeHtml(formatTime(m.createdAtMs))}</div>
+          <div style="color:${escapeHtml(tColor)}">${escapeHtml(m.text||"")}</div>
+          <div class="msgTimeUnder">${escapeHtml(formatTime(Number(m.createdAtMs||0)))}</div>
         `;
         dmMessages.appendChild(div);
       });
-
       dmMessages.scrollTop = dmMessages.scrollHeight;
     });
   }
@@ -1261,28 +1233,182 @@
     });
   });
 
-  // Connection
-  function watchConnection(){
-    const connRef = ref(rtdb, ".info/connected");
-    onValue(connRef, (snap)=>{
-      const connected = snap.val() === true;
-      connDot.classList.toggle("on", connected);
-      connText.textContent = connected ? "متصل" : "غير متصل";
-    });
+  // Menu actions
+  ctxDmBtn.addEventListener("click", ()=>{
+    if (ctxUser) openDmWith(ctxUser);
+    hideCtxMenu();
+  });
+  ctxBanBtn.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser) return;
+    if (ctxUser.isAdmin) return;
+    await adminBan(ctxUser.uid);
+    hideCtxMenu();
+  });
+  ctxKickBtn.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser) return;
+    if (ctxUser.isAdmin) return;
+    await adminKick(ctxUser.uid);
+    hideCtxMenu();
+  });
+  ctxMuteBtn.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser) return;
+    if (ctxUser.isAdmin) return;
+    await adminMute5(ctxUser.uid);
+    hideCtxMenu();
+  });
+
+  // Exit (no signOut)
+  exitBtn.addEventListener("click", async ()=>{
+    try{
+      if (user && profile){
+        await writeSystem("leave");
+        await remove(ref(rtdb, "onlineUsers/" + user.uid));
+      }
+    }catch{}
+    location.href = "index.html";
+  });
+
+  // Status change
+  statusSelect.addEventListener("change", async ()=>{
+    if (!user || !profile) return;
+    const s = statusSelect.value || "online";
+    localStorage.setItem(statusKey(user.uid), s);
+    await updatePresenceStatus(s);
+  });
+
+  // Admin login button
+  adminLoginBtn.addEventListener("click", ()=>{
+    if (!user) return;
+    setErr(adminErr, "");
+    const u = (adminUser.value || "").trim();
+    const p = (adminPass.value || "").trim();
+
+    // ✅ Only your UID can activate admin
+    const uidAllowed = ADMIN_UIDS.includes(user.uid);
+    if (!uidAllowed){
+      setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
+      return;
+    }
+
+    // extra step (not truly secret on client)
+    if (u !== ADMIN_USERNAME || p !== ADMIN_PASSWORD){
+      setErr(adminErr, "بيانات ADMIN غير صحيحة.");
+      return;
+    }
+
+    localStorage.setItem(adminSessionKey(user.uid), "1");
+    setErr(adminErr, "✅ تم تفعيل الأدمن.");
+    // apply immediately if already have profile
+    isAdmin = true;
+    adminClearBtn.style.display = "inline-flex";
+  });
+
+  // Enter chat
+  enterBtn.addEventListener("click", async ()=>{
+    setErr(modalErr, "");
+
+    const rawName = collapseSpaces(nameInput.value);
+    const g = genderInput.value;
+    const age = Number(ageInput.value);
+
+    if (!rawName || rawName.length < 3){
+      setErr(modalErr, "الاسم لازم يكون 3 أحرف على الأقل.");
+      return;
+    }
+    if (!g){
+      setErr(modalErr, "اختار الجنس.");
+      return;
+    }
+    if (!Number.isFinite(age) || age < 10){
+      setErr(modalErr, "العمر لازم يكون 10 أو أكثر.");
+      return;
+    }
+
+    profile = {
+      name: rawName,
+      gender: g,
+      age,
+      nameColor: nameColorInput.value || "#facc15",
+      textColor: textColorInput.value || "#f9fafb"
+    };
+    localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
+
+    const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
+    statusSelect.value = savedStatus;
+
+    await enterChat(savedStatus);
+  });
+
+  async function enterChat(statusVal){
+    // ✅ admin session based on UID + local flag
+    isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1");
+    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+
+    msgInput.disabled = false;
+    sendBtn.disabled = false;
+
+    joinAtMs = Date.now();
+
+    await updatePresenceStatus(statusVal, true);
+    await writeSystem("join");
+
+    modal.style.display = "none";
+
+    startClearMetaListener();
+    startOnlineListener();
+    startGlobalMessagesListener();
+    startModerationListener();
   }
 
-  // Best-effort leave
+  // Auth boot
+  onAuthStateChanged(auth, async (u)=>{
+    if (!u){
+      location.href = "login.html";
+      return;
+    }
+    user = u;
+    meBadge.textContent = "أنت";
+    watchConnection();
+
+    // load ignore
+    loadIgnoreWindows();
+
+    // auto profile
+    const savedProfile = localStorage.getItem(profKey(user.uid));
+    if (savedProfile){
+      profile = JSON.parse(savedProfile);
+      const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
+      statusSelect.value = savedStatus;
+
+      // admin session restore
+      isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1");
+      adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+
+      await enterChat(savedStatus);
+    } else {
+      // admin restore info (just UI)
+      isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1");
+      adminClearBtn.style.display = "none";
+      modal.style.display = "flex";
+    }
+  });
+
+  // Sound & presence cleanup best-effort
   window.addEventListener("beforeunload", ()=>{
     try{
       if (user && profile){
         writeSystem("leave");
         remove(ref(rtdb, "onlineUsers/" + user.uid));
-        releaseName();
       }
     }catch{}
   });
 
-  // Hide ctx menu on scroll/resize
+  // Emoji picker targets
+  emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+  dmEmojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(dmInput); });
+  nameEmojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(nameInput); });
+
+  // Hide menu on scroll/resize
   window.addEventListener("scroll", hideCtxMenu, true);
   window.addEventListener("resize", hideCtxMenu);
 </script>
