@@ -25,8 +25,6 @@ def thumb_from_id(vid: str) -> str:
   return f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg" if vid else ""
 
 def main():
-  if not CHANNEL_HANDLE_URL:
-    raise RuntimeError("Missing CHANNEL_HANDLE_URL env")
 
   channel_id = "UCJ7ltkpYPM7xI3DgMR1vvbg"
   feed_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
