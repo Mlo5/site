@@ -28,7 +28,7 @@ def main():
   if not CHANNEL_HANDLE_URL:
     raise RuntimeError("Missing CHANNEL_HANDLE_URL env")
 
-  channel_id = get_channel_id(CHANNEL_HANDLE_URL)
+  channel_id = "UCJ7ltkpYPM7xI3DgMR1vvbg"
   feed_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
 
   feed = feedparser.parse(feed_url)
