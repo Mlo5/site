@@ -364,6 +364,38 @@
 
     .ad-slot-cta:hover { background: #facc15; color: #111827; transform: translateY(-1px); }
 
+    /* ✅ AD upgrade (image + two buttons) */
+    .ad-slot.ad-rich { align-items: stretch; }
+    .ad-media{
+      width: 150px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(250,204,21,.35);
+      background: rgba(0,0,0,.35);
+      flex: 0 0 auto;
+    }
+    .ad-media img{
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      aspect-ratio: 16 / 9;
+    }
+    .ad-actions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      flex: 0 0 auto;
+    }
+    @media (max-width: 720px){
+      .ad-slot.ad-rich{ flex-wrap:wrap; }
+      .ad-media{ width: 100%; }
+      .ad-slot-body{ text-align: right; min-width: 100%; }
+      .ad-actions{ width:100%; justify-content:flex-start; }
+    }
+
     .sections { margin-top: 24px; }
     .sections-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 
@@ -735,13 +767,21 @@
           </div>
         </section>
 
-        <!-- ✅ إعلان مترجم -->
-        <section class="ad-slot">
+        <!-- ✅ إعلان (صورة + زر تفاصيل + زر إعلان) -->
+        <section class="ad-slot ad-rich">
+          <div class="ad-media">
+            <img id="ad-img" src="ad.jpg" alt="Ad" loading="lazy">
+          </div>
+
           <div id="ad-slot-body" class="ad-slot-body">
             مساحة إعلانية تجريبية لمحتوى أو شريك مرتبط بالجيمينغ؛ مثل المايك اللي بستخدمه، شاشة اللعب، أو كود خصم خاص لمتابعين MLO5.
           </div>
-          <a id="ad-slot-cta" href="soon.html" class="ad-slot-cta">تفاصيل أكثر</a>
-          <div id="ad-slot-label" class="ad-slot-label">إعلان</div>
+
+          <div class="ad-actions">
+            <a id="ad-slot-cta" href="https://bhipshop.com/en/products" class="ad-slot-cta" target="_blank" rel="noopener">تفاصيل أكثر</a>
+            <a id="ad-slot-ads" href="contact.html" class="ad-slot-cta">📢 أعلن عندنا</a>
+            <div id="ad-slot-label" class="ad-slot-label">إعلان</div>
+          </div>
         </section>
 
         <div class="divider">
@@ -904,10 +944,11 @@
         settings: "الإعدادات",
         logout: "تسجيل خروج",
 
-        // ✅ ad slot
+        // ✅ ad slot localization
         adBody: "مساحة إعلانيّة 🔪.",
         adCta: "تفاصيل أكثر",
         adLabel: "إعلان",
+        adSell: "📢 أعلن عندنا",
       },
       en: {
         title: "𝕄𝕃𝕆𝟝 ヅ.",
@@ -943,10 +984,11 @@
         settings: "Settings",
         logout: "Logout",
 
-        // ✅ ad slot
-        adBody: "advertising Space 🔪.",
+        // ✅ ad slot localization
+        adBody: "Advertising space 🔪.",
         adCta: "Learn more",
         adLabel: "Ad",
+        adSell: "📢 Advertise with us",
       },
     };
 
@@ -1032,9 +1074,11 @@
       const adBody = document.getElementById("ad-slot-body");
       const adCta = document.getElementById("ad-slot-cta");
       const adLabel = document.getElementById("ad-slot-label");
+      const adSell = document.getElementById("ad-slot-ads");
       if (adBody) adBody.textContent = strings.adBody;
       if (adCta) adCta.textContent = strings.adCta;
       if (adLabel) adLabel.textContent = strings.adLabel;
+      if (adSell) adSell.textContent = strings.adSell;
     }
 
     let savedLang = localStorage.getItem(LANG_KEY) || "ar";
@@ -1207,11 +1251,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
