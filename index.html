@@ -5,7 +5,7 @@
   <title>M L O 5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ✅ Favicon (تأكد أن favicon.png موجود في نفس مجلد index.html بجذر المشروع) -->
+  <!-- ✅ Favicon -->
   <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="32x32" />
   <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="16x16" />
   <link rel="apple-touch-icon" href="./favicon.png?v=2" />
@@ -639,7 +639,7 @@
     <div class="card-shell">
       <div class="card-shell-inner">
 
-        <!-- ✅ TOP BAR (معدّل) -->
+        <!-- ✅ TOP BAR -->
         <div class="top-bar">
           <a id="login-link" href="login.html" class="top-login-link">تسجيل دخول</a>
 
@@ -647,8 +647,8 @@
           <div id="user-menu" class="top-nav-item top-nav-dropdown" style="display:none;">
             <span class="top-nav-label" id="user-label">User</span>
             <div class="dropdown-menu">
-              <a href="profile.html" class="dropdown-item">الملف الشخصي</a>
-              <a href="settings.html" class="dropdown-item">الإعدادات</a>
+              <a href="profile.html" class="dropdown-item" id="menu-profile">الملف الشخصي</a>
+              <a href="settings.html" class="dropdown-item" id="menu-settings">الإعدادات</a>
               <button id="logout-btn" class="dropdown-item" type="button"
                 style="text-align:right;width:100%;background:transparent;border:none;cursor:pointer;">
                 تسجيل خروج
@@ -735,12 +735,13 @@
           </div>
         </section>
 
+        <!-- ✅ إعلان مترجم -->
         <section class="ad-slot">
-          <div class="ad-slot-body">
+          <div id="ad-slot-body" class="ad-slot-body">
             مساحة إعلانية تجريبية لمحتوى أو شريك مرتبط بالجيمينغ؛ مثل المايك اللي بستخدمه، شاشة اللعب، أو كود خصم خاص لمتابعين MLO5.
           </div>
-          <a href="soon.html" class="ad-slot-cta">تفاصيل أكثر</a>
-          <div class="ad-slot-label">إعلان</div>
+          <a id="ad-slot-cta" href="soon.html" class="ad-slot-cta">تفاصيل أكثر</a>
+          <div id="ad-slot-label" class="ad-slot-label">إعلان</div>
         </section>
 
         <div class="divider">
@@ -865,10 +866,6 @@
       }, 700);
     });
 
-    // تحسين فرصة تشغيل الصوت
-    let userInteracted = false;
-    document.addEventListener("click", () => { userInteracted = true; }, { once: true });
-
     // ✅ اختيار اللغة
     const langToggle = document.getElementById("lang-toggle");
     const LANG_KEY = "mlo5-lang";
@@ -901,6 +898,16 @@
         toastBody: "اشترك الآن وخليك معنا بالرحلة 👇💥",
         toastBtn: "اشترك الآن",
         langTitle: "العربية",
+
+        // ✅ user dropdown
+        profile: "الملف الشخصي",
+        settings: "الإعدادات",
+        logout: "تسجيل خروج",
+
+        // ✅ ad slot
+        adBody: "مساحة إعلانية تجريبية لمحتوى أو شريك مرتبط بالجيمينغ؛ مثل المايك اللي بستخدمه، شاشة اللعب، أو كود خصم خاص لمتابعين MLO5.",
+        adCta: "تفاصيل أكثر",
+        adLabel: "إعلان",
       },
       en: {
         title: "M L O 5",
@@ -930,6 +937,16 @@
         toastBody: "👇💥 Subscribe now and stay with us on the journey",
         toastBtn: "Subscribe now",
         langTitle: "English",
+
+        // ✅ user dropdown
+        profile: "Profile",
+        settings: "Settings",
+        logout: "Logout",
+
+        // ✅ ad slot
+        adBody: "Sample ad space for gaming-related content or a partner—like the mic I use, my gaming monitor, or a special discount code for MLO5 followers.",
+        adCta: "Learn more",
+        adLabel: "Ad",
       },
     };
 
@@ -1002,6 +1019,22 @@
       if (toastBtn) toastBtn.textContent = strings.toastBtn;
 
       if (langToggle) langToggle.title = strings.langTitle;
+
+      // ✅ user dropdown localization
+      const menuProfile = document.getElementById("menu-profile");
+      const menuSettings = document.getElementById("menu-settings");
+      const logoutBtn = document.getElementById("logout-btn");
+      if (menuProfile) menuProfile.textContent = strings.profile;
+      if (menuSettings) menuSettings.textContent = strings.settings;
+      if (logoutBtn) logoutBtn.textContent = strings.logout;
+
+      // ✅ ad slot localization
+      const adBody = document.getElementById("ad-slot-body");
+      const adCta = document.getElementById("ad-slot-cta");
+      const adLabel = document.getElementById("ad-slot-label");
+      if (adBody) adBody.textContent = strings.adBody;
+      if (adCta) adCta.textContent = strings.adCta;
+      if (adLabel) adLabel.textContent = strings.adLabel;
     }
 
     let savedLang = localStorage.getItem(LANG_KEY) || "ar";
@@ -1018,7 +1051,6 @@
     // ✅ Toast
     const toast = document.getElementById("subscribe-toast");
     const toastClose = toast ? toast.querySelector(".subscribe-toast-close") : null;
-    const toastSound = document.getElementById("toast-sound");
 
     if (toastClose) {
       toastClose.addEventListener("click", () => {
@@ -1156,7 +1188,7 @@
         const raw = name || email || "User";
         const displayName = raw.length > 16 ? raw.slice(0, 14) + "…" : raw;
 
-        userLabel.textContent = displayName;
+        if (userLabel) userLabel.textContent = displayName;
 
         if (loginLink) loginLink.style.display = "none";
         if (userMenu) userMenu.style.display = "inline-flex";
