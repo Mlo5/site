@@ -4,14 +4,6 @@
   <meta charset="UTF-8" />
   <title>منتدى المتابعين - M L O 5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- ✅ Favicon (نفس أسلوب موقعك) -->
-  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="32x32" />
-  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="16x16" />
-  <link rel="apple-touch-icon" href="./favicon.png?v=2" />
-  <meta name="theme-color" content="#020202" />
-
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
@@ -20,40 +12,28 @@
       --yellow:#facc15;
       --white:#f9fafb;
       --muted:#9ca3af;
-      --border-subtle: rgba(156, 163, 175, 0.35);
-      --radius-lg:20px;
-      --radius-full:999px;
-      --grid-x:0px;
-      --grid-y:0px;
+      --border-subtle:rgba(156,163,175,.35);
       --shadow:0 18px 45px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,.95);
-      --shadow-soft:0 10px 24px rgba(0,0,0,.9), 0 0 0 1px rgba(15,23,42,.9);
+      --grid-x:0px; --grid-y:0px;
+      --vh: 1vh;
     }
-
     *{box-sizing:border-box;margin:0;padding:0}
-
     body{
       font-family:"Tajawal",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:var(--bg-dark);
       color:var(--white);
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:stretch;
+      min-height: calc(var(--vh, 1vh) * 100);
       position:relative;
-      transition:background .3s ease,color .3s ease;
+      overflow:hidden;
       cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
     }
-
     .bg-grid{
-      position:fixed; inset:0; z-index:0;
-      pointer-events:none;
-      background-image: radial-gradient(circle, rgba(249,250,251,.55) 1px, transparent 1px);
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:radial-gradient(circle, rgba(249,250,251,.55) 1px, transparent 1px);
       background-size:30px 30px;
-      background-position: calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
-      opacity:.25;
-      mix-blend-mode:screen;
+      background-position:calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
+      opacity:.25; mix-blend-mode:screen;
     }
-
     .page{
       width:100%;
       max-width:1100px;
@@ -61,393 +41,291 @@
       margin:auto;
       position:relative;
       z-index:1;
+      min-height:0;
     }
-
-    .card-shell{ border-radius:0; padding:0; background:transparent; box-shadow:none; border:none; }
-    .card-shell-inner{ position:relative; z-index:1; }
-
+    .card{
+      background:linear-gradient(145deg,#020202,#050505);
+      border-radius:18px;
+      padding:14px;
+      border:1px solid var(--border-subtle);
+      box-shadow:0 12px 30px rgba(0,0,0,.8),0 0 0 1px rgba(55,65,81,.6);
+      position:relative;
+      overflow:hidden;
+      min-height:0;
+    }
     .top-bar{
-      display:flex;
-      justify-content:flex-start;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
-      direction:ltr;
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px; margin-bottom:14px; direction:ltr;
     }
-
-    .pill{
-      font-size:.9rem;
-      color:var(--white);
-      text-decoration:none;
-      padding:6px 14px;
-      border-radius:999px;
+    .top-chip{
+      font-size:.9rem; color:var(--white);
+      padding:6px 14px; border-radius:999px;
       border:1px solid rgba(250,204,21,.6);
       background:rgba(0,0,0,.6);
-      box-shadow: var(--shadow-soft);
-      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      user-select:none;
-      cursor:pointer;
+      box-shadow:0 8px 20px rgba(0,0,0,.8),0 0 0 1px rgba(15,23,42,.9);
+      display:inline-flex; align-items:center; gap:8px;
+      user-select:none; cursor:pointer;
+      white-space:nowrap;
     }
-    .pill:hover{
-      background:rgba(250,204,21,.15);
-      transform:translateY(-1px);
-      box-shadow:0 12px 30px rgba(0,0,0,.95), 0 0 0 1px rgba(250,204,21,.7);
-    }
-
-    .lang-toggle{
-      width:36px;height:36px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.7);
-      background: radial-gradient(circle at top,#111111,#020202);
-      color:var(--yellow);
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      font-size:1rem;
-      box-shadow: var(--shadow-soft);
-      transition:background .15s ease, transform .15s ease, box-shadow .15s ease;
-    }
-    .lang-toggle:hover{
-      transform:translateY(-1px);
-      background: radial-gradient(circle at top,#facc15,#fbbf24);
-      color:#000;
-      box-shadow:0 14px 30px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.8);
-    }
-
-    .hero-title{ text-align:center; margin-bottom:10px; }
-    .hero-title h1{
+    .dot{width:8px;height:8px;border-radius:50%;background:rgba(239,68,68,.9)}
+    .dot.on{background:rgba(34,197,94,.95)}
+    .title{
       font-family:"Poppins",system-ui,sans-serif;
-      font-weight:800;
-      font-size: clamp(2.0rem, 4.6vw, 3.0rem);
-      letter-spacing:.28em;
-      text-transform:uppercase;
-      color:var(--white);
-      white-space:nowrap;
-      direction:ltr;
-      unicode-bidi:bidi-override;
+      font-weight:800; letter-spacing:.12em;
+      text-transform:uppercase; white-space:nowrap;
     }
-    .hero-sub{
-      text-align:center;
-      font-size:.9rem;
-      color:var(--muted);
-      margin-top:6px;
+    .title small{letter-spacing:0;font-weight:700;color:var(--muted)}
+    .wrap{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:14px;
+      height: calc(var(--vh, 1vh) * 100 - 32px - 40px - 14px - 44px);
+      min-height:0;
     }
-
-    .divider{ width:100%; margin:18px auto; position:relative; height:1px; }
-    .divider-line{ height:1px; width:100%; background:linear-gradient(90deg,transparent,rgba(156,163,175,.4),transparent); }
-    .divider-glow{
-      position:absolute; inset:0; margin:auto;
-      height:12px; width:40%;
-      background: radial-gradient(circle, rgba(250,204,21,.5), transparent 70%);
-      opacity:.7; filter: blur(3px);
-      pointer-events:none;
+    @media (max-width: 980px){
+      body{overflow:hidden}
+      .page{padding:16px 12px 18px}
+      .wrap{grid-template-columns:1fr; height:calc(var(--vh, 1vh) * 100 - 90px)}
     }
 
-    .top-nav{
-      display:flex;
-      justify-content:center;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-bottom:16px;
-      position:relative;
-      z-index:5;
+    .panel-head{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; margin-bottom:10px;
     }
-    .top-nav-item{
-      position:relative;
-      padding:8px 18px;
+    .panel-head .h{display:flex;flex-direction:column;gap:2px}
+    .panel-head .h b{color:var(--yellow);font-size:1rem}
+    .panel-head .h span{color:var(--muted);font-size:.85rem;line-height:1.6}
+    .badge{
       border-radius:999px;
-      border:1px solid rgba(250,204,21,.5);
-      background: rgba(0,0,0,.4);
-      color:var(--white);
-      font-size:.9rem;
-      cursor:pointer;
-      user-select:none;
-      text-decoration:none;
-      transition:background .2s ease, transform .15s ease, box-shadow .2s ease, color .2s ease;
-    }
-    .top-nav-item:hover{
-      transform:translateY(-1px);
-      background: rgba(250,204,21,.08);
-      box-shadow: 0 8px 18px rgba(0,0,0,.6);
-    }
-    .top-nav-item.is-active{
-      border-color: rgba(250,204,21,.85);
-      background: rgba(250,204,21,.12);
-      color: var(--yellow);
-    }
-
-    /* Forum shell */
-    .forum-shell{
-      border-radius: var(--radius-lg);
-      background: radial-gradient(circle at top,#111111,#020202);
-      border: 1px solid rgba(148,163,184,.22);
-      box-shadow: 0 18px 40px rgba(0,0,0,.85), 0 0 0 1px rgba(148,163,184,.2);
-      padding: 14px;
-    }
-
-    .post-box{
-      border-radius: 18px;
-      background: linear-gradient(145deg, #020202, #050505);
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 12px 30px rgba(0,0,0,.8), 0 0 0 1px rgba(55,65,81,.6);
-      padding: 14px;
-      margin-bottom: 14px;
-      position:relative;
-      overflow:hidden;
-    }
-    .post-box::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: radial-gradient(circle at top, rgba(250,204,21,.14), transparent 58%);
-      opacity:.65;
-      pointer-events:none;
-    }
-
-    textarea{
-      width:100%;
-      min-height:88px;
-      background: rgba(0,0,0,.45);
-      color: var(--white);
-      border: 1px solid rgba(156,163,175,.28);
-      border-radius: 14px;
-      padding: 10px 12px;
-      resize: vertical;
-      font-family: inherit;
-      outline: none;
-      transition: border-color .15s ease, box-shadow .15s ease;
-      position:relative;
-      z-index:1;
-    }
-    textarea:focus{
-      border-color: rgba(250,204,21,.7);
-      box-shadow: 0 0 0 3px rgba(250,204,21,.12);
-    }
-
-    .post-actions{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
-      position:relative;
-      z-index:1;
-    }
-
-    .file-wrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      color: var(--muted);
+      border:1px solid rgba(250,204,21,.55);
+      padding:6px 10px;
       font-size:.85rem;
-    }
-    input[type="file"]{ color: var(--muted); font-size:.85rem; }
-
-    .btn{
-      border:none;
-      border-radius: 999px;
-      padding: 7px 14px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--yellow);
-      color:#111827;
-      transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
-      box-shadow: 0 10px 24px rgba(0,0,0,.9), 0 0 0 1px rgba(15,23,42,.9);
-    }
-    .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); box-shadow: 0 14px 30px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.55); }
-
-    .hint{
-      color: var(--muted);
-      font-size: .8rem;
-      line-height: 1.5;
-    }
-
-    /* Post card */
-    .post{
-      display:block;
-      background: linear-gradient(145deg, #020202, #050505);
-      border-radius: 18px;
-      padding: 14px;
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 10px 28px rgba(0,0,0,.7), 0 0 0 1px rgba(55,65,81,.5);
-      position:relative;
-      overflow:hidden;
-      margin-bottom: 14px;
-      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-    }
-    .post::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: radial-gradient(circle at top, rgba(250,204,21,.16), transparent 55%);
-      opacity:0;
-      transition: opacity .2s ease;
-      pointer-events:none;
-    }
-    .post:hover{
-      transform: translateY(-3px);
-      border-color: rgba(250,204,21,.85);
-      box-shadow: 0 16px 40px rgba(0,0,0,.9), 0 0 0 1px rgba(250,204,21,.45);
-    }
-    .post:hover::before{ opacity:1; }
-
-    .post-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom: 8px;
-      position:relative;
-      z-index:1;
-    }
-    .post-user{
-      font-size:.9rem;
-      color: var(--yellow);
-      font-weight: 700;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 70%;
-    }
-    .post-time{
-      font-size:.75rem;
-      color: rgba(107,114,128,.95);
+      background:rgba(0,0,0,.45);
+      display:inline-flex; align-items:center; gap:8px;
       white-space:nowrap;
     }
 
-    .post-text{
-      color: var(--white);
-      line-height: 1.7;
-      font-size: .95rem;
-      position:relative;
-      z-index:1;
-      white-space: pre-wrap;
-      word-break: break-word;
+    .composer{
+      display:flex; flex-direction:column; gap:10px;
     }
-
-    .post-media{
-      margin-top: 10px;
-      position:relative;
-      z-index:1;
-    }
-    .post-media img{
+    textarea, input, select{
       width:100%;
-      display:block;
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,.22);
-      box-shadow: 0 10px 24px rgba(0,0,0,.75);
-      object-fit: cover;
-      max-height: 420px;
-    }
-
-    .post-footer{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin-top: 10px;
-      position:relative;
-      z-index:1;
-      flex-wrap:wrap;
-    }
-
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(250,204,21,.45);
-      background: rgba(0,0,0,.45);
-      color: var(--yellow);
-      cursor:pointer;
-      user-select:none;
-      font-size: .85rem;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-    }
-    .chip:hover{
-      transform: translateY(-1px);
-      background: rgba(250,204,21,.10);
-      border-color: rgba(250,204,21,.75);
-    }
-
-    .comments{
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(156,163,175,.18);
-      position:relative;
-      z-index:1;
-    }
-
-    .comment{
-      font-size: .85rem;
-      color: #e5e7eb;
-      line-height: 1.6;
-      margin-bottom: 6px;
-      word-break: break-word;
-    }
-    .comment .who{
-      color: var(--muted);
-      font-size: .75rem;
-      margin-inline-end: 6px;
-    }
-
-    .comment-input{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      margin-top: 8px;
-      flex-wrap:wrap;
-    }
-
-    .comment-input input{
-      flex: 1 1 220px;
-      background: rgba(0,0,0,.45);
-      color: var(--white);
-      border: 1px solid rgba(156,163,175,.28);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: .85rem;
+      border-radius:18px;
+      border:1px solid rgba(250,204,21,.55);
+      background:#000;
+      color:var(--white);
+      padding:12px 12px;
       outline:none;
-      transition: border-color .15s ease, box-shadow .15s ease;
-      font-family: inherit;
+      font-size:1rem;
+      resize:none;
     }
-    .comment-input input:focus{
-      border-color: rgba(250,204,21,.7);
-      box-shadow: 0 0 0 3px rgba(250,204,21,.12);
+    textarea{min-height:130px; line-height:1.7}
+    .rowBtns{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-start;
+    }
+    .btn{
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.75);
+      background:rgba(0,0,0,.75);
+      color:var(--yellow);
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:900;
+      user-select:none;
+      height:42px;
+      display:inline-flex;align-items:center;justify-content:center;
+    }
+    .btn:disabled{opacity:.5; cursor:not-allowed}
+
+    .posts{
+      display:flex; flex-direction:column; gap:12px;
+      overflow:auto; min-height:0; flex:1; padding-right:4px;
+      scrollbar-width:none; -ms-overflow-style:none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .posts::-webkit-scrollbar{width:0;height:0}
+
+    .post{
+      border-radius:18px;
+      border:1px solid var(--border-subtle);
+      background:rgba(0,0,0,.55);
+      box-shadow:0 10px 22px rgba(0,0,0,.6);
+      padding:12px;
+      position:relative;
+    }
+    .postHead{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+      color:var(--muted);
+      font-size:.9rem;
+      direction:ltr;
+    }
+    .postHead .who{
+      display:inline-flex; align-items:center; gap:8px;
+      direction:rtl;
+      font-weight:900;
+      color:var(--white);
+    }
+    .postHead .who span.name{
+      color:var(--yellow);
+      max-width:220px;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+      display:inline-block;
+    }
+    .postBody{
+      line-height:1.9;
+      white-space:pre-wrap;
+      word-break:break-word;
+      color:var(--white);
+      margin-bottom:10px;
+    }
+    .postActions{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; flex-wrap:wrap;
+    }
+    .miniBtn{
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.45);
+      color:var(--yellow);
+      border-radius:999px;
+      padding:8px 12px;
+      cursor:pointer;
+      font-weight:900;
+      user-select:none;
+      display:inline-flex;align-items:center;gap:8px;
+      height:38px;
+    }
+    .miniBtn.liked{
+      border-color:rgba(34,197,94,.85);
+      color:rgba(34,197,94,.95);
+    }
+    .countPill{
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.5);
+      padding:6px 10px;
+      font-size:.85rem;
+      background:rgba(0,0,0,.35);
+      color:var(--muted);
+      display:inline-flex; align-items:center; gap:8px;
+      white-space:nowrap;
+      height:38px;
     }
 
-    .comment-btn{
-      border:none;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-weight: 700;
-      cursor: pointer;
-      background: rgba(250,204,21,.18);
-      color: var(--yellow);
-      border: 1px solid rgba(250,204,21,.55);
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-      font-family: inherit;
+    .commentsWrap{
+      margin-top:10px;
+      border-top:1px dashed rgba(250,204,21,.25);
+      padding-top:10px;
+      display:none;
+      gap:10px;
+      flex-direction:column;
     }
-    .comment-btn:hover{
-      transform: translateY(-1px);
-      background: rgba(250,204,21,.24);
-      border-color: rgba(250,204,21,.78);
+    .commentRow{
+      border:1px solid rgba(156,163,175,.28);
+      background:rgba(0,0,0,.35);
+      border-radius:16px;
+      padding:10px;
+      line-height:1.7;
+    }
+    .commentMeta{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-size:.85rem;
+      color:var(--muted);
+      margin-bottom:6px;
+      direction:ltr;
+    }
+    .commentMeta .who{direction:rtl; font-weight:900; color:var(--white)}
+    .commentMeta .who .name{color:var(--yellow)}
+    .commentText{white-space:pre-wrap; word-break:break-word}
+
+    /* Modal (زي تبويب الدردشة) */
+    #modal{
+      position:fixed; inset:0; z-index:999;
+      background:rgba(0,0,0,.75);
+      display:none; align-items:center; justify-content:center;
+      padding:16px;
+    }
+    #modalBox{
+      width:min(860px,96vw);
+      border-radius:18px;
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.92);
+      box-shadow:0 18px 45px rgba(0,0,0,.95),0 0 0 1px rgba(17,24,39,.9);
+      padding:14px;
+      backdrop-filter:blur(10px);
+      position:relative;
+    }
+    .modalGrid{
+      display:grid;
+      grid-template-columns: 1fr 340px;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 900px){ .modalGrid{grid-template-columns:1fr} }
+
+    .modalCard{
+      border:1px solid rgba(250,204,21,.35);
+      border-radius:16px;
+      background:rgba(0,0,0,.45);
+      padding:12px;
+      position:relative;
+    }
+    .modalCard h3{margin-bottom:8px;color:var(--yellow);text-align:center;font-weight:900}
+    .modalCard p{color:var(--muted);text-align:center;font-size:.9rem;margin-bottom:12px;line-height:1.7}
+
+    .choiceRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+    .choiceBtn{
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.75);
+      background:rgba(0,0,0,.75);
+      color:var(--yellow);
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:900;
+      flex:1;
+      min-width:180px;
+      height:44px;
     }
 
-    .footer-bottom{
-      text-align:center;
-      font-size:.75rem;
-      color: rgba(107,114,128,.9);
-      margin-top: 18px;
+    .modalRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    .modalRow.one{grid-template-columns:1fr}
+    .modalBtn{
+      width:100%;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.75);
+      background:rgba(0,0,0,.75);
+      color:var(--yellow);
+      padding:10px 14px;
+      cursor:pointer;
+      font-weight:900;
+      height:44px;
     }
+    .hintErr{margin-top:8px;color:rgba(239,68,68,.95);font-size:.85rem;text-align:center;display:none}
 
-    @media (max-width: 640px){
-      .hero-title h1{ letter-spacing:.22em; }
+    .homeBackBtn{
+      position:absolute;
+      top:10px;
+      left:10px;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.75);
+      background:rgba(0,0,0,.75);
+      color:var(--yellow);
+      width:40px;height:40px;
+      cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;
+      user-select:none;
+    }
+    .backListBtn{
+      position:absolute;
+      top:10px;
+      left:58px;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.75);
+      background:rgba(0,0,0,.75);
+      color:var(--yellow);
+      width:40px;height:40px;
+      cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;
+      user-select:none;
     }
   </style>
 </head>
@@ -456,313 +334,537 @@
   <div class="bg-grid"></div>
 
   <main class="page">
-    <div class="card-shell">
-      <div class="card-shell-inner">
+    <div class="top-bar">
+      <div class="top-chip" title="حالة الاتصال">
+        <span class="dot" id="connDot"></span>
+        <span id="connText">غير متصل</span>
+      </div>
 
-        <!-- TOP BAR (نفس روح موقعك) -->
-        <div class="top-bar">
-          <a class="pill" href="index.html">🏠 الرئيسية</a>
-          <a class="pill" href="contact.html">✉️ اتصل بي</a>
-          <button id="lang-toggle" class="lang-toggle" title="العربية">🌐</button>
+      <div class="title">M L O 5 <small>• Followers Forum</small></div>
+
+      <button class="top-chip" id="exitBtn" type="button" title="خروج">↩ خروج</button>
+    </div>
+
+    <div class="wrap">
+      <!-- العمود الرئيسي: البوستات -->
+      <section class="card" style="display:flex;flex-direction:column;min-height:0;">
+        <div class="panel-head">
+          <div class="h">
+            <b>منشورات المتابعين</b>
+            <span>اكتب رأيك… خلّي الشباب <span style="color:#facc15;font-weight:900">تستفاد</span></span>
+          </div>
+          <div class="badge" id="meBadge">أنت: —</div>
         </div>
 
-        <header class="hero-title">
-          <h1 aria-label="M L O 5">M L O 5</h1>
-          <p id="hero-sub" class="hero-sub">منتدى المتابعين — انشر بوستاتك وخلي الكل يتفاعل 🔥</p>
-        </header>
+        <div class="posts" id="postsList"></div>
+      </section>
 
-        <div class="divider">
-          <div class="divider-line"></div>
-          <div class="divider-glow"></div>
+      <!-- العمود الجانبي: إضافة بوست -->
+      <aside class="card" style="display:flex;flex-direction:column;gap:12px;min-height:0;">
+        <div class="panel-head">
+          <div class="h">
+            <b>انشر بوست</b>
+            <span>بدون صور (مجانًا)</span>
+          </div>
+          <div class="badge" id="postsCount">0 بوست</div>
         </div>
 
-        <!-- NAV -->
-        <nav class="top-nav">
-          <a href="followers.html" class="top-nav-item is-active" id="nav-followers">منتدى المتابعين</a>
-          <a href="room.html" class="top-nav-item" id="nav-chat">غرف الدردشة</a>
-          <a href="privacy.html" class="top-nav-item" id="nav-privacy">سياسة الخصوصية</a>
-          <a href="terms.html" class="top-nav-item" id="nav-terms">الشروط والأحكام</a>
-        </nav>
+        <div class="composer">
+          <textarea id="postText" placeholder="اكتب منشورك هنا..." maxlength="1500" disabled></textarea>
 
-        <!-- Forum -->
-        <section class="forum-shell">
-          <!-- Create post -->
-          <div class="post-box">
-            <textarea id="postText" placeholder="اكتب بوستك هنا..."></textarea>
-
-            <div class="post-actions">
-              <div class="file-wrap">
-                <span class="hint">صورة اختيارية:</span>
-                <input type="file" id="postImage" accept="image/*">
-              </div>
-              <button class="btn" id="publishBtn" type="button">نشر</button>
-            </div>
-
-            <div class="hint" style="margin-top:10px;">
-              * هذا ملف تجريبي: التخزين محلي داخل المتصفح (localStorage) عشان تشوف الشكل.
-            </div>
+          <div class="rowBtns">
+            <button class="btn" id="publishBtn" type="button" disabled>🚀 نشر</button>
+            <button class="btn" id="refreshBtn" type="button">🔄 تحديث</button>
           </div>
 
-          <!-- Posts -->
-          <div id="posts"></div>
-        </section>
+          <div class="hintErr" id="postErr"></div>
 
-        <div class="footer-bottom">
-          © <span id="year-span">2025</span> · صنع بحب 💛.
+          <div class="badge" style="justify-content:center">
+            ✅ لايكات + تعليقات مباشرة
+          </div>
         </div>
-
-      </div>
+      </aside>
     </div>
   </main>
 
-  <script>
-    // سنة الحقوق
-    const y = document.getElementById("year-span");
-    if (y) y.textContent = new Date().getFullYear();
+  <!-- Modal الدخول (زي تبويب الدردشة) -->
+  <div id="modal">
+    <div id="modalBox">
+      <div class="modalGrid">
+        <div class="modalCard">
+          <button class="homeBackBtn" id="homeBtn" type="button" title="الرجوع للهوم">🏠</button>
+          <button class="backListBtn" id="backListBtn" type="button" title="رجوع">↩</button>
 
-    // تحريك شبكة النقاط (نفس موقعك)
-    const root = document.documentElement;
-    document.addEventListener("mousemove", (e) => {
-      const xRatio = e.clientX / window.innerWidth - 0.5;
-      const yRatio = e.clientY / window.innerHeight - 0.5;
-      const maxShift = 40;
-      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
-      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
-    });
+          <h3>الدخول إلى المنتدى</h3>
+          <p>لازم تختار طريقة دخول وبعدين اسمك… عشان أي بوست ينزل باسمك.</p>
 
-    // ====== Forum Demo Logic (localStorage) ======
-    const postsEl = document.getElementById("posts");
-    const postText = document.getElementById("postText");
-    const postImage = document.getElementById("postImage");
-    const publishBtn = document.getElementById("publishBtn");
-
-    function nowLabel(){
-      const d = new Date();
-      const pad = (n)=> String(n).padStart(2,"0");
-      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    }
-
-    function loadPosts(){
-      postsEl.innerHTML = "";
-      const posts = JSON.parse(localStorage.getItem("mlo5-forum-posts") || "[]");
-      posts.forEach((p, i) => renderPost(p, i));
-    }
-
-    function savePosts(posts){
-      localStorage.setItem("mlo5-forum-posts", JSON.stringify(posts));
-    }
-
-    function addPost(){
-      const text = (postText.value || "").trim();
-      if(!text) return;
-
-      const file = postImage.files && postImage.files[0] ? postImage.files[0] : null;
-
-      const pushPost = (imgData) => {
-        const posts = JSON.parse(localStorage.getItem("mlo5-forum-posts") || "[]");
-        posts.unshift({
-          user: "ضيف / مستخدم",
-          time: nowLabel(),
-          text,
-          image: imgData || null,
-          likes: 0,
-          comments: []
-        });
-        savePosts(posts);
-        postText.value = "";
-        postImage.value = "";
-        loadPosts();
-      };
-
-      if(file){
-        const reader = new FileReader();
-        reader.onload = () => pushPost(reader.result);
-        reader.readAsDataURL(file);
-      }else{
-        pushPost(null);
-      }
-    }
-
-    function likePost(i){
-      const posts = JSON.parse(localStorage.getItem("mlo5-forum-posts") || "[]");
-      if(!posts[i]) return;
-      posts[i].likes = (posts[i].likes || 0) + 1;
-      savePosts(posts);
-      loadPosts();
-    }
-
-    function addComment(i, input){
-      const value = (input.value || "").trim();
-      if(!value) return;
-
-      const posts = JSON.parse(localStorage.getItem("mlo5-forum-posts") || "[]");
-      if(!posts[i]) return;
-
-      posts[i].comments = posts[i].comments || [];
-      posts[i].comments.push({ who: "مستخدم", text: value });
-      savePosts(posts);
-      loadPosts();
-    }
-
-    function escapeHTML(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function renderPost(p, i){
-      const div = document.createElement("div");
-      div.className = "post";
-
-      const commentsHtml = (p.comments || []).map(c => {
-        const who = escapeHTML(c.who || "مستخدم");
-        const txt = escapeHTML(c.text || "");
-        return `<div class="comment"><span class="who">${who}:</span>${txt}</div>`;
-      }).join("");
-
-      div.innerHTML = `
-        <div class="post-header">
-          <div class="post-user">${escapeHTML(p.user || "مستخدم")}</div>
-          <div class="post-time">${escapeHTML(p.time || "")}</div>
-        </div>
-
-        <div class="post-text">${escapeHTML(p.text || "")}</div>
-
-        ${p.image ? `
-          <div class="post-media">
-            <img src="${p.image}" alt="Post image" loading="lazy">
+          <div class="choiceRow">
+            <button class="choiceBtn" id="chooseLogin" type="button">🔐 تسجيل دخول</button>
+            <button class="choiceBtn" id="chooseGuest" type="button">👤 الدخول كضيف</button>
           </div>
-        ` : ""}
 
-        <div class="post-footer">
-          <span class="chip" role="button" tabindex="0" data-like="${i}">👍 <span>${p.likes || 0}</span></span>
-          <span class="chip" style="cursor:default;">💬 <span>${(p.comments || []).length}</span></span>
-        </div>
+          <div id="formBox" style="display:none;">
+            <div class="modalRow one">
+              <input id="nameInput" placeholder="اسمك (3+)" />
+            </div>
 
-        <div class="comments">
-          ${commentsHtml || `<div class="hint">كون أول واحد يعلق 👇</div>`}
+            <div class="modalRow">
+              <select id="genderInput">
+                <option value="">الجنس</option>
+                <option value="male">ذكر ♂️</option>
+                <option value="female">أنثى ♀️</option>
+              </select>
+              <input id="ageInput" type="number" min="10" max="99" placeholder="العمر (10+)" />
+            </div>
 
-          <div class="comment-input">
-            <input type="text" placeholder="أضف تعليق..." data-cinput="${i}">
-            <button class="comment-btn" type="button" data-cbtn="${i}">إرسال</button>
+            <button id="enterBtn" class="modalBtn" type="button">دخول المنتدى</button>
           </div>
+
+          <div class="hintErr" id="modalErr"></div>
         </div>
-      `;
 
-      postsEl.appendChild(div);
+        <div class="modalCard">
+          <h3>ملاحظة</h3>
+          <p>المنتدى يشتغل على نفس Firebase تبع موقعك بدون ما يخرب الدردشة.</p>
+          <div class="badge" style="justify-content:center">🔥 نفس الستايل… نفس الهوية</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, serverTimestamp,
+    query, orderBy, onSnapshot, doc, updateDoc,
+    arrayUnion, arrayRemove, getDoc, setDoc
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+  // ✅ نفس مشروعك
+  const firebaseConfig = {
+    apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+    authDomain: "mlo5-users.firebaseapp.com",
+    databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
+    projectId: "mlo5-users",
+    appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const rtdb = getDatabase(app);
+
+  // UI
+  const connDot = document.getElementById("connDot");
+  const connText = document.getElementById("connText");
+  const exitBtn = document.getElementById("exitBtn");
+  const homeBtn = document.getElementById("homeBtn");
+  const backListBtn = document.getElementById("backListBtn");
+
+  const meBadge = document.getElementById("meBadge");
+  const postsCount = document.getElementById("postsCount");
+  const postsList = document.getElementById("postsList");
+
+  const postText = document.getElementById("postText");
+  const publishBtn = document.getElementById("publishBtn");
+  const refreshBtn = document.getElementById("refreshBtn");
+  const postErr = document.getElementById("postErr");
+
+  const modal = document.getElementById("modal");
+  const modalErr = document.getElementById("modalErr");
+  const formBox = document.getElementById("formBox");
+  const chooseLogin = document.getElementById("chooseLogin");
+  const chooseGuest = document.getElementById("chooseGuest");
+  const enterBtn = document.getElementById("enterBtn");
+  const nameInput = document.getElementById("nameInput");
+  const genderInput = document.getElementById("genderInput");
+  const ageInput = document.getElementById("ageInput");
+
+  // Helpers
+  function setVh(){
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+  }
+  setVh();
+  window.addEventListener("resize", setVh);
+  window.addEventListener("orientationchange", setVh);
+
+  const root = document.documentElement;
+  document.addEventListener("mousemove", (e)=>{
+    const xRatio = e.clientX / window.innerWidth - 0.5;
+    const yRatio = e.clientY / window.innerHeight - 0.5;
+    const maxShift = 40;
+    root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+    root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+  });
+
+  function setErr(el, msg){
+    el.style.display = msg ? "block" : "none";
+    el.textContent = msg || "";
+  }
+  function collapseSpaces(s){ return String(s||"").replace(/\s+/g," ").trim(); }
+  function escapeHtml(s=""){
+    return String(s).replace(/[&<>"']/g, (m)=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+    }[m]));
+  }
+  function formatTime(tsMs){
+    if (!tsMs || Number.isNaN(tsMs)) return "";
+    const d = new Date(tsMs);
+    let h = d.getHours();
+    const m = String(d.getMinutes()).padStart(2,"0");
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12; if (h === 0) h = 12;
+    return `${h}:${m} ${ampm}`;
+  }
+
+  // فلتر كلمات (مثل الدردشة)
+  const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
+  function isProfane(text){
+    const t = String(text||"").toLowerCase();
+    return BAD_WORDS.some(w => t.includes(w));
+  }
+
+  // Session
+  let user = null;
+  let profile = null;
+
+  const profKey = (uid) => `followersProfile_${uid}`;
+
+  function showForm(){ formBox.style.display = "block"; }
+  function hideForm(){ formBox.style.display = "none"; }
+
+  // ✅ اتصال Firebase (RTDB info)
+  function watchConnection(){
+    const connRef = ref(rtdb, ".info/connected");
+    onValue(connRef, (snap)=>{
+      const connected = snap.val() === true;
+      connDot.classList.toggle("on", connected);
+      connText.textContent = connected ? "متصل" : "غير متصل";
+    });
+  }
+
+  // Auth flow (زي الدردشة)
+  chooseLogin.addEventListener("click", ()=>{
+    setErr(modalErr,"");
+    // إذا مش مسجل أو ضيف → ودّيه لصفحة login.html
+    if (!user || user.isAnonymous){
+      location.href = "login.html";
+      return;
+    }
+    showForm();
+  });
+
+  chooseGuest.addEventListener("click", async ()=>{
+    setErr(modalErr,"");
+    try{
+      if (!user) await signInAnonymously(auth);
+      showForm();
+    }catch(err){
+      console.error(err);
+      setErr(modalErr, "❌ فشل الدخول كضيف. جرّب مرة ثانية.");
+    }
+  });
+
+  backListBtn.addEventListener("click", ()=>{
+    setErr(modalErr,"");
+    hideForm();
+  });
+
+  homeBtn.addEventListener("click", ()=>{
+    location.href = "index.html";
+  });
+
+  // دخول المنتدى بعد تعبئة البيانات
+  enterBtn.addEventListener("click", async ()=>{
+    setErr(modalErr,"");
+    const rawName = collapseSpaces(nameInput.value);
+    const g = genderInput.value;
+    const age = Number(ageInput.value);
+
+    if (!rawName || rawName.length < 3){ setErr(modalErr, "الاسم لازم يكون 3 أحرف على الأقل."); return; }
+    if (!g){ setErr(modalErr, "اختار الجنس."); return; }
+    if (!Number.isFinite(age) || age < 10){ setErr(modalErr, "العمر لازم يكون 10 أو أكثر."); return; }
+    if (!user){ setErr(modalErr, "اختر طريقة الدخول أولاً."); return; }
+
+    profile = { name: rawName, gender: g, age };
+
+    // نخزن للبريد (مش للضيف)
+    if (!user.isAnonymous){
+      localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
     }
 
-    // events
-    if (publishBtn) publishBtn.addEventListener("click", addPost);
+    await enterForum();
+  });
 
-    // delegate likes/comments
-    document.addEventListener("click", (e) => {
-      const likeEl = e.target.closest && e.target.closest("[data-like]");
-      if (likeEl) {
-        const idx = Number(likeEl.getAttribute("data-like"));
-        likePost(idx);
-        return;
-      }
+  async function enterForum(){
+    modal.style.display = "none";
 
-      const cBtn = e.target.closest && e.target.closest("[data-cbtn]");
-      if (cBtn) {
-        const idx = Number(cBtn.getAttribute("data-cbtn"));
-        const input = document.querySelector(`[data-cinput="${idx}"]`);
-        if (input) addComment(idx, input);
-        return;
-      }
-    });
+    meBadge.textContent = `أنت: ${profile?.name || "—"}`;
+    postText.disabled = false;
+    publishBtn.disabled = false;
 
-    document.addEventListener("keydown", (e) => {
-      const input = e.target && e.target.matches && e.target.matches("[data-cinput]");
-      if (input && e.key === "Enter") {
-        const idx = Number(input.getAttribute("data-cinput"));
-        addComment(idx, input);
-      }
-    });
+    startPostsListener();
+  }
 
-    loadPosts();
+  // Forum Firestore structure:
+  // collection: followers_posts
+  // doc: { text, uid, name, gender, age, createdAt, createdAtMs, likes: [uid...] }
+  // subcollection: followers_posts/{postId}/comments : { text, uid, name, createdAt, createdAtMs }
 
-    // ====== Optional simple lang toggle (شكل فقط) ======
-    const langToggle = document.getElementById("lang-toggle");
-    const LANG_KEY = "mlo5-lang";
-    const l10n = {
-      ar: {
-        title: "منتدى المتابعين - M L O 5",
-        sub: "منتدى المتابعين — انشر بوستاتك وخلي الكل يتفاعل 🔥",
-        navFollowers: "منتدى المتابعين",
-        navChat: "غرف الدردشة",
-        navPrivacy: "سياسة الخصوصية",
-        navTerms: "الشروط والأحكام",
-        publish: "نشر",
-        ph: "اكتب بوستك هنا...",
-        imgHint: "صورة اختيارية:",
-        hint: "* هذا ملف تجريبي: التخزين محلي داخل المتصفح (localStorage) عشان تشوف الشكل.",
-        langTitle: "العربية",
-      },
-      en: {
-        title: "Followers Forum - M L O 5",
-        sub: "Followers Forum — Post & let everyone interact 🔥",
-        navFollowers: "Followers Forum",
-        navChat: "Chat Rooms",
-        navPrivacy: "Privacy Policy",
-        navTerms: "Terms",
-        publish: "Publish",
-        ph: "Write your post here...",
-        imgHint: "Optional image:",
-        hint: "* Demo file: stored locally in your browser (localStorage).",
-        langTitle: "English",
-      }
-    };
+  const POSTS_COL = "followers_posts";
 
-    function applyLang(lang){
-      const s = l10n[lang] || l10n.ar;
-      document.title = s.title;
-      document.documentElement.lang = lang === "en" ? "en" : "ar";
-      document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
+  let unsubPosts = null;
+  const commentUnsubs = new Map();
 
-      const heroSub = document.getElementById("hero-sub");
-      const navFollowers = document.getElementById("nav-followers");
-      const navChat = document.getElementById("nav-chat");
-      const navPrivacy = document.getElementById("nav-privacy");
-      const navTerms = document.getElementById("nav-terms");
+  function clearCommentsListeners(){
+    for (const [,u] of commentUnsubs) try{ u(); }catch{}
+    commentUnsubs.clear();
+  }
 
-      if (heroSub) heroSub.textContent = s.sub;
-      if (navFollowers) navFollowers.textContent = s.navFollowers;
-      if (navChat) navChat.textContent = s.navChat;
-      if (navPrivacy) navPrivacy.textContent = s.navPrivacy;
-      if (navTerms) navTerms.textContent = s.navTerms;
+  function startPostsListener(){
+    if (unsubPosts) try{unsubPosts();}catch{}
+    clearCommentsListeners();
 
-      if (publishBtn) publishBtn.textContent = s.publish;
-      if (postText) postText.placeholder = s.ph;
+    const q = query(collection(db, POSTS_COL), orderBy("createdAtMs","desc"));
+    unsubPosts = onSnapshot(q, (snap)=>{
+      postsList.innerHTML = "";
+      postsCount.textContent = `${snap.size} بوست`;
 
-      // hint texts داخل post-box
-      const hints = document.querySelectorAll(".post-box .hint");
-      if (hints && hints.length){
-        // أول hint قبل input (imgHint) موجود كنص داخل span
-        const imgHint = document.querySelector(".file-wrap .hint");
-        if (imgHint) imgHint.textContent = s.imgHint;
-        // hint الأخير
-        const lastHint = hints[hints.length - 1];
-        if (lastHint) lastHint.textContent = s.hint;
-      }
+      const docs = [];
+      snap.forEach(d=> docs.push({id:d.id, ...d.data()}));
 
-      if (langToggle) langToggle.title = s.langTitle;
-    }
-
-    let savedLang = localStorage.getItem(LANG_KEY) || "ar";
-    applyLang(savedLang);
-
-    if (langToggle){
-      langToggle.addEventListener("click", () => {
-        savedLang = savedLang === "ar" ? "en" : "ar";
-        localStorage.setItem(LANG_KEY, savedLang);
-        applyLang(savedLang);
+      docs.forEach(p=>{
+        postsList.appendChild(renderPost(p));
       });
+
+      // نزول تلقائي مش ضروري (نخليه ثابت)
+    }, (err)=>{
+      console.error(err);
+      setErr(postErr, "❌ صار خطأ بتحميل المنشورات.");
+    });
+  }
+
+  function renderPost(p){
+    const post = document.createElement("div");
+    post.className = "post";
+    post.dataset.pid = p.id;
+
+    const t = Number(p.createdAt?.toMillis ? p.createdAt.toMillis() : p.createdAtMs || 0);
+    const time = formatTime(t);
+
+    const likesArr = Array.isArray(p.likes) ? p.likes : [];
+    const likedByMe = !!user && likesArr.includes(user.uid);
+    const likesCount = likesArr.length;
+
+    post.innerHTML = `
+      <div class="postHead">
+        <div class="who">👤 <span class="name">${escapeHtml(p.name || "مستخدم")}</span></div>
+        <div>${escapeHtml(time)}</div>
+      </div>
+
+      <div class="postBody">${escapeHtml(p.text || "")}</div>
+
+      <div class="postActions">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="miniBtn likeBtn ${likedByMe ? "liked":""}" type="button">👍 <span class="likeText">${likedByMe ? "معجب" : "أعجبني"}</span></button>
+          <button class="miniBtn cToggleBtn" type="button">💬 تعليقات</button>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
+          <div class="countPill">👍 <b class="likesCount" style="color:var(--white)">${likesCount}</b></div>
+          <div class="countPill">💬 <b class="commentsCount" style="color:var(--white)">0</b></div>
+        </div>
+      </div>
+
+      <div class="commentsWrap">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <input class="cInput" placeholder="اكتب تعليق..." maxlength="400" />
+          <button class="miniBtn cSendBtn" type="button">إرسال</button>
+        </div>
+        <div class="hintErr cErr"></div>
+        <div class="cList" style="display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+    `;
+
+    // Like button
+    const likeBtn = post.querySelector(".likeBtn");
+    const likeText = post.querySelector(".likeText");
+    const likesCountEl = post.querySelector(".likesCount");
+
+    likeBtn.addEventListener("click", async ()=>{
+      if (!user || !profile) return;
+      try{
+        const refDoc = doc(db, POSTS_COL, p.id);
+        // toggle
+        const nowLiked = likeBtn.classList.contains("liked");
+        if (nowLiked){
+          await updateDoc(refDoc, { likes: arrayRemove(user.uid) });
+          likeBtn.classList.remove("liked");
+          likeText.textContent = "أعجبني";
+          likesCountEl.textContent = String(Math.max(0, Number(likesCountEl.textContent||0) - 1));
+        }else{
+          await updateDoc(refDoc, { likes: arrayUnion(user.uid) });
+          likeBtn.classList.add("liked");
+          likeText.textContent = "معجب";
+          likesCountEl.textContent = String(Number(likesCountEl.textContent||0) + 1);
+        }
+      }catch(err){
+        console.error(err);
+      }
+    });
+
+    // Comments toggle
+    const cWrap = post.querySelector(".commentsWrap");
+    const cToggleBtn = post.querySelector(".cToggleBtn");
+    const cList = post.querySelector(".cList");
+    const cCountEl = post.querySelector(".commentsCount");
+    const cInput = post.querySelector(".cInput");
+    const cSendBtn = post.querySelector(".cSendBtn");
+    const cErr = post.querySelector(".cErr");
+
+    let commentsOpen = false;
+
+    cToggleBtn.addEventListener("click", ()=>{
+      commentsOpen = !commentsOpen;
+      cWrap.style.display = commentsOpen ? "flex" : "none";
+      if (commentsOpen){
+        cInput.focus();
+        ensureCommentsListener(p.id, cList, cCountEl);
+      }
+    });
+
+    // Send comment
+    cSendBtn.addEventListener("click", async ()=>{
+      setErr(cErr,"");
+      if (!user || !profile) return;
+
+      const text = collapseSpaces(cInput.value);
+      if (!text) return;
+
+      if (isProfane(text)){
+        setErr(cErr, "❌ التعليق مرفوض (كلام غير لائق).");
+        return;
+      }
+
+      cInput.value = "";
+      try{
+        const cCol = collection(db, POSTS_COL, p.id, "comments");
+        await addDoc(cCol, {
+          text,
+          uid: user.uid,
+          name: profile.name,
+          gender: profile.gender,
+          age: profile.age,
+          createdAt: serverTimestamp(),
+          createdAtMs: Date.now()
+        });
+      }catch(err){
+        console.error(err);
+        setErr(cErr, "❌ صار خطأ بإرسال التعليق.");
+      }
+    });
+
+    return post;
+  }
+
+  function ensureCommentsListener(postId, listEl, countEl){
+    if (commentUnsubs.has(postId)) return;
+
+    const q = query(collection(db, POSTS_COL, postId, "comments"), orderBy("createdAtMs","asc"));
+    const unsub = onSnapshot(q, (snap)=>{
+      listEl.innerHTML = "";
+      countEl.textContent = String(snap.size);
+
+      snap.forEach(d=>{
+        const c = d.data() || {};
+        const t = Number(c.createdAt?.toMillis ? c.createdAt.toMillis() : c.createdAtMs || 0);
+
+        const row = document.createElement("div");
+        row.className = "commentRow";
+        row.innerHTML = `
+          <div class="commentMeta">
+            <div class="who">👤 <span class="name">${escapeHtml(c.name || "مستخدم")}</span></div>
+            <div>${escapeHtml(formatTime(t))}</div>
+          </div>
+          <div class="commentText">${escapeHtml(c.text || "")}</div>
+        `;
+        listEl.appendChild(row);
+      });
+    });
+
+    commentUnsubs.set(postId, unsub);
+  }
+
+  // Publish new post
+  publishBtn.addEventListener("click", async ()=>{
+    setErr(postErr,"");
+    if (!user || !profile) return;
+
+    const text = collapseSpaces(postText.value);
+    if (!text){ setErr(postErr, "اكتب شيء قبل النشر."); return; }
+
+    if (isProfane(text)){
+      setErr(postErr, "❌ البوست مرفوض (كلام غير لائق).");
+      return;
     }
-  </script>
+
+    publishBtn.disabled = true;
+
+    try{
+      await addDoc(collection(db, POSTS_COL), {
+        text,
+        uid: user.uid,
+        name: profile.name,
+        gender: profile.gender,
+        age: profile.age,
+        likes: [],
+        createdAt: serverTimestamp(),
+        createdAtMs: Date.now()
+      });
+      postText.value = "";
+    }catch(err){
+      console.error(err);
+      setErr(postErr, "❌ صار خطأ بالنشر.");
+    }finally{
+      publishBtn.disabled = false;
+    }
+  });
+
+  refreshBtn.addEventListener("click", ()=>{
+    startPostsListener();
+  });
+
+  // Exit
+  exitBtn.addEventListener("click", ()=>{
+    location.href = "index.html";
+  });
+
+  // Auth boot
+  onAuthStateChanged(auth, async (u)=>{
+    user = u || null;
+    watchConnection();
+
+    // حمّل بروفايل لو مسجل بالبريد
+    if (user && !user.isAnonymous){
+      const saved = localStorage.getItem(profKey(user.uid));
+      if (saved){
+        try{
+          const p = JSON.parse(saved);
+          nameInput.value = p.name || "";
+          genderInput.value = p.gender || "";
+          ageInput.value = p.age || "";
+        }catch{}
+      }
+    }
+
+    // فتح المودال دائمًا (مثل الدردشة) عشان يحدد اسم + دخول
+    hideForm();
+    setErr(modalErr,"");
+    modal.style.display = "flex";
+  });
+</script>
 </body>
 </html>
