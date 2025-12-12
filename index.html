@@ -5,9 +5,11 @@
   <title>M L O 5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ✅ أيقونة الموقع (حمّل favicon.png في نفس المجلد) -->
-  <link rel="icon" type="image/png" href="favicon.png" />
-  <link rel="apple-touch-icon" href="favicon.png" />
+  <!-- ✅ Favicon (تأكد أن favicon.png موجود في نفس مجلد index.html بجذر المشروع) -->
+  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="32x32" />
+  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="16x16" />
+  <link rel="apple-touch-icon" href="./favicon.png?v=2" />
+  <meta name="theme-color" content="#020202" />
 
   <!-- خطوط -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
@@ -25,15 +27,10 @@
       --grid-y: 0px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
+      font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg-dark);
       color: var(--white);
       min-height: 100vh;
@@ -54,46 +51,28 @@
       z-index: 1;
     }
 
-    /* خلفية نقاط متحركة مع الماوس */
     .bg-grid {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      background-image: radial-gradient(
-        circle,
-        rgba(249, 250, 251, 0.55) 1px,
-        transparent 1px
-      );
+      background-image: radial-gradient(circle, rgba(249, 250, 251, 0.55) 1px, transparent 1px);
       background-size: 30px 30px;
-      background-position:
-        calc(50% + var(--grid-x))
-        calc(50% + var(--grid-y));
+      background-position: calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
       opacity: 0.25;
       mix-blend-mode: screen;
     }
 
-    .card-shell {
-      border-radius: 0;
-      padding: 0;
-      background: transparent;
-      box-shadow: none;
-      border: none;
-    }
+    .card-shell { border-radius: 0; padding: 0; background: transparent; box-shadow: none; border: none; }
+    .card-shell-inner { position: relative; z-index: 1; }
 
-    .card-shell-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* الشريط العلوي: تسجيل دخول + اختيار اللغة */
     .top-bar {
       display: flex;
-      justify-content: flex-start; /* ثابت على اليسار */
+      justify-content: flex-start;
       align-items: center;
       gap: 10px;
       margin-bottom: 10px;
-      direction: ltr; /* يخلي ترتيب العناصر من اليسار لليمين دائماً */
+      direction: ltr;
     }
 
     .top-login-link {
@@ -104,26 +83,18 @@
       border-radius: 999px;
       border: 1px solid rgba(250, 204, 21, 0.6);
       background: rgba(0, 0, 0, 0.6);
-      box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition:
-        background 0.15s ease,
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .top-login-link:hover {
       background: rgba(250, 204, 21, 0.15);
       transform: translateY(-1px);
-      box-shadow:
-        0 12px 30px rgba(0, 0, 0, 0.95),
-        0 0 0 1px rgba(250, 204, 21, 0.7);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(250, 204, 21, 0.7);
     }
 
     .lang-toggle {
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       border-radius: 999px;
       border: 1px solid rgba(148, 163, 184, 0.7);
       background: radial-gradient(circle at top, #111111, #020202);
@@ -133,29 +104,18 @@
       justify-content: center;
       cursor: pointer;
       font-size: 1rem;
-      box-shadow:
-        0 10px 24px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition:
-        background 0.15s ease,
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .lang-toggle:hover {
       transform: translateY(-1px);
       background: radial-gradient(circle at top, #facc15, #fbbf24);
       color: #000;
-      box-shadow:
-        0 14px 30px rgba(0, 0, 0, 1),
-        0 0 0 1px rgba(250, 204, 21, 0.8);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.8);
     }
 
-    /* العنوان */
-    .hero-title {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+    .hero-title { text-align: center; margin-bottom: 10px; }
 
     .hero-title h1 {
       font-family: "Poppins", system-ui, sans-serif;
@@ -164,96 +124,41 @@
       letter-spacing: 0.35em;
       text-transform: uppercase;
       color: var(--white);
-      text-shadow: none;
       white-space: nowrap;
       direction: ltr;
       unicode-bidi: bidi-override;
     }
 
-    /* حروف اللوغو المنفصلة للأنيميشن */
-    .hero-title h1 .logo-letter {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(16px);
-    }
-
-    .hero-title h1.hero-logo-animate .logo-letter {
-      animation: logo-bounce 0.7s cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
-    }
-
-    .hero-title h1.hero-logo-animate .logo-letter:nth-child(1) {
-      animation-delay: 0s;
-    }
-    .hero-title h1.hero-logo-animate .logo-letter:nth-child(2) {
-      animation-delay: 0.08s;
-    }
-    .hero-title h1.hero-logo-animate .logo-letter:nth-child(3) {
-      animation-delay: 0.16s;
-    }
-    .hero-title h1.hero-logo-animate .logo-letter:nth-child(4) {
-      animation-delay: 0.24s;
-    }
+    .hero-title h1 .logo-letter { display: inline-block; opacity: 0; transform: translateY(16px); }
+    .hero-title h1.hero-logo-animate .logo-letter { animation: logo-bounce 0.7s cubic-bezier(0.22, 0.8, 0.3, 1) forwards; }
+    .hero-title h1.hero-logo-animate .logo-letter:nth-child(1) { animation-delay: 0s; }
+    .hero-title h1.hero-logo-animate .logo-letter:nth-child(2) { animation-delay: 0.08s; }
+    .hero-title h1.hero-logo-animate .logo-letter:nth-child(3) { animation-delay: 0.16s; }
+    .hero-title h1.hero-logo-animate .logo-letter:nth-child(4) { animation-delay: 0.24s; }
 
     @keyframes logo-bounce {
-      0% {
-        transform: translateY(18px);
-        opacity: 0;
-      }
-      40% {
-        transform: translateY(-6px);
-        opacity: 1;
-      }
-      70% {
-        transform: translateY(4px);
-      }
-      100% {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      0% { transform: translateY(18px); opacity: 0; }
+      40% { transform: translateY(-6px); opacity: 1; }
+      70% { transform: translateY(4px); }
+      100% { transform: translateY(0); opacity: 1; }
     }
 
-    .hero-sub {
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-top: 6px;
-    }
+    .hero-sub { text-align: center; font-size: 0.9rem; color: var(--muted); margin-top: 6px; }
 
-    .divider {
-      width: 100%;
-      margin: 18px auto;
-      position: relative;
-      height: 1px;
-    }
-
-    .divider-line {
-      height: 1px;
-      width: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(156, 163, 175, 0.4),
-        transparent
-      );
-    }
-
+    .divider { width: 100%; margin: 18px auto; position: relative; height: 1px; }
+    .divider-line { height: 1px; width: 100%; background: linear-gradient(90deg, transparent, rgba(156, 163, 175, 0.4), transparent); }
     .divider-glow {
       position: absolute;
       inset: 0;
       margin: auto;
       height: 12px;
       width: 40%;
-      background: radial-gradient(
-        circle,
-        rgba(250, 204, 21, 0.5),
-        transparent 70%
-      );
+      background: radial-gradient(circle, rgba(250, 204, 21, 0.5), transparent 70%);
       opacity: 0.7;
       filter: blur(3px);
       pointer-events: none;
     }
 
-    /* القوائم أعلى الصفحة */
     .top-nav {
       display: flex;
       justify-content: center;
@@ -263,7 +168,6 @@
       position: relative;
       z-index: 5;
     }
-    /* ما في top-nav--rtl / top-nav--ltr الآن */
 
     .top-nav-item {
       position: relative;
@@ -276,11 +180,7 @@
       cursor: pointer;
       user-select: none;
       text-decoration: none;
-      transition:
-        background 0.2s ease,
-        transform 0.15s ease,
-        box-shadow 0.2s ease,
-        color 0.2s ease;
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease;
     }
 
     .top-nav-item:hover {
@@ -289,22 +189,9 @@
       box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
     }
 
-    .top-nav-dropdown {
-      padding-right: 18px;
-      padding-left: 18px;
-    }
-
-    .top-nav-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .top-nav-label::after {
-      content: "▾";
-      font-size: 0.75rem;
-      opacity: 0.9;
-    }
+    .top-nav-dropdown { padding-right: 18px; padding-left: 18px; }
+    .top-nav-label { display: inline-flex; align-items: center; gap: 4px; }
+    .top-nav-label::after { content: "▾"; font-size: 0.75rem; opacity: 0.9; }
 
     .dropdown-menu {
       position: absolute;
@@ -319,9 +206,7 @@
       opacity: 0;
       pointer-events: none;
       transform: translateY(4px);
-      transition:
-        opacity 0.18s ease,
-        transform 0.18s ease;
+      transition: opacity 0.18s ease, transform 0.18s ease;
       backdrop-filter: blur(10px);
       z-index: 10;
     }
@@ -344,32 +229,21 @@
       display: block;
     }
 
-    .dropdown-item:hover {
-      background: rgba(250, 204, 21, 0.12);
-      color: var(--yellow);
-    }
+    .dropdown-item:hover { background: rgba(250, 204, 21, 0.12); color: var(--yellow); }
 
-    /* منطقة السلايدر (بدل الفيديو) */
-    .video-section {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
+    .video-section { margin-top: 10px; margin-bottom: 10px; }
 
     .video-wrapper {
       position: relative;
       width: 100%;
       border-radius: var(--radius-lg);
       background: radial-gradient(circle at top, #111111, #020202);
-      box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.85),
-        0 0 0 1px rgba(148, 163, 184, 0.2);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(148, 163, 184, 0.2);
       overflow: hidden;
       padding: 10px;
       z-index: 1;
       border: 2px solid #f9fafb;
-      transition:
-        box-shadow 0.25s ease,
-        border-color 0.25s ease;
+      transition: box-shadow 0.25s ease, border-color 0.25s ease;
     }
 
     .video-wrapper::before {
@@ -381,17 +255,12 @@
       box-shadow: 0 0 0 rgba(250, 204, 21, 0);
       opacity: 0;
       pointer-events: none;
-      transition:
-        opacity 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
+      transition: opacity 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
     .video-wrapper:hover {
       border-color: rgba(250, 204, 21, 0.8);
-      box-shadow:
-        0 22px 55px rgba(0, 0, 0, 0.95),
-        0 0 0 1px rgba(250, 204, 21, 0.35);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(250, 204, 21, 0.35);
     }
 
     .video-wrapper:hover::before {
@@ -409,19 +278,8 @@
       aspect-ratio: 16 / 9;
     }
 
-    /* ✅ سلايدر الصور */
-    .hero-slider {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      touch-action: pan-y;
-    }
-
-    .hero-slider-track {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
+    .hero-slider { position: relative; width: 100%; height: 100%; touch-action: pan-y; }
+    .hero-slider-track { position: relative; width: 100%; height: 100%; }
 
     .hero-slide {
       position: absolute;
@@ -437,11 +295,10 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      cursor: pointer; /* ✅ عشان يحس المستخدم إنها قابلة للكبس */
     }
 
-    .hero-slide.is-active {
-      opacity: 1;
-    }
+    .hero-slide.is-active { opacity: 1; }
 
     .hero-slider-dots {
       position: absolute;
@@ -460,19 +317,11 @@
       border: 1px solid rgba(249, 250, 251, 0.8);
       background: rgba(15, 23, 42, 0.8);
       cursor: pointer;
-      transition:
-        background 0.15s ease,
-        transform 0.15s ease,
-        border-color 0.15s ease;
+      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
     }
 
-    .hero-slider-dot.is-active {
-      background: #facc15;
-      border-color: #facc15;
-      transform: scale(1.15);
-    }
+    .hero-slider-dot.is-active { background: #facc15; border-color: #facc15; transform: scale(1.15); }
 
-    /* إعلان تجريبي تحت الفيديو */
     .ad-slot {
       margin-top: 18px;
       margin-bottom: 10px;
@@ -496,10 +345,7 @@
       white-space: nowrap;
     }
 
-    .ad-slot-body {
-      flex: 1;
-      text-align: right;
-    }
+    .ad-slot-body { flex: 1; text-align: right; }
 
     .ad-slot-cta {
       font-size: 0.8rem;
@@ -513,22 +359,10 @@
       transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
     }
 
-    .ad-slot-cta:hover {
-      background: #facc15;
-      color: #111827;
-      transform: translateY(-1px);
-    }
+    .ad-slot-cta:hover { background: #facc15; color: #111827; transform: translateY(-1px); }
 
-    /* الأقسام */
-    .sections {
-      margin-top: 24px;
-    }
-
-    .sections-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-    }
+    .sections { margin-top: 24px; }
+    .sections-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 
     .section-card {
       display: block;
@@ -538,26 +372,17 @@
       border-radius: 18px;
       padding: 14px 14px 16px;
       border: 1px solid var(--border-subtle);
-      box-shadow:
-        0 10px 28px rgba(0, 0, 0, 0.7),
-        0 0 0 1px rgba(55, 65, 81, 0.5);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(55, 65, 81, 0.5);
       position: relative;
       overflow: hidden;
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
     .section-card::before {
       content: "";
       position: absolute;
       inset: -40%;
-      background: radial-gradient(
-        circle at top,
-        rgba(250, 204, 21, 0.18),
-        transparent 55%
-      );
+      background: radial-gradient(circle at top, rgba(250, 204, 21, 0.18), transparent 55%);
       opacity: 0;
       transition: opacity 0.2s ease;
       pointer-events: none;
@@ -566,50 +391,25 @@
     .section-card:hover {
       transform: translateY(-4px);
       border-color: rgba(250, 204, 21, 0.9);
-      box-shadow:
-        0 16px 40px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(250, 204, 21, 0.5);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(250, 204, 21, 0.5);
     }
 
-    .section-card:hover::before {
-      opacity: 1;
-    }
+    .section-card:hover::before { opacity: 1; }
+    .section-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+    .section-title { font-size: 1.05rem; font-weight: 700; color: var(--yellow); margin-bottom: 6px; }
+    .section-body { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
 
-    .section-label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .section-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--yellow);
-      margin-bottom: 6px;
-    }
-
-    .section-body {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    /* نبذة عنّي */
-    .about-section {
-      margin-top: 26px;
-    }
+    .about-section { margin-top: 26px; }
 
     .about-card {
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 14px 14px 14px;
+      padding: 14px;
       border-radius: 18px;
       background: linear-gradient(145deg, #020202, #050505);
       border: 1px solid var(--border-subtle);
-      box-shadow:
-        0 12px 30px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(55, 65, 81, 0.6);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(55, 65, 81, 0.6);
     }
 
     .about-avatar {
@@ -622,32 +422,12 @@
       box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
     }
 
-    .about-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .about-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    .about-text {
-      flex: 1;
-      min-width: 0;
-    }
+    .about-text { flex: 1; min-width: 0; }
+    .about-title { font-size: 0.95rem; color: var(--yellow); margin-bottom: 4px; font-weight: 700; }
+    .about-body { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
 
-    .about-title {
-      font-size: 0.95rem;
-      color: var(--yellow);
-      margin-bottom: 4px;
-      font-weight: 700;
-    }
-
-    .about-body {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    /* السوشال ميديا */
     .footer {
       margin-top: 30px;
       padding-top: 18px;
@@ -659,15 +439,10 @@
 
     .footer-top {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end; /* ✅ صار فقط أيقونات */
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
-    }
-
-    .footer-text {
-      font-size: 0.85rem;
-      color: var(--muted);
     }
 
     .social-links {
@@ -692,15 +467,8 @@
       font-size: 0.85rem;
       font-weight: 700;
       font-family: "Poppins", system-ui, sans-serif;
-      box-shadow:
-        0 10px 24px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        border-color 0.18s ease,
-        background 0.18s ease,
-        color 0.18s.ease;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
       overflow: hidden;
     }
 
@@ -708,16 +476,10 @@
       content: "";
       position: absolute;
       inset: -40%;
-      background: radial-gradient(
-        circle at top,
-        rgba(250, 204, 21, 0.15),
-        transparent 60%
-      );
+      background: radial-gradient(circle at top, rgba(250, 204, 21, 0.15), transparent 60%);
       opacity: 0;
       transform: translateX(-10px);
-      transition:
-        opacity 0.2s.ease,
-        transform 0.2s.ease;
+      transition: opacity 0.2s ease, transform 0.2s ease;
       pointer-events: none;
       mix-blend-mode: screen;
     }
@@ -727,15 +489,10 @@
       border-color: rgba(250, 204, 21, 0.95);
       background: radial-gradient(circle at top, #facc15, #fbbf24);
       color: #000;
-      box-shadow:
-        0 18px 42px rgba(0, 0, 0, 1),
-        0 0 0 1px rgba(250, 204, 21, 0.8);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.8);
     }
 
-    .social-link:hover::after {
-      opacity: 1;
-      transform: translateX(6px);
-    }
+    .social-link:hover::after { opacity: 1; transform: translateX(6px); }
 
     .footer-bottom {
       text-align: center;
@@ -744,32 +501,15 @@
       margin-top: 2px;
     }
 
-    @media (max-width: 900px) {
-      .sections-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
+    @media (max-width: 900px) { .sections-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     @media (max-width: 640px) {
-      .hero-title h1 {
-        letter-spacing: 0.28em;
-      }
-
-      .sections-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .footer-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .social-links {
-        justify-content: flex-start;
-      }
+      .hero-title h1 { letter-spacing: 0.28em; }
+      .sections-grid { grid-template-columns: 1fr; }
+      .footer-top { flex-direction: column; align-items: flex-start; }
+      .social-links { justify-content: flex-start; }
     }
 
-    /* شاشة التحميل (Preloader) */
     #preloader {
       position: fixed;
       inset: 0;
@@ -781,38 +521,25 @@
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
-    #preloader.preloader-hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
+    #preloader.preloader-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-    .preloader-logo img {
-      max-width: 200px;
-      height: auto;
-      animation: preloader-blink 0.35s infinite alternate;
-    }
+    .preloader-logo img { max-width: 200px; height: auto; animation: preloader-blink 0.35s infinite alternate; }
+    @keyframes preloader-blink { 0% { opacity: 0.35; } 100% { opacity: 1; } }
 
-    @keyframes preloader-blink {
-      0% { opacity: 0.35; }
-      100% { opacity: 1; }
-    }
-
-    /* Toast الاشتراك */
+    /* ✅ Toast الاشتراك (صار ظاهر دائمًا) */
     .subscribe-toast {
       position: fixed;
       left: 18px;
       bottom: 72px;
       z-index: 40;
       max-width: 320px;
-      transform: translateY(20px);
-      opacity: 0;
-      pointer-events: none;
-      transition:
-        opacity 0.25s ease,
-        transform 0.25s.ease;
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
+    /* (احتفظنا بالكلاس لو احتجته لاحقًا) */
     .subscribe-toast.subscribe-toast--visible {
       opacity: 1;
       transform: translateY(0);
@@ -827,28 +554,13 @@
       border-radius: 16px;
       background: rgba(0, 0, 0, 0.9);
       border: 1px solid rgba(250, 204, 21, 0.85);
-      box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.95),
-        0 0 0 1px rgba(17, 24, 39, 0.9);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(17, 24, 39, 0.9);
       backdrop-filter: blur(10px);
     }
 
-    .subscribe-toast-text {
-      flex: 1;
-    }
-
-    .subscribe-toast-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--yellow);
-      margin-bottom: 2px;
-    }
-
-    .subscribe-toast-body {
-      font-size: 0.8rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
+    .subscribe-toast-text { flex: 1; }
+    .subscribe-toast-title { font-size: 0.9rem; font-weight: 700; color: var(--yellow); margin-bottom: 2px; }
+    .subscribe-toast-body { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
 
     .subscribe-toast-btn {
       display: inline-flex;
@@ -865,9 +577,7 @@
       margin-top: 4px;
     }
 
-    .subscribe-toast-btn:hover {
-      filter: brightness(1.05);
-    }
+    .subscribe-toast-btn:hover { filter: brightness(1.05); }
 
     .subscribe-toast-close {
       border: none;
@@ -879,11 +589,8 @@
       padding: 0 2px;
     }
 
-    .subscribe-toast-close:hover {
-      color: var(--white);
-    }
+    .subscribe-toast-close:hover { color: var(--white); }
 
-    /* زر الرجوع لأعلى الصفحة */
     .scroll-top-btn {
       position: fixed;
       right: 18px;
@@ -899,60 +606,43 @@
       justify-content: center;
       font-size: 1.1rem;
       cursor: pointer;
-      box-shadow:
-        0 10px 26px rgba(0, 0, 0, 0.95),
-        0 0 0 1px rgba(0, 0, 0, 1);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(0, 0, 0, 1);
       opacity: 0;
       pointer-events: none;
       transform: translateY(10px);
-      transition:
-        opacity 0.2s ease,
-        transform 0.2s ease,
-        background 0.15s ease,
-        color 0.15s ease,
-        box-shadow 0.15s.ease;
+      transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
       z-index: 55;
     }
 
-    .scroll-top-btn.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
+    .scroll-top-btn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
 
     .scroll-top-btn:hover {
       background: #facc15;
       color: #000;
-      box-shadow:
-        0 14px 32px rgba(0, 0, 0, 1),
-        0 0 0 1px rgba(250, 204, 21, 0.9);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.9);
     }
   </style>
 </head>
+
 <body>
-  <!-- شاشة تحميل قبل فتح الموقع (لوغو) -->
+  <!-- شاشة تحميل -->
   <div id="preloader">
     <div class="preloader-logo">
       <img src="logo.png" alt="MLO5 Logo">
     </div>
   </div>
 
-  <!-- خلفية نقاط متحركة -->
   <div class="bg-grid"></div>
 
   <main class="page">
     <div class="card-shell">
       <div class="card-shell-inner">
 
-        <!-- الشريط العلوي: تسجيل دخول + اختيار اللغة -->
         <div class="top-bar">
           <a id="login-link" href="login.html" class="top-login-link">تسجيل دخول</a>
-          <button id="lang-toggle" class="lang-toggle" title="العربية">
-            🌐
-          </button>
+          <button id="lang-toggle" class="lang-toggle" title="العربية">🌐</button>
         </div>
 
-        <!-- العنوان الرئيسي -->
         <header class="hero-title">
           <h1 id="hero-logo" aria-label="M L O 5">
             <span class="logo-letter">M</span><span class="logo-letter">L</span><span class="logo-letter">O</span><span class="logo-letter">5</span>
@@ -960,20 +650,15 @@
           <p id="hero-sub" class="hero-sub"> يتم تعديل هذا النص لاحقًا </p>
         </header>
 
-        <!-- خط فاصل -->
         <div class="divider">
           <div class="divider-line"></div>
           <div class="divider-glow"></div>
         </div>
 
-        <!-- القوائم (نفس الترتيب دائماً: 1-2-3-4-5) -->
         <nav class="top-nav">
-          <!-- قائمة 1 / Home -->
           <a href="index.html" class="top-nav-item" id="menu1">قائمة 1</a>
-          <!-- قائمة 2 / Chat Room -->
           <a href="soon.html" class="top-nav-item" id="menu2">قائمة 2</a>
 
-          <!-- قائمة 3 منسدلة -->
           <div class="top-nav-item top-nav-dropdown" id="menu3-wrap">
             <span class="top-nav-label" id="menu3-label">قائمة 3</span>
             <div class="dropdown-menu">
@@ -983,45 +668,43 @@
             </div>
           </div>
 
-          <!-- قائمة 4 -->
           <a href="soon.html" class="top-nav-item" id="menu4">قائمة 4</a>
-          <!-- قائمة 5 / Contact Me -->
           <a href="contact.html" class="top-nav-item" id="menu5">قائمة 5</a>
         </nav>
 
-        <!-- ✅ السلايدر بدل الفيديو -->
+        <!-- ✅ السلايدر (Hover يوقف - Click يفتح رابط) -->
         <section class="video-section">
           <div class="video-wrapper">
             <div class="video-inner">
               <div id="hero-slider" class="hero-slider">
                 <div class="hero-slider-track">
-                  <div class="hero-slide is-active">
-                    <img src="slide1.jpg" alt="صورة 1">
+                  <!-- ضع رابطك لاحقًا داخل data-link -->
+                  <div class="hero-slide is-active" data-link="#">
+                    <img src="slide1.jpg" alt="صورة 1" loading="eager">
                   </div>
-                  <div class="hero-slide">
-                    <img src="slide2.jpg" alt="صورة 2">
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide2.jpg" alt="صورة 2" loading="lazy">
                   </div>
-                  <div class="hero-slide">
-                    <img src="slide3.jpg" alt="صورة 3">
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide3.jpg" alt="صورة 3" loading="lazy">
                   </div>
-                  <div class="hero-slide">
-                    <img src="slide4.jpg" alt="صورة 4">
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide4.jpg" alt="صورة 4" loading="lazy">
                   </div>
-                  <div class="hero-slide">
-                    <img src="slide5.jpg" alt="صورة 5">
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide5.jpg" alt="صورة 5" loading="lazy">
                   </div>
-                  <div class="hero-slide">
-                    <img src="slide6.jpg" alt="صورة 6">
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide6.jpg" alt="صورة 6" loading="lazy">
                   </div>
-                  <div class="hero-slide">
-                    <img src="slide7.jpg" alt="صورة 7">
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide7.jpg" alt="صورة 7" loading="lazy">
                   </div>
-                  <div class="hero-slide">
-                    <img src="slide8.jpg" alt="صورة 8">
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide8.jpg" alt="صورة 8" loading="lazy">
                   </div>
                 </div>
 
-                <!-- النقاط -->
                 <div class="hero-slider-dots">
                   <button class="hero-slider-dot is-active" data-index="0" type="button"></button>
                   <button class="hero-slider-dot" data-index="1" type="button"></button>
@@ -1037,7 +720,6 @@
           </div>
         </section>
 
-        <!-- إعلان تجريبي تحت الفيديو -->
         <section class="ad-slot">
           <div class="ad-slot-body">
             مساحة إعلانية تجريبية لمحتوى أو شريك مرتبط بالجيمينغ؛ مثل المايك اللي بستخدمه، شاشة اللعب، أو كود خصم خاص لمتابعين MLO5.
@@ -1046,13 +728,11 @@
           <div class="ad-slot-label">إعلان</div>
         </section>
 
-        <!-- خط فاصل -->
         <div class="divider">
           <div class="divider-line"></div>
           <div class="divider-glow"></div>
         </div>
 
-        <!-- الأقسام -->
         <section class="sections">
           <div class="sections-grid">
             <a href="soon.html" class="section-card">
@@ -1089,17 +769,15 @@
           </div>
         </section>
 
-        <!-- خط فاصل قبل النبذة -->
         <div class="divider">
           <div class="divider-line"></div>
           <div class="divider-glow"></div>
         </div>
 
-        <!-- نبذة عنّي -->
         <section class="about-section">
           <div class="about-card">
             <div class="about-avatar">
-              <img src="me.jpg" alt="صورة mlo5">
+              <img src="me.jpg" alt="صورة mlo5" loading="lazy">
             </div>
             <div class="about-text">
               <div id="about-title" class="about-title">نبذة عنّي</div>
@@ -1111,23 +789,13 @@
           </div>
         </section>
 
-        <!-- الفوتر + السوشال ميديا -->
+        <!-- ✅ Footer (أيقونات فقط) -->
         <footer class="footer">
           <div class="footer-top">
-            <p id="footer-text" class="footer-text">
-              تابعني على السوشال ميديا:
-            </p>
-
             <div class="social-links">
-              <a href="https://www.youtube.com/@mlo5ya" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
-                Y
-              </a>
-              <a href="https://www.instagram.com/i.mlo5/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
-                IG
-              </a>
-              <a href="https://www.facebook.com/hkafeh" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">
-                f
-              </a>
+              <a href="https://www.youtube.com/@mlo5ya" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">Y</a>
+              <a href="https://www.instagram.com/i.mlo5/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">IG</a>
+              <a href="https://www.facebook.com/hkafeh" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">f</a>
             </div>
           </div>
 
@@ -1135,12 +803,13 @@
             © <span id="year-span">2025</span> · صنع بحب 💛.
           </div>
         </footer>
+
       </div>
     </div>
   </main>
 
-  <!-- Toast الاشتراك -->
-  <div id="subscribe-toast" class="subscribe-toast" aria-live="polite">
+  <!-- ✅ Toast الاشتراك (ظاهر دائمًا) -->
+  <div id="subscribe-toast" class="subscribe-toast subscribe-toast--visible" aria-live="polite">
     <div class="subscribe-toast-inner">
       <button class="subscribe-toast-close" aria-label="إغلاق التنبيه">×</button>
       <div class="subscribe-toast-text">
@@ -1164,16 +833,14 @@
     const y = document.getElementById("year-span");
     if (y) y.textContent = new Date().getFullYear();
 
-    // تحريك شبكة النقاط مع الماوس
+    // تحريك شبكة النقاط
     const root = document.documentElement;
     document.addEventListener("mousemove", (e) => {
       const xRatio = e.clientX / window.innerWidth - 0.5;
       const yRatio = e.clientY / window.innerHeight - 0.5;
       const maxShift = 40;
-      const xShift = xRatio * maxShift;
-      const yShift = yRatio * maxShift;
-      root.style.setProperty("--grid-x", xShift.toFixed(1) + "px");
-      root.style.setProperty("--grid-y", yShift.toFixed(1) + "px");
+      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
     });
 
     // شاشة التحميل + أنيميشن اللوغو
@@ -1181,26 +848,16 @@
     const heroLogo = document.getElementById("hero-logo");
     window.addEventListener("load", () => {
       setTimeout(() => {
-        if (preloader) {
-          preloader.classList.add("preloader-hidden");
-        }
-        if (heroLogo) {
-          heroLogo.classList.add("hero-logo-animate");
-        }
+        if (preloader) preloader.classList.add("preloader-hidden");
+        if (heroLogo) heroLogo.classList.add("hero-logo-animate");
       }, 700);
     });
 
-    // حيلة بسيطة لتحسين فرصة تشغيل الصوت
+    // تحسين فرصة تشغيل الصوت
     let userInteracted = false;
-    document.addEventListener(
-      "click",
-      () => {
-        userInteracted = true;
-      },
-      { once: true }
-    );
+    document.addEventListener("click", () => { userInteracted = true; }, { once: true });
 
-    // اختيار اللغة (عربي / إنجليزي)
+    // ✅ اختيار اللغة (حذفنا footerText لأنه انشال)
     const langToggle = document.getElementById("lang-toggle");
     const LANG_KEY = "mlo5-lang";
     const l10n = {
@@ -1228,9 +885,8 @@
         aboutTitle: "نبذة عنّي",
         aboutBody:
           "هذا نص تعريفي مؤقت عنّي. أقدّم محتوى جيمينغ، أفكار كرياتيف، وتجارب مختلفة على منصات التواصل. رح أعدّل هذا النص لاحقًا بحيث يعكس أسلوبي وشخصيتي بالشكل اللي بحبّه.",
-        footerText: "تابعني على السوشال ميديا:",
         toastTitle: "اشترك بقناتي على يوتيوب",
-        toastBody: " اشترك الآن وخليك معنا بالرحلة 👇💥",
+        toastBody: "اشترك الآن وخليك معنا بالرحلة 👇💥",
         toastBtn: "اشترك الآن",
         langTitle: "العربية",
       },
@@ -1258,7 +914,6 @@
         aboutTitle: "About Me",
         aboutBody:
           "This is a temporary bio. I create gaming content, creative ideas, and different experiences across platforms. I’ll update this text later so it reflects my style and personality.",
-        footerText: "Follow me on social media:",
         toastTitle: "Subscribe to my YouTube channel",
         toastBody: "👇💥 Subscribe now and stay with us on the journey",
         toastBtn: "Subscribe now",
@@ -1276,7 +931,6 @@
       const heroSub = document.getElementById("hero-sub");
       const aboutTitle = document.getElementById("about-title");
       const aboutBody = document.getElementById("about-body");
-      const footerText = document.getElementById("footer-text");
       const toastTitle = document.getElementById("toast-title");
       const toastBody = document.getElementById("toast-body");
       const toastBtn = document.getElementById("toast-btn");
@@ -1331,14 +985,11 @@
 
       if (aboutTitle) aboutTitle.textContent = strings.aboutTitle;
       if (aboutBody) aboutBody.textContent = strings.aboutBody;
-      if (footerText) footerText.textContent = strings.footerText;
       if (toastTitle) toastTitle.textContent = strings.toastTitle;
       if (toastBody) toastBody.textContent = strings.toastBody;
       if (toastBtn) toastBtn.textContent = strings.toastBtn;
 
-      if (langToggle) {
-        langToggle.title = strings.langTitle;
-      }
+      if (langToggle) langToggle.title = strings.langTitle;
     }
 
     let savedLang = localStorage.getItem(LANG_KEY) || "ar";
@@ -1352,51 +1003,35 @@
       });
     }
 
-    // Toast الاشتراك بعد 7 ثواني + صوت
+    // ✅ Toast: زر الإغلاق يخفيه فقط (لكن يرجع يظهر دائمًا عند إعادة تحميل الصفحة)
     const toast = document.getElementById("subscribe-toast");
     const toastClose = toast ? toast.querySelector(".subscribe-toast-close") : null;
     const toastSound = document.getElementById("toast-sound");
-    const SUB_KEY = "mlo5-sub-toast-v2";
 
-    if (toast && !localStorage.getItem(SUB_KEY)) {
-      setTimeout(() => {
-        toast.classList.add("subscribe-toast--visible");
-        if (userInteracted && toastSound && typeof toastSound.play === "function") {
-          try {
-            toastSound.currentTime = 0;
-            toastSound.play().catch(() => {});
-          } catch (e) {}
-        }
-      }, 7000);
+    if (toast && userInteracted && toastSound && typeof toastSound.play === "function") {
+      try { toastSound.currentTime = 0; toastSound.play().catch(() => {}); } catch (e) {}
     }
 
     if (toastClose) {
       toastClose.addEventListener("click", () => {
-        toast.classList.remove("subscribe-toast--visible");
-        localStorage.setItem(SUB_KEY, "1");
+        toast.style.display = "none";
       });
     }
 
-    // زر الرجوع لأعلى الصفحة
+    // زر الرجوع للأعلى
     const scrollTopBtn = document.getElementById("scroll-top");
     if (scrollTopBtn) {
       window.addEventListener("scroll", () => {
-        if (window.scrollY > 250) {
-          scrollTopBtn.classList.add("visible");
-        } else {
-          scrollTopBtn.classList.remove("visible");
-        }
+        if (window.scrollY > 250) scrollTopBtn.classList.add("visible");
+        else scrollTopBtn.classList.remove("visible");
       });
 
       scrollTopBtn.addEventListener("click", () => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
     }
 
-    // ✅ سلايدر: نقاط + سحب + تشغيل تلقائي كل 3 ثواني (تقدر تغيّر AUTO_DELAY)
+    // ✅ سلايدر: نقاط + سحب + تشغيل تلقائي + (Hover يوقف على الصورة) + (Click يفتح رابط)
     (function initHeroSlider() {
       const slider = document.getElementById("hero-slider");
       if (!slider) return;
@@ -1407,29 +1042,20 @@
 
       let current = 0;
       let autoTimer = null;
-      const AUTO_DELAY = 3000; // 3 ثواني
+      const AUTO_DELAY = 3000;
 
       function goTo(index) {
         const total = slides.length;
         current = (index + total) % total;
 
-        slides.forEach((slide, i) => {
-          slide.classList.toggle("is-active", i === current);
-        });
-        dots.forEach((dot, i) => {
-          dot.classList.toggle("is-active", i === current);
-        });
+        slides.forEach((slide, i) => slide.classList.toggle("is-active", i === current));
+        dots.forEach((dot, i) => dot.classList.toggle("is-active", i === current));
       }
 
-      function goNext() {
-        goTo(current + 1);
-      }
+      function goNext() { goTo(current + 1); }
 
       function stopAuto() {
-        if (autoTimer !== null) {
-          clearInterval(autoTimer);
-          autoTimer = null;
-        }
+        if (autoTimer !== null) { clearInterval(autoTimer); autoTimer = null; }
       }
 
       function startAuto() {
@@ -1446,7 +1072,22 @@
         });
       });
 
-      // سحب باللمس / الماوس
+      // Hover على أي صورة = يوقف
+      slides.forEach((slide) => {
+        const img = slide.querySelector("img");
+        if (!img) return;
+
+        img.addEventListener("mouseenter", () => stopAuto());
+        img.addEventListener("mouseleave", () => startAuto());
+
+        // Click = يفتح رابط (من data-link)
+        img.addEventListener("click", () => {
+          const link = slide.getAttribute("data-link") || "#";
+          if (link && link !== "#") window.open(link, "_blank", "noopener");
+        });
+      });
+
+      // سحب باللمس/الماوس
       let startX = null;
       let isTouching = false;
 
@@ -1463,11 +1104,8 @@
 
         const threshold = 50;
         if (Math.abs(diff) > threshold) {
-          if (diff < 0) {
-            goNext();
-          } else {
-            goTo(current - 1);
-          }
+          if (diff < 0) goNext();
+          else goTo(current - 1);
         }
 
         isTouching = false;
@@ -1478,15 +1116,9 @@
       slider.addEventListener("touchstart", onPointerStart, { passive: true });
       slider.addEventListener("touchend", onPointerEnd);
 
-      slider.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        onPointerStart(e);
-      });
+      slider.addEventListener("mousedown", (e) => { e.preventDefault(); onPointerStart(e); });
       slider.addEventListener("mouseup", onPointerEnd);
-      slider.addEventListener("mouseleave", () => {
-        isTouching = false;
-        startX = null;
-      });
+      slider.addEventListener("mouseleave", () => { isTouching = false; startX = null; startAuto(); });
 
       goTo(0);
       startAuto();
@@ -1518,15 +1150,10 @@
       if (!currentEmail) return;
 
       const users = mlo5IndexLoadUsers();
-      const currentUser =
-        users.find((u) => u.email === currentEmail) || null;
+      const currentUser = users.find((u) => u.email === currentEmail) || null;
 
-      const rawName =
-        (currentUser && currentUser.name && currentUser.name.trim()) ||
-        currentEmail;
-
-      const displayName =
-        rawName.length > 16 ? rawName.slice(0, 14) + "…" : rawName;
+      const rawName = (currentUser && currentUser.name && currentUser.name.trim()) || currentEmail;
+      const displayName = rawName.length > 16 ? rawName.slice(0, 14) + "…" : rawName;
 
       const topBar = loginLink.parentElement;
       if (!topBar) return;
@@ -1578,4 +1205,3 @@
   </script>
 </body>
 </html>
-
