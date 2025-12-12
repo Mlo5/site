@@ -10,26 +10,18 @@
   <style>
     body{margin:0;font-family:Tajawal;background:#020202;color:#fff}
     .wrap{max-width:900px;margin:auto;padding:16px}
-    .top{display:flex;gap:10px;align-items:center;margin-bottom:12px;direction:ltr}
-    .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 14px;border-radius:999px;border:1px solid #facc15;background:rgba(0,0,0,.55);color:#fff;text-decoration:none;cursor:pointer;font-weight:900}
-    .pill:hover{background:rgba(250,204,21,.08)}
-    .room{border:1px solid #facc15;border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;background:rgba(0,0,0,.35)}
+    .room{border:1px solid #facc15;border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer}
     .room:hover{background:rgba(250,204,21,.08)}
-    .muted{color:#9ca3af;font-size:.92rem;margin-top:6px}
-
-    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px}
-    .modal{background:#0a0a0a;border:1px solid #facc15;border-radius:16px;padding:16px;width:100%;max-width:420px;box-shadow:0 18px 45px rgba(0,0,0,.9)}
-    .modal-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
-    .x{border:none;background:transparent;color:#9ca3af;font-size:22px;cursor:pointer}
-    .x:hover{color:#fff}
-
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:14px}
+    .modal{background:#0a0a0a;border:1px solid #facc15;border-radius:16px;padding:16px;width:100%;max-width:420px}
     input,select{width:100%;margin-top:6px;margin-bottom:12px;padding:10px;border-radius:10px;border:1px solid #333;background:#000;color:#fff;outline:none}
-    input:focus,select:focus{border-color:#facc15;box-shadow:0 0 0 4px rgba(250,204,21,.18)}
     button{padding:10px 14px;border-radius:999px;border:none;font-weight:900;cursor:pointer}
     .primary{background:#facc15;color:#000}
-    .ghost{background:rgba(0,0,0,.55);border:1px solid rgba(250,204,21,.35);color:#fff}
-    .actions{display:flex;gap:10px;flex-wrap:wrap}
-    #msg{min-height:1.2em;margin-top:10px;color:#9ca3af}
+    .row{display:flex;gap:10px;justify-content:flex-start;margin-top:6px}
+    .ghost{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(250,204,21,.35)}
+    #msg{color:#fca5a5;margin:8px 0 0;min-height:18px}
+    .top{display:flex;gap:10px;margin-bottom:14px;direction:ltr}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 14px;border-radius:999px;border:1px solid rgba(250,204,21,.45);background:rgba(0,0,0,.55);color:#fff;text-decoration:none}
   </style>
 </head>
 
@@ -41,30 +33,24 @@
     <a class="pill" href="profile.html">👤 <span>بروفايل</span></a>
   </div>
 
-  <h2 style="margin:0 0 6px 0;">غرف الدردشة</h2>
-  <div class="muted">اختر غرفة — رح يطلعلك نموذج سريع قبل الدخول.</div>
+  <h2>غرف الدردشة</h2>
 
   <div class="room" data-room="general">الغرفة العامة</div>
   <div class="room" data-room="gaming">Gaming</div>
   <div class="room" data-room="help">مساعدة</div>
   <div class="room" data-room="offtopic">سوالف</div>
-
-  <div class="muted" id="status"></div>
 </div>
 
 <!-- Modal -->
-<div class="modal-bg" id="modal" aria-hidden="true">
+<div class="modal-bg" id="modal-bg">
   <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-h">
-      <h3 style="margin:0;color:#facc15;">قبل الدخول</h3>
-      <button class="x" id="close" aria-label="close">×</button>
-    </div>
+    <h3>قبل الدخول</h3>
 
     <label>الاسم</label>
-    <input id="name" placeholder="اكتب اسمك" autocomplete="nickname"/>
+    <input id="name" placeholder="اكتب اسمك" />
 
     <label>العمر</label>
-    <input id="age" type="number" min="8" max="99" placeholder="مثال: 21"/>
+    <input id="age" type="number" min="8" max="99" placeholder="مثال: 21" />
 
     <label>الجنس</label>
     <select id="gender">
@@ -73,9 +59,9 @@
       <option value="female">أنثى</option>
     </select>
 
-    <div class="actions">
-      <button class="primary" id="enter" type="button">دخول الغرفة</button>
-      <button class="ghost" id="cancel" type="button">إلغاء</button>
+    <div class="row">
+      <button class="primary" id="enter-btn" type="button">دخول الغرفة</button>
+      <button class="ghost" id="cancel-btn" type="button">إلغاء</button>
     </div>
 
     <p id="msg"></p>
@@ -85,7 +71,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   const app = initializeApp({
     apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
@@ -96,66 +82,44 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const modal = document.getElementById("modal");
-  const statusEl = document.getElementById("status");
-  const msg = document.getElementById("msg");
-
+  // DOM
+  const modalBg   = document.getElementById("modal-bg");
+  const enterBtn  = document.getElementById("enter-btn");
+  const cancelBtn = document.getElementById("cancel-btn");
   const nameInput = document.getElementById("name");
-  const ageInput = document.getElementById("age");
-  const genderInput = document.getElementById("gender");
-
-  const enterBtn = document.getElementById("enter");
-  const closeBtn = document.getElementById("close");
-  const cancelBtn = document.getElementById("cancel");
+  const ageInput  = document.getElementById("age");
+  const genderSel = document.getElementById("gender");
+  const msgEl     = document.getElementById("msg");
 
   let roomPicked = null;
   let uid = null;
   let authReady = false;
-  let busy = false;
 
   function openModal(){
-    msg.textContent = "";
-    modal.style.display = "flex";
-    modal.setAttribute("aria-hidden","false");
-    setTimeout(()=> nameInput.focus(), 0);
+    msgEl.textContent = "";
+    modalBg.style.display = "flex";
   }
   function closeModal(){
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden","true");
-    roomPicked = null;
-    msg.textContent = "";
+    modalBg.style.display = "none";
   }
 
-  closeBtn.onclick = closeModal;
-  cancelBtn.onclick = closeModal;
-  modal.addEventListener("click", (e)=>{ if(e.target === modal) closeModal(); });
+  cancelBtn.addEventListener("click", closeModal);
+  modalBg.addEventListener("click", (e)=>{ if(e.target === modalBg) closeModal(); });
 
-  // ✅ اقرأ بيانات محفوظة مسبقًا (مرة واحدة)
-  async function loadIdentity(u){
-    try{
-      const snap = await getDoc(doc(db,"users",u.uid,"chatProfile","main"));
-      if (snap.exists()){
-        const d = snap.data();
-        if (d?.name) nameInput.value = d.name;
-        if (d?.age) ageInput.value = d.age;
-        if (d?.gender) genderInput.value = d.gender;
-      }
-    }catch(e){}
-  }
-
-  onAuthStateChanged(auth, async (u)=>{
-    if(!u){ location.href="login.html"; return; }
+  onAuthStateChanged(auth, (u)=>{
+    if(!u){
+      location.href = "login.html";
+      return;
+    }
     uid = u.uid;
     authReady = true;
-    statusEl.textContent = "";
-    await loadIdentity(u);
   });
 
-  // ✅ فتح المودال عند اختيار غرفة
-  document.querySelectorAll(".room").forEach(r=>{
+  // اختيار غرفة
+  document.querySelectorAll(".room").forEach((r)=>{
     r.addEventListener("click", ()=>{
-      if(!authReady){
-        statusEl.textContent = "جارٍ التأكد من تسجيل الدخول…";
+      if(!authReady || !uid){
+        msgEl.textContent = "استنى لحظة… جاري تجهيز تسجيل الدخول.";
         return;
       }
       roomPicked = r.dataset.room;
@@ -163,45 +127,45 @@
     });
   });
 
-  // ✅ دخول الغرفة
+  // دخول الغرفة
   enterBtn.addEventListener("click", async ()=>{
-    if (busy) return;
-    if (!authReady || !uid){
-      msg.textContent = "⏳ لحظة… لسه بنجهّز تسجيل الدخول.";
+    msgEl.textContent = "";
+
+    if(!authReady || !uid){
+      msgEl.textContent = "❌ تسجيل الدخول مش جاهز… جرّب بعد ثانية.";
       return;
     }
-    if (!roomPicked){
-      msg.textContent = "❌ اختَر غرفة أولًا.";
+    if(!roomPicked){
+      msgEl.textContent = "❌ اختر غرفة أولًا.";
       return;
     }
 
     const name = (nameInput.value || "").trim();
     const age = Number(ageInput.value || 0);
-    const gender = (genderInput.value || "").trim();
+    const gender = (genderSel.value || "").trim();
 
     if(!name || !age || age < 8 || age > 99 || !gender){
-      msg.textContent="❌ عبّي الاسم + العمر (8-99) + الجنس.";
+      msgEl.textContent = "❌ عبّي الاسم + العمر (8-99) + الجنس.";
       return;
     }
 
-    busy = true;
-    enterBtn.disabled = true;
-    enterBtn.textContent = "جارٍ الدخول…";
+    // خزّن محليًا (يضمن إن room.html يقرأها فورًا)
+    sessionStorage.setItem("mlo5-chat", JSON.stringify({ name, age, gender }));
 
-    // ✅ تخزين سريع يضمن الدخول
-    sessionStorage.setItem("mlo5-chat", JSON.stringify({name,age,gender}));
-
-    // ✅ حفظ Firestore (مرة واحدة + أي تعديل)
+    // حاول خزّن Firestore (لو Rules بتمنع، ما رح نوقف التحويل)
     try{
       await setDoc(doc(db,"users",uid,"chatProfile","main"),{
         name, age, gender, updatedAt: serverTimestamp()
       },{merge:true});
     }catch(e){
-      // حتى لو فشل، ندخل الغرفة عادي
+      console.warn("Firestore save failed (not blocking):", e);
     }
 
     closeModal();
-    location.href = `room.html?room=${encodeURIComponent(roomPicked)}`;
+
+    // ✅ تحويل مضمون
+    const target = `room.html?room=${encodeURIComponent(roomPicked)}`;
+    location.assign(target);
   });
 </script>
 </body>
