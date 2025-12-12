@@ -320,6 +320,26 @@
       color: var(--muted);
     }
 
+    /* ✅ سبينر + قفل زر الإرسال أثناء الإرسال */
+    .btn.loading {
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .btn.loading::after {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.25);
+      border-top-color: #000;
+      display: inline-block;
+      margin-inline-start: 8px;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
   </style>
 </head>
 <body>
@@ -348,6 +368,9 @@
 <!-- الفورم -->
 <form accept-charset="UTF-8" action="https://formspree.io/f/xeoypvvj" class="form" id="contact-form" method="POST" novalidate="">
   <input id="hidden-subject" name="_subject" type="hidden" value="New message from MLO5 contact form"/>
+
+  <!-- ✅ Honeypot anti-spam (بوتات بتعبيه، الإنسان لا) -->
+  <input type="text" name="website" tabindex="-1" autocomplete="off" style="display:none">
 
   <div class="form-row">
     <label class="label" for="name" id="label-name">الاسم</label>
@@ -557,9 +580,23 @@
       if (el) el.textContent = msg || "";
     }
 
+    let successTimer = null;
     function setSuccess(msg) {
       const el = document.getElementById("success-message");
-      if (el) el.textContent = msg || "";
+      if (!el) return;
+
+      el.textContent = msg || "";
+
+      if (successTimer) {
+        clearTimeout(successTimer);
+        successTimer = null;
+      }
+
+      if (msg) {
+        successTimer = setTimeout(() => {
+          el.textContent = "";
+        }, 4000);
+      }
     }
 
     function clearAllMessages() {
@@ -573,6 +610,10 @@
     if (contactForm) {
       contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        // ✅ Honeypot anti-spam
+        const trap = contactForm.querySelector('input[name="website"]');
+        if (trap && trap.value) return;
 
         const s = l10n[currentLang] || l10n.ar;
         clearAllMessages();
@@ -616,6 +657,7 @@
         if (submitBtn) {
           submitBtn.disabled = true;
           submitBtn.dataset.prevText = submitBtn.textContent || "";
+          submitBtn.classList.add("loading");
           submitBtn.textContent = s.sending || "Sending...";
         }
 
@@ -640,6 +682,7 @@
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;
+            submitBtn.classList.remove("loading");
             submitBtn.textContent = submitBtn.dataset.prevText || (s.sendBtn || "Send");
           }
         }
