@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <title>Social - Mlo5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg-dark:#020202;
+      --yellow:#facc15;
+      --white:#f9fafb;
+      --muted:#9ca3af;
+      --border:rgba(156,163,175,.22);
+      --border-strong:rgba(30,30,30,.95);
+      --shadow:0 18px 45px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,.95);
+      --shadow-soft:0 10px 24px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.9);
+      --radius:22px;
+      --radius-full:999px;
+      --grid-x:0px;
+      --grid-y:0px;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+
+    body{
+      font-family:"Tajawal",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg-dark);
+      color:var(--white);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+      padding:16px;
+      position:relative;
+      cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+    }
+
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image: radial-gradient(circle, rgba(249,250,251,.55) 1px, transparent 1px);
+      background-size:30px 30px;
+      background-position: calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
+      opacity:.25; mix-blend-mode:screen;
+    }
+
+    .page{
+      position:relative; z-index:1;
+      width:100%; max-width:1100px; margin:auto;
+    }
+
+    .top-bar{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px; flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .left-actions, .right-actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+    .back-link{
+      font-size:.85rem; color:var(--muted);
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 12px; border-radius:var(--radius-full);
+      background:rgba(10,10,10,.9);
+      border:1px solid var(--border-strong);
+      box-shadow:var(--shadow-soft);
+      transition:transform .15s ease, background .15s ease;
+    }
+    .back-link:hover{ background:rgba(20,20,20,.95); transform:translateY(-1px); }
+
+    .lang-toggle{
+      width:36px; height:36px; border-radius:var(--radius-full);
+      border:1px solid rgba(148,163,184,.7);
+      background:radial-gradient(circle at top,#111,#020202);
+      color:var(--yellow);
+      display:inline-flex; align-items:center; justify-content:center;
+      cursor:pointer; font-size:1rem;
+      box-shadow:var(--shadow-soft);
+      transition:transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+    }
+    .lang-toggle:hover{
+      transform:translateY(-1px);
+      background:radial-gradient(circle at top,#facc15,#fbbf24);
+      color:#000;
+      box-shadow:0 14px 30px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.8);
+    }
+
+    .btn{
+      border:1px solid rgba(250,204,21,.35);
+      background:rgba(10,10,10,.88);
+      color:var(--yellow);
+      padding:10px 14px;
+      border-radius:var(--radius-full);
+      cursor:pointer;
+      font-size:.88rem;
+      display:inline-flex; align-items:center; gap:8px;
+      box-shadow:var(--shadow-soft);
+      transition:transform .15s ease, background .15s ease, filter .15s ease;
+      text-decoration:none;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform:translateY(-1px); filter:brightness(1.05); background:rgba(18,18,18,.92); }
+    .btn.primary{
+      background:radial-gradient(circle at top,#facc15,#fbbf24);
+      color:#000;
+      border:1px solid rgba(250,204,21,.8);
+    }
+
+    .header{ margin-bottom:14px; }
+    .title{
+      font-family:"Poppins","Tajawal",system-ui,sans-serif;
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size:1.6rem;
+      margin-bottom:6px;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.8;
+      max-width:900px;
+    }
+
+    .pill-row{
+      margin-top:10px;
+      display:flex; flex-wrap:wrap; gap:8px;
+      align-items:center;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 12px; border-radius:var(--radius-full);
+      border:1px solid var(--border);
+      background:rgba(10,10,10,.86);
+      color:rgba(156,163,175,.95);
+      font-size:.82rem;
+      width:fit-content;
+    }
+
+    .card{
+      background:radial-gradient(circle at top,#111,#020202);
+      border-radius:var(--radius);
+      border:1px solid rgba(20,20,20,.95);
+      box-shadow:var(--shadow);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background:radial-gradient(circle at top, rgba(250,204,21,.16), transparent 55%);
+      opacity:.7;
+      pointer-events:none;
+      mix-blend-mode:screen;
+    }
+    .card-inner{ position:relative; z-index:1; }
+
+    .toolbar{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .search{
+      flex:1;
+      min-width:220px;
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(156,163,175,.18);
+      background:rgba(10,10,10,.65);
+      box-shadow:0 10px 24px rgba(0,0,0,.75);
+    }
+    .search input{
+      width:100%;
+      background:transparent;
+      border:none;
+      outline:none;
+      color:var(--white);
+      font-size:.92rem;
+    }
+    .search .icon{ color:rgba(156,163,175,.9); }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 620px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .soc-card{
+      border-radius:18px;
+      border:1px solid rgba(156,163,175,.14);
+      background:rgba(10,10,10,.55);
+      overflow:hidden;
+      box-shadow:0 14px 30px rgba(0,0,0,.7);
+      transition:transform .15s ease, border-color .15s ease, filter .15s ease;
+      position:relative;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .soc-card:hover{
+      transform:translateY(-2px);
+      border-color:rgba(250,204,21,.3);
+      filter:brightness(1.03);
+    }
+
+    .soc-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .soc-left{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .soc-ico{
+      width:44px; height:44px;
+      border-radius:16px;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(250,204,21,.10);
+      border:1px solid rgba(250,204,21,.35);
+      color:var(--yellow);
+      font-size:1.25rem;
+      box-shadow:var(--shadow-soft);
+      flex:0 0 auto;
+    }
+    .soc-name{
+      font-family:"Poppins","Tajawal",system-ui,sans-serif;
+      font-weight:800;
+      font-size:.98rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .soc-desc{
+      color:rgba(156,163,175,.95);
+      font-size:.86rem;
+      line-height:1.75;
+      min-height:2.9em;
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:5px 10px;
+      border-radius:var(--radius-full);
+      border:1px solid rgba(156,163,175,.18);
+      background:rgba(0,0,0,.25);
+      color:rgba(156,163,175,.95);
+      font-size:.78rem;
+      width:fit-content;
+    }
+    .badge.yellow{
+      border-color:rgba(250,204,21,.35);
+      color:var(--yellow);
+      background:rgba(250,204,21,.10);
+    }
+
+    .actions{
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin-top:auto;
+    }
+    .mini{
+      font-size:.84rem;
+      padding:8px 10px;
+      border-radius:var(--radius-full);
+      border:1px solid rgba(156,163,175,.18);
+      background:rgba(10,10,10,.72);
+      color:var(--white);
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:8px;
+      transition:transform .15s ease, border-color .15s ease, filter .15s ease, opacity .15s ease;
+      user-select:none;
+    }
+    .mini:hover{ transform:translateY(-1px); border-color:rgba(250,204,21,.35); filter:brightness(1.05); }
+    .mini.yellow{ border-color:rgba(250,204,21,.45); color:var(--yellow); }
+
+    .mini.disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .footer-note{
+      margin-top:14px;
+      font-size:.82rem;
+      color:rgba(156,163,175,.9);
+      line-height:1.8;
+      text-align:center;
+    }
+
+    .empty{
+      padding:14px;
+      border:1px dashed rgba(156,163,175,.25);
+      border-radius:18px;
+      color:rgba(156,163,175,.95);
+      background:rgba(10,10,10,.35);
+      line-height:1.9;
+    }
+    .hidden{ display:none !important; }
+
+    .toast{
+      position:fixed;
+      bottom:16px;
+      left:16px;
+      right:16px;
+      margin:auto;
+      max-width:520px;
+      z-index:60;
+      display:none;
+      padding:10px 12px;
+      border-radius:18px;
+      border:1px solid rgba(156,163,175,.18);
+      background:rgba(10,10,10,.85);
+      box-shadow:0 18px 45px rgba(0,0,0,.95);
+      color:var(--white);
+      font-size:.9rem;
+      line-height:1.6;
+      text-align:center;
+    }
+    .toast.show{ display:block; }
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+
+  <main class="page">
+    <div class="top-bar">
+      <div class="left-actions">
+        <a class="back-link" href="index.html" id="back-link">← عودة للصفحة الرئيسية</a>
+        <a class="btn primary" id="btn-all" href="#" target="_blank" rel="noopener">✨ افتح كل حساباتي</a>
+      </div>
+
+      <div class="right-actions">
+        <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
+      </div>
+    </div>
+
+    <header class="header">
+      <h1 class="title" id="page-title">Social Media</h1>
+      <p class="subtitle" id="page-subtitle">
+        كل حساباتي الرسمية في مكان واحد — اضغط وادخل بسرعة.
+      </p>
+
+      <div class="pill-row">
+        <div class="pill" id="pill-tip">💡 نصيحة: تقدر تغيّر الروابط من ملف واحد داخل الكود بسهولة</div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="card-inner">
+
+        <div class="toolbar">
+          <div class="search">
+            <span class="icon">🔎</span>
+            <input id="search" type="text" placeholder="ابحث عن منصة..." autocomplete="off"/>
+          </div>
+        </div>
+
+        <div class="grid" id="grid"></div>
+        <div class="empty hidden" id="empty">ما لقيت منصات بهالاسم.</div>
+
+        <div class="footer-note" id="footer-note">
+          آخر تحديث: 12 ديسمبر 2025
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">✅</div>
+
+  <script>
+    // ======= Background grid move =======
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+    });
+
+    // ======= EDIT LINKS HERE (put your accounts later) =======
+    // ضع روابطك لاحقًا مكان "#"
+    const SOCIAL = [
+      { key:"youtube",   nameAR:"يوتيوب",        nameEN:"YouTube",        icon:"▶",  tag:"Video",     url:"#", noteAR:"القناة الرسمية + فيديوهاتي", noteEN:"Official channel + videos" },
+      { key:"kick",      nameAR:"Kick",          nameEN:"Kick",           icon:"🟢", tag:"Live",      url:"#", noteAR:"بثوث مباشرة على Kick",      noteEN:"Live streams on Kick" },
+      { key:"twitch",    nameAR:"Twitch",        nameEN:"Twitch",         icon:"🟣", tag:"Live",      url:"#", noteAR:"بثوث وتفاعل",            noteEN:"Streams & community" },
+      { key:"tiktok",    nameAR:"تيك توك",       nameEN:"TikTok",         icon:"🎵", tag:"Shorts",    url:"#", noteAR:"شورتز وفيديوهات سريعة",     noteEN:"Short clips & trends" },
+      { key:"instagram", nameAR:"انستغرام",      nameEN:"Instagram",      icon:"📸", tag:"Pics",      url:"#", noteAR:"ستوري + بوستات",           noteEN:"Stories + posts" },
+      { key:"facebook",  nameAR:"فيسبوك",        nameEN:"Facebook",       icon:"f",  tag:"Page",      url:"#", noteAR:"صفحة رسمية ومجتمع",         noteEN:"Official page & community" },
+      { key:"x",         nameAR:"X (تويتر)",     nameEN:"X (Twitter)",    icon:"𝕏",  tag:"Updates",   url:"#", noteAR:"تحديثات سريعة وإعلانات",     noteEN:"Fast updates & news" },
+      { key:"discord",   nameAR:"ديسكورد",       nameEN:"Discord",        icon:"💬", tag:"Community", url:"discord.html", noteAR:"سيرفر المجتمع", noteEN:"Community server" },
+      { key:"snapchat",  nameAR:"سناب شات",      nameEN:"Snapchat",       icon:"👻", tag:"Stories",   url:"#", noteAR:"لقطات سريعة يومية",          noteEN:"Daily quick stories" },
+      { key:"threads",   nameAR:"Threads",       nameEN:"Threads",        icon:"@",  tag:"Social",    url:"#", noteAR:"نقاشات خفيفة",              noteEN:"Light discussions" },
+      { key:"telegram",  nameAR:"تيليجرام",      nameEN:"Telegram",       icon:"✈️", tag:"Channel",   url:"#", noteAR:"قناة للإعلانات",             noteEN:"Announcements channel" },
+      { key:"whatsapp",  nameAR:"واتساب",        nameEN:"WhatsApp",       icon:"💚", tag:"Contact",   url:"#", noteAR:"تواصل سريع",                noteEN:"Quick contact" },
+      { key:"email",     nameAR:"إيميل",         nameEN:"Email",          icon:"✉️", tag:"Business",  url:"#", noteAR:"للأعمال والتعاون",           noteEN:"Business & collabs" },
+      { key:"website",   nameAR:"الموقع",        nameEN:"Website",        icon:"🌐", tag:"Hub",       url:"index.html", noteAR:"ارجع للموقع الرئيسي", noteEN:"Back to main site" },
+    ];
+
+    // ======= Helpers =======
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHTML(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function showToast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> t.classList.remove("show"), 1200);
+    }
+
+    function isPlaceholder(url){
+      return !url || url === "#";
+    }
+
+    // ======= Render =======
+    let currentLang = localStorage.getItem("mlo5-lang") || "ar";
+
+    function render(){
+      const q = ($("search").value || "").trim().toLowerCase();
+      const grid = $("grid");
+      const empty = $("empty");
+
+      const list = SOCIAL.filter(p=>{
+        const name = (currentLang === "en" ? p.nameEN : p.nameAR).toLowerCase();
+        const key = (p.key || "").toLowerCase();
+        return !q || name.includes(q) || key.includes(q);
+      });
+
+      grid.innerHTML = "";
+      empty.classList.toggle("hidden", list.length > 0);
+
+      list.forEach(p=>{
+        const name = currentLang === "en" ? p.nameEN : p.nameAR;
+        const note = currentLang === "en" ? p.noteEN : p.noteAR;
+
+        const url = p.url || "#";
+        const disabled = isPlaceholder(url);
+
+        const card = document.createElement("div");
+        card.className = "soc-card";
+        card.innerHTML = `
+          <div class="soc-top">
+            <div class="soc-left">
+              <div class="soc-ico">${escapeHTML(p.icon || "•")}</div>
+              <div class="soc-name">${escapeHTML(name)}</div>
+            </div>
+            <span class="badge yellow">${escapeHTML(p.tag || "")}</span>
+          </div>
+
+          <div class="soc-desc">${escapeHTML(note || "")}</div>
+
+          <div class="actions">
+            <a class="mini yellow ${disabled ? "disabled" : ""}" ${disabled ? "" : `href="${escapeHTML(url)}" target="_blank" rel="noopener"`}>
+              ${currentLang === "en" ? "Open" : "فتح"}
+            </a>
+            <button class="mini ${disabled ? "disabled" : ""}" data-copy="${escapeHTML(url)}" ${disabled ? "disabled" : ""}>
+              ${currentLang === "en" ? "Copy link" : "نسخ الرابط"}
+            </button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+
+      grid.querySelectorAll("[data-copy]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const url = btn.getAttribute("data-copy") || "#";
+          if(isPlaceholder(url)){
+            showToast(currentLang === "en" ? "Add your link first." : "حط رابط حسابك أولاً.");
+            return;
+          }
+          try{
+            await navigator.clipboard.writeText(url);
+            showToast(currentLang === "en" ? "✅ Copied!" : "✅ تم النسخ!");
+          }catch(e){
+            showToast(currentLang === "en" ? "❌ Copy failed" : "❌ فشل النسخ");
+          }
+        });
+      });
+    }
+
+    // ======= Open all accounts =======
+    $("btn-all").addEventListener("click", ()=>{
+      const links = SOCIAL
+        .map(p=>p.url)
+        .filter(u=>u && u !== "#" && !u.endsWith("index.html")); // ignore placeholders
+      if(!links.length){
+        showToast(currentLang === "en" ? "Add your links first." : "ضيف روابطك أولاً.");
+        return;
+      }
+      // open up to 5 to avoid popup blocking
+      links.slice(0,5).forEach(u=> window.open(u, "_blank", "noopener"));
+      showToast(currentLang === "en" ? "Opened some links." : "فتحت بعض الروابط.");
+    });
+
+    // ======= Language =======
+    const langToggle = $("lang-toggle");
+    const l10n = {
+      ar:{
+        docTitle:"Social - Mlo5",
+        back:"← عودة للصفحة الرئيسية",
+        title:"Social Media",
+        subtitle:"كل حساباتي الرسمية في مكان واحد — اضغط وادخل بسرعة.",
+        searchPH:"ابحث عن منصة...",
+        tip:"💡 نصيحة: تقدر تغيّر الروابط من ملف واحد داخل الكود بسهولة",
+        openAll:"✨ افتح كل حساباتي",
+        empty:"ما لقيت منصات بهالاسم.",
+        lastUpdate:"آخر تحديث: 12 ديسمبر 2025",
+        langTitle:"العربية"
+      },
+      en:{
+        docTitle:"Social - Mlo5",
+        back:"← Back to home",
+        title:"Social Media",
+        subtitle:"All my official accounts in one place — open them fast.",
+        searchPH:"Search a platform...",
+        tip:"💡 Tip: You can update links easily from one place in the code",
+        openAll:"✨ Open all my accounts",
+        empty:"No platforms match your search.",
+        lastUpdate:"Last updated: December 12, 2025",
+        langTitle:"English"
+      }
+    };
+
+    function applyLang(){
+      const s = l10n[currentLang] || l10n.ar;
+
+      document.title = s.docTitle;
+      $("back-link").textContent = s.back;
+      $("page-title").textContent = s.title;
+      $("page-subtitle").textContent = s.subtitle;
+      $("search").placeholder = s.searchPH;
+      $("pill-tip").textContent = s.tip;
+      $("btn-all").textContent = s.openAll;
+      $("empty").textContent = s.empty;
+      $("footer-note").textContent = s.lastUpdate;
+
+      langToggle.title = s.langTitle;
+
+      document.documentElement.lang = currentLang === "en" ? "en" : "ar";
+      document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
+
+      render();
+    }
+
+    langToggle.addEventListener("click", ()=>{
+      currentLang = currentLang === "ar" ? "en" : "ar";
+      localStorage.setItem("mlo5-lang", currentLang);
+      applyLang();
+    });
+
+    $("search").addEventListener("input", render);
+
+    applyLang();
+  </script>
+</body>
+</html>
