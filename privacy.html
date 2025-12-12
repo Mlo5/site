@@ -5,6 +5,7 @@
   <title>سياسة الخصوصية - Mlo5</title>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
+
   <style>
     :root {
       --bg-dark: #020202;
@@ -62,6 +63,13 @@
       flex-wrap: wrap;
     }
 
+    .nav-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
     .back-link {
       font-size: 0.85rem;
       color: var(--muted);
@@ -75,8 +83,8 @@
       border: 1px solid rgba(30, 30, 30, 0.95);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0, 0, 0, 0.9);
       transition: background 0.15s ease, transform 0.15s ease;
+      white-space: nowrap;
     }
-
     .back-link:hover { background: rgba(20, 20, 20, 0.95); transform: translateY(-1px); }
 
     .lang-toggle {
@@ -185,29 +193,44 @@
     }
     .link:hover { filter: brightness(1.05); }
 
+    /* Mlo5 clickable style */
+    .site-link{
+      color: var(--white);
+      font-weight: 900;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(250, 204, 21, 0.35);
+    }
+    .site-link:hover{
+      color: var(--yellow);
+      border-bottom-color: rgba(250, 204, 21, 0.75);
+    }
+
     .footer-note {
       margin-top: 14px;
       font-size: 0.82rem;
       color: rgba(156, 163, 175, 0.9);
       line-height: 1.8;
     }
-
   </style>
 </head>
+
 <body>
   <div class="bg-grid"></div>
 
   <main class="page">
     <div class="top-bar">
-      <a class="back-link" href="index.html" id="back-link">← عودة للصفحة الرئيسية</a>
+      <div class="nav-left">
+        <a class="back-link" href="index.html" id="nav-home">🏠 الرئيسية</a>
+        <a class="back-link" href="terms.html" id="nav-terms">📜 الشروط</a>
+        <a class="back-link" href="contact.html" id="nav-contact">✉️ اتصل بنا</a>
+      </div>
+
       <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
     </div>
 
     <header class="page-header">
       <h1 class="page-title" id="page-title">سياسة الخصوصية</h1>
-      <p class="page-subtitle" id="page-subtitle">
-        هذه السياسة تشرح كيف يتعامل موقع Mlo5 مع معلوماتك عند استخدام الموقع، بما في ذلك نموذج “اتصل بنا”، الدردشة العامة، وأي أقسام تفاعلية مثل المنتدى مستقبلًا.
-      </p>
+      <p class="page-subtitle" id="page-subtitle"></p>
       <div class="pill" id="effective-date">تاريخ النفاذ: 12 ديسمبر 2025</div>
     </header>
 
@@ -216,154 +239,84 @@
 
         <div class="section">
           <div class="h2" id="s1-title">1) من نحن</div>
-          <div class="p" id="s1-body">
-            موقع <strong style="color:var(--white)">Mlo5</strong> هو موقع شخصي. نلتزم باحترام خصوصيتك وحماية المعلومات التي تشاركها معنا عند استخدام خدمات الموقع.
-          </div>
+          <div class="p" id="s1-body"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s2-title">2) المعلومات التي نجمعها</div>
-          <div class="p" id="s2-body">
-            قد نجمع (حسب القسم الذي تستخدمه) الأنواع التالية من المعلومات:
-          </div>
-          <ul class="list" id="s2-list">
-            <li><strong>نموذج “اتصل بنا”:</strong> الاسم، البريد الإلكتروني، ومحتوى الرسالة.</li>
-            <li><strong>الدردشة العامة:</strong> الاسم المعروض، الجنس، العمر (حسب ما تدخله)، ومحتوى الرسائل التي ترسلها في الشات.</li>
-            <li><strong>المنتدى (مستقبلًا):</strong> المنشورات/التعليقات/الميمز وأي محتوى يضيفه المستخدم.</li>
-            <li><strong>بيانات تقنية أساسية:</strong> معلومات عامة من المتصفح (مثل نوع الجهاز/المتصفح) لأغراض تشغيلية وأمنية (قد تُجمع عبر مزوّدي الخدمة أو المنصة المستخدمة).</li>
-          </ul>
+          <div class="p" id="s2-body"></div>
+          <ul class="list" id="s2-list"></ul>
         </div>
 
         <div class="section">
           <div class="h2" id="s3-title">3) لماذا نجمع هذه المعلومات</div>
-          <div class="p" id="s3-body">
-            نستخدم المعلومات فقط للأغراض التالية:
-          </div>
-          <ul class="list" id="s3-list">
-            <li>تشغيل خدمات الموقع (الشات/المنتدى/الأقسام التفاعلية) وإظهار الاسم المعروض داخلها.</li>
-            <li>الرد على الرسائل والاستفسارات عبر نموذج “اتصل بنا”.</li>
-            <li>حماية الموقع والحد من الإساءة/السبام، وتطبيق قواعد الاستخدام (مثل الكتم/الحظر/الطرد).</li>
-            <li>تحسين تجربة الاستخدام (مثل تذكّر اللغة أو بعض الإعدادات).</li>
-          </ul>
+          <div class="p" id="s3-body"></div>
+          <ul class="list" id="s3-list"></ul>
         </div>
 
         <div class="section">
           <div class="h2" id="s4-title">4) الدردشة العامة (مهم)</div>
-          <div class="p" id="s4-body">
-            الدردشة العامة مساحة تواصل بين المستخدمين. عند إرسال رسالة في الشات، قد تظهر رسالتك واسمك المعروض ومعلومات بسيطة (مثل رمز الجنس) للآخرين داخل غرفة الدردشة.
-            <br><br>
-            يرجى عدم مشاركة أي معلومات حساسة أو خاصة داخل الشات (مثل رقم الهاتف، العنوان، كلمات المرور، أو أي بيانات مالية).
-          </div>
+          <div class="p" id="s4-body"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s5-title">5) المحتوى الذي ينشئه المستخدمون (الشات/المنتدى)</div>
-          <div class="p" id="s5-body">
-            أي محتوى تنشره أو ترسله (رسائل، منشورات، تعليقات، ميمز…) هو مسؤوليتك. نحتفظ بحق:
-          </div>
-          <ul class="list" id="s5-list">
-            <li>حذف/إخفاء المحتوى المخالف أو غير المناسب.</li>
-            <li>تطبيق إجراءات الإشراف (كتم/حظر/طرد) لحماية المجتمع.</li>
-          </ul>
-          <div class="p" id="s5-body2" style="margin-top:8px;">
-            الهدف من الإشراف هو تقليل الإساءة والسبام والحفاظ على بيئة محترمة، دون ضمان منع كل المخالفات بشكل كامل.
-          </div>
+          <div class="p" id="s5-body"></div>
+          <ul class="list" id="s5-list"></ul>
+          <div class="p" id="s5-body2" style="margin-top:8px;"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s6-title">6) أين تُعالج البيانات وكيف تُرسل</div>
-          <div class="p" id="s6-body">
-            هذا الموقع هو موقع ثابت (Static) مستضاف على GitHub Pages.
-            <br><br>
-            <strong style="color:var(--white)">نموذج التواصل:</strong> عند إرسال نموذج “اتصل بنا”، يتم إرسال البيانات إلى خدمة طرف ثالث لمعالجة النماذج وهي
-            <strong style="color:var(--white)">Formspree</strong> بهدف إيصال الرسالة إلينا.
-            <br><br>
-            <strong style="color:var(--white)">الدردشة/الأقسام التفاعلية:</strong> قد تعتمد على خدمات طرف ثالث/مزود قاعدة بيانات لتشغيل الشات والميزات التفاعلية. عند استخدامك لهذه الميزات، قد تُعالج البيانات عبر هذه الخدمات بهدف تشغيلها وتأمينها.
-          </div>
+          <div class="p" id="s6-body"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s7-title">7) الخدمات الخارجية والروابط</div>
-          <div class="p" id="s7-body">
-            يستخدم الموقع أو قد يستخدم روابط/خدمات خارجية لتشغيله أو لعرض محتوى وروابط مفيدة، مثل:
-          </div>
-          <ul class="list" id="s7-list">
-            <li>GitHub Pages (استضافة ملفات الموقع)</li>
-            <li>Formspree (استقبال ومعالجة رسائل نموذج التواصل)</li>
-            <li>YouTube (عرض فيديوهات/أفكار/ثمبنيلات أو روابط للقناة)</li>
-            <li>Discord (روابط لسيرفر الديسكورد أو أدوات/ودجت مرتبطة به)</li>
-            <li>منصات التواصل الاجتماعي (روابط لحساباتنا)</li>
-          </ul>
-          <div class="p" id="s7-body2" style="margin-top:8px;">
-            عند الانتقال إلى أي خدمة خارجية، تخضع بياناتك وسياساتك لسياسة الخصوصية الخاصة بتلك الخدمة.
-          </div>
+          <div class="p" id="s7-body"></div>
+          <ul class="list" id="s7-list"></ul>
+          <div class="p" id="s7-body2" style="margin-top:8px;"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s8-title">8) ملفات تعريف الارتباط (Cookies) والتخزين المحلي</div>
-          <div class="p" id="s8-body">
-            حاليًا لا نستخدم ملفات تعريف الارتباط للإعلانات أو التتبع التسويقي.
-            قد يستخدم الموقع التخزين المحلي في المتصفح (Local Storage) لتذكّر إعدادات مثل اللغة أو بيانات بسيطة لتسهيل الدخول للأقسام التفاعلية.
-            إذا أضفنا مستقبلاً أدوات تحليلات أو ملفات تعريف ارتباط إضافية، سنقوم بتحديث هذه الصفحة.
-          </div>
+          <div class="p" id="s8-body"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s9-title">9) خصوصية الأطفال والحد الأدنى للعمر</div>
-          <div class="p" id="s9-body">
-            بعض أقسام الموقع (مثل الشات والمنتدى) مخصصة لتفاعل المستخدمين.
-            الحد الأدنى لاستخدام هذه الأقسام هو <strong style="color:var(--white)">10 سنوات</strong>.
-            نحن لا نقصد جمع بيانات حساسة من الأطفال عمدًا.
-            إذا كنت ولي أمر وتعتقد أن طفلك شارك ببيانات شخصية أو محتوى غير مناسب، تواصل معنا وسنعمل على اتخاذ الإجراء المناسب (حذف/إخفاء المحتوى عند الإمكان).
-          </div>
+          <div class="p" id="s9-body"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s10-title">10) حماية البيانات</div>
-          <div class="p" id="s10-body">
-            نستخدم إجراءات تقنية معقولة للمساعدة في حماية البيانات (مثل HTTPS وإجراءات ضد السبام/الإساءة حيثما أمكن).
-            ومع ذلك، لا يمكن ضمان أمان 100% لأي نقل بيانات عبر الإنترنت.
-          </div>
+          <div class="p" id="s10-body"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s11-title">11) حقوقك</div>
-          <div class="p" id="s11-body">
-            يمكنك في أي وقت طلب:
-          </div>
-          <ul class="list" id="s11-list">
-            <li>معرفة المعلومات التي أرسلتها لنا عبر نموذج التواصل</li>
-            <li>حذف رسالتك أو بياناتك التي تم إرسالها (قدر الإمكان)</li>
-            <li>الإبلاغ عن محتوى مسيء في الشات/المنتدى ليتسنى لنا مراجعته</li>
-          </ul>
+          <div class="p" id="s11-body"></div>
+          <ul class="list" id="s11-list"></ul>
         </div>
 
         <div class="section">
           <div class="h2" id="s12-title">12) التواصل معنا</div>
-          <div class="p" id="s12-body">
-            لأي استفسار حول سياسة الخصوصية أو للإبلاغ عن محتوى مخالف، يمكنك التواصل معنا عبر البريد الإلكتروني:
-            <a class="link" href="mailto:ih4.mlo5@gmail.com">ih4.mlo5@gmail.com</a>
-          </div>
+          <div class="p" id="s12-body"></div>
         </div>
 
         <div class="section">
           <div class="h2" id="s13-title">13) التعديلات على هذه السياسة</div>
-          <div class="p" id="s13-body">
-            قد نقوم بتحديث هذه السياسة من وقت لآخر، خاصة عند إضافة ميزات جديدة (مثل: المنتدى، ما هو الجديد، أدوات تحليلات…).
-            سيتم نشر أي تعديل على هذه الصفحة مع تحديث تاريخ النفاذ.
-          </div>
+          <div class="p" id="s13-body"></div>
         </div>
 
-        <div class="footer-note" id="footer-note">
-          آخر تحديث: 12 ديسمبر 2025
-        </div>
+        <div class="footer-note" id="footer-note"></div>
 
       </div>
     </section>
   </main>
 
   <script>
-    // تحريك شبكة النقاط (نفس ستايل موقعك)
+    // تحريك شبكة النقاط
     const root = document.documentElement;
     document.addEventListener("mousemove", (e) => {
       const xRatio = e.clientX / window.innerWidth - 0.5;
@@ -377,21 +330,25 @@
     const LANG_KEY = "mlo5-lang";
     const langToggle = document.getElementById("lang-toggle");
 
-    // تاريخ اليوم حسب بياناتك (Asia/Amman)
     const EFFECTIVE_AR = "12 ديسمبر 2025";
     const EFFECTIVE_EN = "December 12, 2025";
+
+    // ✅ Mlo5 clickable HTML (bold + link to home)
+    const SITE = `<a href="index.html" class="site-link"><strong>Mlo5</strong></a>`;
 
     const l10n = {
       ar: {
         pageTitle: "سياسة الخصوصية - Mlo5",
-        back: "← عودة للصفحة الرئيسية",
+        navHome: "🏠 الرئيسية",
+        navTerms: "📜 الشروط",
+        navContact: "✉️ اتصل بنا",
+        subtitle: `هذه السياسة تشرح كيف يتعامل ${SITE} مع معلوماتك عند استخدام الموقع، بما في ذلك نموذج “اتصل بنا”، الدردشة العامة، وأي أقسام تفاعلية مثل المنتدى مستقبلًا.`,
         title: "سياسة الخصوصية",
-        subtitle: "هذه السياسة تشرح كيف يتعامل موقع Mlo5 مع معلوماتك عند استخدام الموقع، بما في ذلك نموذج “اتصل بنا”، الدردشة العامة، وأي أقسام تفاعلية مثل المنتدى مستقبلًا.",
         effective: `تاريخ النفاذ: ${EFFECTIVE_AR}`,
         lastUpdate: `آخر تحديث: ${EFFECTIVE_AR}`,
 
         s1t:"1) من نحن",
-        s1b:"موقع <strong style='color:var(--white)'>Mlo5</strong> هو موقع شخصي. نلتزم باحترام خصوصيتك وحماية المعلومات التي تشاركها معنا عند استخدام خدمات الموقع.",
+        s1b:`${SITE} هو موقع شخصي. نلتزم باحترام خصوصيتك وحماية المعلومات التي تشاركها معنا عند استخدام خدمات الموقع.`,
 
         s2t:"2) المعلومات التي نجمعها",
         s2b:"قد نجمع (حسب القسم الذي تستخدمه) الأنواع التالية من المعلومات:",
@@ -462,16 +419,19 @@
 
         langTitle:"العربية"
       },
+
       en: {
         pageTitle: "Privacy Policy - Mlo5",
-        back: "← Back to home",
+        navHome: "🏠 Home",
+        navTerms: "📜 Terms",
+        navContact: "✉️ Contact",
+        subtitle: `This policy explains how ${SITE} handles your information when you use the website, including the contact form, public chat, and future interactive sections such as a forum.`,
         title: "Privacy Policy",
-        subtitle: "This policy explains how the Mlo5 website handles your information when you use the site, including the contact form, public chat, and future interactive sections such as the forum.",
         effective: `Effective Date: ${EFFECTIVE_EN}`,
         lastUpdate: `Last Updated: ${EFFECTIVE_EN}`,
 
         s1t:"1) Who we are",
-        s1b:"<strong style='color:var(--white)'>Mlo5</strong> is a personal website. We respect your privacy and are committed to protecting the information you share when using the site’s services.",
+        s1b:`${SITE} is a personal website. We respect your privacy and are committed to protecting the information you share when using the website’s services.`,
 
         s2t:"2) Information we collect",
         s2b:"Depending on the feature you use, we may collect:",
@@ -486,8 +446,8 @@
         s3b:"We use the information only to:",
         s3l:[
           "Operate site features (chat/forum/interactive sections) and display your chosen name within them.",
-          "Respond to your inquiries submitted through the contact form.",
-          "Protect the site, reduce abuse/spam, and enforce rules (mute/ban/kick).",
+          "Respond to inquiries submitted through the contact form.",
+          "Protect the website, reduce abuse/spam, and enforce rules (mute/ban/kick).",
           "Improve user experience (e.g., remembering language or settings)."
         ],
 
@@ -503,10 +463,10 @@
         s5b2:"Moderation aims to reduce abuse and spam and keep a respectful environment, but it cannot guarantee preventing all violations.",
 
         s6t:"6) Where data is processed",
-        s6b:"This is a static website hosted on GitHub Pages.<br><br><strong style='color:var(--white)'>Contact form:</strong> When you submit the form, data is sent to a third-party form processor, <strong style='color:var(--white)'>Formspree</strong>, to deliver your message to us.<br><br><strong style='color:var(--white)'>Chat/interactive features:</strong> These features may rely on third-party services/database providers to function. When you use them, data may be processed by such services to operate and secure the features.",
+        s6b:"This is a static website hosted on GitHub Pages.<br><br><strong style='color:var(--white)'>Contact form:</strong> When you submit the contact form, data is sent to a third-party form processor, <strong style='color:var(--white)'>Formspree</strong>, to deliver your message to us.<br><br><strong style='color:var(--white)'>Chat/interactive features:</strong> These features may rely on third-party services/database providers. When you use them, data may be processed by such services to operate and secure the features.",
 
         s7t:"7) Third-party services & links",
-        s7b:"The site uses or may include third-party services/links, such as:",
+        s7b:"The website uses or may include third-party services/links, such as:",
         s7l:[
           "GitHub Pages (website hosting)",
           "Formspree (contact form handling)",
@@ -517,10 +477,10 @@
         s7b2:"When you visit a third-party service, their privacy policy applies.",
 
         s8t:"8) Cookies & local storage",
-        s8b:"We currently do not use cookies for advertising or marketing tracking. The site may use browser local storage to remember settings such as language or basic data that helps you access interactive features. If we add analytics or additional cookies in the future, we will update this page.",
+        s8b:"We currently do not use cookies for advertising or marketing tracking. The website may use browser local storage to remember settings such as language or basic data that helps you access interactive features. If we add analytics or additional cookies in the future, we will update this page.",
 
         s9t:"9) Children’s privacy & minimum age",
-        s9b:"Some site features (such as chat and the forum) are interactive. The minimum age to use these features is <strong style='color:var(--white)'>10</strong>. We do not knowingly intend to collect sensitive data from children. If you are a parent/guardian and believe your child shared personal data or inappropriate content, contact us and we will take appropriate action (remove/hide content where possible).",
+        s9b:"Some website features (such as chat and the forum) are interactive. The minimum age to use these features is <strong style='color:var(--white)'>10</strong>. We do not knowingly intend to collect sensitive data from children. If you are a parent/guardian and believe your child shared personal data or inappropriate content, contact us and we will take appropriate action (remove/hide content where possible).",
 
         s10t:"10) Data protection",
         s10b:"We use reasonable technical measures to help protect your data (such as HTTPS and anti-spam/anti-abuse measures where possible). However, no method of transmission over the internet is 100% secure.",
@@ -552,7 +512,7 @@
       ul.innerHTML = "";
       items.forEach(t=>{
         const li = document.createElement("li");
-        li.innerHTML = t; // ملاحظة: صار في عناصر HTML داخل النصوص
+        li.innerHTML = t;
         ul.appendChild(li);
       });
     }
@@ -562,15 +522,21 @@
 
       document.title = s.pageTitle;
 
-      const backLink = document.getElementById("back-link");
+      // nav text
+      const navHome = document.getElementById("nav-home");
+      const navTerms = document.getElementById("nav-terms");
+      const navContact = document.getElementById("nav-contact");
+      if(navHome) navHome.textContent = s.navHome;
+      if(navTerms) navTerms.textContent = s.navTerms;
+      if(navContact) navContact.textContent = s.navContact;
+
       const pageTitle = document.getElementById("page-title");
       const pageSubtitle = document.getElementById("page-subtitle");
       const effective = document.getElementById("effective-date");
       const footerNote = document.getElementById("footer-note");
 
-      if(backLink) backLink.textContent = s.back;
       if(pageTitle) pageTitle.textContent = s.title;
-      if(pageSubtitle) pageSubtitle.textContent = s.subtitle;
+      if(pageSubtitle) pageSubtitle.innerHTML = s.subtitle;
       if(effective) effective.textContent = s.effective;
       if(footerNote) footerNote.textContent = s.lastUpdate;
 
@@ -578,7 +544,6 @@
         const el = document.getElementById(id);
         if(el) el.innerHTML = html;
       };
-
       const setText = (id, text) => {
         const el = document.getElementById(id);
         if(el) el.textContent = text;
@@ -592,7 +557,8 @@
 
       setText("s4-title", s.s4t); setHTML("s4-body", s.s4b);
 
-      setText("s5-title", s.s5t); setText("s5-body", s.s5b); setList("s5-list", s.s5l); setText("s5-body2", s.s5b2);
+      setText("s5-title", s.s5t); setText("s5-body", s.s5b); setList("s5-list", s.s5l);
+      setText("s5-body2", s.s5b2);
 
       setText("s6-title", s.s6t); setHTML("s6-body", s.s6b);
 
