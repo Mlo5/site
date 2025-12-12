@@ -98,6 +98,7 @@
       background:rgba(0,0,0,.45);
       display:inline-flex; align-items:center; gap:8px;
       white-space:nowrap;
+      position:relative;
     }
 
     .onlineCard{display:flex;flex-direction:column;height:100%}
@@ -129,8 +130,6 @@
       60%  { filter: drop-shadow(0 0 10px rgba(0,0,0,.95)); opacity:.92; }
       100% { filter: drop-shadow(0 0 0 rgba(0,0,0,.95)); opacity:1; }
     }
-
-    /* ✅ خلفية سوداء فقط للاسم+التاج */
     .adminNamePill{
       display:inline-flex;
       align-items:center;
@@ -154,6 +153,11 @@
       padding:3px 8px;font-size:.75rem;background:rgba(0,0,0,.4);
       color:var(--yellow);white-space:nowrap;
     }
+    .miniPill.red{
+      color:rgba(239,68,68,.95);
+      border-color:rgba(239,68,68,.55);
+    }
+
     .ignoreBtn, .moreBtn{
       border:1px solid rgba(250,204,21,.55);
       background:rgba(0,0,0,.45);
@@ -186,7 +190,6 @@
     .chatCard{display:flex;flex-direction:column;height:100%;min-height:0;position:relative}
     .chatCol{min-height:0;display:flex;flex-direction:column;flex:1}
 
-    /* ✅ مساحة الرسائل + شريط كتابة ثابت تحت */
     #messages{
       display:flex;flex-direction:column;gap:10px;overflow:auto;
       min-height:0;flex:1;padding-right:4px;padding-bottom:6px;
@@ -224,8 +227,19 @@
       max-width:100%;
       text-align:center;
     }
+    /* ✅ Broadcast مربع واضح داخل الشات */
+    .system.broadcast{
+      align-self:stretch;
+      border-style:solid;
+      border-radius:16px;
+      padding:10px 12px;
+      background:rgba(250,204,21,.08);
+      color:var(--white);
+      font-weight:900;
+      text-align:right;
+    }
 
-    /* ✅ زر الرد جنب الرسالة (مش فوق الاسم) */
+    /* ✅ زر الرد جنب الرسالة */
     .replyBtn{
       position:absolute;
       top:50%;
@@ -240,10 +254,7 @@
       padding:4px 10px;
       box-shadow:0 10px 22px rgba(0,0,0,.6);
     }
-    .msg.me .replyBtn{
-      left:auto;
-      right:-46px;
-    }
+    .msg.me .replyBtn{ left:auto; right:-46px; }
 
     .replyPreview{
       border:1px solid rgba(250,204,21,.35);
@@ -285,10 +296,11 @@
       display:flex;align-items:center;gap:10px;direction:rtl;
       margin-top:auto;
       padding-top:10px;
+      position:relative;
     }
     #msgInput{flex:1;border-radius:999px}
 
-    .sendBtn,.emojiBtn,.adminClearBtn{
+    .sendBtn,.emojiBtn,.adminClearBtn,.formatBtn{
       border-radius:999px;
       border:1px solid rgba(250,204,21,.75);
       background:rgba(0,0,0,.75);
@@ -302,7 +314,7 @@
       justify-content:center;
       user-select:none;
     }
-    .emojiBtn{width:40px;padding:0}
+    .emojiBtn,.formatBtn{width:40px;padding:0}
     .adminClearBtn{width:40px;padding:0;display:none}
 
     .emojiPicker{
@@ -322,6 +334,46 @@
     }
     .emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;max-height:200px;overflow:auto;padding-right:4px}
     .emojiItem{border:1px solid rgba(148,163,184,.35);background:rgba(0,0,0,.55);border-radius:12px;padding:6px 0;text-align:center;cursor:pointer;user-select:none}
+
+    /* ✅ Format menu */
+    .fmtMenu{
+      position:absolute;
+      bottom:62px;
+      left:14px;
+      width:220px;
+      max-width:calc(100% - 28px);
+      border-radius:18px;
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.92);
+      box-shadow:0 18px 45px rgba(0,0,0,.95);
+      padding:10px;
+      display:none;
+      z-index:60;
+      backdrop-filter:blur(10px);
+    }
+    .fmtRow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+    .fmtBtn{
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.65);
+      color:var(--white);
+      padding:8px 10px;
+      cursor:pointer;
+      font-weight:900;
+      min-width:44px;
+      user-select:none;
+    }
+    .fmtBtn.on{
+      background:rgba(250,204,21,.14);
+      color:var(--yellow);
+      border-color:rgba(250,204,21,.85);
+    }
+    .fmtHint{
+      margin-top:8px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.82rem;
+    }
 
     .gMale{color:#3b82f6;font-weight:900}
     .gFemale{color:#ec4899;font-weight:900}
@@ -495,7 +547,44 @@
       display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
     }
 
-    /* ✅ إزالة مستطيل/أزرار السكرول */
+    /* ✅ Compose modal (Admin input) */
+    #composeModal{
+      position:fixed; inset:0; z-index:2200;
+      background:rgba(0,0,0,.75);
+      display:none; align-items:center; justify-content:center;
+      padding:16px;
+    }
+    #composeBox{
+      width:min(560px,96vw);
+      border-radius:18px;
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.92);
+      box-shadow:0 18px 45px rgba(0,0,0,.95),0 0 0 1px rgba(17,24,39,.9);
+      padding:14px;
+      backdrop-filter:blur(10px);
+    }
+    #composeTitle{
+      color:var(--yellow);
+      font-weight:900;
+      text-align:center;
+      margin-bottom:10px;
+    }
+    #composeInput{
+      width:100%;
+      min-height:120px;
+      resize:none;
+      border-radius:16px;
+      border:1px solid rgba(250,204,21,.35);
+      background:rgba(0,0,0,.55);
+      color:var(--white);
+      padding:10px 12px;
+      outline:none;
+      font-family:inherit;
+      line-height:1.7;
+      margin-bottom:12px;
+    }
+
+    /* ✅ إزالة أزرار السكرول */
     #onlineList, #messages, .emojiGrid{
       scrollbar-width: thin;
       scrollbar-color: rgba(250,204,21,.35) transparent;
@@ -560,6 +649,49 @@
       background:rgba(250,204,21,.12);
       color:var(--yellow);
     }
+
+    /* ✅ Admin tools dropdown */
+    .adminToolsBtn{
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.55);
+      color:var(--white);
+      width:36px;height:36px;
+      display:none;
+      align-items:center;justify-content:center;
+      cursor:pointer;
+      user-select:none;
+    }
+    .adminToolsMenu{
+      position:absolute;
+      top:44px;
+      left:0;
+      min-width:220px;
+      background:#000;
+      border:1px solid rgba(250,204,21,.45);
+      border-radius:14px;
+      box-shadow:0 18px 40px rgba(0,0,0,.9);
+      padding:8px;
+      display:none;
+      z-index:1200;
+    }
+    .adminToolsMenu button{
+      width:100%;
+      border:none;
+      background:transparent;
+      color:#fff;
+      padding:10px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-family:inherit;
+      font-weight:900;
+      text-align:right;
+    }
+    .adminToolsMenu button:hover{
+      background:rgba(250,204,21,.12);
+      color:var(--yellow);
+    }
+    .adminToolsMenu .sep{height:1px;background:rgba(250,204,21,.25);margin:6px 0;border-radius:999px}
   </style>
 </head>
 
@@ -588,7 +720,18 @@
           </div>
 
           <div class="statusWrap">
-            <span class="badge" id="meBadge">أنت</span>
+            <span class="badge" id="meBadge">
+              أنت
+              <button class="adminToolsBtn" id="adminToolsBtn" type="button" title="أدوات الأدمن">≡</button>
+              <div class="adminToolsMenu" id="adminToolsMenu">
+                <button id="admBroadcastBtn">📢 رسالة عامة</button>
+                <button id="admAlertBtn">🔔 تنبيه (نافذة)</button>
+                <div class="sep"></div>
+                <button id="admLockBtn">🔒 قفل الروم</button>
+                <button id="admUnlockBtn">🔓 فتح الروم</button>
+              </div>
+            </span>
+
             <select id="statusSelect" title="غيّر حالتك">
               <option value="online">🟢 متصل</option>
               <option value="busy">⛔ مشغول</option>
@@ -620,7 +763,7 @@
               </div>
             </div>
 
-            <span>لا تظهر رسائل قبل دخولك</span>
+            <span>دردش وخلي الشباب <span style="color:var(--yellow);font-weight:900">تستفاد</span></span>
           </div>
           <div class="badge" id="ignoreCount">تجاهل: 0</div>
         </div>
@@ -628,7 +771,7 @@
         <div class="chatCol">
           <div id="messages"></div>
 
-          <!-- Reply preview (global) -->
+          <!-- Reply preview -->
           <div class="replyPreview" id="replyPreview">
             <div style="min-width:0">
               <b id="replyPreviewName">رد على:</b>
@@ -641,7 +784,20 @@
             <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled />
             <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع (Admin)">🧹</button>
             <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
+            <button class="formatBtn" id="formatBtn" type="button" title="تنسيق">𝑻</button>
             <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
+
+            <!-- Format menu -->
+            <div class="fmtMenu" id="fmtMenu" aria-hidden="true">
+              <div class="fmtRow">
+                <button class="fmtBtn" id="fmtBold" type="button">B</button>
+                <button class="fmtBtn" id="fmtItalic" type="button">I</button>
+                <button class="fmtBtn" id="fmtMinus" type="button">A−</button>
+                <button class="fmtBtn" id="fmtPlus" type="button">A+</button>
+                <button class="fmtBtn" id="fmtReset" type="button">⟲</button>
+              </div>
+              <div class="fmtHint" id="fmtHint">الحجم: 100%</div>
+            </div>
           </form>
         </div>
 
@@ -733,7 +889,19 @@
     </div>
   </div>
 
-  <!-- Context menu -->
+  <!-- Admin compose modal -->
+  <div id="composeModal">
+    <div id="composeBox">
+      <div id="composeTitle">—</div>
+      <textarea id="composeInput" placeholder="اكتب الرسالة..."></textarea>
+      <div class="appModalActions">
+        <button class="modalBtn" id="composeSend" type="button">إرسال</button>
+        <button class="modalBtn" id="composeCancel" type="button">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context menu (Admin only) -->
   <div class="menu" id="ctxMenu">
     <div class="sep" id="adminSep" style="display:none;"></div>
     <div id="adminActions" style="display:none;">
@@ -750,7 +918,7 @@
   import { getAuth, onAuthStateChanged, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, serverTimestamp,
-    query, where, orderBy, onSnapshot, doc, setDoc
+    query, where, orderBy, onSnapshot, doc, setDoc, getDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
@@ -781,12 +949,28 @@
   const statusSelect = document.getElementById("statusSelect");
   const ignoreCount = document.getElementById("ignoreCount");
 
+  const adminToolsBtn = document.getElementById("adminToolsBtn");
+  const adminToolsMenu = document.getElementById("adminToolsMenu");
+  const admBroadcastBtn = document.getElementById("admBroadcastBtn");
+  const admAlertBtn = document.getElementById("admAlertBtn");
+  const admLockBtn = document.getElementById("admLockBtn");
+  const admUnlockBtn = document.getElementById("admUnlockBtn");
+
   const messagesDiv = document.getElementById("messages");
   const chatForm = document.getElementById("chatForm");
   const msgInput = document.getElementById("msgInput");
   const sendBtn = document.getElementById("sendBtn");
   const adminClearBtn = document.getElementById("adminClearBtn");
   const emojiBtn = document.getElementById("emojiBtn");
+
+  const formatBtn = document.getElementById("formatBtn");
+  const fmtMenu = document.getElementById("fmtMenu");
+  const fmtBold = document.getElementById("fmtBold");
+  const fmtItalic = document.getElementById("fmtItalic");
+  const fmtMinus = document.getElementById("fmtMinus");
+  const fmtPlus = document.getElementById("fmtPlus");
+  const fmtReset = document.getElementById("fmtReset");
+  const fmtHint = document.getElementById("fmtHint");
 
   const replyPreview = document.getElementById("replyPreview");
   const replyPreviewName = document.getElementById("replyPreviewName");
@@ -829,6 +1013,13 @@
   const appModalText = document.getElementById("appModalText");
   const appModalActions = document.getElementById("appModalActions");
 
+  const composeModal = document.getElementById("composeModal");
+  const composeTitle = document.getElementById("composeTitle");
+  const composeInput = document.getElementById("composeInput");
+  const composeSend = document.getElementById("composeSend");
+  const composeCancel = document.getElementById("composeCancel");
+  let composeMode = null; // "broadcast" | "alert"
+
   const dropBtn = document.getElementById("dropBtn");
   const dropMenu = document.getElementById("dropMenu");
   const dropLinks = Array.from(document.querySelectorAll(".dropLink"));
@@ -855,6 +1046,18 @@
 
   let ignoreWindows = {};
   let replyTarget = null;
+
+  // ✅ formatting state
+  let fmtState = { b:false, i:false, sz:1.0 };
+
+  // ✅ lock state
+  let roomLocked = false;
+
+  // ✅ moderation map (for 🔇)
+  let moderationMap = {};
+
+  // ✅ alert state
+  let lastAlertMs = 0;
 
   const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
   const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎👏🙏🔥💛⭐⚡🎮💀".split("");
@@ -936,6 +1139,23 @@
   function hideAppModal(){ appModal.style.display = "none"; }
   appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
 
+  function showComposeModal(mode){
+    composeMode = mode;
+    composeTitle.textContent =
+      mode === "broadcast" ? "📢 رسالة عامة للأعضاء" :
+      mode === "alert" ? "🔔 تنبيه (نافذة منبثقة)" :
+      "—";
+    composeInput.value = "";
+    composeModal.style.display = "flex";
+    setTimeout(()=>composeInput.focus(), 50);
+  }
+  function hideComposeModal(){
+    composeModal.style.display = "none";
+    composeMode = null;
+  }
+  composeModal.addEventListener("click",(e)=>{ if (e.target === composeModal) hideComposeModal(); });
+  composeCancel.addEventListener("click", hideComposeModal);
+
   // Dropdown
   function toggleDrop(force){
     const show = (typeof force === "boolean") ? force : (dropMenu.style.display !== "block");
@@ -949,6 +1169,13 @@
       toggleDrop(false);
     });
   });
+
+  // Admin tools dropdown
+  function toggleAdminTools(force){
+    const show = (typeof force === "boolean") ? force : (adminToolsMenu.style.display !== "block");
+    adminToolsMenu.style.display = show ? "block" : "none";
+  }
+  adminToolsBtn.addEventListener("click",(e)=>{ e.preventDefault(); e.stopPropagation(); toggleAdminTools(); });
 
   // Emoji picker
   let activeEmojiTarget = null;
@@ -986,10 +1213,36 @@
     input.focus();
   }
 
+  // Format menu
+  function showFmt(){
+    fmtMenu.style.display = "block";
+    fmtMenu.setAttribute("aria-hidden","false");
+  }
+  function hideFmt(){
+    fmtMenu.style.display = "none";
+    fmtMenu.setAttribute("aria-hidden","true");
+  }
+  function refreshFmtUI(){
+    fmtBold.classList.toggle("on", !!fmtState.b);
+    fmtItalic.classList.toggle("on", !!fmtState.i);
+    fmtHint.textContent = `الحجم: ${Math.round((fmtState.sz||1)*100)}%`;
+  }
+  refreshFmtUI();
+
+  formatBtn.addEventListener("click",(e)=>{ e.preventDefault(); (fmtMenu.style.display==="block") ? hideFmt() : showFmt(); });
+
+  fmtBold.addEventListener("click",(e)=>{ e.preventDefault(); fmtState.b = !fmtState.b; refreshFmtUI(); });
+  fmtItalic.addEventListener("click",(e)=>{ e.preventDefault(); fmtState.i = !fmtState.i; refreshFmtUI(); });
+  fmtPlus.addEventListener("click",(e)=>{ e.preventDefault(); fmtState.sz = Math.min(1.6, (fmtState.sz||1)+0.1); refreshFmtUI(); });
+  fmtMinus.addEventListener("click",(e)=>{ e.preventDefault(); fmtState.sz = Math.max(0.7, (fmtState.sz||1)-0.1); refreshFmtUI(); });
+  fmtReset.addEventListener("click",(e)=>{ e.preventDefault(); fmtState = {b:false,i:false,sz:1.0}; refreshFmtUI(); });
+
   document.addEventListener("click",(e)=>{
     if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) hideEmoji();
+    if (!fmtMenu.contains(e.target) && e.target !== formatBtn) hideFmt();
     if (!ctxMenu.contains(e.target)) hideCtxMenu();
     if (!dropMenu.contains(e.target) && e.target !== dropBtn) toggleDrop(false);
+    if (!adminToolsMenu.contains(e.target) && e.target !== adminToolsBtn) toggleAdminTools(false);
   });
 
   emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
@@ -1084,7 +1337,6 @@
         clearedAtMs, byUid:user.uid, byName: profile?.name || "Admin", createdAt: serverTimestamp()
       }, { merge:true });
 
-      // لازم تكون بعد clearedAtMs عشان تظهر
       const noticeMs = clearedAtMs + 2;
       const by = displayName(user.uid, profile?.name || "Admin");
       await writeSystemText(`🧹 تم مسح الشات بواسطة الأدمن ${by}`, "clear", noticeMs);
@@ -1094,6 +1346,103 @@
     }
   }
   adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
+
+  // ✅ Lock/unlock
+  async function setRoomLock(locked){
+    if (!isAdmin) return;
+    const atMs = Date.now();
+    const by = displayName(user.uid, profile?.name || "Admin");
+    await setDoc(doc(db,"globalMeta","lock"), { locked: !!locked, atMs, by }, { merge:true });
+    await writeSystemText(locked ? `🔒 تم قفل الروم بواسطة الأدمن ${by}` : `🔓 تم فتح الروم بواسطة الأدمن ${by}`, locked ? "lock" : "unlock");
+  }
+
+  function applyLockUI(){
+    roomLocked = !!roomLocked;
+    const disabled = roomLocked;
+    msgInput.disabled = disabled;
+    sendBtn.disabled = disabled;
+    emojiBtn.disabled = disabled;
+    formatBtn.disabled = disabled;
+    if (disabled){
+      msgInput.placeholder = "الروم مغلق";
+    }else{
+      msgInput.placeholder = "اكتب رسالتك...";
+    }
+  }
+
+  function startLockListener(){
+    onSnapshot(doc(db,"globalMeta","lock"), (snap)=>{
+      if (!snap.exists()) return;
+      const d = snap.data() || {};
+      roomLocked = !!d.locked;
+      applyLockUI();
+    });
+  }
+
+  // ✅ Admin broadcast (message inside chat)
+  async function sendBroadcast(text){
+    if (!isAdmin) return;
+    const by = displayName(user.uid, profile?.name || "Admin");
+    await addDoc(collection(db, "globalMessages"), {
+      system:true,
+      type:"broadcast",
+      text:`📢 ${text} — (${by})`,
+      createdAt: serverTimestamp(),
+      createdAtMs: Date.now()
+    });
+  }
+
+  // ✅ Admin alert popup (for everyone)
+  async function sendAlert(text){
+    if (!isAdmin) return;
+    const atMs = Date.now();
+    const by = displayName(user.uid, profile?.name || "Admin");
+    await setDoc(doc(db,"globalMeta","alert"), {
+      atMs,
+      title: "🔔 تنبيه",
+      text,
+      by
+    }, { merge:true });
+  }
+
+  function startAlertListener(){
+    onSnapshot(doc(db,"globalMeta","alert"), (snap)=>{
+      if (!snap.exists()) return;
+      const d = snap.data() || {};
+      const atMs = Number(d.atMs||0);
+      if (!atMs) return;
+      if (!joinAtMs) return;
+      if (atMs < joinAtMs) return;
+      if (atMs <= lastAlertMs) return;
+      lastAlertMs = atMs;
+
+      const t = (d.text || "—").toString();
+      const by = (d.by || "Admin").toString();
+      showAppModal({
+        title: d.title || "🔔 تنبيه",
+        text: `${t}\n\n(${by})`,
+        actions:[{label:"حسناً", onClick:()=>hideAppModal()}]
+      });
+    });
+  }
+
+  admBroadcastBtn.addEventListener("click", (e)=>{ e.preventDefault(); toggleAdminTools(false); showComposeModal("broadcast"); });
+  admAlertBtn.addEventListener("click", (e)=>{ e.preventDefault(); toggleAdminTools(false); showComposeModal("alert"); });
+  admLockBtn.addEventListener("click", async (e)=>{ e.preventDefault(); toggleAdminTools(false); await setRoomLock(true); });
+  admUnlockBtn.addEventListener("click", async (e)=>{ e.preventDefault(); toggleAdminTools(false); await setRoomLock(false); });
+
+  composeSend.addEventListener("click", async ()=>{
+    const text = collapseSpaces(composeInput.value);
+    if (!text) return;
+    hideComposeModal();
+    try{
+      if (composeMode === "broadcast") await sendBroadcast(text);
+      else if (composeMode === "alert") await sendAlert(text);
+    }catch(err){
+      console.error(err);
+      showAppModal({title:"❌ خطأ", text:"فشل إرسال الرسالة.", actions:[{label:"حسناً", onClick:()=>hideAppModal()}]});
+    }
+  });
 
   async function updatePresenceStatus(statusVal, first=false){
     const onlineRef = ref(rtdb, "onlineUsers/" + user.uid);
@@ -1170,11 +1519,25 @@
         return;
       }
 
+      // muted handled in lock UI too
       const until = m.mutedUntil || 0;
       const muted = Date.now() < until;
-      msgInput.disabled = muted;
-      sendBtn.disabled = muted;
-      msgInput.placeholder = muted ? "تم كتمك — لا يمكنك الإرسال الآن" : "اكتب رسالتك...";
+      if (!roomLocked){
+        msgInput.disabled = muted;
+        sendBtn.disabled = muted;
+        emojiBtn.disabled = muted;
+        formatBtn.disabled = muted;
+        msgInput.placeholder = muted ? "تم كتمك — لا يمكنك الإرسال الآن" : "اكتب رسالتك...";
+      }
+    });
+  }
+
+  // ✅ moderation map for 🔇 label beside names
+  function startModerationMapListener(){
+    onValue(ref(rtdb, "moderation"), (snap)=>{
+      moderationMap = snap.val() || {};
+      // re-render online list happens on onlineUsers change; this is enough for live label mostly
+      // optional: force refresh by touching DOM? not needed.
     });
   }
 
@@ -1212,12 +1575,15 @@
           const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
 
           const shownName = displayName(u.uid, u.name);
-
           const adminTag = isRowAdmin ? `<span class="adminCrown" title="ADMIN">👑</span>` : "";
 
+          const mod = moderationMap?.[u.uid] || {};
+          const muted = !!mod.mutedUntil && (Date.now() < Number(mod.mutedUntil||0));
+          const mutedTag = muted ? `<span class="miniPill red">🔇 مكتوم</span>` : "";
+
           const nameHtml = isRowAdmin
-            ? `<span class="adminNamePill">${adminTag} <span style="color:#fff;font-weight:900;text-shadow:0 2px 10px rgba(0,0,0,.95)">${escapeHtml(shownName)}</span></span> ${guestHtml}`
-            : `<span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(shownName)}</span> ${guestHtml}`;
+            ? `<span class="adminNamePill">${adminTag} <span style="color:#fff;font-weight:900;text-shadow:0 2px 10px rgba(0,0,0,.95)">${escapeHtml(shownName)}</span></span> ${guestHtml} ${mutedTag}`
+            : `<span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(shownName)}</span> ${guestHtml} ${mutedTag}`;
 
           left.innerHTML = `
             <b>${gHtml} ${nameHtml}</b>
@@ -1322,7 +1688,7 @@
 
         if (m.system){
           const div = document.createElement("div");
-          div.className = "system";
+          div.className = "system" + (m.type === "broadcast" ? " broadcast" : "");
           div.textContent = m.text || "";
           messagesDiv.appendChild(div);
 
@@ -1358,11 +1724,21 @@
               </div>
             ` : "";
 
+          const f = m.fmt || {};
+          const fSize = Math.max(0.7, Math.min(1.6, Number(f.sz || 1)));
+          const fBold = f.b ? "900" : "400";
+          const fItalic = f.i ? "italic" : "normal";
+
           div.innerHTML = `
             <button class="replyBtn" type="button" title="رد">↩</button>
             <div class="msgHead"><div class="nameTag">${gHtml} ${nameHtml}</div></div>
             ${replyBlock}
-            <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${escapeHtml(m.text||"")}</div>
+            <div style="
+              color:${escapeHtml(m.textColor || "#f9fafb")};
+              font-size:${(16*fSize).toFixed(1)}px;
+              font-weight:${fBold};
+              font-style:${fItalic};
+            ">${escapeHtml(m.text||"")}</div>
             <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
           `;
 
@@ -1422,6 +1798,8 @@
   chatForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     if (!user || !profile) return;
+    if (roomLocked) return;
+
     const text = collapseSpaces(msgInput.value);
     if (!text) return;
     if (msgInput.disabled) return;
@@ -1451,6 +1829,7 @@
       textColor:profile.textColor,
       isAdmin, isGuest,
       replyTo,
+      fmt: { b: !!fmtState.b, i: !!fmtState.i, sz: Number(fmtState.sz||1) },
       createdAt: serverTimestamp(),
       createdAtMs: Date.now()
     });
@@ -1492,6 +1871,7 @@
     setErr(adminErr, "✅ تم تفعيل الأدمن.");
     isAdmin = true;
     adminClearBtn.style.display = "inline-flex";
+    adminToolsBtn.style.display = "inline-flex";
     try{
       if (profile) await updatePresenceStatus(statusSelect.value || "online");
     }catch{}
@@ -1560,7 +1940,9 @@
   async function enterChat(statusVal){
     isGuest = !!user?.isAnonymous;
     isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
+
     adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+    adminToolsBtn.style.display = isAdmin ? "inline-flex" : "none";
 
     msgInput.disabled = false;
     sendBtn.disabled = false;
@@ -1574,14 +1956,19 @@
 
     loadIgnoreWindows();
     startClearMetaListener();
+    startLockListener();
+    startAlertListener();
+    startModerationMapListener();
     startOnlineListener();
     startGlobalMessagesListener();
     startModerationListener();
+
+    applyLockUI();
   }
 
+  // Boot
   onAuthStateChanged(auth, async (u)=>{
     user = u || null;
-    meBadge.textContent = "أنت";
     watchConnection();
 
     let loadedSaved = false;
