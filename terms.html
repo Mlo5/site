@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>الشروط والأحكام - M L O 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- خطوط -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg-dark:#020202;
+      --yellow:#facc15;
+      --white:#f9fafb;
+      --muted:#9ca3af;
+      --border-subtle:rgba(156,163,175,.35);
+      --radius-lg:18px;
+      --radius-full:999px;
+      --grid-x:0px; --grid-y:0px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Tajawal",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg-dark);
+      color:var(--white);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+      position:relative;
+      cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+    }
+
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:radial-gradient(circle, rgba(249,250,251,.55) 1px, transparent 1px);
+      background-size:30px 30px;
+      background-position:calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
+      opacity:.25; mix-blend-mode:screen;
+    }
+
+    .page{
+      width:100%;
+      max-width:1100px;
+      padding:32px 16px 40px;
+      margin:auto;
+      position:relative;
+      z-index:1;
+    }
+
+    .top-bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:14px;
+      direction:ltr;
+    }
+
+    .top-chip{
+      font-size:.9rem; color:var(--white);
+      padding:6px 14px; border-radius:999px;
+      border:1px solid rgba(250,204,21,.6);
+      background:rgba(0,0,0,.6);
+      box-shadow:0 8px 20px rgba(0,0,0,.8),0 0 0 1px rgba(15,23,42,.9);
+      display:inline-flex; align-items:center; gap:8px;
+      user-select:none; cursor:pointer;
+      text-decoration:none;
+    }
+    .top-chip:hover{
+      background:rgba(250,204,21,.12);
+      transform:translateY(-1px);
+    }
+
+    .title{
+      font-family:"Poppins",system-ui,sans-serif;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      white-space:nowrap;
+      color:var(--white);
+    }
+    .title small{
+      letter-spacing:0;
+      font-weight:700;
+      color:var(--muted);
+      text-transform:none;
+    }
+
+    .card{
+      background:linear-gradient(145deg,#020202,#050505);
+      border-radius:18px;
+      padding:16px;
+      border:1px solid var(--border-subtle);
+      box-shadow:0 12px 30px rgba(0,0,0,.8),0 0 0 1px rgba(55,65,81,.6);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-bottom:14px;
+    }
+    .hero h1{
+      color:var(--yellow);
+      font-size:1.35rem;
+      font-weight:900;
+    }
+    .hero p{
+      color:var(--muted);
+      line-height:1.8;
+      font-size:.95rem;
+    }
+
+    .divider{
+      width:100%;
+      margin:16px auto;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(156,163,175,.4), transparent);
+      border-radius:999px;
+    }
+
+    .section{
+      margin-top:12px;
+    }
+    .section h2{
+      font-size:1.05rem;
+      font-weight:900;
+      color:var(--yellow);
+      margin-bottom:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .section p, .section li{
+      color:var(--white);
+      line-height:1.9;
+      font-size:.95rem;
+    }
+    .section p{
+      color:rgba(249,250,251,.92);
+    }
+    ul{
+      margin:8px 20px 0 0;
+      padding-right:16px;
+    }
+    li{ margin-bottom:6px; color:rgba(249,250,251,.92); }
+
+    .note{
+      margin-top:14px;
+      border:1px dashed rgba(250,204,21,.55);
+      background:rgba(0,0,0,.55);
+      border-radius:16px;
+      padding:12px 12px;
+      color:rgba(249,250,251,.92);
+      line-height:1.9;
+    }
+    .note b{ color:var(--yellow); }
+
+    .footer{
+      margin-top:18px;
+      text-align:center;
+      color:rgba(107,114,128,.9);
+      font-size:.8rem;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.55);
+      padding:6px 12px;
+      background:rgba(0,0,0,.45);
+      color:var(--yellow);
+      font-weight:900;
+      margin-top:10px;
+      user-select:none;
+    }
+
+    /* ✅ رابط MLO5 (بولد + يرجع للرئيسية) */
+    .mlo5Anchor{
+      color:var(--yellow);
+      font-weight:900;
+      text-decoration:none;
+    }
+    .mlo5Anchor:hover{ text-decoration:underline; }
+
+    @media (max-width:640px){
+      .title{ letter-spacing:.08em; }
+      .hero h1{ font-size:1.2rem; }
+      .section p, .section li{ font-size:.93rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+
+  <main class="page">
+    <div class="top-bar">
+      <a class="top-chip" href="index.html" title="الرجوع للرئيسية" id="homeLink">🏠 الرئيسية</a>
+
+      <div class="title" id="pageTitle">M L O 5 <small id="pageTitleSmall">• Terms</small></div>
+
+      <div style="display:flex; gap:10px; align-items:center;">
+        <!-- ✅ زر الترجمة -->
+        <button class="top-chip" id="langBtn" type="button" title="Translate">🌐 EN</button>
+        <a class="top-chip" href="privacy.html" title="سياسة الخصوصية" id="privacyLink">🔒 الخصوصية</a>
+      </div>
+    </div>
+
+    <section class="card">
+      <div class="hero">
+        <h1 id="h1Title">الشروط والأحكام</h1>
+        <p id="heroP">
+          باستخدامك لموقع <a class="mlo5Anchor" href="index.html"><b>MLO5</b></a> أو أي صفحة/خدمة داخله (بما فيها الدردشة العامة)، فأنت توافق على الشروط التالية.
+          إذا لم توافق على أي بند، يُفضّل عدم استخدام الموقع.
+        </p>
+        <span class="pill" id="lastUpdate"><span id="lastUpdateLabel">آخر تحديث:</span> <span id="dateSpan">2025</span></span>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <h2 id="s1H">✅ 1) القبول والاستخدام</h2>
+        <p id="s1P">هذه الشروط تنظّم استخدامك للموقع وخدماته. استمرارك في استخدام الموقع يعني موافقتك على الالتزام بها.</p>
+      </div>
+
+      <div class="section">
+        <h2 id="s2H">👤 2) الأهلية والعمر</h2>
+        <ul id="s2UL">
+          <li>يُشترط أن يكون عمر المستخدم مناسبًا لاستخدام الموقع.</li>
+          <li>في الدردشة العامة تحديدًا، قد يتم منع/حظر الحسابات التي لا تلتزم بحد العمر المطلوب داخل الدردشة.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 id="s3H">💬 3) قواعد الدردشة العامة (مهم)</h2>
+        <ul id="s3UL">
+          <li>يُمنع منعًا باتًا مشاركة أي معلومات شخصية أو حساسة داخل الدردشة العامة، مثل: رقم هاتف، عنوان، حسابات، كلمات مرور، بيانات بنكية… إلخ.</li>
+          <li>يُمنع التحرّش، التهديد، السبّ، العنصرية، نشر روابط ضارة أو احتيالية، أو أي إساءة للمستخدمين.</li>
+          <li>المستخدم مسؤول مسؤولية كاملة عن المحتوى الذي يكتبه داخل الدردشة.</li>
+          <li>قد لا تظهر للمستخدم الرسائل السابقة قبل وقت دخوله للدردشة (عرض الرسائل يبدأ من لحظة الانضمام)، وذلك لحماية الخصوصية وتقليل الإزعاج.</li>
+          <li>أي محادثات أو تواصل بين المستخدمين داخل الدردشة يكون على مسؤوليتهم الشخصية، والإدارة غير مسؤولة عن أي اتفاقات أو معلومات يتم تبادلها.</li>
+        </ul>
+
+        <div class="note" id="adminNote">
+          <b id="adminNoteB">صلاحيات الإدارة:</b>
+          تحتفظ إدارة <a class="mlo5Anchor" href="index.html"><b>MLO5</b></a> بحق حذف المحتوى المخالف أو اتخاذ إجراء (كتم/حظر/طرد) دون إنذار مسبق بهدف حماية المستخدمين والحفاظ على بيئة آمنة ومحترمة.
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 id="s4H">🛡️ 4) المحتوى والسلوك المحظور</h2>
+        <ul id="s4UL">
+          <li>نشر محتوى غير قانوني أو ضار أو ينتهك حقوق الآخرين.</li>
+          <li>محاولة اختراق الموقع، إزعاج الخدمات، أو إساءة الاستخدام التقني (Spam/Abuse).</li>
+          <li>انتحال شخصية أي شخص/جهة.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 id="s5H">🔒 5) الخصوصية</h2>
+        <p id="s5P">
+          نلتزم بقدر الإمكان بحماية بيانات المستخدمين. لمعرفة المزيد، راجع صفحة
+          <a href="privacy.html" style="color:#facc15; font-weight:900; text-decoration:none;" id="privacyInline">سياسة الخصوصية</a>.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 id="s6H">⚠️ 6) إخلاء المسؤولية</h2>
+        <ul id="s6UL">
+          <li>الموقع يُقدَّم “كما هو” دون ضمانات مطلقة.</li>
+          <li>قد تتغير الخدمات أو يتم إيقافها مؤقتًا للصيانة أو التطوير.</li>
+          <li>أي تعاملات أو روابط خارجية يتحمل المستخدم مسؤوليتها.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2 id="s7H">🧾 7) التعديلات على الشروط</h2>
+        <p id="s7P">قد نقوم بتحديث هذه الشروط من وقت لآخر. استمرار الاستخدام بعد التحديث يعني موافقتك على النسخة الجديدة.</p>
+      </div>
+
+      <div class="section">
+        <h2 id="s8H">📩 8) التواصل</h2>
+        <p id="s8P">
+          لأي استفسار أو بلاغ، تواصل معنا عبر صفحة:
+          <a href="contact.html" style="color:#facc15; font-weight:900; text-decoration:none;" id="contactLink">اتصل بي</a>.
+        </p>
+      </div>
+
+      <div class="footer" id="footerText">
+        © <span id="yearSpan">2025</span> · M L O 5
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // تحريك شبكة النقاط مثل صفحاتك
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+    });
+
+    // سنة الحقوق + تاريخ تحديث بسيط
+    const y = new Date().getFullYear();
+    const yearSpan = document.getElementById("yearSpan");
+    const dateSpan = document.getElementById("dateSpan");
+    if (yearSpan) yearSpan.textContent = y;
+    if (dateSpan) dateSpan.textContent = new Date().toISOString().slice(0,10);
+
+    // ✅ ترجمة (AR/EN)
+    const langBtn = document.getElementById("langBtn");
+
+    const mlo5 = `<a class="mlo5Anchor" href="index.html"><b>MLO5</b></a>`;
+
+    const i18n = {
+      ar: {
+        dir:"rtl", lang:"ar",
+        home:"🏠 الرئيسية", privacy:"🔒 الخصوصية",
+        langBtn:"🌐 EN",
+        h1:"الشروط والأحكام",
+        hero: `باستخدامك لموقع ${mlo5} أو أي صفحة/خدمة داخله (بما فيها الدردشة العامة)، فأنت توافق على الشروط التالية. إذا لم توافق على أي بند، يُفضّل عدم استخدام الموقع.`,
+        lastUpdate:"آخر تحديث:",
+        s1H:"✅ 1) القبول والاستخدام",
+        s1P:"هذه الشروط تنظّم استخدامك للموقع وخدماته. استمرارك في استخدام الموقع يعني موافقتك على الالتزام بها.",
+        s2H:"👤 2) الأهلية والعمر",
+        s2UL:[
+          "يُشترط أن يكون عمر المستخدم مناسبًا لاستخدام الموقع.",
+          "في الدردشة العامة تحديدًا، قد يتم منع/حظر الحسابات التي لا تلتزم بحد العمر المطلوب داخل الدردشة."
+        ],
+        s3H:"💬 3) قواعد الدردشة العامة (مهم)",
+        s3UL:[
+          "يُمنع منعًا باتًا مشاركة أي معلومات شخصية أو حساسة داخل الدردشة العامة، مثل: رقم هاتف، عنوان، حسابات، كلمات مرور، بيانات بنكية… إلخ.",
+          "يُمنع التحرّش، التهديد، السبّ، العنصرية، نشر روابط ضارة أو احتيالية، أو أي إساءة للمستخدمين.",
+          "المستخدم مسؤول مسؤولية كاملة عن المحتوى الذي يكتبه داخل الدردشة.",
+          "قد لا تظهر للمستخدم الرسائل السابقة قبل وقت دخوله للدردشة (عرض الرسائل يبدأ من لحظة الانضمام)، وذلك لحماية الخصوصية وتقليل الإزعاج.",
+          "أي محادثات أو تواصل بين المستخدمين داخل الدردشة يكون على مسؤوليتهم الشخصية، والإدارة غير مسؤولة عن أي اتفاقات أو معلومات يتم تبادلها."
+        ],
+        adminNoteB:"صلاحيات الإدارة:",
+        adminNoteText:`تحتفظ إدارة ${mlo5} بحق حذف المحتوى المخالف أو اتخاذ إجراء (كتم/حظر/طرد) دون إنذار مسبق بهدف حماية المستخدمين والحفاظ على بيئة آمنة ومحترمة.`,
+        s4H:"🛡️ 4) المحتوى والسلوك المحظور",
+        s4UL:[
+          "نشر محتوى غير قانوني أو ضار أو ينتهك حقوق الآخرين.",
+          "محاولة اختراق الموقع، إزعاج الخدمات، أو إساءة الاستخدام التقني (Spam/Abuse).",
+          "انتحال شخصية أي شخص/جهة."
+        ],
+        s5H:"🔒 5) الخصوصية",
+        s5P:`نلتزم بقدر الإمكان بحماية بيانات المستخدمين. لمعرفة المزيد، راجع صفحة <a href="privacy.html" style="color:#facc15; font-weight:900; text-decoration:none;">سياسة الخصوصية</a>.`,
+        s6H:"⚠️ 6) إخلاء المسؤولية",
+        s6UL:[
+          "الموقع يُقدَّم “كما هو” دون ضمانات مطلقة.",
+          "قد تتغير الخدمات أو يتم إيقافها مؤقتًا للصيانة أو التطوير.",
+          "أي تعاملات أو روابط خارجية يتحمل المستخدم مسؤوليتها."
+        ],
+        s7H:"🧾 7) التعديلات على الشروط",
+        s7P:"قد نقوم بتحديث هذه الشروط من وقت لآخر. استمرار الاستخدام بعد التحديث يعني موافقتك على النسخة الجديدة.",
+        s8H:"📩 8) التواصل",
+        s8P:`لأي استفسار أو بلاغ، تواصل معنا عبر صفحة: <a href="contact.html" style="color:#facc15; font-weight:900; text-decoration:none;">اتصل بي</a>.`,
+      },
+      en: {
+        dir:"ltr", lang:"en",
+        home:"🏠 Home", privacy:"🔒 Privacy",
+        langBtn:"🌐 AR",
+        h1:"Terms & Conditions",
+        hero: `By using ${mlo5} or any page/service within it (including the Global Chat), you agree to the following terms. If you do not agree with any part, please do not use the site.`,
+        lastUpdate:"Last update:",
+        s1H:"✅ 1) Acceptance & Use",
+        s1P:"These terms govern your use of the website and its services. Continuing to use the site means you agree to comply with them.",
+        s2H:"👤 2) Eligibility & Age",
+        s2UL:[
+          "Users must be of an appropriate age to use the website.",
+          "In the Global Chat specifically, accounts that do not meet the required age may be restricted/banned."
+        ],
+        s3H:"💬 3) Global Chat Rules (Important)",
+        s3UL:[
+          "Do NOT share any personal or sensitive information in the chat, such as phone numbers, addresses, accounts, passwords, banking details, etc.",
+          "Harassment, threats, insults, hate speech, posting harmful/scam links, or any abuse toward users is strictly prohibited.",
+          "Each user is fully responsible for the content they post in the chat.",
+          "New users may not see messages sent before they joined (messages start from the moment of joining) to protect privacy and reduce spam.",
+          "Any conversations or interactions between users are at their own responsibility; the administration is not responsible for any agreements or information exchanged."
+        ],
+        adminNoteB:"Admin Rights:",
+        adminNoteText:`The administration of ${mlo5} reserves the right to remove violating content or take action (mute/ban/kick) without prior notice to protect users and maintain a safe, respectful environment.`,
+        s4H:"🛡️ 4) Prohibited Content & Behavior",
+        s4UL:[
+          "Posting illegal, harmful content, or content that violates the rights of others.",
+          "Attempting to hack the site, disrupt services, or technical abuse (Spam/Abuse).",
+          "Impersonating any person or entity."
+        ],
+        s5H:"🔒 5) Privacy",
+        s5P:`We do our best to protect user data. For details, please see the <a href="privacy.html" style="color:#facc15; font-weight:900; text-decoration:none;">Privacy Policy</a>.`,
+        s6H:"⚠️ 6) Disclaimer",
+        s6UL:[
+          "The site is provided “as is” without absolute guarantees.",
+          "Services may change or be temporarily unavailable for maintenance or development.",
+          "Any external links or dealings are the user's responsibility."
+        ],
+        s7H:"🧾 7) Changes to Terms",
+        s7P:"We may update these terms from time to time. Continued use after updates means you accept the new version.",
+        s8H:"📩 8) Contact",
+        s8P:`For questions or reports, contact us via: <a href="contact.html" style="color:#facc15; font-weight:900; text-decoration:none;">Contact Me</a>.`,
+      }
+    };
+
+    function setLang(code){
+      const t = i18n[code] || i18n.ar;
+
+      document.documentElement.setAttribute("dir", t.dir);
+      document.documentElement.setAttribute("lang", t.lang);
+
+      // زر الترجمة
+      langBtn.textContent = t.langBtn;
+
+      // أعلى الصفحة
+      document.getElementById("homeLink").textContent = t.home;
+      document.getElementById("privacyLink").textContent = t.privacy;
+
+      // العنوان/الهيرو
+      document.getElementById("h1Title").textContent = t.h1;
+      document.getElementById("heroP").innerHTML = t.hero;
+      document.getElementById("lastUpdateLabel").textContent = t.lastUpdate;
+
+      // الأقسام
+      document.getElementById("s1H").textContent = t.s1H;
+      document.getElementById("s1P").textContent = t.s1P;
+
+      document.getElementById("s2H").textContent = t.s2H;
+      document.getElementById("s2UL").innerHTML = t.s2UL.map(x=>`<li>${x}</li>`).join("");
+
+      document.getElementById("s3H").textContent = t.s3H;
+      document.getElementById("s3UL").innerHTML = t.s3UL.map(x=>`<li>${x}</li>`).join("");
+
+      document.getElementById("adminNoteB").textContent = t.adminNoteB;
+      document.getElementById("adminNote").innerHTML = `<b id="adminNoteB">${t.adminNoteB}</b> ${t.adminNoteText}`;
+
+      document.getElementById("s4H").textContent = t.s4H;
+      document.getElementById("s4UL").innerHTML = t.s4UL.map(x=>`<li>${x}</li>`).join("");
+
+      document.getElementById("s5H").textContent = t.s5H;
+      document.getElementById("s5P").innerHTML = t.s5P;
+
+      document.getElementById("s6H").textContent = t.s6H;
+      document.getElementById("s6UL").innerHTML = t.s6UL.map(x=>`<li>${x}</li>`).join("");
+
+      document.getElementById("s7H").textContent = t.s7H;
+      document.getElementById("s7P").textContent = t.s7P;
+
+      document.getElementById("s8H").textContent = t.s8H;
+      document.getElementById("s8P").innerHTML = t.s8P;
+
+      // تحسين بسيط للقوائم مع LTR
+      const ulEls = document.querySelectorAll("ul");
+      ulEls.forEach(ul=>{
+        if (t.dir === "ltr"){
+          ul.style.margin = "8px 0 0 20px";
+          ul.style.paddingRight = "0";
+          ul.style.paddingLeft = "16px";
+        } else {
+          ul.style.margin = "8px 20px 0 0";
+          ul.style.paddingRight = "16px";
+          ul.style.paddingLeft = "0";
+        }
+      });
+
+      localStorage.setItem("termsLang", code);
+    }
+
+    langBtn.addEventListener("click", ()=>{
+      const current = localStorage.getItem("termsLang") || "ar";
+      setLang(current === "ar" ? "en" : "ar");
+    });
+
+    // تحميل اللغة المحفوظة
+    setLang(localStorage.getItem("termsLang") || "ar");
+  </script>
+</body>
+</html>
