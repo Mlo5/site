@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>الملف الشخصي - M L O 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg-dark:#020202; --yellow:#facc15; --white:#f9fafb; --muted:#9ca3af;
+      --border: rgba(250,204,21,.45);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Tajawal",system-ui,-apple-system,"Segoe UI",sans-serif;
+      background:var(--bg-dark); color:var(--white);
+      min-height:100vh; padding:18px;
+      display:flex; justify-content:center;
+    }
+    .wrap{width:100%; max-width:900px;}
+    .top-bar{
+      display:flex; gap:10px; align-items:center; justify-content:flex-start;
+      direction:ltr; margin-bottom:14px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 14px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.55);
+      color:var(--white); text-decoration:none;
+      cursor:pointer; user-select:none;
+      transition:transform .15s ease, background .15s ease;
+      font-weight:700; font-size:.9rem;
+    }
+    .pill:hover{transform:translateY(-1px); background:rgba(250,204,21,.12)}
+    .lang-toggle{
+      width:40px;height:40px;border-radius:999px;border:1px solid rgba(148,163,184,.7);
+      background:radial-gradient(circle at top,#111,#020202);
+      color:var(--yellow); cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-size:1rem;
+    }
+    .card{
+      border:1px solid rgba(156,163,175,.35);
+      background:linear-gradient(145deg,#020202,#050505);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 12px 30px rgba(0,0,0,.85);
+      margin-bottom:14px;
+    }
+    .profile-head{
+      display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    }
+    .avatar{
+      width:76px;height:76px;border-radius:50%;
+      overflow:hidden; border:2px solid rgba(250,204,21,.9);
+      background:#000;
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .h-title{font-weight:800;color:var(--yellow);font-size:1.1rem}
+    .h-sub{color:var(--muted);font-size:.9rem;margin-top:4px}
+    .grid{
+      display:grid; gap:12px;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      margin-top:12px;
+    }
+    @media(max-width:700px){ .grid{grid-template-columns:1fr;} }
+    label{display:block; color:var(--muted); font-size:.85rem; margin-bottom:6px}
+    input, textarea{
+      width:100%;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.45);
+      color:var(--white);
+      padding:10px 12px;
+      font-size:.92rem;
+      outline:none;
+    }
+    textarea{min-height:120px; resize:vertical;}
+    input:focus, textarea:focus{
+      border-color: rgba(250,204,21,.8);
+      box-shadow:0 0 0 4px rgba(250,204,21,.18);
+    }
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
+    }
+    .btn{
+      border:none; cursor:pointer;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:800;
+    }
+    .btn-primary{background:var(--yellow); color:#111;}
+    .btn-ghost{
+      background:rgba(0,0,0,.55);
+      color:var(--white);
+      border:1px solid rgba(250,204,21,.35);
+    }
+    .msg{margin-top:10px; min-height:1.2em; color:var(--muted); font-size:.9rem;}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="top-bar">
+      <a class="pill" id="back-home" href="index.html">⬅︎ <span id="back-home-txt">الرئيسية</span></a>
+      <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
+      <button class="pill" id="logout-btn" type="button">⎋ <span id="logout-txt">تسجيل خروج</span></button>
+    </div>
+
+    <div class="card">
+      <div class="profile-head">
+        <div class="avatar"><img id="avatar-img" src="" alt="avatar" /></div>
+        <div>
+          <div class="h-title" id="u-name">...</div>
+          <div class="h-sub" id="u-email">...</div>
+          <div class="h-sub" id="u-meta">...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="grid">
+        <div>
+          <label id="lbl-nickname">اسم عرض داخل الموقع</label>
+          <input id="nickname" placeholder="مثال: Mlo5" />
+        </div>
+        <div>
+          <label id="lbl-instagram">انستغرام</label>
+          <input id="instagram" placeholder="i.mlo5" />
+        </div>
+
+        <div>
+          <label id="lbl-youtube">يوتيوب</label>
+          <input id="youtube" placeholder="https://youtube.com/@..." />
+        </div>
+        <div>
+          <label id="lbl-discord">ديسكورد</label>
+          <input id="discord" placeholder="رابط الدعوة أو اليوزر" />
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <label id="lbl-bio">نبذة</label>
+        <textarea id="bio" placeholder="اكتب نبذة بسيطة عنك…"></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="save-btn" type="button">حفظ</button>
+        <a class="btn btn-ghost" id="go-settings" href="settings.html" style="text-decoration:none;display:inline-flex;align-items:center;">⚙️ <span id="go-settings-txt" style="margin-inline-start:8px;">الإعدادات</span></a>
+      </div>
+
+      <div class="msg" id="msg"></div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+      authDomain: "mlo5-users.firebaseapp.com",
+      projectId: "mlo5-users",
+      appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ---------- L10N ----------
+    const l10n = {
+      ar: {
+        title: "الملف الشخصي - M L O 5",
+        home: "الرئيسية",
+        logout: "تسجيل خروج",
+        nickname: "اسم عرض داخل الموقع",
+        instagram: "انستغرام",
+        youtube: "يوتيوب",
+        discord: "ديسكورد",
+        bio: "نبذة",
+        save: "حفظ",
+        settings: "الإعدادات",
+        loading: "جارٍ التحميل…",
+        saved: "✅ تم الحفظ.",
+        err: "❌ صار خطأ. جرّب مرة ثانية.",
+        notSigned: "لازم تسجل دخول أولًا."
+      },
+      en: {
+        title: "Profile - M L O 5",
+        home: "Home",
+        logout: "Logout",
+        nickname: "Site Display Name",
+        instagram: "Instagram",
+        youtube: "YouTube",
+        discord: "Discord",
+        bio: "Bio",
+        save: "Save",
+        settings: "Settings",
+        loading: "Loading…",
+        saved: "✅ Saved.",
+        err: "❌ Something went wrong. Try again.",
+        notSigned: "Please sign in first."
+      }
+    };
+
+    let currentLang = "ar";
+    function applyLang(lang){
+      currentLang = (lang === "en") ? "en" : "ar";
+      const s = l10n[currentLang];
+
+      document.title = s.title;
+      document.documentElement.lang = currentLang === "en" ? "en" : "ar";
+      document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
+
+      document.getElementById("back-home-txt").textContent = s.home;
+      document.getElementById("logout-txt").textContent = s.logout;
+      document.getElementById("lbl-nickname").textContent = s.nickname;
+      document.getElementById("lbl-instagram").textContent = s.instagram;
+      document.getElementById("lbl-youtube").textContent = s.youtube;
+      document.getElementById("lbl-discord").textContent = s.discord;
+      document.getElementById("lbl-bio").textContent = s.bio;
+      document.getElementById("save-btn").textContent = s.save;
+      document.getElementById("go-settings-txt").textContent = s.settings;
+
+      document.getElementById("lang-toggle").title = (currentLang === "en") ? "English" : "العربية";
+    }
+
+    // ---------- Firestore helpers ----------
+    async function getSettings(uid){
+      const ref = doc(db, "users", uid, "settings", "main");
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+
+    async function setLang(uid, lang){
+      const ref = doc(db, "users", uid, "settings", "main");
+      await setDoc(ref, { lang, updatedAt: serverTimestamp() }, { merge: true });
+    }
+
+    async function getProfile(uid){
+      const ref = doc(db, "users", uid, "profile", "main");
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+
+    async function saveProfile(uid, data){
+      const ref = doc(db, "users", uid, "profile", "main");
+      await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true });
+    }
+
+    // ---------- UI ----------
+    const msg = document.getElementById("msg");
+    const avatarImg = document.getElementById("avatar-img");
+    const uName = document.getElementById("u-name");
+    const uEmail = document.getElementById("u-email");
+    const uMeta = document.getElementById("u-meta");
+
+    const nickname = document.getElementById("nickname");
+    const instagram = document.getElementById("instagram");
+    const youtube = document.getElementById("youtube");
+    const discord = document.getElementById("discord");
+    const bio = document.getElementById("bio");
+
+    const saveBtn = document.getElementById("save-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const langToggle = document.getElementById("lang-toggle");
+
+    function setMsg(text, ok=false){
+      msg.style.color = ok ? "#22c55e" : "#9ca3af";
+      msg.textContent = text || "";
+    }
+
+    let currentUid = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        applyLang("ar");
+        setMsg(l10n[currentLang].notSigned);
+        setTimeout(() => window.location.href = "login.html", 700);
+        return;
+      }
+
+      currentUid = user.uid;
+
+      // اقرأ اللغة من Firestore
+      try{
+        setMsg(l10n[currentLang].loading);
+        const settings = await getSettings(user.uid);
+        applyLang(settings?.lang || "ar");
+      }catch(e){
+        applyLang("ar");
+      }
+
+      // اعرض بيانات Firebase الأساسية
+      avatarImg.src = user.photoURL || "me.jpg";
+      uName.textContent = (user.displayName || user.email || "User");
+      uEmail.textContent = user.email || "";
+      uMeta.textContent = user.metadata?.creationTime ? ("Joined: " + user.metadata.creationTime) : "";
+
+      // اقرأ البروفايل من Firestore
+      try{
+        const p = await getProfile(user.uid);
+        nickname.value = p?.nickname || "";
+        bio.value = p?.bio || "";
+        instagram.value = p?.socials?.instagram || "";
+        youtube.value = p?.socials?.youtube || "";
+        discord.value = p?.socials?.discord || "";
+        setMsg("");
+      }catch(e){
+        console.error(e);
+        setMsg(l10n[currentLang].err);
+      }
+    });
+
+    // تغيير اللغة + حفظها Firestore
+    langToggle.addEventListener("click", async () => {
+      const next = (currentLang === "ar") ? "en" : "ar";
+      applyLang(next);
+      if (!currentUid) return;
+      try{ await setLang(currentUid, next); }catch(e){ console.error(e); }
+    });
+
+    // حفظ البروفايل Firestore
+    saveBtn.addEventListener("click", async () => {
+      if (!currentUid) return;
+      try{
+        setMsg(l10n[currentLang].loading);
+        await saveProfile(currentUid, {
+          nickname: (nickname.value || "").trim(),
+          bio: (bio.value || "").trim(),
+          socials: {
+            instagram: (instagram.value || "").trim(),
+            youtube: (youtube.value || "").trim(),
+            discord: (discord.value || "").trim()
+          }
+        });
+        setMsg(l10n[currentLang].saved, true);
+      }catch(e){
+        console.error(e);
+        setMsg(l10n[currentLang].err);
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
