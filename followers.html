@@ -346,7 +346,6 @@
     </div>
 
     <div class="wrap">
-      <!-- العمود الرئيسي: البوستات -->
       <section class="card" style="display:flex;flex-direction:column;min-height:0;">
         <div class="panel-head">
           <div class="h">
@@ -359,7 +358,6 @@
         <div class="posts" id="postsList"></div>
       </section>
 
-      <!-- العمود الجانبي: إضافة بوست -->
       <aside class="card" style="display:flex;flex-direction:column;gap:12px;min-height:0;">
         <div class="panel-head">
           <div class="h">
@@ -387,7 +385,6 @@
     </div>
   </main>
 
-  <!-- Modal الدخول (زي تبويب الدردشة) -->
   <div id="modal">
     <div id="modalBox">
       <div class="modalGrid">
@@ -438,11 +435,10 @@
   import {
     getFirestore, collection, addDoc, serverTimestamp,
     query, orderBy, onSnapshot, doc, updateDoc,
-    arrayUnion, arrayRemove, getDoc, setDoc
+    arrayUnion, arrayRemove
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-  // ✅ نفس مشروعك
   const firebaseConfig = {
     apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
     authDomain: "mlo5-users.firebaseapp.com",
@@ -456,7 +452,6 @@
   const db = getFirestore(app);
   const rtdb = getDatabase(app);
 
-  // UI
   const connDot = document.getElementById("connDot");
   const connText = document.getElementById("connText");
   const exitBtn = document.getElementById("exitBtn");
@@ -482,7 +477,6 @@
   const genderInput = document.getElementById("genderInput");
   const ageInput = document.getElementById("ageInput");
 
-  // Helpers
   function setVh(){
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -520,23 +514,19 @@
     return `${h}:${m} ${ampm}`;
   }
 
-  // فلتر كلمات (مثل الدردشة)
   const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
   function isProfane(text){
     const t = String(text||"").toLowerCase();
     return BAD_WORDS.some(w => t.includes(w));
   }
 
-  // Session
   let user = null;
   let profile = null;
-
   const profKey = (uid) => `followersProfile_${uid}`;
 
   function showForm(){ formBox.style.display = "block"; }
   function hideForm(){ formBox.style.display = "none"; }
 
-  // ✅ اتصال Firebase (RTDB info)
   function watchConnection(){
     const connRef = ref(rtdb, ".info/connected");
     onValue(connRef, (snap)=>{
@@ -546,10 +536,8 @@
     });
   }
 
-  // Auth flow (زي الدردشة)
   chooseLogin.addEventListener("click", ()=>{
     setErr(modalErr,"");
-    // إذا مش مسجل أو ضيف → ودّيه لصفحة login.html
     if (!user || user.isAnonymous){
       location.href = "login.html";
       return;
@@ -577,9 +565,8 @@
     location.href = "index.html";
   });
 
-  // دخول المنتدى بعد تعبئة البيانات
   enterBtn.addEventListener("click", async ()=>{
-    setErr(modalErr,"");
+    setErr(modalErr, "");
     const rawName = collapseSpaces(nameInput.value);
     const g = genderInput.value;
     const age = Number(ageInput.value);
@@ -591,7 +578,6 @@
 
     profile = { name: rawName, gender: g, age };
 
-    // نخزن للبريد (مش للضيف)
     if (!user.isAnonymous){
       localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
     }
@@ -601,20 +587,14 @@
 
   async function enterForum(){
     modal.style.display = "none";
-
     meBadge.textContent = `أنت: ${profile?.name || "—"}`;
     postText.disabled = false;
     publishBtn.disabled = false;
-
     startPostsListener();
   }
 
-  // Forum Firestore structure:
-  // collection: followers_posts
-  // doc: { text, uid, name, gender, age, createdAt, createdAtMs, likes: [uid...] }
-  // subcollection: followers_posts/{postId}/comments : { text, uid, name, createdAt, createdAtMs }
-
-  const POSTS_COL = "followers_posts";
+  // ✅ مهم: نخليها نفس الـRules اللي عندك
+  const POSTS_COL = "forumPosts";
 
   let unsubPosts = null;
   const commentUnsubs = new Map();
@@ -639,8 +619,6 @@
       docs.forEach(p=>{
         postsList.appendChild(renderPost(p));
       });
-
-      // نزول تلقائي مش ضروري (نخليه ثابت)
     }, (err)=>{
       console.error(err);
       setErr(postErr, "❌ صار خطأ بتحميل المنشورات.");
@@ -689,7 +667,6 @@
       </div>
     `;
 
-    // Like button
     const likeBtn = post.querySelector(".likeBtn");
     const likeText = post.querySelector(".likeText");
     const likesCountEl = post.querySelector(".likesCount");
@@ -698,7 +675,6 @@
       if (!user || !profile) return;
       try{
         const refDoc = doc(db, POSTS_COL, p.id);
-        // toggle
         const nowLiked = likeBtn.classList.contains("liked");
         if (nowLiked){
           await updateDoc(refDoc, { likes: arrayRemove(user.uid) });
@@ -716,7 +692,6 @@
       }
     });
 
-    // Comments toggle
     const cWrap = post.querySelector(".commentsWrap");
     const cToggleBtn = post.querySelector(".cToggleBtn");
     const cList = post.querySelector(".cList");
@@ -736,7 +711,6 @@
       }
     });
 
-    // Send comment
     cSendBtn.addEventListener("click", async ()=>{
       setErr(cErr,"");
       if (!user || !profile) return;
@@ -793,12 +767,13 @@
         `;
         listEl.appendChild(row);
       });
+    }, (err)=>{
+      console.error(err);
     });
 
     commentUnsubs.set(postId, unsub);
   }
 
-  // Publish new post
   publishBtn.addEventListener("click", async ()=>{
     setErr(postErr,"");
     if (!user || !profile) return;
@@ -837,17 +812,14 @@
     startPostsListener();
   });
 
-  // Exit
   exitBtn.addEventListener("click", ()=>{
     location.href = "index.html";
   });
 
-  // Auth boot
   onAuthStateChanged(auth, async (u)=>{
     user = u || null;
     watchConnection();
 
-    // حمّل بروفايل لو مسجل بالبريد
     if (user && !user.isAnonymous){
       const saved = localStorage.getItem(profKey(user.uid));
       if (saved){
@@ -860,7 +832,6 @@
       }
     }
 
-    // فتح المودال دائمًا (مثل الدردشة) عشان يحدد اسم + دخول
     hideForm();
     setErr(modalErr,"");
     modal.style.display = "flex";
