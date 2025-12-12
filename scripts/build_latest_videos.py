@@ -1,35 +1,25 @@
-import os, re, json, requests, feedparser
+import os, re, json, feedparser
 from datetime import datetime, timezone
 
-CHANNEL_HANDLE_URL = os.environ.get("CHANNEL_HANDLE_URL", "").strip()
+CHANNEL_ID = "UCJ7ltkpYPM7xI3DgMR1vvbg"
+
 OUT_PATH = os.environ.get("OUT_PATH", "latest-videos.json")
 LIMIT = int(os.environ.get("LIMIT", "15"))
 
 def now_iso():
   return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-def get_channel_id(handle_url: str) -> str:
-  html = requests.get(handle_url, headers={"User-Agent": "Mozilla/5.0"}, timeout=30).text
-  m = re.search(r'"channelId"\s*:\s*"([^"]+)"', html)
-  if not m:
-    m = re.search(r'channelId=([A-Za-z0-9_\-]+)', html)
-  if not m:
-    raise RuntimeError("Could not resolve channelId from handle URL")
-  return m.group(1)
-
 def video_id_from_link(link: str) -> str:
-  m = re.search(r"v=([A-Za-z0-9_\-]{6,})", link)
+  m = re.search(r"v=([A-Za-z0-9_\-]{6,})", link or "")
   return m.group(1) if m else ""
 
 def thumb_from_id(vid: str) -> str:
   return f"https://i.ytimg.com/vi/{vid}/hqdefault.jpg" if vid else ""
 
 def main():
-
-  channel_id = "UCJ7ltkpYPM7xI3DgMR1vvbg"
-  feed_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
-
+  feed_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={CHANNEL_ID}"
   feed = feedparser.parse(feed_url)
+
   items = []
   for e in feed.entries[:LIMIT]:
     vid = getattr(e, "yt_videoid", "") or video_id_from_link(getattr(e, "link", ""))
@@ -56,12 +46,15 @@ def main():
 
   out = {
     "generatedAt": now_iso(),
-    "channelHandleUrl": CHANNEL_HANDLE_URL,
-    "channelId": channel_id,
+    "channelId": CHANNEL_ID,
     "videos": items
   }
 
-  os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
+  # لو OUT_PATH بدون مجلد، لا تعمل makedirs
+  dirn = os.path.dirname(OUT_PATH)
+  if dirn:
+    os.makedirs(dirn, exist_ok=True)
+
   with open(OUT_PATH, "w", encoding="utf-8") as f:
     json.dump(out, f, ensure_ascii=False, indent=2)
 
