@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+
+<html dir="rtl" lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <title>اتصل بنا - M L O 5</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
-
-  <style>
+<meta charset="utf-8"/>
+<title>اتصل بنا - M L O 5</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&amp;family=Tajawal:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
     :root {
       --bg-dark: #020202;
       --yellow: #facc15;
@@ -324,113 +323,82 @@
   </style>
 </head>
 <body>
-  <div class="bg-grid"></div>
-
-  <main class="page">
-    <!-- الشريط العلوي -->
-    <div class="top-bar">
-      <a href="index.html" class="back-link" id="back-link">
+<div class="bg-grid"></div>
+<main class="page">
+<!-- الشريط العلوي -->
+<div class="top-bar">
+<a class="back-link" href="index.html" id="back-link">
         ← عودة للصفحة الرئيسية
       </a>
-      <button id="lang-toggle" class="lang-toggle" title="العربية">
+<button class="lang-toggle" id="lang-toggle" title="العربية">
         🌐
       </button>
-    </div>
-
-    <!-- الهيدر -->
-    <header class="page-header">
-      <h1 class="page-title" id="page-title">اتصل بي</h1>
-      <p class="page-subtitle" id="page-subtitle">
+</div>
+<!-- الهيدر -->
+<header class="page-header">
+<h1 class="page-title" id="page-title">اتصل بي</h1>
+<p class="page-subtitle" id="page-subtitle">
         عندك سؤال، فكرة تعاون، أو اقتراح للمحتوى؟ ابعتلي رسالة من هنا مباشرة.
       </p>
-    </header>
-
-    <!-- الكارد -->
-    <section class="card">
-      <div class="card-inner">
-        <div class="card-grid">
-          <!-- الفورم -->
-          <form id="contact-form" class="form" novalidate>
-            <div class="form-row">
-              <label class="label" for="name" id="label-name">الاسم</label>
-              <input
-                id="name"
-                type="text"
-                class="input"
-                placeholder="اكتب اسمك"
-              />
-              <div id="error-name" class="error-text"></div>
-            </div>
-
-            <div class="form-row">
-              <label class="label" for="email" id="label-email">البريد الإلكتروني</label>
-              <input
-                id="email"
-                type="email"
-                class="input"
-                placeholder="example@email.com"
-              />
-              <div id="error-email" class="error-text"></div>
-            </div>
-
-            <div class="form-row">
-              <label class="label" for="subject" id="label-subject">موضوع الرسالة</label>
-              <input
-                id="subject"
-                type="text"
-                class="input"
-                placeholder="مثلاً: اقتراح لفيديو، تعاون، استفسار..."
-              />
-              <div id="error-subject" class="error-text"></div>
-            </div>
-
-            <div class="form-row">
-              <label class="label" for="message" id="label-message">الرسالة</label>
-              <textarea
-                id="message"
-                class="textarea"
-                placeholder="اكتب رسالتك بالتفصيل…"
-              ></textarea>
-              <div id="error-message" class="error-text"></div>
-            </div>
-
-            <button type="submit" class="btn" id="send-btn">
+</header>
+<!-- الكارد -->
+<section class="card">
+<div class="card-inner">
+<div class="card-grid">
+<!-- الفورم -->
+<form accept-charset="UTF-8" action="https://formspree.io/f/xeoypvvj" class="form" id="contact-form" method="POST" novalidate=""><input id="hidden-subject" name="_subject" type="hidden" value="New message from MLO5 contact form"/>
+<div class="form-row">
+<label class="label" for="name" id="label-name">الاسم</label>
+<input autocomplete="name" class="input" id="name" name="name" placeholder="اكتب اسمك" required="" type="text"/>
+<div class="error-text" id="error-name"></div>
+</div>
+<div class="form-row">
+<label class="label" for="email" id="label-email">البريد الإلكتروني</label>
+<input autocomplete="email" class="input" id="email" name="email" placeholder="ih4.mlo5@gmail.com" required="" type="email"/>
+<div class="error-text" id="error-email"></div>
+</div>
+<div class="form-row">
+<label class="label" for="subject" id="label-subject">موضوع الرسالة</label>
+<input autocomplete="off" class="input" id="subject" name="subject" placeholder="مثلاً: اقتراح لفيديو، تعاون، استفسار..." required="" type="text"/>
+<div class="error-text" id="error-subject"></div>
+</div>
+<div class="form-row">
+<label class="label" for="message" id="label-message">الرسالة</label>
+<textarea autocomplete="off" class="textarea" id="message" name="message" placeholder="اكتب رسالتك بالتفصيل…" required=""></textarea>
+<div class="error-text" id="error-message"></div>
+</div>
+<button class="btn" id="send-btn" type="submit">
               إرسال الرسالة
             </button>
-
-            <div id="success-message" class="success-text"></div>
-          </form>
-
-          <!-- معلومات التواصل الجانبية -->
-          <div class="contact-box">
-            <div class="contact-title" id="contact-title">
+<div class="success-text" id="success-message"></div>
+</form>
+<!-- معلومات التواصل الجانبية -->
+<div class="contact-box">
+<div class="contact-title" id="contact-title">
               طرق تواصل أخرى
             </div>
-
-            <div class="contact-row">
-              <div class="contact-label" id="contact-email-label">الإيميل الرسمي:</div>
-              <div class="contact-value" id="contact-email-value">
-                example@gmail.com
+<div class="contact-row">
+<div class="contact-label" id="contact-email-label">الإيميل الرسمي:</div>
+<div class="contact-value" id="contact-email-value">
+                ih4.mlo5@gmail.com
               </div>
-            </div>
-
-            <div class="contact-row">
-              <div class="contact-label" id="contact-social-label">السوشال ميديا:</div>
-              <div class="contact-value" id="contact-social-value">
-                 Instagram: i.mlo5
+</div>
+<div class="contact-row">
+<div class="contact-label" id="contact-social-label">السوشال ميديا:</div>
+<div class="contact-value" id="contact-social-value">
+                YouTube · Instagram · TikTok (تقدر تعدّل النص لاحقًا)
               </div>
+</div>
+<div class="contact-note" id="contact-note">
+              ملاحظة: نموذج "اتصل بنا" تجريبي حالياً – الرسالة تُحفظ في المتصفح (localStorage). لما تطلع
+              بسيرفر حقيقي، تقدر تربطه بإرسال الإيميل فعلياً.
             </div>
-
-            <div class="contact-note" id="contact-note">
-لا يتم الرّد على أيّ إيميل وهمي أو احتيالي
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <script>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
     // تحريك شبكة النقاط
     const root = document.documentElement;
     document.addEventListener("mousemove", (e) => {
@@ -457,7 +425,7 @@
         labelSubject: "موضوع الرسالة",
         labelMessage: "الرسالة",
         placeholderName: "اكتب اسمك",
-        placeholderEmail: "example@mlo5.com",
+        placeholderEmail: "ih4.mlo5@gmail.com",
         placeholderSubject: "مثلاً: اقتراح لفيديو، تعاون، استفسار...",
         placeholderMessage: "اكتب رسالتك بالتفصيل…",
         errorName: "الاسم لازم يكون 2 أحرف أو أكثر.",
@@ -470,8 +438,8 @@
         contactEmailLabel: "الإيميل الرسمي:",
         contactEmailValue: "ih4.mlo5@gmail.com",
         contactSocialLabel: "السوشال ميديا:",
-        contactSocialValue: "Instagram: i.mlo5",
-        contactNote: "لا يتم الرّد على أيّ إيميل وهمي أو احتيالي",
+        contactSocialValue: "YouTube · Instagram · TikTok (تقدر تعدّل النص لاحقًا)",
+        contactNote: "ملاحظة: نموذج \"اتصل بنا\" تجريبي حالياً – الرسالة تُحفظ في المتصفح (localStorage). لما تطلع بسيرفر حقيقي، تقدر تربطه بإرسال الإيميل فعلياً.",
         langTitle: "العربية",
         pageTitle: "اتصل بنا - M L O 5",
       },
@@ -484,7 +452,7 @@
         labelSubject: "Subject",
         labelMessage: "Message",
         placeholderName: "Type your name",
-        placeholderEmail: "example@gmail.com",
+        placeholderEmail: "ih4.mlo5@gmail.com",
         placeholderSubject: "e.g. video idea, collaboration, question...",
         placeholderMessage: "Write your message in detail…",
         errorName: "Name must be at least 2 characters.",
@@ -497,8 +465,8 @@
         contactEmailLabel: "Official email:",
         contactEmailValue: "ih4.mlo5@gmail.com",
         contactSocialLabel: "Social media:",
-        contactSocialValue: "Instagram: i.mlo5",
-        contactNote: "No response will be given to any fake or fraudulent email",
+        contactSocialValue: "YouTube · Instagram · TikTok (you can edit this text later).",
+        contactNote: "Note: This contact form is demo-only – messages are stored locally (localStorage). When you move to a real server, you can wire it to send real emails.",
         langTitle: "English",
         pageTitle: "Contact - M L O 5",
       },
@@ -599,7 +567,7 @@
     }
 
     if (contactForm) {
-      contactForm.addEventListener("submit", (e) => {
+      contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const s = l10n[currentLang] || l10n.ar;
 
@@ -607,59 +575,76 @@
         setError("error-email", "");
         setError("error-subject", "");
         setError("error-message", "");
-        setSuccess("");
+        setSuccess("success-msg", "");
 
-        const nameInput = document.getElementById("name");
-        const emailInput = document.getElementById("email");
-        const subjectInput = document.getElementById("subject");
-        const messageInput = document.getElementById("message");
+        const name = (contactForm.querySelector("#name")?.value || "").trim();
+        const email = (contactForm.querySelector("#email")?.value || "").trim();
+        const subject = (contactForm.querySelector("#subject")?.value || "").trim();
+        const message = (contactForm.querySelector("#message")?.value || "").trim();
 
-        const name = nameInput ? nameInput.value.trim() : "";
-        const email = emailInput ? emailInput.value.trim() : "";
-        const subject = subjectInput ? subjectInput.value.trim() : "";
-        const message = messageInput ? messageInput.value.trim() : "";
+        let ok = true;
+        if (!name) { setError("error-name", s.errors.name); ok = false; }
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("error-email", s.errors.email); ok = false; }
+        if (!subject) { setError("error-subject", s.errors.subject); ok = false; }
+        if (!message) { setError("error-message", s.errors.message); ok = false; }
+        if (!ok) return;
 
-        let isValid = true;
+        // ✅ Formspree / Getform: جهّز البيانات
+        const fd = new FormData(contactForm);
 
-        if (name.length < 2) {
-          setError("error-name", s.errorName);
-          isValid = false;
+        // ✅ نخلي عنوان الإيميل واضح
+        const hiddenSubject = contactForm.querySelector("#hidden-subject");
+        if (hiddenSubject) hiddenSubject.value = `MLO5 Contact: ${subject}`;
+
+        // ✅ تعطيل زر الإرسال أثناء الطلب
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.dataset.prevText = submitBtn.textContent || "";
+          submitBtn.textContent = s.sending || "Sending...";
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          setError("error-email", s.errorEmail);
-          isValid = false;
+        try {
+          const res = await fetch(contactForm.action, {
+            method: "POST",
+            body: fd,
+            headers: { "Accept": "application/json" }
+          });
+
+          if (res.ok) {
+            // ✅ نجاح الإرسال
+            setSuccess("success-msg", s.success);
+
+            // (اختياري) نخزن نسخة محلياً بنفس المتصفح
+            const all = loadMessages();
+            all.unshift({
+              id: Date.now(),
+              name,
+              email,
+              subject,
+              message,
+              createdAt: new Date().toISOString(),
+            });
+            saveMessages(all);
+            renderMessages();
+
+            contactForm.reset();
+          } else {
+            let data = null;
+            try { data = await res.json(); } catch (e) {}
+            const msg = (data && data.error) ? data.error : (s.fail || "Failed to send.");
+            setError("error-message", msg);
+          }
+        } catch (err) {
+          setError("error-message", s.fail || "Failed to send.");
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = submitBtn.dataset.prevText || (s.send || "Send");
+          }
         }
-
-        if (subject.length < 3) {
-          setError("error-subject", s.errorSubject);
-          isValid = false;
-        }
-
-        if (message.length < 10) {
-          setError("error-message", s.errorMessage);
-          isValid = false;
-        }
-
-        if (!isValid) return;
-
-        // نخزنها محلياً كتجربة
-        saveMessage({
-          name,
-          email,
-          subject,
-          message,
-          createdAt: new Date().toISOString(),
-        });
-
-        if (contactForm) {
-          contactForm.reset();
-        }
-
-        setSuccess(s.success);
       });
     }
-  </script>
+</script>
 </body>
 </html>
