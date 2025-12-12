@@ -12,27 +12,19 @@
     .wrap{max-width:900px;margin:auto;padding:16px}
     .room{border:1px solid #facc15;border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer}
     .room:hover{background:rgba(250,204,21,.08)}
-    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:14px}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px}
     .modal{background:#0a0a0a;border:1px solid #facc15;border-radius:16px;padding:16px;width:100%;max-width:420px}
-    input,select{width:100%;margin-top:6px;margin-bottom:12px;padding:10px;border-radius:10px;border:1px solid #333;background:#000;color:#fff;outline:none}
+    input,select{width:100%;margin-top:6px;margin-bottom:12px;padding:10px;border-radius:10px;border:1px solid #333;background:#000;color:#fff}
     button{padding:10px 14px;border-radius:999px;border:none;font-weight:900;cursor:pointer}
     .primary{background:#facc15;color:#000}
-    .row{display:flex;gap:10px;justify-content:flex-start;margin-top:6px}
-    .ghost{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(250,204,21,.35)}
-    #msg{color:#fca5a5;margin:8px 0 0;min-height:18px}
-    .top{display:flex;gap:10px;margin-bottom:14px;direction:ltr}
-    .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 14px;border-radius:999px;border:1px solid rgba(250,204,21,.45);background:rgba(0,0,0,.55);color:#fff;text-decoration:none}
+    .ghost{background:transparent;color:#fff;border:1px solid rgba(250,204,21,.45)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    #msg{color:#fca5a5;min-height:18px}
   </style>
 </head>
 
 <body>
 <div class="wrap">
-
-  <div class="top">
-    <a class="pill" href="index.html">🏠 <span>الرئيسية</span></a>
-    <a class="pill" href="profile.html">👤 <span>بروفايل</span></a>
-  </div>
-
   <h2>غرف الدردشة</h2>
 
   <div class="room" data-room="general">الغرفة العامة</div>
@@ -42,15 +34,18 @@
 </div>
 
 <!-- Modal -->
-<div class="modal-bg" id="modal-bg">
-  <div class="modal" role="dialog" aria-modal="true">
-    <h3>قبل الدخول</h3>
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      <h3 style="margin:0;color:#facc15;">قبل الدخول</h3>
+      <button class="ghost" id="close" type="button">✕</button>
+    </div>
 
     <label>الاسم</label>
-    <input id="name" placeholder="اكتب اسمك" />
+    <input id="name" autocomplete="name" />
 
     <label>العمر</label>
-    <input id="age" type="number" min="8" max="99" placeholder="مثال: 21" />
+    <input id="age" type="number" min="8" max="99" />
 
     <label>الجنس</label>
     <select id="gender">
@@ -60,8 +55,8 @@
     </select>
 
     <div class="row">
-      <button class="primary" id="enter-btn" type="button">دخول الغرفة</button>
-      <button class="ghost" id="cancel-btn" type="button">إلغاء</button>
+      <button class="ghost" id="cancel" type="button">إلغاء</button>
+      <button class="primary" id="enter" type="button">جاهز للدخول…</button>
     </div>
 
     <p id="msg"></p>
@@ -69,104 +64,87 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  const app = initializeApp({
-    apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
-    authDomain: "mlo5-users.firebaseapp.com",
-    projectId: "mlo5-users"
+const app = initializeApp({
+  apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+  authDomain: "mlo5-users.firebaseapp.com",
+  projectId: "mlo5-users",
+  appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+});
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const modal = document.getElementById("modal");
+const msg = document.getElementById("msg");
+const nameInput = document.getElementById("name");
+const ageInput = document.getElementById("age");
+const genderInput = document.getElementById("gender");
+
+let roomPicked = null;
+let uid = null;
+
+function openModal(room){
+  roomPicked = room;
+  msg.textContent = "";
+  modal.style.display = "flex";
+}
+function closeModal(){
+  modal.style.display = "none";
+  roomPicked = null;
+}
+document.getElementById("close").onclick = closeModal;
+document.getElementById("cancel").onclick = closeModal;
+modal.addEventListener("click",(e)=>{ if(e.target === modal) closeModal(); });
+
+onAuthStateChanged(auth, u=>{
+  if(!u) location.href = "login.html";
+  uid = u.uid;
+
+  // Prefill
+  const fallbackName = (u.displayName || u.email || "User");
+  if(!nameInput.value) nameInput.value = fallbackName;
+});
+
+document.querySelectorAll(".room").forEach(r=>{
+  r.addEventListener("click", ()=>{
+    openModal(r.dataset.room);
   });
+});
 
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  // DOM
-  const modalBg   = document.getElementById("modal-bg");
-  const enterBtn  = document.getElementById("enter-btn");
-  const cancelBtn = document.getElementById("cancel-btn");
-  const nameInput = document.getElementById("name");
-  const ageInput  = document.getElementById("age");
-  const genderSel = document.getElementById("gender");
-  const msgEl     = document.getElementById("msg");
-
-  let roomPicked = null;
-  let uid = null;
-  let authReady = false;
-
-  function openModal(){
-    msgEl.textContent = "";
-    modalBg.style.display = "flex";
+document.getElementById("enter").addEventListener("click", async ()=>{
+  if(!uid || !roomPicked){
+    msg.textContent="❌ لازم تكون مسجل دخول.";
+    return;
   }
-  function closeModal(){
-    modalBg.style.display = "none";
+
+  const name = nameInput.value.trim();
+  const age = Number(ageInput.value);
+  const gender = genderInput.value;
+
+  if(!name || !age || age < 8 || age > 99 || !gender){
+    msg.textContent="❌ عبّي الاسم + العمر (8-99) + الجنس.";
+    return;
   }
 
-  cancelBtn.addEventListener("click", closeModal);
-  modalBg.addEventListener("click", (e)=>{ if(e.target === modalBg) closeModal(); });
+  // ✅ خزّن فوراً محليًا (مضمون) عشان room.html يقرأها حتى لو Firestore فشل
+  sessionStorage.setItem("mlo5-chat", JSON.stringify({ name, age, gender, savedAt: Date.now() }));
 
-  onAuthStateChanged(auth, (u)=>{
-    if(!u){
-      location.href = "login.html";
-      return;
-    }
-    uid = u.uid;
-    authReady = true;
-  });
+  // 🔥 حاول خزّن Firestore (إذا القواعد مانعة رح يفشل… بس مش رح يمنع الدخول)
+  try{
+    await setDoc(doc(db,"users",uid,"chatProfile","main"),{
+      name, age, gender, updatedAt: serverTimestamp()
+    },{merge:true});
+  }catch(e){
+    console.warn("Firestore save failed:", e);
+  }
 
-  // اختيار غرفة
-  document.querySelectorAll(".room").forEach((r)=>{
-    r.addEventListener("click", ()=>{
-      if(!authReady || !uid){
-        msgEl.textContent = "استنى لحظة… جاري تجهيز تسجيل الدخول.";
-        return;
-      }
-      roomPicked = r.dataset.room;
-      openModal();
-    });
-  });
-
-  // دخول الغرفة
-  enterBtn.addEventListener("click", async ()=>{
-    msgEl.textContent = "";
-
-    if(!authReady || !uid){
-      msgEl.textContent = "❌ تسجيل الدخول مش جاهز… جرّب بعد ثانية.";
-      return;
-    }
-    if(!roomPicked){
-      msgEl.textContent = "❌ اختر غرفة أولًا.";
-      return;
-    }
-
-    const name = (nameInput.value || "").trim();
-    const age = Number(ageInput.value || 0);
-    const gender = (genderSel.value || "").trim();
-
-    if(!name || !age || age < 8 || age > 99 || !gender){
-      msgEl.textContent = "❌ عبّي الاسم + العمر (8-99) + الجنس.";
-      return;
-    }
-
-    // خزّن محليًا (يضمن إن room.html يقرأها فورًا)
-    sessionStorage.setItem("mlo5-chat", JSON.stringify({ name, age, gender }));
-
-    // حاول خزّن Firestore (لو Rules بتمنع، ما رح نوقف التحويل)
-    try{
-      await setDoc(doc(db,"users",uid,"chatProfile","main"),{
-        name, age, gender, updatedAt: serverTimestamp()
-      },{merge:true});
-    }catch(e){
-      console.warn("Firestore save failed (not blocking):", e);
-    }
-
-    closeModal();
-
-    // ✅ تحويل مضمون
-    const target = `room.html?room=${encodeURIComponent(roomPicked)}`;
-    location.assign(target);
-  });
+  closeModal();
+  location.assign(`./room.html?room=${encodeURIComponent(roomPicked)}`);
+});
 </script>
 </body>
 </html>
