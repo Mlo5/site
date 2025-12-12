@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>إنشاء حساب - M L O 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- نفس الخطوط -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #020202;
+      --yellow: #facc15;
+      --white: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(156, 163, 175, 0.35);
+      --radius-lg: 20px;
+      --radius-full: 999px;
+      --grid-x: 0px;
+      --grid-y: 0px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--bg-dark);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+      padding: 16px;
+    }
+
+    /* خلفية النقاط نفسها */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: radial-gradient(
+        circle,
+        rgba(249, 250, 251, 0.55) 1px,
+        transparent 1px
+      );
+      background-size: 30px 30px;
+      background-position:
+        calc(50% + var(--grid-x))
+        calc(50% + var(--grid-y));
+      opacity: 0.25;
+      mix-blend-mode: screen;
+    }
+
+    .login-shell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* شريط علوي صغير: رجوع + لغة */
+    .login-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .back-link {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(10, 10, 10, 0.9);
+      border: 1px solid rgba(30, 30, 30, 0.95);
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(0, 0, 0, 0.9);
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .back-link:hover {
+      background: rgba(20, 20, 20, 0.95);
+      transform: translateY(-1px);
+    }
+
+    .lang-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: var(--yellow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0, 0, 0, 0.9);
+      transition:
+        background 0.15s ease,
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .lang-toggle:hover {
+      transform: translateY(-1px);
+      background: radial-gradient(circle at top, #facc15, #fbbf24);
+      color: #000;
+      box-shadow:
+        0 14px 30px rgba(0, 0, 0, 1),
+        0 0 0 1px rgba(250, 204, 21, 0.8);
+    }
+
+    /* الكارد – أسود/أصفر */
+    .login-card {
+      background: radial-gradient(circle at top, #111111, #020202);
+      border-radius: 22px;
+      padding: 22px 18px 20px;
+      border: 1px solid rgba(20, 20, 20, 0.95);
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(0, 0, 0, 0.95);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.2),
+        transparent 55%
+      );
+      opacity: 0.7;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .login-card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* اللوغو + العنوان */
+    .login-logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .login-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid rgba(250, 204, 21, 0.9);
+      box-shadow:
+        0 0 0 2px rgba(0, 0, 0, 0.8),
+        0 12px 30px rgba(0, 0, 0, 0.9);
+      background: #020202;
+    }
+
+    .login-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .login-title {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      font-size: 1.3rem;
+      color: var(--white);
+      text-align: center;
+    }
+
+    .login-subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .login-divider {
+      margin: 14px 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(156, 163, 175, 0.6),
+        transparent
+      );
+    }
+
+    /* الفورم */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .form-input {
+      background: rgba(10, 10, 10, 0.95);
+      border-radius: 999px;
+      border: 1px solid rgba(35, 35, 35, 0.95);
+      padding: 9px 14px;
+      font-size: 0.9rem;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .form-input::placeholder {
+      color: rgba(148, 163, 184, 0.8);
+    }
+
+    .form-input:focus {
+      border-color: rgba(250, 204, 21, 0.9);
+      box-shadow:
+        0 0 0 1px rgba(250, 204, 21, 0.7),
+        0 0 0 6px rgba(250, 204, 21, 0.18);
+      background: rgba(12, 12, 12, 0.98);
+    }
+
+    .error-text {
+      font-size: 0.78rem;
+      color: #f97373;
+      min-height: 14px;
+    }
+
+    .success-text {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #22c55e;
+      min-height: 14px;
+    }
+
+    /* زر إنشاء حساب */
+    .login-btn {
+      margin-top: 6px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 2px solid #000000;
+      background: #facc15;
+      color: #111827;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.6);
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        filter 0.15s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.75);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+      box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.8);
+    }
+
+    .login-helper {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .signin-link {
+      color: var(--yellow);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .signin-link:hover {
+      text-decoration: underline;
+    }
+
+    /* كابتشا – مودال منفصل */
+    .captcha-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .captcha-overlay.captcha-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .captcha-modal {
+      background: radial-gradient(circle at top, #111111, #020202);
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      max-width: 320px;
+      width: 100%;
+      border: 1px solid rgba(250, 204, 21, 0.7);
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 1),
+        0 0 0 1px rgba(0, 0, 0, 0.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .captcha-modal::before {
+      content: "";
+      position: absolute;
+      inset: -50%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.22),
+        transparent 60%
+      );
+      opacity: 0.7;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .captcha-modal-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .captcha-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--yellow);
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .captcha-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .captcha-question {
+      font-size: 0.95rem;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .captcha-input {
+      width: 100%;
+      background: rgba(10, 10, 10, 0.95);
+      border-radius: 999px;
+      border: 1px solid rgba(35, 35, 35, 0.95);
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      color: var(--white);
+      outline: none;
+      margin-bottom: 4px;
+    }
+
+    .captcha-error {
+      font-size: 0.78rem;
+      color: #f97373;
+      min-height: 14px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .captcha-actions {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .captcha-btn-confirm,
+    .captcha-btn-cancel {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #000;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .captcha-btn-confirm {
+      background: #facc15;
+      color: #111827;
+    }
+
+    .captcha-btn-confirm:hover {
+      filter: brightness(1.05);
+    }
+
+    .captcha-btn-cancel {
+      background: #020617;
+      color: #e5e7eb;
+      border-color: #111827;
+    }
+
+    .captcha-btn-cancel:hover {
+      filter: brightness(1.1);
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 20px 14px 18px;
+      }
+
+      .login-title {
+        font-size: 1.15rem;
+        letter-spacing: 0.22em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- خلفية نقاط متحركة -->
+  <div class="bg-grid"></div>
+
+  <!-- مودال الكابتشا -->
+  <div id="captcha-overlay" class="captcha-overlay">
+    <div class="captcha-modal">
+      <div class="captcha-modal-inner">
+        <div id="captcha-title" class="captcha-title">تحقق بسيط</div>
+        <div id="captcha-desc" class="captcha-desc">
+          قبل إنشاء الحساب، أجب على هذا السؤال للتأكد إنك مش روبوت 🤖
+        </div>
+        <div id="captcha-question" class="captcha-question"></div>
+        <input
+          id="captcha-input"
+          type="text"
+          class="captcha-input"
+          placeholder="اكتب الجواب هنا"
+        />
+        <div id="error-captcha" class="captcha-error"></div>
+        <div class="captcha-actions">
+          <button id="captcha-confirm" class="captcha-btn-confirm">
+            تأكيد
+          </button>
+          <button id="captcha-cancel" class="captcha-btn-cancel">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-shell">
+    <div class="login-top-bar">
+      <a href="login.html" class="back-link" id="back-link">
+        ← رجوع لتسجيل الدخول
+      </a>
+      <button id="lang-toggle" class="lang-toggle" title="العربية">
+        🌐
+      </button>
+    </div>
+
+    <div class="login-card">
+      <div class="login-card-inner">
+        <!-- اللوغو + العنوان -->
+        <div class="login-logo-wrap">
+          <div class="login-logo">
+            <!-- 🔻 نفس اللوغو تبعك -->
+            <img src="logo.png" alt="MLO5 Logo">
+          </div>
+          <div class="login-title">M L O 5</div>
+          <div id="login-subtitle" class="login-subtitle">
+            أنشئ حساب جديد
+          </div>
+        </div>
+
+        <div class="login-divider"></div>
+
+        <!-- الفورم -->
+        <form id="signup-form" class="login-form" novalidate>
+          <!-- الاسم الكامل -->
+          <div class="form-group">
+            <label for="full-name" id="full-name-label" class="form-label">الاسم الكامل</label>
+            <input
+              id="full-name"
+              name="full-name"
+              type="text"
+              class="form-input"
+              placeholder="اكتب اسمك الكامل"
+              required
+            />
+            <div id="error-full-name" class="error-text"></div>
+          </div>
+
+          <!-- رقم الهاتف -->
+          <div class="form-group">
+            <label for="phone" id="phone-label" class="form-label">رقم الهاتف</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              class="form-input"
+              placeholder="+9627xxxxxxxx"
+              required
+            />
+            <div id="error-phone" class="error-text"></div>
+          </div>
+
+          <!-- الإيميل -->
+          <div class="form-group">
+            <label for="email" id="email-label" class="form-label">البريد الإلكتروني</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              class="form-input"
+              placeholder="example@email.com"
+              required
+            />
+            <div id="error-email" class="error-text"></div>
+          </div>
+
+          <!-- الباسورد -->
+          <div class="form-group">
+            <label for="password" id="password-label" class="form-label">كلمة المرور</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              class="form-input"
+              placeholder="********"
+              required
+            />
+            <div id="error-password" class="error-text"></div>
+          </div>
+
+          <!-- تأكيد الباسورد -->
+          <div class="form-group">
+            <label for="confirm-password" id="confirm-password-label" class="form-label">تأكيد كلمة المرور</label>
+            <input
+              id="confirm-password"
+              name="confirm-password"
+              type="password"
+              class="form-input"
+              placeholder="أعد كتابة كلمة المرور"
+              required
+            />
+            <div id="error-confirm-password" class="error-text"></div>
+          </div>
+
+          <button type="submit" id="signup-btn" class="login-btn">
+            إنشاء حساب
+          </button>
+
+          <!-- رسالة النجاح -->
+          <div id="success-message" class="success-text"></div>
+        </form>
+
+        <p class="login-helper">
+          <span id="have-account-text">عندك حساب؟</span>
+          <a href="login.html" id="signin-link" class="signin-link">سجّل دخول</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // تحريك شبكة النقاط مع الماوس
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      const xShift = xRatio * maxShift;
+      const yShift = yRatio * maxShift;
+      root.style.setProperty("--grid-x", xShift.toFixed(1) + "px");
+      root.style.setProperty("--grid-y", yShift.toFixed(1) + "px");
+    });
+
+    // مفاتيح التخزين (نفسها في index/login/pro
+    const MLO5_USERS_KEY = "mlo5-users";
+    const MLO5_CURRENT_USER_KEY = "mlo5-current-user-email";
+
+    function mlo5LoadUsers() {
+      try {
+        const raw = localStorage.getItem(MLO5_USERS_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.error("Failed to load users", e);
+        return [];
+      }
+    }
+
+    function mlo5SaveUsers(users) {
+      try {
+        localStorage.setItem(MLO5_USERS_KEY, JSON.stringify(users));
+      } catch (e) {
+        console.error("Failed to save users", e);
+      }
+    }
+
+    function mlo5SetCurrentUser(email) {
+      if (!email) return;
+      try {
+        localStorage.setItem(MLO5_CURRENT_USER_KEY, email.toLowerCase());
+      } catch (e) {
+        console.error("Failed to set current user", e);
+      }
+    }
+
+    // نفس نظام اللغة
+    const langToggle = document.getElementById("lang-toggle");
+    const LANG_KEY = "mlo5-lang";
+
+    const l10n = {
+      ar: {
+        back: "← رجوع لتسجيل الدخول",
+        subtitle: "أنشئ حساب جديد",
+        fullNameLabel: "الاسم الكامل",
+        phoneLabel: "رقم الهاتف",
+        emailLabel: "البريد الإلكتروني",
+        passwordLabel: "كلمة المرور",
+        confirmPasswordLabel: "تأكيد كلمة المرور",
+        fullNameError: "الاسم لازم يكون 3 أحرف أو أكثر.",
+        phoneError: "رجاءً أدخل رقم هاتف صحيح.",
+        emailError: "رجاءً أدخل بريد إلكتروني صحيح.",
+        passwordError: "كلمة المرور لازم تكون 8 أحرف أو أكثر.",
+        confirmPasswordError: "كلمة المرور غير متطابقتين.",
+        emailExistsError: "هذا البريد مسجّل مسبقاً، جرّب تسجيل الدخول.",
+        captchaTitle: "تحقق بسيط",
+        captchaDesc: "قبل إنشاء الحساب، أجب على هذا السؤال للتأكد إنك مش روبوت 🤖",
+        captchaPlaceholder: "اكتب الجواب هنا",
+        captchaError: "الإجابة غير صحيحة، حاول مرة ثانية.",
+        success: "تم إنشاء الحساب بنجاح! جاري تحويلك للصفحة الرئيسية...",
+        haveAccount: "عندك حساب؟",
+        signin: "سجّل دخول",
+        langTitle: "العربية",
+        title: "إنشاء حساب - M L O 5",
+      },
+      en: {
+        back: "← Back to login",
+        subtitle: "Create a new account",
+        fullNameLabel: "Full name",
+        phoneLabel: "Phone number",
+        emailLabel: "Email address",
+        passwordLabel: "Password",
+        confirmPasswordLabel: "Confirm password",
+        fullNameError: "Name must be at least 3 characters.",
+        phoneError: "Please enter a valid phone number.",
+        emailError: "Please enter a valid email address.",
+        passwordError: "Password must be at least 8 characters.",
+        confirmPasswordError: "Passwords do not match.",
+        emailExistsError: "This email is already registered, please sign in.",
+        captchaTitle: "Simple verification",
+        captchaDesc: "Before creating the account, answer this to confirm you're not a robot 🤖",
+        captchaPlaceholder: "Type your answer here",
+        captchaError: "Incorrect answer, please try again.",
+        success: "Account created successfully! Redirecting to home...",
+        haveAccount: "Already have an account?",
+        signin: "Sign in",
+        langTitle: "English",
+        title: "Sign Up - M L O 5",
+      },
+    };
+
+    function applyLang(lang) {
+      const strings = l10n[lang] || l10n["ar"];
+      document.title = strings.title;
+
+      const back = document.getElementById("back-link");
+      const subtitle = document.getElementById("login-subtitle");
+      const fullNameLabel = document.getElementById("full-name-label");
+      const phoneLabel = document.getElementById("phone-label");
+      const emailLabel = document.getElementById("email-label");
+      const passwordLabel = document.getElementById("password-label");
+      const confirmPasswordLabel = document.getElementById("confirm-password-label");
+      const haveAccountText = document.getElementById("have-account-text");
+      const signinLink = document.getElementById("signin-link");
+      const captchaTitle = document.getElementById("captcha-title");
+      const captchaDesc = document.getElementById("captcha-desc");
+      const captchaInput = document.getElementById("captcha-input");
+
+      if (back) back.textContent = strings.back;
+      if (subtitle) subtitle.textContent = strings.subtitle;
+      if (fullNameLabel) fullNameLabel.textContent = strings.fullNameLabel;
+      if (phoneLabel) phoneLabel.textContent = strings.phoneLabel;
+      if (emailLabel) emailLabel.textContent = strings.emailLabel;
+      if (passwordLabel) passwordLabel.textContent = strings.passwordLabel;
+      if (confirmPasswordLabel) confirmPasswordLabel.textContent = strings.confirmPasswordLabel;
+      if (haveAccountText) haveAccountText.textContent = strings.haveAccount;
+      if (signinLink) signinLink.textContent = strings.signin;
+      if (captchaTitle) captchaTitle.textContent = strings.captchaTitle;
+      if (captchaDesc) captchaDesc.textContent = strings.captchaDesc;
+      if (captchaInput) captchaInput.placeholder = strings.captchaPlaceholder;
+
+      if (langToggle) {
+        langToggle.title = strings.langTitle;
+      }
+
+      document.documentElement.lang = lang === "en" ? "en" : "ar";
+      document.documentElement.dir = "rtl";
+    }
+
+    let savedLang = localStorage.getItem(LANG_KEY) || "ar";
+    applyLang(savedLang);
+
+    if (langToggle) {
+      langToggle.addEventListener("click", () => {
+        savedLang = savedLang === "ar" ? "en" : "ar";
+        localStorage.setItem(LANG_KEY, savedLang);
+        applyLang(savedLang);
+      });
+    }
+
+    // Helpers للرسائل
+    function setError(id, message) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = message || "";
+    }
+
+    function setSuccess(message) {
+      const el = document.getElementById("success-message");
+      if (el) el.textContent = message || "";
+    }
+
+    // كابتشا بسيطة (جمع رقمين)
+    let currentCaptchaAnswer = null;
+
+    function generateCaptcha() {
+      const a = Math.floor(Math.random() * 9) + 1;
+      const b = Math.floor(Math.random() * 9) + 1;
+      currentCaptchaAnswer = a + b;
+      const qEl = document.getElementById("captcha-question");
+      if (qEl) {
+        const lang = savedLang === "en" ? "en" : "ar";
+        if (lang === "ar") {
+          qEl.textContent = `كم حاصل ${a} + ${b} ؟`;
+        } else {
+          qEl.textContent = `What is ${a} + ${b}?`;
+        }
+      }
+      const input = document.getElementById("captcha-input");
+      if (input) {
+        input.value = "";
+      }
+      setError("error-captcha", "");
+    }
+
+    function openCaptchaModal() {
+      generateCaptcha();
+      const overlay = document.getElementById("captcha-overlay");
+      if (overlay) {
+        overlay.classList.add("captcha-visible");
+      }
+      const input = document.getElementById("captcha-input");
+      setTimeout(() => {
+        if (input) input.focus();
+      }, 50);
+    }
+
+    function closeCaptchaModal() {
+      const overlay = document.getElementById("captcha-overlay");
+      if (overlay) {
+        overlay.classList.remove("captcha-visible");
+      }
+    }
+
+    // فورم إنشاء حساب
+    const signupForm = document.getElementById("signup-form");
+    const captchaConfirmBtn = document.getElementById("captcha-confirm");
+    const captchaCancelBtn = document.getElementById("captcha-cancel");
+
+    // نخزّن حالة الفاليديشين قبل الكابتشا
+    let pendingSubmissionValid = false;
+
+    if (signupForm) {
+      signupForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const lang = savedLang === "en" ? "en" : "ar";
+        const s = l10n[lang];
+
+        setSuccess("");
+        setError("error-full-name", "");
+        setError("error-phone", "");
+        setError("error-email", "");
+        setError("error-password", "");
+        setError("error-confirm-password", "");
+        setError("error-captcha", "");
+
+        const fullName = document.getElementById("full-name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
+
+        let isValid = true;
+
+        if (fullName.length < 3) {
+          setError("error-full-name", s.fullNameError);
+          isValid = false;
+        }
+
+        const phoneRegex = /^[0-9+\-\s]{7,20}$/;
+        if (!phoneRegex.test(phone)) {
+          setError("error-phone", s.phoneError);
+          isValid = false;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          setError("error-email", s.emailError);
+          isValid = false;
+        }
+
+        if (password.length < 8) {
+          setError("error-password", s.passwordError);
+          isValid = false;
+        }
+
+        if (confirmPassword !== password) {
+          setError("error-confirm-password", s.confirmPasswordError);
+          isValid = false;
+        }
+
+        // التحقق إن الإيميل مش مسجّل من قبل
+        if (isValid) {
+          const users = mlo5LoadUsers();
+          const emailLower = email.toLowerCase();
+          if (users.some((u) => (u.email || "").toLowerCase() === emailLower)) {
+            setError("error-email", s.emailExistsError);
+            isValid = false;
+          }
+        }
+
+        if (!isValid) {
+          return;
+        }
+
+        // الفاليديشين كله تمام → نفتح مودال الكابتشا
+        pendingSubmissionValid = true;
+        openCaptchaModal();
+      });
+    }
+
+    if (captchaConfirmBtn) {
+      captchaConfirmBtn.addEventListener("click", () => {
+        if (!pendingSubmissionValid) {
+          closeCaptchaModal();
+          return;
+        }
+        const lang = savedLang === "en" ? "en" : "ar";
+        const s = l10n[lang];
+
+        const input = document.getElementById("captcha-input");
+        const value = input ? input.value.trim() : "";
+        if (!value || parseInt(value, 10) !== currentCaptchaAnswer) {
+          setError("error-captcha", s.captchaError);
+          return;
+        }
+
+        // نجاح التحقق → نخزّن المستخدم
+        const fullName = document.getElementById("full-name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const emailLower = email.toLowerCase();
+
+        let users = mlo5LoadUsers();
+
+        const newUser = {
+          name: fullName,
+          email: emailLower,
+          phone: phone,
+          password: password,
+          createdAt: new Date().toISOString(), // بنستخدمها لاحقاً في "عضو منذ"
+        };
+
+        users.push(newUser);
+        mlo5SaveUsers(users);
+        mlo5SetCurrentUser(emailLower);
+
+        closeCaptchaModal();
+        setSuccess(s.success);
+
+        if (signupForm) {
+          signupForm.reset();
+        }
+        pendingSubmissionValid = false;
+        generateCaptcha();
+
+        // تحويل للصفحة الرئيسية
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 900);
+      });
+    }
+
+    if (captchaCancelBtn) {
+      captchaCancelBtn.addEventListener("click", () => {
+        closeCaptchaModal();
+        pendingSubmissionValid = false;
+      });
+    }
+
+    // نولد كابتشا أول مرة
+    generateCaptcha();
+  </script>
+</body>
+</html>
