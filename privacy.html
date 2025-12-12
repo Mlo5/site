@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <title>سياسة الخصوصية - Mlo5</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg-dark: #020202;
+      --yellow: #facc15;
+      --white: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(156, 163, 175, 0.35);
+      --radius-lg: 20px;
+      --radius-full: 999px;
+      --grid-x: 0px;
+      --grid-y: 0px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-dark);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      position: relative;
+      padding: 16px;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, rgba(249, 250, 251, 0.55) 1px, transparent 1px);
+      background-size: 30px 30px;
+      background-position: calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
+      opacity: 0.25;
+      mix-blend-mode: screen;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .back-link {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(10, 10, 10, 0.9);
+      border: 1px solid rgba(30, 30, 30, 0.95);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0, 0, 0, 0.9);
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .back-link:hover { background: rgba(20, 20, 20, 0.95); transform: translateY(-1px); }
+
+    .lang-toggle {
+      width: 36px; height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: var(--yellow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(0, 0, 0, 0.9);
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .lang-toggle:hover {
+      transform: translateY(-1px);
+      background: radial-gradient(circle at top, #facc15, #fbbf24);
+      color: #000;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.8);
+    }
+
+    .page-header { margin-bottom: 16px; }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(156, 163, 175, 0.22);
+      background: rgba(10,10,10,0.86);
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 10px;
+      width: fit-content;
+    }
+
+    .card {
+      background: radial-gradient(circle at top, #111111, #020202);
+      border-radius: 22px;
+      border: 1px solid rgba(20,20,20,0.95);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(0, 0, 0, 0.95);
+      padding: 18px 16px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at top, rgba(250, 204, 21, 0.16), transparent 55%);
+      opacity: 0.7;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .card-inner { position: relative; z-index: 1; }
+
+    .section {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(156, 163, 175, 0.12);
+    }
+    .section:last-child { border-bottom: none; }
+
+    .h2 {
+      font-size: 1.02rem;
+      color: var(--yellow);
+      margin-bottom: 6px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .p {
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 0.92rem;
+    }
+
+    .list { margin-top: 8px; padding-right: 18px; }
+    html[dir="ltr"] .list { padding-right: 0; padding-left: 18px; }
+
+    .list li {
+      margin-bottom: 6px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.92rem;
+    }
+
+    .link {
+      color: var(--yellow);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(250, 204, 21, 0.55);
+    }
+    .link:hover { filter: brightness(1.05); }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: rgba(156, 163, 175, 0.9);
+      line-height: 1.8;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <main class="page">
+    <div class="top-bar">
+      <a class="back-link" href="index.html" id="back-link">← عودة للصفحة الرئيسية</a>
+      <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
+    </div>
+
+    <header class="page-header">
+      <h1 class="page-title" id="page-title">سياسة الخصوصية</h1>
+      <p class="page-subtitle" id="page-subtitle">
+        هذه السياسة تشرح كيف يتعامل موقع Mlo5 مع معلوماتك عند استخدام الموقع ونموذج “اتصل بنا”.
+      </p>
+      <div class="pill" id="effective-date">تاريخ النفاذ: 12 ديسمبر 2025</div>
+    </header>
+
+    <section class="card">
+      <div class="card-inner" id="policy-content">
+
+        <div class="section">
+          <div class="h2" id="s1-title">1) من نحن</div>
+          <div class="p" id="s1-body">
+            موقع <strong style="color:var(--white)">Mlo5</strong> هو موقع شخصي. نلتزم باحترام خصوصيتك وحماية أي معلومات تشاركها معنا عبر هذا الموقع.
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s2-title">2) المعلومات التي نجمعها</div>
+          <div class="p" id="s2-body">
+            عند استخدامك لنموذج “اتصل بنا”، قد نجمع المعلومات التالية:
+          </div>
+          <ul class="list" id="s2-list">
+            <li>الاسم</li>
+            <li>البريد الإلكتروني</li>
+            <li>محتوى الرسالة</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s3-title">3) لماذا نجمع هذه المعلومات</div>
+          <div class="p" id="s3-body">
+            نستخدم هذه المعلومات فقط من أجل:
+          </div>
+          <ul class="list" id="s3-list">
+            <li>الرد على استفساراتك ورسائلك</li>
+            <li>التواصل معك بخصوص طلبك أو رسالتك</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s4-title">4) أين تُعالج البيانات وكيف تُرسل</div>
+          <div class="p" id="s4-body">
+            هذا الموقع هو موقع ثابت (Static) مستضاف على GitHub Pages. عند إرسال نموذج التواصل، يتم إرسال البيانات إلى خدمة طرف ثالث لمعالجة النماذج وهي
+            <strong style="color:var(--white)">Formspree</strong> بهدف إيصال الرسالة إلينا. نحن لا ندير خوادم خاصة بنا لتخزين رسائل الموقع.
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s5-title">5) الخدمات الخارجية</div>
+          <div class="p" id="s5-body">
+            يستخدم الموقع خدمات خارجية لتشغيله بشكل صحيح، مثل:
+          </div>
+          <ul class="list" id="s5-list">
+            <li>GitHub Pages (استضافة ملفات الموقع)</li>
+            <li>Formspree (استقبال ومعالجة رسائل نموذج التواصل)</li>
+          </ul>
+          <div class="p" id="s5-body2" style="margin-top:8px;">
+            تخضع هذه الخدمات لسياسات الخصوصية الخاصة بها.
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s6-title">6) ملفات تعريف الارتباط (Cookies) والتخزين المحلي</div>
+          <div class="p" id="s6-body">
+            حاليًا لا نستخدم ملفات تعريف الارتباط للتتبع أو الإعلانات. قد يستخدم الموقع تخزينًا محليًا في المتصفح (مثل حفظ اللغة أو بعض إعدادات الحماية ضد الرسائل المزعجة).
+            إذا أضفنا مستقبلاً أدوات تحليلات أو ملفات تعريف ارتباط إضافية، سنقوم بتحديث هذه الصفحة.
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s7-title">7) خصوصية الأطفال</div>
+          <div class="p" id="s7-body">
+            قد يكون الموقع مناسبًا لجمهور عام بما في ذلك من هم دون 18 سنة. نحن لا نقصد جمع بيانات حساسة من الأطفال عمدًا.
+            إذا كنت ولي أمر وتعتقد أن طفلك أرسل بيانات شخصية عبر نموذج التواصل، تواصل معنا وسنعمل على حذفها عند الإمكان.
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s8-title">8) حماية البيانات</div>
+          <div class="p" id="s8-body">
+            نستخدم إجراءات تقنية معقولة للمساعدة في حماية البيانات (مثل HTTPS وحماية ضد الرسائل الآلية في نموذج التواصل). ومع ذلك، لا يمكن ضمان أمان 100% لأي نقل بيانات عبر الإنترنت.
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s9-title">9) حقوقك</div>
+          <div class="p" id="s9-body">
+            يمكنك في أي وقت طلب:
+          </div>
+          <ul class="list" id="s9-list">
+            <li>معرفة المعلومات التي أرسلتها لنا عبر نموذج التواصل</li>
+            <li>حذف رسالتك أو بياناتك التي تم إرسالها (قدر الإمكان)</li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s10-title">10) التواصل معنا</div>
+          <div class="p" id="s10-body">
+            لأي استفسار حول سياسة الخصوصية، يمكنك التواصل معنا عبر البريد الإلكتروني:
+            <a class="link" href="mailto:ih4.mlo5@gmail.com">ih4.mlo5@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="h2" id="s11-title">11) التعديلات على هذه السياسة</div>
+          <div class="p" id="s11-body">
+            قد نقوم بتحديث هذه السياسة من وقت لآخر. سيتم نشر أي تعديل على هذه الصفحة مع تحديث تاريخ النفاذ.
+          </div>
+        </div>
+
+        <div class="footer-note" id="footer-note">
+          آخر تحديث: 12 ديسمبر 2025
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // تحريك شبكة النقاط (نفس ستايل موقعك)
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+    });
+
+    // لغة الصفحة
+    const LANG_KEY = "mlo5-lang";
+    const langToggle = document.getElementById("lang-toggle");
+
+    // تاريخ اليوم حسب بياناتك (Asia/Amman)
+    const EFFECTIVE_AR = "12 ديسمبر 2025";
+    const EFFECTIVE_EN = "December 12, 2025";
+
+    const l10n = {
+      ar: {
+        pageTitle: "سياسة الخصوصية - Mlo5",
+        back: "← عودة للصفحة الرئيسية",
+        title: "سياسة الخصوصية",
+        subtitle: "هذه السياسة تشرح كيف يتعامل موقع Mlo5 مع معلوماتك عند استخدام الموقع ونموذج “اتصل بنا”.",
+        effective: `تاريخ النفاذ: ${EFFECTIVE_AR}`,
+        lastUpdate: `آخر تحديث: ${EFFECTIVE_AR}`,
+
+        s1t:"1) من نحن",
+        s1b:"موقع <strong style='color:var(--white)'>Mlo5</strong> هو موقع شخصي. نلتزم باحترام خصوصيتك وحماية أي معلومات تشاركها معنا عبر هذا الموقع.",
+
+        s2t:"2) المعلومات التي نجمعها",
+        s2b:"عند استخدامك لنموذج “اتصل بنا”، قد نجمع المعلومات التالية:",
+        s2l:["الاسم","البريد الإلكتروني","محتوى الرسالة"],
+
+        s3t:"3) لماذا نجمع هذه المعلومات",
+        s3b:"نستخدم هذه المعلومات فقط من أجل:",
+        s3l:["الرد على استفساراتك ورسائلك","التواصل معك بخصوص طلبك أو رسالتك"],
+
+        s4t:"4) أين تُعالج البيانات وكيف تُرسل",
+        s4b:"هذا الموقع هو موقع ثابت (Static) مستضاف على GitHub Pages. عند إرسال نموذج التواصل، يتم إرسال البيانات إلى خدمة طرف ثالث لمعالجة النماذج وهي <strong style='color:var(--white)'>Formspree</strong> بهدف إيصال الرسالة إلينا. نحن لا ندير خوادم خاصة بنا لتخزين رسائل الموقع.",
+
+        s5t:"5) الخدمات الخارجية",
+        s5b:"يستخدم الموقع خدمات خارجية لتشغيله بشكل صحيح، مثل:",
+        s5l:["GitHub Pages (استضافة ملفات الموقع)","Formspree (استقبال ومعالجة رسائل نموذج التواصل)"],
+        s5b2:"تخضع هذه الخدمات لسياسات الخصوصية الخاصة بها.",
+
+        s6t:"6) ملفات تعريف الارتباط (Cookies) والتخزين المحلي",
+        s6b:"حاليًا لا نستخدم ملفات تعريف الارتباط للتتبع أو الإعلانات. قد يستخدم الموقع تخزينًا محليًا في المتصفح (مثل حفظ اللغة أو بعض إعدادات الحماية ضد الرسائل المزعجة). إذا أضفنا مستقبلاً أدوات تحليلات أو ملفات تعريف ارتباط إضافية، سنقوم بتحديث هذه الصفحة.",
+
+        s7t:"7) خصوصية الأطفال",
+        s7b:"قد يكون الموقع مناسبًا لجمهور عام بما في ذلك من هم دون 18 سنة. نحن لا نقصد جمع بيانات حساسة من الأطفال عمدًا. إذا كنت ولي أمر وتعتقد أن طفلك أرسل بيانات شخصية عبر نموذج التواصل، تواصل معنا وسنعمل على حذفها عند الإمكان.",
+
+        s8t:"8) حماية البيانات",
+        s8b:"نستخدم إجراءات تقنية معقولة للمساعدة في حماية البيانات (مثل HTTPS وحماية ضد الرسائل الآلية في نموذج التواصل). ومع ذلك، لا يمكن ضمان أمان 100% لأي نقل بيانات عبر الإنترنت.",
+
+        s9t:"9) حقوقك",
+        s9b:"يمكنك في أي وقت طلب:",
+        s9l:["معرفة المعلومات التي أرسلتها لنا عبر نموذج التواصل","حذف رسالتك أو بياناتك التي تم إرسالها (قدر الإمكان)"],
+
+        s10t:"10) التواصل معنا",
+        s10b:`لأي استفسار حول سياسة الخصوصية، يمكنك التواصل معنا عبر البريد الإلكتروني:
+             <a class="link" href="mailto:ih4.mlo5@gmail.com">ih4.mlo5@gmail.com</a>`,
+
+        s11t:"11) التعديلات على هذه السياسة",
+        s11b:"قد نقوم بتحديث هذه السياسة من وقت لآخر. سيتم نشر أي تعديل على هذه الصفحة مع تحديث تاريخ النفاذ.",
+
+        langTitle:"العربية"
+      },
+      en: {
+        pageTitle: "Privacy Policy - Mlo5",
+        back: "← Back to home",
+        title: "Privacy Policy",
+        subtitle: "This policy explains how the Mlo5 website handles your information when you use the site and the contact form.",
+        effective: `Effective Date: ${EFFECTIVE_EN}`,
+        lastUpdate: `Last Updated: ${EFFECTIVE_EN}`,
+
+        s1t:"1) Who we are",
+        s1b:"<strong style='color:var(--white)'>Mlo5</strong> is a personal website. We respect your privacy and are committed to protecting any information you share with us through this website.",
+
+        s2t:"2) Information we collect",
+        s2b:"When you use the contact form, we may collect:",
+        s2l:["Name","Email address","Message content"],
+
+        s3t:"3) How we use the information",
+        s3b:"We use this information only to:",
+        s3l:["Respond to your inquiries and messages","Communicate with you regarding your request"],
+
+        s4t:"4) Where data is processed",
+        s4b:"This is a static website hosted on GitHub Pages. When you submit the contact form, the data is sent to a third-party form processing service, <strong style='color:var(--white)'>Formspree</strong>, so your message can be delivered to us. We do not operate our own servers to store website messages.",
+
+        s5t:"5) Third-party services",
+        s5b:"This website uses third-party services to operate properly, such as:",
+        s5l:["GitHub Pages (website hosting)","Formspree (contact form submission handling)"],
+        s5b2:"These services have their own privacy policies.",
+
+        s6t:"6) Cookies & local storage",
+        s6b:"We currently do not use cookies for tracking or advertising. The website may use browser local storage (for example, to remember language preferences or basic anti-spam settings). If we add analytics or additional cookies in the future, we will update this page.",
+
+        s7t:"7) Children’s privacy",
+        s7b:"This website may be suitable for a general audience, including users under 18. We do not knowingly intend to collect sensitive personal data from children. If you are a parent/guardian and believe your child submitted personal data via the contact form, please contact us and we will work to delete it where possible.",
+
+        s8t:"8) Data protection",
+        s8b:"We use reasonable technical measures to help protect your data (such as HTTPS and anti-spam protections on the contact form). However, no method of transmission over the internet is 100% secure.",
+
+        s9t:"9) Your rights",
+        s9b:"You may request at any time:",
+        s9l:["Access to the information you submitted via the contact form","Deletion of your submitted message/data (where possible)"],
+
+        s10t:"10) Contact us",
+        s10b:`If you have questions about this Privacy Policy, contact us at:
+             <a class="link" href="mailto:ih4.mlo5@gmail.com">ih4.mlo5@gmail.com</a>`,
+
+        s11t:"11) Changes to this policy",
+        s11b:"We may update this policy from time to time. Any changes will be posted on this page and the effective date will be updated.",
+
+        langTitle:"English"
+      }
+    };
+
+    let currentLang = localStorage.getItem(LANG_KEY) || "ar";
+
+    function setList(id, items){
+      const ul = document.getElementById(id);
+      if(!ul) return;
+      ul.innerHTML = "";
+      items.forEach(t=>{
+        const li = document.createElement("li");
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+    }
+
+    function applyLang(){
+      const s = l10n[currentLang] || l10n.ar;
+
+      document.title = s.pageTitle;
+
+      const backLink = document.getElementById("back-link");
+      const pageTitle = document.getElementById("page-title");
+      const pageSubtitle = document.getElementById("page-subtitle");
+      const effective = document.getElementById("effective-date");
+      const footerNote = document.getElementById("footer-note");
+
+      if(backLink) backLink.textContent = s.back;
+      if(pageTitle) pageTitle.textContent = s.title;
+      if(pageSubtitle) pageSubtitle.textContent = s.subtitle;
+      if(effective) effective.textContent = s.effective;
+      if(footerNote) footerNote.textContent = s.lastUpdate;
+
+      const setHTML = (id, html) => {
+        const el = document.getElementById(id);
+        if(el) el.innerHTML = html;
+      };
+
+      const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if(el) el.textContent = text;
+      };
+
+      setText("s1-title", s.s1t); setHTML("s1-body", s.s1b);
+      setText("s2-title", s.s2t); setText("s2-body", s.s2b); setList("s2-list", s.s2l);
+      setText("s3-title", s.s3t); setText("s3-body", s.s3b); setList("s3-list", s.s3l);
+      setText("s4-title", s.s4t); setHTML("s4-body", s.s4b);
+      setText("s5-title", s.s5t); setText("s5-body", s.s5b); setList("s5-list", s.s5l); setText("s5-body2", s.s5b2);
+      setText("s6-title", s.s6t); setText("s6-body", s.s6b);
+      setText("s7-title", s.s7t); setText("s7-body", s.s7b);
+      setText("s8-title", s.s8t); setText("s8-body", s.s8b);
+      setText("s9-title", s.s9t); setText("s9-body", s.s9b); setList("s9-list", s.s9l);
+      setText("s10-title", s.s10t); setHTML("s10-body", s.s10b);
+      setText("s11-title", s.s11t); setText("s11-body", s.s11b);
+
+      if(langToggle) langToggle.title = s.langTitle;
+
+      document.documentElement.lang = currentLang === "en" ? "en" : "ar";
+      document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
+    }
+
+    applyLang();
+
+    if (langToggle) {
+      langToggle.addEventListener("click", () => {
+        currentLang = currentLang === "ar" ? "en" : "ar";
+        localStorage.setItem(LANG_KEY, currentLang);
+        applyLang();
+      });
+    }
+  </script>
+</body>
+</html>
