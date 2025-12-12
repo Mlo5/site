@@ -24,7 +24,7 @@ jobs:
       - name: Build latest-videos.json
         env:
           CHANNEL_HANDLE_URL: "https://www.youtube.com/@mlo5ya"
-          OUT_PATH: "site/latest-videos.json"
+          OUT_PATH: "latest-videos.json"
           LIMIT: "15"
         run: python scripts/build_latest_videos.py
 
@@ -32,5 +32,5 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add site/latest-videos.json
+          git add latest-videos.json
           git diff --cached --quiet || git commit -m "Update latest-videos.json" && git push
