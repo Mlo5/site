@@ -2,487 +2,361 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>الملف الشخصي - M L O 5</title>
+  <title>M L O 5 — Soon</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
-    :root{
-      --bg-dark:#020202; --yellow:#facc15; --white:#f9fafb; --muted:#9ca3af;
-      --border: rgba(250,204,21,.45);
+    :root {
+      --bg-dark: #020202;
+      --yellow: #facc15;
+      --white: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(156, 163, 175, 0.35);
+      --radius-lg: 20px;
+      --radius-full: 999px;
+      --grid-x: 0px;
+      --grid-y: 0px;
     }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family:"Tajawal",system-ui,-apple-system,"Segoe UI",sans-serif;
-      background:var(--bg-dark); color:var(--white);
-      min-height:100vh; padding:18px;
-      display:flex; justify-content:center;
-    }
-    .wrap{width:100%; max-width:900px;}
-    .top-bar{
-      display:flex; gap:10px; align-items:center; justify-content:flex-start;
-      direction:ltr; margin-bottom:14px;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 14px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.55);
-      color:var(--white); text-decoration:none;
-      cursor:pointer; user-select:none;
-      transition:transform .15s ease, background .15s ease;
-      font-weight:700; font-size:.9rem;
-    }
-    .pill:hover{transform:translateY(-1px); background:rgba(250,204,21,.12)}
-    .lang-toggle{
-      width:40px;height:40px;border-radius:999px;border:1px solid rgba(148,163,184,.7);
-      background:radial-gradient(circle at top,#111,#020202);
-      color:var(--yellow); cursor:pointer;
-      display:inline-flex;align-items:center;justify-content:center;
-      font-size:1rem;
-    }
-    .card{
-      border:1px solid rgba(156,163,175,.35);
-      background:linear-gradient(145deg,#020202,#050505);
-      border-radius:18px;
-      padding:16px;
-      box-shadow:0 12px 30px rgba(0,0,0,.85);
-      margin-bottom:14px;
-    }
-    .profile-head{
-      display:flex; gap:14px; align-items:center; flex-wrap:wrap;
-    }
-    .avatar{
-      width:76px;height:76px;border-radius:50%;
-      overflow:hidden; border:2px solid rgba(250,204,21,.9);
-      background:#000;
-      position:relative;
-    }
-    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
-    .avatar-actions{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:10px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .file-btn{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 12px; border-radius:999px;
-      border:1px solid rgba(250,204,21,.35);
-      background:rgba(0,0,0,.55);
-      color:var(--white); cursor:pointer;
-      font-weight:800; font-size:.85rem;
-      transition:transform .15s ease, background .15s ease;
-    }
-    .file-btn:hover{transform:translateY(-1px); background:rgba(250,204,21,.12)}
-    input[type="file"]{display:none;}
 
-    .h-title{font-weight:800;color:var(--yellow);font-size:1.1rem}
-    .h-sub{color:var(--muted);font-size:.9rem;margin-top:4px}
-    .grid{
-      display:grid; gap:12px;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      margin-top:12px;
+    body {
+      font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--bg-dark);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      transition: background 0.3s ease, color 0.3s ease;
+      position: relative;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
     }
-    @media(max-width:700px){ .grid{grid-template-columns:1fr;} }
-    label{display:block; color:var(--muted); font-size:.85rem; margin-bottom:6px}
-    input, textarea{
-      width:100%;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.45);
-      color:var(--white);
-      padding:10px 12px;
-      font-size:.92rem;
-      outline:none;
+
+    .page {
+      width: 100%;
+      max-width: 1100px;
+      padding: 32px 16px 40px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
     }
-    textarea{min-height:120px; resize:vertical;}
-    input:focus, textarea:focus{
-      border-color: rgba(250,204,21,.8);
-      box-shadow:0 0 0 4px rgba(250,204,21,.18);
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: radial-gradient(
+        circle,
+        rgba(249, 250, 251, 0.55) 1px,
+        transparent 1px
+      );
+      background-size: 30px 30px;
+      background-position:
+        calc(50% + var(--grid-x))
+        calc(50% + var(--grid-y));
+      opacity: 0.25;
+      mix-blend-mode: screen;
     }
-    .actions{
-      display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
+
+    .card-shell {
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      border: none;
     }
-    .btn{
-      border:none; cursor:pointer;
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:800;
+
+    .card-shell-inner {
+      position: relative;
+      z-index: 1;
     }
-    .btn-primary{background:var(--yellow); color:#111;}
-    .btn-ghost{
-      background:rgba(0,0,0,.55);
-      color:var(--white);
-      border:1px solid rgba(250,204,21,.35);
+
+    /* شاشة التحميل بدون وميض */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
     }
-    .msg{margin-top:10px; min-height:1.2em; color:var(--muted); font-size:.9rem;}
+
+    #preloader.preloader-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .preloader-logo img {
+      max-width: 200px;
+      height: auto;
+      /* لا يوجد أي أنيميشن هنا */
+    }
+
+    /* مربع Soon */
+    .soon-wrapper {
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40vh;
+    }
+
+    .soon-card {
+      border-radius: 24px;
+      padding: 30px 24px 32px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      background: radial-gradient(circle at top, #111111, #020202);
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(55, 65, 81, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .soon-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.16),
+        transparent 55%
+      );
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .soon-title {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .soon-dots {
+      display: inline-flex;
+      gap: 4px;
+      margin-left: 4px;
+    }
+
+    .soon-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--yellow);
+      opacity: 0.25;
+      animation: dotBlink 1.1s infinite ease-in-out;
+    }
+
+    .soon-dot:nth-child(2) { animation-delay: 0.15s; }
+    .soon-dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes dotBlink {
+      0%   { opacity: 0.2; transform: translateY(0); }
+      30%  { opacity: 1;   transform: translateY(-2px); }
+      60%  { opacity: 0.7; transform: translateY(0); }
+      100% { opacity: 0.2; transform: translateY(0); }
+    }
+
+    .soon-sub {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .soon-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.6);
+      background: rgba(0, 0, 0, 0.65);
+      font-size: 0.8rem;
+      color: var(--yellow);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* قسم "الرئيسية" بنفس ستايل الأقسام */
+    .sections {
+      margin-top: 30px;
+    }
+
+    .sections-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .section-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: linear-gradient(145deg, #020202, #050505);
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(55, 65, 81, 0.5);
+      position: relative;
+      overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .section-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.18),
+        transparent 55%
+      );
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .section-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(250, 204, 21, 0.9);
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(250, 204, 21, 0.5);
+    }
+
+    .section-card:hover::before {
+      opacity: 1;
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--yellow);
+      margin-bottom: 6px;
+    }
+
+    .section-body {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 640px) {
+      .soon-wrapper {
+        margin-top: 20px;
+      }
+    }
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-
-    <div class="top-bar">
-      <a class="pill" id="back-home" href="index.html">⬅︎ <span id="back-home-txt">الرئيسية</span></a>
-      <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
-      <button class="pill" id="logout-btn" type="button">⎋ <span id="logout-txt">تسجيل خروج</span></button>
+  <!-- شاشة تحميل بدون وميض -->
+  <div id="preloader">
+    <div class="preloader-logo">
+      <img src="logo.png" alt="MLO5 Logo">
     </div>
-
-    <div class="card">
-      <div class="profile-head">
-        <div class="avatar">
-          <img id="avatar-img" src="me.jpg" alt="avatar" />
-        </div>
-        <div>
-          <div class="h-title" id="u-name">...</div>
-          <div class="h-sub" id="u-email">...</div>
-          <div class="h-sub" id="u-meta">...</div>
-
-          <div class="avatar-actions">
-            <label class="file-btn" for="avatar-file">📷 <span id="pick-photo-txt">رفع صورة</span></label>
-            <input id="avatar-file" type="file" accept="image/*" />
-            <button class="file-btn" id="remove-photo" type="button">🗑️ <span id="remove-photo-txt">حذف الصورة</span></button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="grid">
-        <div>
-          <label id="lbl-username">يوزر داخل الموقع</label>
-          <input id="username" placeholder="مثال: Mlo5" />
-        </div>
-        <div>
-          <label id="lbl-instagram">انستغرام</label>
-          <input id="instagram" placeholder="i.mlo5" />
-        </div>
-
-        <div>
-          <label id="lbl-youtube">يوتيوب</label>
-          <input id="youtube" placeholder="https://youtube.com/@..." />
-        </div>
-        <div>
-          <label id="lbl-discord">ديسكورد</label>
-          <input id="discord" placeholder="رابط الدعوة أو اليوزر" />
-        </div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <label id="lbl-bio">نبذة</label>
-        <textarea id="bio" placeholder="اكتب نبذة بسيطة عنك…"></textarea>
-      </div>
-
-      <div class="actions">
-        <button class="btn btn-primary" id="save-btn" type="button">حفظ</button>
-        <a class="btn btn-ghost" id="go-settings" href="settings.html" style="text-decoration:none;display:inline-flex;align-items:center;">
-          ⚙️ <span id="go-settings-txt" style="margin-inline-start:8px;">الإعدادات</span>
-        </a>
-      </div>
-
-      <div class="msg" id="msg"></div>
-    </div>
-
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  <div class="bg-grid"></div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
-      authDomain: "mlo5-users.firebaseapp.com",
-      projectId: "mlo5-users",
-      appId: "1:142086858806:web:64c50f3a8d6250a2049097"
-    };
+  <main class="page">
+    <div class="card-shell">
+      <div class="card-shell-inner">
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        <!-- مربع Soon -->
+        <section class="soon-wrapper">
+          <div class="soon-card">
+            <div class="soon-title">
+              Soon
+              <span class="soon-dots">
+                <span class="soon-dot"></span>
+                <span class="soon-dot"></span>
+                <span class="soon-dot"></span>
+              </span>
+            </div>
+            <p class="soon-sub">
+              هذه الصفحة قيد التطوير حاليًا. ترقّب تحديثات جديدة من MLO5 قريبًا 👀
+            </p>
+            <div class="soon-tag">
+              🚧 تحت الإنشاء · MLO5
+            </div>
+          </div>
+        </section>
 
-    // ---------- L10N ----------
-    const l10n = {
-      ar: {
-        title: "الملف الشخصي - M L O 5",
-        home: "الرئيسية",
-        logout: "تسجيل خروج",
-        username: "يوزر داخل الموقع",
-        instagram: "انستغرام",
-        youtube: "يوتيوب",
-        discord: "ديسكورد",
-        bio: "نبذة",
-        save: "حفظ",
-        settings: "الإعدادات",
-        pickPhoto: "رفع صورة",
-        removePhoto: "حذف الصورة",
-        loading: "جارٍ التحميل…",
-        saved: "✅ تم الحفظ.",
-        err: "❌ صار خطأ. جرّب مرة ثانية.",
-        notSigned: "لازم تسجل دخول أولًا."
-      },
-      en: {
-        title: "Profile - M L O 5",
-        home: "Home",
-        logout: "Logout",
-        username: "Website Username",
-        instagram: "Instagram",
-        youtube: "YouTube",
-        discord: "Discord",
-        bio: "Bio",
-        save: "Save",
-        settings: "Settings",
-        pickPhoto: "Upload Photo",
-        removePhoto: "Remove Photo",
-        loading: "Loading…",
-        saved: "✅ Saved.",
-        err: "❌ Something went wrong. Try again.",
-        notSigned: "Please sign in first."
-      }
-    };
+        <!-- قسم واحد فقط: الرئيسية -->
+        <section class="sections">
+          <div class="sections-grid">
+            <a href="index.html" class="section-card">
+              <div class="section-label">قسم</div>
+              <h2 class="section-title">الرئيسية</h2>
+              <p class="section-body">
+                ارجع إلى الصفحة الرئيسية لموقع MLO5 وشوف كل المحتوى والأقسام.
+              </p>
+            </a>
+          </div>
+        </section>
 
-    let currentLang = "ar";
-    function applyLang(lang){
-      currentLang = (lang === "en") ? "en" : "ar";
-      const s = l10n[currentLang];
+      </div>
+    </div>
+  </main>
 
-      document.title = s.title;
-      document.documentElement.lang = currentLang === "en" ? "en" : "ar";
-      document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
-
-      document.getElementById("back-home-txt").textContent = s.home;
-      document.getElementById("logout-txt").textContent = s.logout;
-      document.getElementById("lbl-username").textContent = s.username;
-      document.getElementById("lbl-instagram").textContent = s.instagram;
-      document.getElementById("lbl-youtube").textContent = s.youtube;
-      document.getElementById("lbl-discord").textContent = s.discord;
-      document.getElementById("lbl-bio").textContent = s.bio;
-      document.getElementById("save-btn").textContent = s.save;
-      document.getElementById("go-settings-txt").textContent = s.settings;
-      document.getElementById("pick-photo-txt").textContent = s.pickPhoto;
-      document.getElementById("remove-photo-txt").textContent = s.removePhoto;
-
-      document.getElementById("lang-toggle").title = (currentLang === "en") ? "English" : "العربية";
-    }
-
-    // ---------- Firestore helpers ----------
-    async function getSettings(uid){
-      const ref = doc(db, "users", uid, "settings", "main");
-      const snap = await getDoc(ref);
-      return snap.exists() ? snap.data() : null;
-    }
-
-    async function setLang(uid, lang){
-      const ref = doc(db, "users", uid, "settings", "main");
-      await setDoc(ref, { lang, updatedAt: serverTimestamp() }, { merge: true });
-    }
-
-    async function getProfile(uid){
-      const ref = doc(db, "users", uid, "profile", "main");
-      const snap = await getDoc(ref);
-      return snap.exists() ? snap.data() : null;
-    }
-
-    async function saveProfile(uid, data){
-      const ref = doc(db, "users", uid, "profile", "main");
-      await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true });
-    }
-
-    // ---------- UI ----------
-    const msg = document.getElementById("msg");
-    const avatarImg = document.getElementById("avatar-img");
-    const avatarFile = document.getElementById("avatar-file");
-    const removePhotoBtn = document.getElementById("remove-photo");
-
-    const uName = document.getElementById("u-name");
-    const uEmail = document.getElementById("u-email");
-    const uMeta = document.getElementById("u-meta");
-
-    const username = document.getElementById("username");
-    const instagram = document.getElementById("instagram");
-    const youtube = document.getElementById("youtube");
-    const discord = document.getElementById("discord");
-    const bio = document.getElementById("bio");
-
-    const saveBtn = document.getElementById("save-btn");
-    const logoutBtn = document.getElementById("logout-btn");
-    const langToggle = document.getElementById("lang-toggle");
-
-    function setMsg(text, ok=false){
-      msg.style.color = ok ? "#22c55e" : "#9ca3af";
-      msg.textContent = text || "";
-    }
-
-    // الصورة اللي راح تنحفظ بالـ Firestore (DataURL بعد الضغط)
-    let pendingPhotoDataUrl = null;
-    let currentUid = null;
-
-    // --- image utils: compress to 256x256 JPEG ---
-    function readFileAsDataURL(file){
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result || ""));
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function compressImageToDataUrl(file, size=256, quality=0.82){
-      const dataUrl = await readFileAsDataURL(file);
-      const img = new Image();
-      img.src = dataUrl;
-
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-      });
-
-      const canvas = document.createElement("canvas");
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext("2d");
-
-      // crop square from center
-      const w = img.naturalWidth;
-      const h = img.naturalHeight;
-      const side = Math.min(w, h);
-      const sx = Math.floor((w - side) / 2);
-      const sy = Math.floor((h - side) / 2);
-
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, size, size);
-      ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
-
-      return canvas.toDataURL("image/jpeg", quality);
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        applyLang("ar");
-        setMsg(l10n[currentLang].notSigned);
-        setTimeout(() => window.location.href = "login.html", 700);
-        return;
-      }
-
-      currentUid = user.uid;
-
-      // اقرأ اللغة من Firestore
-      try{
-        setMsg(l10n[currentLang].loading);
-        const settings = await getSettings(user.uid);
-        applyLang(settings?.lang || "ar");
-      }catch(e){
-        applyLang("ar");
-      }
-
-      // اعرض بيانات Firebase الأساسية
-      uName.textContent = (user.displayName || user.email || "User");
-      uEmail.textContent = user.email || "";
-      uMeta.textContent = user.metadata?.creationTime ? ("Joined: " + user.metadata.creationTime) : "";
-
-      // اقرأ البروفايل من Firestore (الاسم + الصورة + السوشال)
-      try{
-        const p = await getProfile(user.uid);
-
-        username.value = p?.username || "";
-        bio.value = p?.bio || "";
-        instagram.value = p?.socials?.instagram || "";
-        youtube.value = p?.socials?.youtube || "";
-        discord.value = p?.socials?.discord || "";
-
-        // الصورة: من Firestore أولًا، وإلا photoURL من Google، وإلا me.jpg
-        if (p?.photoDataUrl) avatarImg.src = p.photoDataUrl;
-        else if (user.photoURL) avatarImg.src = user.photoURL;
-        else avatarImg.src = "me.jpg";
-
-        pendingPhotoDataUrl = null;
-        setMsg("");
-      }catch(e){
-        console.error(e);
-        avatarImg.src = user.photoURL || "me.jpg";
-        setMsg(l10n[currentLang].err);
-      }
+  <script>
+    // تحريك شبكة النقاط مع الماوس (نفس ستايل الموقع)
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      const xShift = xRatio * maxShift;
+      const yShift = yRatio * maxShift;
+      root.style.setProperty("--grid-x", xShift.toFixed(1) + "px");
+      root.style.setProperty("--grid-y", yShift.toFixed(1) + "px");
     });
 
-    // تغيير اللغة + حفظها Firestore
-    langToggle.addEventListener("click", async () => {
-      const next = (currentLang === "ar") ? "en" : "ar";
-      applyLang(next);
-      if (!currentUid) return;
-      try{ await setLang(currentUid, next); }catch(e){ console.error(e); }
-    });
-
-    // رفع صورة: preview + ضغط + تجهيز للحفظ
-    avatarFile.addEventListener("change", async (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      try{
-        setMsg(l10n[currentLang].loading);
-
-        // ضغط الصورة
-        const compressed = await compressImageToDataUrl(file, 256, 0.82);
-
-        // Preview فوري
-        avatarImg.src = compressed;
-
-        // نخزنها لحد ما المستخدم يضغط حفظ
-        pendingPhotoDataUrl = compressed;
-
-        setMsg("✅ جاهزة للحفظ. اضغط حفظ.", true);
-      }catch(err){
-        console.error(err);
-        setMsg(l10n[currentLang].err);
-      }finally{
-        // عشان تقدر تختار نفس الملف مرة ثانية
-        avatarFile.value = "";
-      }
-    });
-
-    // حذف الصورة (يرجع للافتراضي)
-    removePhotoBtn.addEventListener("click", () => {
-      pendingPhotoDataUrl = ""; // نخزنها كفاضية عشان تنمسح من Firestore عند الحفظ
-      avatarImg.src = "me.jpg";
-      setMsg("✅ رح تنحذف بعد ما تضغط حفظ.", true);
-    });
-
-    // حفظ البروفايل Firestore
-    saveBtn.addEventListener("click", async () => {
-      if (!currentUid) return;
-
-      try{
-        setMsg(l10n[currentLang].loading);
-
-        const data = {
-          username: (username.value || "").trim(),
-          bio: (bio.value || "").trim(),
-          socials: {
-            instagram: (instagram.value || "").trim(),
-            youtube: (youtube.value || "").trim(),
-            discord: (discord.value || "").trim()
-          }
-        };
-
-        // لو المستخدم اختار صورة جديدة: نخزنها
-        if (pendingPhotoDataUrl !== null) {
-          // لو كانت "" يعني حذف
-          if (pendingPhotoDataUrl === "") data.photoDataUrl = null;
-          else data.photoDataUrl = pendingPhotoDataUrl;
+    // إخفاء شاشة التحميل بدون أي أنيميشن إضافية
+    const preloader = document.getElementById("preloader");
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        if (preloader) {
+          preloader.classList.add("preloader-hidden");
         }
-
-        await saveProfile(currentUid, data);
-
-        pendingPhotoDataUrl = null;
-        setMsg(l10n[currentLang].saved, true);
-      }catch(e){
-        console.error(e);
-        setMsg(l10n[currentLang].err);
-      }
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
+      }, 500);
     });
   </script>
 </body>
