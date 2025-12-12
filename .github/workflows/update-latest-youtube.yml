@@ -1,4 +1,3 @@
-
 name: Update latest long video
 
 on:
@@ -25,7 +24,7 @@ jobs:
           YT_CHANNEL_ID: "UCJ7ltkpYPM7xI3DgMR1vvbg"
         run: node scripts/fetch-latest-long.js
 
-      - name: Commit & push
+      - name: Commit & push if changed
         run: |
           git config user.name "mlo5-bot"
           git config user.email "actions@users.noreply.github.com"
