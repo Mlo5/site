@@ -14,18 +14,20 @@
       --muted:#9ca3af;
       --border-subtle:rgba(156,163,175,.35);
       --grid-x:0px; --grid-y:0px;
+      --vh: 1vh; /* ✅ للموبايل */
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{
       font-family:"Tajawal",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:var(--bg-dark);
       color:var(--white);
-      min-height:100vh;
+      min-height: calc(var(--vh, 1vh) * 100); /* ✅ للموبايل */
       display:flex;
       justify-content:center;
       align-items:stretch;
       position:relative;
       cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+      overflow:hidden; /* ✅ يمنع قفزات الموبايل */
     }
     .bg-grid{
       position:fixed; inset:0; z-index:0; pointer-events:none;
@@ -41,6 +43,7 @@
       margin:auto;
       position:relative;
       z-index:1;
+      min-height:0;
     }
     .card{
       background:linear-gradient(145deg,#020202,#050505);
@@ -80,6 +83,7 @@
       gap:14px;
       height:calc(100vh - 32px - 40px - 14px - 44px);
       min-height:70vh;
+      min-height:0;
     }
 
     .panel-head{
@@ -98,6 +102,20 @@
       background:rgba(0,0,0,.45);
       display:inline-flex; align-items:center; gap:8px;
       white-space:nowrap;
+    }
+
+    .badgeBtn{
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.55);
+      padding:6px 10px;
+      font-size:.85rem;
+      background:rgba(0,0,0,.45);
+      color:var(--yellow);
+      display:none; /* ✅ يظهر بالموبايل فقط */
+      align-items:center; gap:8px;
+      white-space:nowrap;
+      cursor:pointer;
+      user-select:none;
     }
 
     .onlineCard{display:flex;flex-direction:column;height:100%}
@@ -175,17 +193,18 @@
       display:flex;flex-direction:column;gap:10px;overflow:auto;
       min-height:0;flex:1;padding-right:4px;padding-bottom:6px;
       scrollbar-width:none; -ms-overflow-style:none;
+      -webkit-overflow-scrolling: touch; /* ✅ سكرول ثابت بالموبايل */
     }
     #messages::-webkit-scrollbar{ width:0; height:0; }
 
     .msgRow{
       width:100%;
       display:flex;
-      direction:rtl; /* ✅ عشان اليمين/يسار طبيعي */
-      justify-content:flex-start; /* ✅ الافتراضي: على اليمين */
+      direction:rtl;
+      justify-content:flex-start;
     }
     .msgRow.me{
-      justify-content:flex-end; /* ✅ رسائلي على اليسار */
+      justify-content:flex-end;
     }
 
     .msg{
@@ -194,7 +213,7 @@
       border:1px solid var(--border-subtle);
       background:rgba(0,0,0,.55);
       box-shadow:0 10px 22px rgba(0,0,0,.6);
-      padding:10px 12px 44px; /* ✅ مساحة لزر الرد داخل البوكس */
+      padding:10px 12px 44px;
       line-height:1.5;
       word-break:break-word;
       position:relative;
@@ -220,7 +239,6 @@
       text-align:center;
     }
 
-    /* ✅ زر الرد داخل مربع الرسالة (أسفل يمين) */
     .replyBtn{
       position:absolute;
       bottom:8px;
@@ -466,7 +484,15 @@
     }
 
     @media (max-width:900px){
-      .wrap{grid-template-columns:1fr;height:auto}
+      /* ✅ الموبايل: نخلي الشات يأخذ الشاشة ونعالج vh */
+      body{overflow:hidden}
+      .page{padding:16px 12px 18px}
+      .wrap{
+        grid-template-columns:1fr;
+        height:calc(var(--vh, 1vh) * 100 - 90px); /* ✅ بدل 100vh */
+        min-height:0;
+      }
+      .badgeBtn{display:inline-flex;} /* ✅ زر المتواجدين */
     }
 
     #appModal{
@@ -563,11 +589,45 @@
       align-items:center;
       justify-content:center;
     }
+
+    /* ✅ Drawer للموبايل */
+    #onlineOverlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.65);
+      z-index:1190;
+      display:none;
+    }
+    @media (max-width:900px){
+      .onlineCard{
+        position:fixed;
+        top:74px;
+        bottom:16px;
+        right:-380px;
+        width:min(360px, 88vw);
+        z-index:1200;
+        transition:right .22s ease;
+      }
+      .onlineCard.drawer-open{ right:12px; }
+      #onlineOverlay.show{ display:block; }
+    }
+
+    .deviceIco{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:26px; height:26px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.45);
+      background:rgba(0,0,0,.35);
+      font-size:.9rem;
+      flex:0 0 auto;
+    }
   </style>
 </head>
 
 <body>
   <div class="bg-grid"></div>
+  <div id="onlineOverlay"></div>
 
   <main class="page">
     <div class="top-bar">
@@ -582,7 +642,7 @@
     </div>
 
     <div class="wrap">
-      <section class="card onlineCard">
+      <section class="card onlineCard" id="onlineCard">
         <div class="panel-head">
           <div class="h">
             <b>المتواجدين الآن</b>
@@ -611,7 +671,10 @@
             <b>الدردشة العامة</b>
             <span id="chatHint">دردش وخلي الشباب <span style="color:#facc15">تستفاد</span></span>
           </div>
-          <div class="badge" id="ignoreCount">تجاهل: 0</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+            <button class="badgeBtn" id="openOnlineBtn" type="button" title="عرض المتواجدين">👥 المتواجدين</button>
+            <div class="badge" id="ignoreCount">تجاهل: 0</div>
+          </div>
         </div>
 
         <div class="chatSplit" id="chatSplit">
@@ -705,7 +768,6 @@
 
           <div class="adminNote">
            أشياء شوي خاصة حبوبي ✨🥱.<br>
-        
           </div>
         </div>
       </div>
@@ -851,6 +913,53 @@
 
   const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
   const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎👏🙏🔥💛⭐⚡🎮💀".split("");
+
+  /* ✅ إصلاح vh بالموبايل */
+  function setVh(){
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+  }
+  setVh();
+  window.addEventListener("resize", setVh);
+  window.addEventListener("orientationchange", setVh);
+
+  /* ✅ Drawer المتواجدين (موبايل فقط) */
+  const onlineCard = document.getElementById("onlineCard");
+  const openOnlineBtn = document.getElementById("openOnlineBtn");
+  const onlineOverlay = document.getElementById("onlineOverlay");
+
+  function isMobileView(){
+    return window.matchMedia("(max-width: 900px)").matches;
+  }
+  function openOnlineDrawer(){
+    if (!isMobileView()) return;
+    onlineCard.classList.add("drawer-open");
+    onlineOverlay.classList.add("show");
+  }
+  function closeOnlineDrawer(){
+    onlineCard.classList.remove("drawer-open");
+    onlineOverlay.classList.remove("show");
+  }
+
+  if (openOnlineBtn){
+    openOnlineBtn.addEventListener("click", ()=>{
+      if (onlineCard.classList.contains("drawer-open")) closeOnlineDrawer();
+      else openOnlineDrawer();
+    });
+  }
+  if (onlineOverlay){
+    onlineOverlay.addEventListener("click", closeOnlineDrawer);
+  }
+
+  /* ✅ أيقونة الجهاز */
+  const IS_MOBILE_DEVICE =
+    window.matchMedia("(pointer: coarse)").matches ||
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  const myDevice = IS_MOBILE_DEVICE ? "mobile" : "desktop";
+  function deviceIconHtml(dev){
+    return `<span class="deviceIco" title="${dev === "mobile" ? "Mobile" : "Desktop"}">${dev === "mobile" ? "📱" : "💻"}</span>`;
+  }
 
   const root = document.documentElement;
   document.addEventListener("mousemove", (e)=>{
@@ -1095,7 +1204,8 @@
       statusText: statusLabel(statusVal || "online"),
       isAdmin,
       isGuest,
-      muted:false
+      muted:false,
+      device: myDevice /* ✅ */
     };
     await set(onlineRef, payload);
     if (first) onDisconnect(onlineRef).remove();
@@ -1241,6 +1351,7 @@
 
         const gHtml = genderSymbolHtml(u.gender);
         const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
+        const devHtml = deviceIconHtml(u.device === "mobile" ? "mobile" : "desktop"); /* ✅ */
 
         const mutedBadge = (u.muted === true)
           ? `<span class="miniPill" style="border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)">🔇 مكتوم</span>`
@@ -1252,9 +1363,10 @@
               <span class="adminNameText">𝕄𝕃𝕆𝟝 ヅ</span>
               <span class="adminSkull">💀</span>
             </span>
+            ${devHtml}
             ${guestHtml}
           `
-          : `<span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span> ${guestHtml}`;
+          : `<span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span> ${devHtml} ${guestHtml}`;
 
         left.innerHTML = `
           <b>${gHtml} ${nameHtml} ${mutedBadge}</b>
@@ -1390,9 +1502,10 @@
 
           const gHtml = genderSymbolHtml(m.gender);
           const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
+          const devHtml = deviceIconHtml(m.device === "mobile" ? "mobile" : "desktop"); /* ✅ */
 
           const nameHtml =
-            `<span style="color:${escapeHtml(m.nameColor || "#facc15")}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
+            `<span style="color:${escapeHtml(m.nameColor || "#facc15")}">${escapeHtml(m.name||"مستخدم")}</span> ${devHtml} ${guestHtml}`;
 
           const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
             ? `
@@ -1506,6 +1619,7 @@
       textColor:profile.textColor,
       isAdmin, isGuest,
       replyTo,
+      device: myDevice, /* ✅ */
       createdAt: serverTimestamp(),
       createdAtMs: Date.now()
     });
@@ -1655,6 +1769,9 @@
       sendBtn.disabled = true;
       msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
     }
+
+    /* ✅ بالموبايل: اقفل Drawer تلقائيًا بعد الدخول */
+    closeOnlineDrawer();
   }
 
   onAuthStateChanged(auth, async (u)=>{
@@ -1700,5 +1817,3 @@
 </script>
 </body>
 </html>
-
-
