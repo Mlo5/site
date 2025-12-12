@@ -98,12 +98,13 @@
       font-size:.86rem;
       display:inline-flex; align-items:center; gap:8px;
       box-shadow:var(--shadow-soft);
-      transition:transform .15s ease, background .15s ease, filter .15s ease;
+      transition:transform .15s ease, background .15s ease, filter .15s ease, opacity .15s ease;
       text-decoration:none;
       user-select:none;
       white-space:nowrap;
     }
     .btn:hover{ transform:translateY(-1px); filter:brightness(1.05); background:rgba(18,18,18,.92); }
+    .btn:disabled{ cursor:not-allowed; opacity:.6; transform:none; }
 
     .btn.primary{
       background:radial-gradient(circle at top,#facc15,#fbbf24);
@@ -111,9 +112,7 @@
       border:1px solid rgba(250,204,21,.8);
     }
 
-    .header{
-      margin-bottom:14px;
-    }
+    .header{ margin-bottom:14px; }
     .title{
       font-family:"Poppins","Tajawal",system-ui,sans-serif;
       font-weight:800;
@@ -267,9 +266,7 @@
       object-fit:cover;
     }
 
-    .vc-body{
-      padding:12px 12px 14px;
-    }
+    .vc-body{ padding:12px 12px 14px; }
     .vc-title{
       font-size:.95rem;
       font-weight:700;
@@ -302,9 +299,7 @@
       background:rgba(250,204,21,.10);
     }
 
-    .actions{
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
+    .actions{ display:flex; gap:8px; flex-wrap:wrap; }
     .mini{
       font-size:.82rem;
       padding:7px 10px;
@@ -320,6 +315,24 @@
     }
     .mini:hover{ transform:translateY(-1px); border-color:rgba(250,204,21,.35); filter:brightness(1.05); }
     .mini.yellow{ border-color:rgba(250,204,21,.45); color:var(--yellow); }
+
+    /* Load more */
+    .loadmore-wrap{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      margin-top:14px;
+    }
+    .loadmore-hint{
+      font-size:.8rem;
+      color:rgba(156,163,175,.95);
+      border:1px solid rgba(156,163,175,.18);
+      background:rgba(0,0,0,.18);
+      padding:6px 10px;
+      border-radius:var(--radius-full);
+      box-shadow:var(--shadow-soft);
+    }
 
     /* Thumbnails grid more dense */
     .thumb-grid{
@@ -400,9 +413,7 @@
       flex-direction:column;
       gap:10px;
     }
-    .idea-card{
-      padding:12px;
-    }
+    .idea-card{ padding:12px; }
     .idea-title{
       font-size:.92rem;
       color:var(--white);
@@ -545,6 +556,12 @@
         <div id="panel-videos">
           <div class="grid" id="videos-grid"></div>
           <div class="empty hidden" id="videos-empty">ما لقيت نتائج. جرّب كلمة ثانية أو غيّر الفلتر.</div>
+
+          <!-- LOAD MORE -->
+          <div class="loadmore-wrap hidden" id="loadmore-wrap">
+            <button class="btn" id="btn-loadmore">➕ عرض المزيد</button>
+            <div class="loadmore-hint" id="loadmore-hint">0 / 0</div>
+          </div>
         </div>
 
         <!-- THUMBNAILS -->
@@ -592,8 +609,12 @@
     const CHANNEL_URL = "https://www.youtube.com/@mlo5ya";
 
     // Videos (auto)
-    let videos = [];      // currently displayed (after filter + slice)
-    let allVideos = [];   // raw list from latest-videos.json
+    let allVideos = [];          // raw list from latest-videos.json
+    let filteredVideos = [];     // after type filter only (ALL/LONG/SHORT/LIVE)
+
+    // Load More config
+    const PAGE_SIZE = 15;
+    let visibleCount = PAGE_SIZE;
 
     async function loadVideos(){
       const grid = document.getElementById("videos-grid");
@@ -612,10 +633,11 @@
         const list = Array.isArray(data?.videos) ? data.videos : [];
 
         allVideos = list;
-        applyFilter();
+        applyFilter(true);
       }catch(e){
         allVideos = [];
-        videos = [];
+        filteredVideos = [];
+        visibleCount = PAGE_SIZE;
         setCounts();
         renderVideos();
       }
@@ -629,38 +651,6 @@
       if (title.includes("live") || title.includes("بث") || title.includes("مباشر") || url.includes("live")) return "live";
       return "long";
     }
-
-    function applyFilter(){
-      const enriched = (allVideos || []).map(v => ({
-        ...v,
-        type: v.type || guessType(v)
-      }));
-
-      let filtered = enriched;
-
-      if (currentFilter === "long") filtered = enriched.filter(v => v.type === "long");
-      else if (currentFilter === "short") filtered = enriched.filter(v => v.type === "short");
-      else if (currentFilter === "live") filtered = enriched.filter(v => v.type === "live");
-
-      videos = filtered.slice(0, 15);
-
-      setCounts();
-      renderVideos();
-    }
-
-    // Thumbnails
-    const thumbs = [
-      { name: "Thumbnail 1 — Geometry Dash", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+1", tag:"Geometry Dash" },
-      { name: "Thumbnail 2 — RoK",           img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+2", tag:"RoK" },
-      { name: "Thumbnail 3 — Hollow Knight", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+3", tag:"Hollow Knight" }
-    ];
-
-    // Ideas
-    const ideas = [
-      { title:"سلسلة جديدة: تحديات Geometry Dash (موبايل)", game:"Geometry Dash", kind:"Long", status:"soon" },
-      { title:"Shorts: Quiz Time (سؤال/تحدي سريع)", game:"Mixed", kind:"Short", status:"making" },
-      { title:"بث: تجربة لعبة جديدة ترند", game:"Trending", kind:"Live", status:"shelf" }
-    ];
 
     // ======= Helpers =======
     const $ = (id) => document.getElementById(id);
@@ -688,20 +678,55 @@
     // ======= Render: Videos =======
     let currentFilter = "all";
 
+    function applyFilter(resetVisible){
+      const enriched = (allVideos || []).map(v => ({
+        ...v,
+        type: v.type || guessType(v)
+      }));
+
+      if (currentFilter === "long") filteredVideos = enriched.filter(v => v.type === "long");
+      else if (currentFilter === "short") filteredVideos = enriched.filter(v => v.type === "short");
+      else if (currentFilter === "live") filteredVideos = enriched.filter(v => v.type === "live");
+      else filteredVideos = enriched; // "all" = كل الفيديوهات (Long + Shorts + Live)
+
+      if (resetVisible) visibleCount = PAGE_SIZE;
+
+      setCounts();
+      renderVideos();
+    }
+
+    function updateLoadMore(totalCount){
+      const wrap = $("loadmore-wrap");
+      const btn  = $("btn-loadmore");
+      const hint = $("loadmore-hint");
+      if(!wrap || !btn || !hint) return;
+
+      const shown = Math.min(visibleCount, totalCount);
+      hint.textContent = `${shown} / ${totalCount}`;
+
+      const hasMore = totalCount > visibleCount;
+      wrap.classList.toggle("hidden", totalCount === 0);
+      btn.disabled = !hasMore;
+
+      const s = l10n[currentLang] || l10n.ar;
+      btn.textContent = s.loadMore;
+    }
+
     function renderVideos(){
       const q = ($("search")?.value || "").trim().toLowerCase();
       const grid = $("videos-grid");
       const empty = $("videos-empty");
       if(!grid) return;
 
-      const list = videos.filter(v=>{
-        const okFilter = (currentFilter === "all") || (v.type === currentFilter);
-        const okQuery = !q || (v.title || "").toLowerCase().includes(q);
-        return okFilter && okQuery;
+      const fullList = (filteredVideos || []).filter(v=>{
+        if(!q) return true;
+        return (v.title || "").toLowerCase().includes(q);
       });
 
+      const list = fullList.slice(0, visibleCount);
+
       grid.innerHTML = "";
-      empty.classList.toggle("hidden", list.length > 0);
+      empty.classList.toggle("hidden", fullList.length > 0);
 
       list.forEach(v=>{
         const card = document.createElement("div");
@@ -737,9 +762,23 @@
           }
         });
       });
+
+      updateLoadMore(fullList.length);
     }
 
+    // Load more click
+    $("btn-loadmore")?.addEventListener("click", ()=>{
+      visibleCount += PAGE_SIZE;
+      renderVideos();
+    });
+
     // ======= Render: Thumbnails =======
+    const thumbs = [
+      { name: "Thumbnail 1 — Geometry Dash", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+1", tag:"Geometry Dash" },
+      { name: "Thumbnail 2 — RoK",           img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+2", tag:"RoK" },
+      { name: "Thumbnail 3 — Hollow Knight", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+3", tag:"Hollow Knight" }
+    ];
+
     function renderThumbs(){
       const grid = $("thumbs-grid");
       const empty = $("thumbs-empty");
@@ -772,6 +811,12 @@
     }
 
     // ======= Render: Ideas (Kanban) =======
+    const ideas = [
+      { title:"سلسلة جديدة: تحديات Geometry Dash (موبايل)", game:"Geometry Dash", kind:"Long", status:"soon" },
+      { title:"Shorts: Quiz Time (سؤال/تحدي سريع)", game:"Mixed", kind:"Short", status:"making" },
+      { title:"بث: تجربة لعبة جديدة ترند", game:"Trending", kind:"Live", status:"shelf" }
+    ];
+
     function renderIdeas(){
       const kanban = $("kanban");
       const empty = $("ideas-empty");
@@ -845,11 +890,15 @@
         currentFilter = chip.getAttribute("data-filter") || "all";
         document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
         chip.classList.add("active");
-        applyFilter();
+
+        // reset pagination when filter changes
+        applyFilter(true);
       });
     });
 
     $("search")?.addEventListener("input", ()=>{
+      // reset pagination when search changes
+      visibleCount = PAGE_SIZE;
       renderVideos();
     });
 
@@ -931,7 +980,8 @@
         tEmpty: "لسا ما أضفت ثمبنيلات. حط روابط الصور داخل مصفوفة thumbs.",
         iEmpty: "لسا ما أضفت أفكار. حطها داخل مصفوفة ideas.",
         lastUpdate: "آخر تحديث: 12 ديسمبر 2025",
-        langTitle: "العربية"
+        langTitle: "العربية",
+        loadMore: "➕ عرض المزيد"
       },
       en: {
         docTitle: "YouTube - Mlo5",
@@ -950,7 +1000,8 @@
         tEmpty: "No thumbnails yet. Add image links in the thumbs array.",
         iEmpty: "No ideas yet. Add them in the ideas array.",
         lastUpdate: "Last updated: December 12, 2025",
-        langTitle: "English"
+        langTitle: "English",
+        loadMore: "➕ Load more"
       }
     };
 
@@ -985,6 +1036,7 @@
       document.documentElement.lang = currentLang === "en" ? "en" : "ar";
       document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
 
+      // update load more text + re-render
       renderVideos();
       renderIdeas();
       bindLatestLongButton();
@@ -998,7 +1050,8 @@
 
     // ======= Counters =======
     function setCounts(){
-      $("count-v").textContent = videos.length;
+      // عدد الفيديوهات = كل اللي متحمّل من json (مش بس المعروض)
+      $("count-v").textContent = (allVideos || []).length;
       $("count-t").textContent = thumbs.length;
       $("count-i").textContent = ideas.length;
     }
