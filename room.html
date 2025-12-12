@@ -101,7 +101,12 @@
     }
 
     .onlineCard{display:flex;flex-direction:column;height:100%}
-    #onlineList{display:flex;flex-direction:column;gap:10px;overflow:auto;min-height:0;flex:1;padding-right:4px}
+    #onlineList{
+      display:flex;flex-direction:column;gap:10px;overflow:auto;min-height:0;flex:1;padding-right:4px;
+      scrollbar-width:none; -ms-overflow-style:none;
+    }
+    #onlineList::-webkit-scrollbar{ width:0; height:0; }
+
     .userRow{
       display:flex;align-items:center;justify-content:space-between;gap:10px;
       padding:10px;border-radius:16px;border:1px solid var(--border-subtle);
@@ -113,8 +118,6 @@
       border-color:rgba(0,0,0,.9);
       box-shadow:0 0 0 1px rgba(0,0,0,.8), 0 10px 22px rgba(0,0,0,.6);
     }
-    /* ✅ مهم: لا تفرض لون أسود على نص الأدمن */
-    /* (تم حذف أي rule كان يخلي النص أسود) */
 
     .userMeta{display:flex;flex-direction:column;gap:3px;min-width:0}
     .userMeta b{
@@ -171,6 +174,18 @@
     #messages{
       display:flex;flex-direction:column;gap:10px;overflow:auto;
       min-height:0;flex:1;padding-right:4px;padding-bottom:6px;
+      scrollbar-width:none; -ms-overflow-style:none;
+    }
+    #messages::-webkit-scrollbar{ width:0; height:0; }
+
+    .msgRow{
+      width:100%;
+      display:flex;
+      direction:rtl; /* ✅ عشان اليمين/يسار طبيعي */
+      justify-content:flex-start; /* ✅ الافتراضي: على اليمين */
+    }
+    .msgRow.me{
+      justify-content:flex-end; /* ✅ رسائلي على اليسار */
     }
 
     .msg{
@@ -179,13 +194,12 @@
       border:1px solid var(--border-subtle);
       background:rgba(0,0,0,.55);
       box-shadow:0 10px 22px rgba(0,0,0,.6);
-      padding:10px 12px;
+      padding:10px 12px 44px; /* ✅ مساحة لزر الرد داخل البوكس */
       line-height:1.5;
       word-break:break-word;
       position:relative;
     }
     .msg.me{
-      margin-right:auto;
       border-color:rgba(250,204,21,.75);
       box-shadow:0 14px 32px rgba(0,0,0,.75),0 0 0 1px rgba(250,204,21,.35);
     }
@@ -206,17 +220,11 @@
       text-align:center;
     }
 
-    /* ✅ reply OUTSIDE bubble (زر الرد على الشمال) */
-    .msgWrap{
-      display:flex;
-      gap:10px;
-      align-items:flex-end;
-      max-width:100%;
-      direction:ltr; /* مهم عشان الشمال/اليمين يكونوا واضحين */
-    }
-    .msgWrap.me{justify-content:flex-end}
-    .msgWrap .replyBtnOut{
-      order:1; /* أول عنصر = يسار */
+    /* ✅ زر الرد داخل مربع الرسالة (أسفل يمين) */
+    .replyBtn{
+      position:absolute;
+      bottom:8px;
+      right:10px;
       border-radius:999px;
       border:1px solid rgba(250,204,21,.45);
       background:rgba(0,0,0,.55);
@@ -229,10 +237,6 @@
       align-items:center;
       justify-content:center;
       user-select:none;
-    }
-    .msgWrap .msg{
-      order:2;
-      max-width:78%;
     }
 
     .replyPreview{
@@ -270,7 +274,6 @@
     .replyQuote b{color:var(--yellow);font-size:.85rem}
     .replyQuote div{color:var(--muted);font-size:.85rem;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-    /* ✅ composer bottom */
     .composer{display:flex;align-items:center;gap:10px;margin-top:12px;direction:rtl}
     #msgInput{flex:1;border-radius:999px}
 
@@ -306,7 +309,11 @@
       z-index:50;
       backdrop-filter:blur(10px);
     }
-    .emojiGrid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;max-height:200px;overflow:auto;padding-right:4px}
+    .emojiGrid{
+      display:grid;grid-template-columns:repeat(8,1fr);gap:6px;max-height:200px;overflow:auto;padding-right:4px;
+      scrollbar-width:none; -ms-overflow-style:none;
+    }
+    .emojiGrid::-webkit-scrollbar{ width:0; height:0; }
     .emojiItem{border:1px solid rgba(148,163,184,.35);background:rgba(0,0,0,.55);border-radius:12px;padding:6px 0;text-align:center;cursor:pointer;user-select:none}
 
     .gMale{color:#3b82f6;font-weight:900}
@@ -347,7 +354,6 @@
       white-space:nowrap;
     }
 
-    /* Modal */
     #modal{
       position:fixed; inset:0; z-index:999;
       background:rgba(0,0,0,.75);
@@ -518,7 +524,6 @@
       box-shadow: 0 0 0 1px rgba(250,204,21,.14), 0 0 26px rgba(250,204,21,.10), 0 18px 45px rgba(0,0,0,.95);
     }
 
-    /* ADMIN NAME badge (white name + skull, black bg only) */
     .adminNameWrap{
       display:inline-flex;
       align-items:center;
@@ -528,7 +533,7 @@
       border-radius:999px;
     }
     .adminNameText{
-      color:#fff !important;  /* ✅ أبيض */
+      color:#fff !important;
       font-weight:900;
       font-size:1.25rem;
       white-space:nowrap;
@@ -577,7 +582,6 @@
     </div>
 
     <div class="wrap">
-      <!-- Online -->
       <section class="card onlineCard">
         <div class="panel-head">
           <div class="h">
@@ -601,7 +605,6 @@
         <div id="onlineList"></div>
       </section>
 
-      <!-- Chat -->
       <section class="card chatCard">
         <div class="panel-head">
           <div class="h">
@@ -639,7 +642,6 @@
     </div>
   </main>
 
-  <!-- Modal -->
   <div id="modal">
     <div id="modalBox">
       <div class="modalGrid">
@@ -710,7 +712,6 @@
     </div>
   </div>
 
-  <!-- App Modal -->
   <div id="appModal">
     <div id="appModalBox">
       <div class="appModalTitle" id="appModalTitle">تنبيه</div>
@@ -719,7 +720,6 @@
     </div>
   </div>
 
-  <!-- Context menu -->
   <div class="menu" id="ctxMenu">
     <div class="sep" id="adminSep" style="display:none;"></div>
     <div id="adminActions" style="display:none;">
@@ -731,7 +731,6 @@
     </div>
   </div>
 
-  <!-- Room lock menu (admin only) -->
   <div class="menu" id="roomMenu">
     <button id="roomLockBtn">🔒 قفل الروم</button>
     <button id="roomUnlockBtn">🔓 فتح الروم</button>
@@ -1269,7 +1268,6 @@
         const actions = document.createElement("div");
         actions.className = "actionsRow";
 
-        /* ⋮ قفل/فتح الروم يظهر للأدمن فقط */
         if (isRowAdmin && isAdmin){
           const dots = document.createElement("button");
           dots.type = "button";
@@ -1383,8 +1381,8 @@
             }
           }
         } else {
-          const wrap = document.createElement("div");
-          wrap.className = "msgWrap" + (m.uid === user.uid ? " me" : "");
+          const row = document.createElement("div");
+          row.className = "msgRow" + (m.uid === user.uid ? " me" : "");
 
           const div = document.createElement("div");
           div.className = "msg" + (m.uid === user.uid ? " me" : "");
@@ -1393,7 +1391,6 @@
           const gHtml = genderSymbolHtml(m.gender);
           const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
 
-          /* ✅ رجع الاسم للوضع الطبيعي للجميع (حتى الأدمن) */
           const nameHtml =
             `<span style="color:${escapeHtml(m.nameColor || "#facc15")}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
 
@@ -1410,15 +1407,10 @@
             ${replyBlock}
             <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${escapeHtml(m.text||"")}</div>
             <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
+            <button class="replyBtn" type="button" title="رد">↩ رد</button>
           `;
 
-          const btn = document.createElement("button");
-          btn.className = "replyBtnOut";
-          btn.type = "button";
-          btn.title = "رد";
-          btn.textContent = "↩ رد";
-
-          btn.addEventListener("click", ()=>{
+          div.querySelector(".replyBtn").addEventListener("click", ()=>{
             replyTarget = {
               id: it.id,
               uid: m.uid,
@@ -1431,9 +1423,8 @@
             msgInput.focus();
           });
 
-          wrap.appendChild(btn);
-          wrap.appendChild(div);
-          messagesDiv.appendChild(wrap);
+          row.appendChild(div);
+          messagesDiv.appendChild(row);
         }
       }
 
@@ -1520,7 +1511,6 @@
     });
   });
 
-  /* ✅ مهم: ضيف = لا تخزين */
   function cleanupGuestLocal(){
     try{
       if (user?.isAnonymous){
@@ -1628,7 +1618,6 @@
       textColor: textColorInput.value || "#f9fafb"
     };
 
-    /* ✅ لا تخزين للضيف */
     if (!user.isAnonymous){
       localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
     }
