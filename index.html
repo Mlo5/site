@@ -5,7 +5,7 @@
   <title>M L O 5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ✅ Favicon -->
+  <!-- ✅ Favicon (تأكد أن favicon.png موجود في نفس مجلد index.html بجذر المشروع) -->
   <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="32x32" />
   <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="16x16" />
   <link rel="apple-touch-icon" href="./favicon.png?v=2" />
@@ -118,28 +118,6 @@
       box-shadow: 0 14px 30px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.8);
     }
 
-    /* ✅ user avatar next to name */
-    .user-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .user-avatar {
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(250, 204, 21, 0.75);
-      background: rgba(0,0,0,.6);
-      flex: 0 0 auto;
-    }
-    .user-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
     .hero-title { text-align: center; margin-bottom: 10px; }
 
     .hero-title h1 {
@@ -215,7 +193,7 @@
     }
 
     .top-nav-dropdown { padding-right: 18px; padding-left: 18px; }
-    .top-nav-label { display: inline-flex; align-items: center; gap: 6px; }
+    .top-nav-label { display: inline-flex; align-items: center; gap: 4px; }
     .top-nav-label::after { content: "▾"; font-size: 0.75rem; opacity: 0.9; }
 
     .dropdown-menu {
@@ -256,8 +234,8 @@
 
     .dropdown-item:hover { background: rgba(250, 204, 21, 0.12); color: var(--yellow); }
 
-    /* باقي CSS زي ما هو عندك... */
     .video-section { margin-top: 10px; margin-bottom: 10px; }
+
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -270,6 +248,7 @@
       border: 2px solid #f9fafb;
       transition: box-shadow 0.25s ease, border-color 0.25s ease;
     }
+
     .video-wrapper::before {
       content: "";
       position: absolute;
@@ -281,32 +260,69 @@
       pointer-events: none;
       transition: opacity 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
+
     .video-wrapper:hover {
       border-color: rgba(250, 204, 21, 0.8);
       box-shadow: 0 22px 55px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(250, 204, 21, 0.35);
     }
+
     .video-wrapper:hover::before {
       opacity: 1;
       border-color: rgba(250, 204, 21, 0.85);
       box-shadow: 0 0 26px rgba(250, 204, 21, 0.75);
     }
-    .video-inner { position: relative; width: 100%; border-radius: 16px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; }
+
+    .video-inner {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 16 / 9;
+    }
+
     .hero-slider { position: relative; width: 100%; height: 100%; touch-action: pan-y; }
     .hero-slider-track { position: relative; width: 100%; height: 100%; }
-    .hero-slide { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.4s ease; }
-    .hero-slide img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
-    .hero-slide.is-active { opacity: 1; }
-    .hero-slider-dots {
-      position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
-      display: flex; gap: 6px; z-index: 4;
+
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
+
+    .hero-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
+
+    .hero-slide.is-active { opacity: 1; }
+
+    .hero-slider-dots {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 4;
+    }
+
     .hero-slider-dot {
-      width: 8px; height: 8px; border-radius: 999px;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
       border: 1px solid rgba(249, 250, 251, 0.8);
       background: rgba(15, 23, 42, 0.8);
       cursor: pointer;
       transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
     }
+
     .hero-slider-dot.is-active { background: #facc15; border-color: #facc15; transform: scale(1.15); }
 
     .ad-slot {
@@ -323,8 +339,17 @@
       justify-content: space-between;
       gap: 10px;
     }
-    .ad-slot-label { font-size: 0.75rem; color: #facc15; text-transform: uppercase; letter-spacing: 0.15em; white-space: nowrap; }
+
+    .ad-slot-label {
+      font-size: 0.75rem;
+      color: #facc15;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+    }
+
     .ad-slot-body { flex: 1; text-align: right; }
+
     .ad-slot-cta {
       font-size: 0.8rem;
       color: #facc15;
@@ -336,64 +361,108 @@
       background: rgba(0, 0, 0, 0.5);
       transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
     }
+
     .ad-slot-cta:hover { background: #facc15; color: #111827; transform: translateY(-1px); }
 
     .sections { margin-top: 24px; }
     .sections-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
     .section-card {
-      display: block; text-decoration: none; color: inherit;
+      display: block;
+      text-decoration: none;
+      color: inherit;
       background: linear-gradient(145deg, #020202, #050505);
-      border-radius: 18px; padding: 14px 14px 16px;
+      border-radius: 18px;
+      padding: 14px 14px 16px;
       border: 1px solid var(--border-subtle);
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(55, 65, 81, 0.5);
-      position: relative; overflow: hidden;
+      position: relative;
+      overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
+
     .section-card::before {
-      content: ""; position: absolute; inset: -40%;
+      content: "";
+      position: absolute;
+      inset: -40%;
       background: radial-gradient(circle at top, rgba(250, 204, 21, 0.18), transparent 55%);
-      opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
     }
+
     .section-card:hover {
       transform: translateY(-4px);
       border-color: rgba(250, 204, 21, 0.9);
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(250, 204, 21, 0.5);
     }
+
     .section-card:hover::before { opacity: 1; }
     .section-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
     .section-title { font-size: 1.05rem; font-weight: 700; color: var(--yellow); margin-bottom: 6px; }
     .section-body { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
 
     .about-section { margin-top: 26px; }
+
     .about-card {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px; border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 18px;
       background: linear-gradient(145deg, #020202, #050505);
       border: 1px solid var(--border-subtle);
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(55, 65, 81, 0.6);
     }
+
     .about-avatar {
-      flex: 0 0 64px; width: 64px; height: 64px;
-      border-radius: 50%; overflow: hidden;
+      flex: 0 0 64px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      overflow: hidden;
       border: 2px solid rgba(250, 204, 21, 0.9);
       box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
     }
+
     .about-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
     .about-text { flex: 1; min-width: 0; }
     .about-title { font-size: 0.95rem; color: var(--yellow); margin-bottom: 4px; font-weight: 700; }
     .about-body { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
 
     .footer {
-      margin-top: 30px; padding-top: 18px;
+      margin-top: 30px;
+      padding-top: 18px;
       border-top: 1px solid rgba(31, 41, 55, 0.9);
-      display: flex; flex-direction: column; gap: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .footer-top { display: flex; justify-content: flex-end; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .social-links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+
+    .footer-top {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
     .social-link {
       position: relative;
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 38px; height: 38px; border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-full);
       border: 1px solid rgba(148, 163, 184, 0.7);
       background: radial-gradient(circle at top, #111111, #020202);
       color: var(--yellow);
@@ -405,6 +474,7 @@
       transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
       overflow: hidden;
     }
+
     .social-link::after {
       content: "";
       position: absolute;
@@ -416,6 +486,7 @@
       pointer-events: none;
       mix-blend-mode: screen;
     }
+
     .social-link:hover {
       transform: translateY(-2px) scale(1.07) rotate(-6deg);
       border-color: rgba(250, 204, 21, 0.95);
@@ -423,10 +494,18 @@
       color: #000;
       box-shadow: 0 18px 42px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.8);
     }
+
     .social-link:hover::after { opacity: 1; transform: translateX(6px); }
-    .footer-bottom { text-align: center; font-size: 0.75rem; color: rgba(107, 114, 128, 0.9); margin-top: 2px; }
+
+    .footer-bottom {
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(107, 114, 128, 0.9);
+      margin-top: 2px;
+    }
 
     @media (max-width: 900px) { .sections-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
     @media (max-width: 640px) {
       .hero-title h1 { letter-spacing: 0.28em; }
       .sections-grid { grid-template-columns: 1fr; }
@@ -444,6 +523,7 @@
       z-index: 999;
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
+
     #preloader.preloader-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
     .preloader-logo img { max-width: 200px; height: auto; animation: preloader-blink 0.35s infinite alternate; }
@@ -497,6 +577,7 @@
       white-space: nowrap;
       margin-top: 4px;
     }
+
     .subscribe-toast-btn:hover { filter: brightness(1.05); }
 
     .subscribe-toast-close {
@@ -508,6 +589,7 @@
       cursor: pointer;
       padding: 0 2px;
     }
+
     .subscribe-toast-close:hover { color: var(--white); }
 
     .scroll-top-btn {
@@ -532,7 +614,9 @@
       transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
       z-index: 55;
     }
+
     .scroll-top-btn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
     .scroll-top-btn:hover {
       background: #facc15;
       color: #000;
@@ -555,19 +639,16 @@
     <div class="card-shell">
       <div class="card-shell-inner">
 
-        <!-- ✅ TOP BAR -->
+        <!-- ✅ TOP BAR (معدّل) -->
         <div class="top-bar">
           <a id="login-link" href="login.html" class="top-login-link">تسجيل دخول</a>
 
           <!-- ✅ يظهر فقط بعد تسجيل الدخول -->
           <div id="user-menu" class="top-nav-item top-nav-dropdown" style="display:none;">
-            <span class="top-nav-label user-pill" id="user-label-wrap">
-              <span class="user-avatar"><img id="user-avatar" src="me.jpg" alt="avatar"></span>
-              <span id="user-label">User</span>
-            </span>
+            <span class="top-nav-label" id="user-label">User</span>
             <div class="dropdown-menu">
-              <a href="profile.html" class="dropdown-item" id="menu-profile">الملف الشخصي</a>
-              <a href="settings.html" class="dropdown-item" id="menu-settings">الإعدادات</a>
+              <a href="profile.html" class="dropdown-item">الملف الشخصي</a>
+              <a href="settings.html" class="dropdown-item">الإعدادات</a>
               <button id="logout-btn" class="dropdown-item" type="button"
                 style="text-align:right;width:100%;background:transparent;border:none;cursor:pointer;">
                 تسجيل خروج
@@ -654,13 +735,12 @@
           </div>
         </section>
 
-        <!-- ✅ إعلان مترجم -->
         <section class="ad-slot">
-          <div id="ad-slot-body" class="ad-slot-body">
+          <div class="ad-slot-body">
             مساحة إعلانية تجريبية لمحتوى أو شريك مرتبط بالجيمينغ؛ مثل المايك اللي بستخدمه، شاشة اللعب، أو كود خصم خاص لمتابعين MLO5.
           </div>
-          <a id="ad-slot-cta" href="soon.html" class="ad-slot-cta">تفاصيل أكثر</a>
-          <div id="ad-slot-label" class="ad-slot-label">إعلان</div>
+          <a href="soon.html" class="ad-slot-cta">تفاصيل أكثر</a>
+          <div class="ad-slot-label">إعلان</div>
         </section>
 
         <div class="divider">
@@ -785,6 +865,10 @@
       }, 700);
     });
 
+    // تحسين فرصة تشغيل الصوت
+    let userInteracted = false;
+    document.addEventListener("click", () => { userInteracted = true; }, { once: true });
+
     // ✅ اختيار اللغة
     const langToggle = document.getElementById("lang-toggle");
     const LANG_KEY = "mlo5-lang";
@@ -817,12 +901,6 @@
         toastBody: "اشترك الآن وخليك معنا بالرحلة 👇💥",
         toastBtn: "اشترك الآن",
         langTitle: "العربية",
-        profile: "الملف الشخصي",
-        settings: "الإعدادات",
-        logout: "تسجيل خروج",
-        adBody: "مساحة إعلانية تجريبية لمحتوى أو شريك مرتبط بالجيمينغ؛ مثل المايك اللي بستخدمه، شاشة اللعب، أو كود خصم خاص لمتابعين MLO5.",
-        adCta: "تفاصيل أكثر",
-        adLabel: "إعلان",
       },
       en: {
         title: "M L O 5",
@@ -852,12 +930,6 @@
         toastBody: "👇💥 Subscribe now and stay with us on the journey",
         toastBtn: "Subscribe now",
         langTitle: "English",
-        profile: "Profile",
-        settings: "Settings",
-        logout: "Logout",
-        adBody: "Sample ad space for gaming-related content or a partner—like the mic I use, my gaming monitor, or a special discount code for MLO5 followers.",
-        adCta: "Learn more",
-        adLabel: "Ad",
       },
     };
 
@@ -930,22 +1002,6 @@
       if (toastBtn) toastBtn.textContent = strings.toastBtn;
 
       if (langToggle) langToggle.title = strings.langTitle;
-
-      // ✅ user dropdown localization
-      const menuProfile = document.getElementById("menu-profile");
-      const menuSettings = document.getElementById("menu-settings");
-      const logoutBtn = document.getElementById("logout-btn");
-      if (menuProfile) menuProfile.textContent = strings.profile;
-      if (menuSettings) menuSettings.textContent = strings.settings;
-      if (logoutBtn) logoutBtn.textContent = strings.logout;
-
-      // ✅ ad slot localization
-      const adBody = document.getElementById("ad-slot-body");
-      const adCta = document.getElementById("ad-slot-cta");
-      const adLabel = document.getElementById("ad-slot-label");
-      if (adBody) adBody.textContent = strings.adBody;
-      if (adCta) adCta.textContent = strings.adCta;
-      if (adLabel) adLabel.textContent = strings.adLabel;
     }
 
     let savedLang = localStorage.getItem(LANG_KEY) || "ar";
@@ -962,6 +1018,7 @@
     // ✅ Toast
     const toast = document.getElementById("subscribe-toast");
     const toastClose = toast ? toast.querySelector(".subscribe-toast-close") : null;
+    const toastSound = document.getElementById("toast-sound");
 
     if (toastClose) {
       toastClose.addEventListener("click", () => {
@@ -1072,11 +1129,10 @@
     })();
   </script>
 
-  <!-- ✅ Firebase Auth UI + Firestore Profile (username + photo) -->
+  <!-- ✅ Firebase Auth UI (اسم المستخدم + تسجيل خروج) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
@@ -1087,38 +1143,20 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
     const loginLink = document.getElementById("login-link");
     const userMenu = document.getElementById("user-menu");
     const userLabel = document.getElementById("user-label");
-    const userAvatar = document.getElementById("user-avatar");
     const logoutBtn = document.getElementById("logout-btn");
 
-    async function getProfile(uid){
-      const ref = doc(db, "users", uid, "profile", "main");
-      const snap = await getDoc(ref);
-      return snap.exists() ? snap.data() : null;
-    }
-
-    onAuthStateChanged(auth, async (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        // fallback (لو ما في Firestore)
-        const baseName = ((user.displayName || "").trim() || (user.email || "").trim() || "User");
-        if (userLabel) userLabel.textContent = baseName.length > 16 ? baseName.slice(0,14) + "…" : baseName;
-        if (userAvatar) userAvatar.src = user.photoURL || "me.jpg";
+        const name = (user.displayName || "").trim();
+        const email = (user.email || "").trim();
+        const raw = name || email || "User";
+        const displayName = raw.length > 16 ? raw.slice(0, 14) + "…" : raw;
 
-        // ✅ Firestore profile overrides
-        try{
-          const p = await getProfile(user.uid);
-          const uname = (p?.username || p?.nickname || "").trim();
-          const photo = (p?.photoDataUrl || p?.photoURL || "").trim();
-
-          if (uname) userLabel.textContent = uname.length > 16 ? uname.slice(0,14) + "…" : uname;
-          if (photo && userAvatar) userAvatar.src = photo;
-        }catch(e){
-          console.error(e);
-        }
+        userLabel.textContent = displayName;
 
         if (loginLink) loginLink.style.display = "none";
         if (userMenu) userMenu.style.display = "inline-flex";
