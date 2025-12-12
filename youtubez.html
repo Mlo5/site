@@ -592,9 +592,10 @@
     // ضع رابط القناة هنا:
     const CHANNEL_URL = "https://www.youtube.com/@mlo5ya";
 
-    // فيديوهاتك (تلقائي من latest-videos.json)
+   // فيديوهاتك (تلقائي من latest-videos.json)
 let videos = [];
-    async function loadVideos(){
+
+async function loadVideos(){
   const grid = document.getElementById("videos-grid");
   const empty = document.getElementById("videos-empty");
 
@@ -610,7 +611,13 @@ let videos = [];
     const data = await res.json();
     const list = Array.isArray(data?.videos) ? data.videos : [];
 
-    videos = list.slice(0, 15);
+    // ✅ استبعاد الشورتس
+    const filtered = list.filter(v => {
+      const url = (v.url || "").toLowerCase();
+      return !url.includes("/shorts/");
+    });
+
+    videos = filtered.slice(0, 15);
   }catch(e){
     videos = [];
   }
@@ -1004,4 +1011,5 @@ bindLatestLongButton();
   </script>
 </body>
 </html>
+
 
