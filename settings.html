@@ -2,417 +2,361 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>الإعدادات - M L O 5</title>
+  <title>M L O 5 — Soon</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
-    :root{
-      --bg-dark:#020202; --yellow:#facc15; --white:#f9fafb; --muted:#9ca3af;
-      --border: rgba(250,204,21,.45);
-      --card-border: rgba(156,163,175,.35);
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family:"Tajawal",system-ui,-apple-system,"Segoe UI",sans-serif;
-      background:var(--bg-dark); color:var(--white);
-      min-height:100vh; padding:18px;
-      display:flex; justify-content:center;
-    }
-    .wrap{width:100%; max-width:900px;}
-    .top-bar{
-      display:flex; gap:10px; align-items:center; justify-content:flex-start;
-      direction:ltr; margin-bottom:14px;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 14px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(0,0,0,.55);
-      color:var(--white); text-decoration:none;
-      cursor:pointer; user-select:none;
-      transition:transform .15s ease, background .15s ease;
-      font-weight:800; font-size:.9rem;
-    }
-    .pill:hover{transform:translateY(-1px); background:rgba(250,204,21,.12)}
-    .lang-toggle{
-      width:40px;height:40px;border-radius:999px;border:1px solid rgba(148,163,184,.7);
-      background:radial-gradient(circle at top,#111,#020202);
-      color:var(--yellow); cursor:pointer;
-      display:inline-flex;align-items:center;justify-content:center;
-      font-size:1rem;
-    }
-    .card{
-      border:1px solid var(--card-border);
-      background:linear-gradient(145deg,#020202,#050505);
-      border-radius:18px;
-      padding:16px;
-      box-shadow:0 12px 30px rgba(0,0,0,.85);
-      margin-bottom:14px;
-    }
-    .h1{
-      font-family:"Poppins",system-ui,sans-serif;
-      font-weight:800;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--yellow);
-      font-size:1.05rem;
-      margin-bottom:10px;
-      direction:ltr;
+    :root {
+      --bg-dark: #020202;
+      --yellow: #facc15;
+      --white: #f9fafb;
+      --muted: #9ca3af;
+      --border-subtle: rgba(156, 163, 175, 0.35);
+      --radius-lg: 20px;
+      --radius-full: 999px;
+      --grid-x: 0px;
+      --grid-y: 0px;
     }
 
-    /* ✅ Profile mini header */
-    .profile-head{
-      display:flex; gap:14px; align-items:center; flex-wrap:wrap;
-    }
-    .avatar{
-      width:64px;height:64px;border-radius:50%;
-      overflow:hidden; border:2px solid rgba(250,204,21,.9);
-      background:#000; flex:0 0 auto;
-    }
-    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
-    .u-title{font-weight:900;color:var(--yellow);font-size:1rem}
-    .u-sub{color:var(--muted);font-size:.86rem;margin-top:4px;line-height:1.35}
-
-    .row{
-      display:flex; gap:14px; align-items:center; justify-content:space-between;
-      padding:12px 0;
-      border-top:1px solid rgba(255,255,255,.08);
-    }
-    .row:first-of-type{border-top:none}
-    .row-left{min-width:0}
-    .row-title{font-weight:900; font-size:.95rem}
-    .row-desc{color:var(--muted); font-size:.85rem; margin-top:4px; line-height:1.4}
-
-    /* Toggle */
-    .toggle{ position:relative; width:52px; height:30px; flex:0 0 auto; }
-    .toggle input{opacity:0; width:0; height:0}
-    .slider{
-      position:absolute; inset:0;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:999px;
-      cursor:pointer;
-      transition:.2s ease;
-    }
-    .slider:before{
-      content:"";
-      position:absolute;
-      width:22px; height:22px;
-      left:4px; top:50%;
-      transform:translateY(-50%);
-      background:#111;
-      border:2px solid rgba(250,204,21,.8);
-      border-radius:999px;
-      transition:.2s ease;
-      box-shadow:0 8px 18px rgba(0,0,0,.65);
-    }
-    .toggle input:checked + .slider{
-      background:rgba(250,204,21,.22);
-      border-color:rgba(250,204,21,.55);
-    }
-    .toggle input:checked + .slider:before{
-      left:26px;
-      background:var(--yellow);
-      border-color:#000;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .actions{
-      display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
+    body {
+      font-family: "Tajawal", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: var(--bg-dark);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      transition: background 0.3s ease, color 0.3s ease;
+      position: relative;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
     }
-    .btn{
-      border:none; cursor:pointer;
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:900;
-      font-size:.92rem;
+
+    .page {
+      width: 100%;
+      max-width: 1100px;
+      padding: 32px 16px 40px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
     }
-    .btn-primary{background:var(--yellow); color:#111;}
-    .btn-ghost{
-      background:rgba(0,0,0,.55);
-      color:var(--white);
-      border:1px solid rgba(250,204,21,.35);
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: radial-gradient(
+        circle,
+        rgba(249, 250, 251, 0.55) 1px,
+        transparent 1px
+      );
+      background-size: 30px 30px;
+      background-position:
+        calc(50% + var(--grid-x))
+        calc(50% + var(--grid-y));
+      opacity: 0.25;
+      mix-blend-mode: screen;
     }
-    .msg{margin-top:10px; min-height:1.2em; color:var(--muted); font-size:.9rem;}
+
+    .card-shell {
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      border: none;
+    }
+
+    .card-shell-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* شاشة التحميل بدون وميض */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    #preloader.preloader-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .preloader-logo img {
+      max-width: 200px;
+      height: auto;
+      /* لا يوجد أي أنيميشن هنا */
+    }
+
+    /* مربع Soon */
+    .soon-wrapper {
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40vh;
+    }
+
+    .soon-card {
+      border-radius: 24px;
+      padding: 30px 24px 32px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      background: radial-gradient(circle at top, #111111, #020202);
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(55, 65, 81, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .soon-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.16),
+        transparent 55%
+      );
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .soon-title {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .soon-dots {
+      display: inline-flex;
+      gap: 4px;
+      margin-left: 4px;
+    }
+
+    .soon-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--yellow);
+      opacity: 0.25;
+      animation: dotBlink 1.1s infinite ease-in-out;
+    }
+
+    .soon-dot:nth-child(2) { animation-delay: 0.15s; }
+    .soon-dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes dotBlink {
+      0%   { opacity: 0.2; transform: translateY(0); }
+      30%  { opacity: 1;   transform: translateY(-2px); }
+      60%  { opacity: 0.7; transform: translateY(0); }
+      100% { opacity: 0.2; transform: translateY(0); }
+    }
+
+    .soon-sub {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .soon-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.6);
+      background: rgba(0, 0, 0, 0.65);
+      font-size: 0.8rem;
+      color: var(--yellow);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* قسم "الرئيسية" بنفس ستايل الأقسام */
+    .sections {
+      margin-top: 30px;
+    }
+
+    .sections-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .section-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: linear-gradient(145deg, #020202, #050505);
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(55, 65, 81, 0.5);
+      position: relative;
+      overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .section-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(
+        circle at top,
+        rgba(250, 204, 21, 0.18),
+        transparent 55%
+      );
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .section-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(250, 204, 21, 0.9);
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(250, 204, 21, 0.5);
+    }
+
+    .section-card:hover::before {
+      opacity: 1;
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--yellow);
+      margin-bottom: 6px;
+    }
+
+    .section-body {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 640px) {
+      .soon-wrapper {
+        margin-top: 20px;
+      }
+    }
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-
-    <div class="top-bar">
-      <a class="pill" id="back-home" href="index.html">⬅︎ <span id="back-home-txt">الرئيسية</span></a>
-      <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
-      <button class="pill" id="logout-btn" type="button">⎋ <span id="logout-txt">تسجيل خروج</span></button>
+  <!-- شاشة تحميل بدون وميض -->
+  <div id="preloader">
+    <div class="preloader-logo">
+      <img src="logo.png" alt="MLO5 Logo">
     </div>
-
-    <!-- ✅ mini profile header (shows everywhere) -->
-    <div class="card">
-      <div class="profile-head">
-        <div class="avatar"><img id="avatar-img" src="me.jpg" alt="avatar" /></div>
-        <div>
-          <div class="u-title" id="u-name">...</div>
-          <div class="u-sub" id="u-email">...</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="h1" id="page-title">SETTINGS</div>
-
-      <div class="row">
-        <div class="row-left">
-          <div class="row-title" id="t-toast">التنبيه (Toast)</div>
-          <div class="row-desc" id="d-toast">إظهار / إخفاء تنبيه الاشتراك أسفل الصفحة.</div>
-        </div>
-        <label class="toggle" aria-label="toast enabled">
-          <input id="toastEnabled" type="checkbox" />
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="row">
-        <div class="row-left">
-          <div class="row-title" id="t-sound">صوت التنبيه</div>
-          <div class="row-desc" id="d-sound">تشغيل / إيقاف صوت toast.mp3 عند ظهور التنبيه.</div>
-        </div>
-        <label class="toggle" aria-label="toast sound">
-          <input id="toastSound" type="checkbox" />
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="row">
-        <div class="row-left">
-          <div class="row-title" id="t-motion">تقليل الحركة</div>
-          <div class="row-desc" id="d-motion">تخفيف الأنيميشن والحركات لتجربة أهدأ وأخف.</div>
-        </div>
-        <label class="toggle" aria-label="reduce motion">
-          <input id="reduceMotion" type="checkbox" />
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="actions">
-        <button class="btn btn-primary" id="save-btn" type="button">حفظ</button>
-        <a class="btn btn-ghost" id="go-profile" href="profile.html" style="text-decoration:none;display:inline-flex;align-items:center;">
-          👤 <span id="go-profile-txt" style="margin-inline-start:8px;">الملف الشخصي</span>
-        </a>
-      </div>
-
-      <div class="msg" id="msg"></div>
-    </div>
-
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  <div class="bg-grid"></div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
-      authDomain: "mlo5-users.firebaseapp.com",
-      projectId: "mlo5-users",
-      appId: "1:142086858806:web:64c50f3a8d6250a2049097"
-    };
+  <main class="page">
+    <div class="card-shell">
+      <div class="card-shell-inner">
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+        <!-- مربع Soon -->
+        <section class="soon-wrapper">
+          <div class="soon-card">
+            <div class="soon-title">
+              Soon
+              <span class="soon-dots">
+                <span class="soon-dot"></span>
+                <span class="soon-dot"></span>
+                <span class="soon-dot"></span>
+              </span>
+            </div>
+            <p class="soon-sub">
+              هذه الصفحة قيد التطوير حاليًا. ترقّب تحديثات جديدة من MLO5 قريبًا 👀
+            </p>
+            <div class="soon-tag">
+              🚧 تحت الإنشاء · MLO5
+            </div>
+          </div>
+        </section>
 
-    // ---------- L10N ----------
-    const l10n = {
-      ar: {
-        title: "الإعدادات - M L O 5",
-        home: "الرئيسية",
-        logout: "تسجيل خروج",
-        page: "SETTINGS",
-        toastT: "التنبيه (Toast)",
-        toastD: "إظهار / إخفاء تنبيه الاشتراك أسفل الصفحة.",
-        soundT: "صوت التنبيه",
-        soundD: "تشغيل / إيقاف صوت toast.mp3 عند ظهور التنبيه.",
-        motionT: "تقليل الحركة",
-        motionD: "تخفيف الأنيميشن والحركات لتجربة أهدأ وأخف.",
-        save: "حفظ",
-        profile: "الملف الشخصي",
-        loading: "جارٍ التحميل…",
-        saved: "✅ تم حفظ الإعدادات.",
-        err: "❌ صار خطأ. جرّب مرة ثانية.",
-        notSigned: "لازم تسجل دخول أولًا."
-      },
-      en: {
-        title: "Settings - M L O 5",
-        home: "Home",
-        logout: "Logout",
-        page: "SETTINGS",
-        toastT: "Toast",
-        toastD: "Show / hide the subscribe toast at the bottom.",
-        soundT: "Toast Sound",
-        soundD: "Enable / disable toast.mp3 sound when the toast appears.",
-        motionT: "Reduce Motion",
-        motionD: "Reduce animations for a calmer, lighter experience.",
-        save: "Save",
-        profile: "Profile",
-        loading: "Loading…",
-        saved: "✅ Settings saved.",
-        err: "❌ Something went wrong. Try again.",
-        notSigned: "Please sign in first."
-      }
-    };
+        <!-- قسم واحد فقط: الرئيسية -->
+        <section class="sections">
+          <div class="sections-grid">
+            <a href="index.html" class="section-card">
+              <div class="section-label">قسم</div>
+              <h2 class="section-title">الرئيسية</h2>
+              <p class="section-body">
+                ارجع إلى الصفحة الرئيسية لموقع MLO5 وشوف كل المحتوى والأقسام.
+              </p>
+            </a>
+          </div>
+        </section>
 
-    let currentLang = "ar";
-    function applyLang(lang){
-      currentLang = (lang === "en") ? "en" : "ar";
-      const s = l10n[currentLang];
+      </div>
+    </div>
+  </main>
 
-      document.title = s.title;
-      document.documentElement.lang = currentLang === "en" ? "en" : "ar";
-      document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
+  <script>
+    // تحريك شبكة النقاط مع الماوس (نفس ستايل الموقع)
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      const xShift = xRatio * maxShift;
+      const yShift = yRatio * maxShift;
+      root.style.setProperty("--grid-x", xShift.toFixed(1) + "px");
+      root.style.setProperty("--grid-y", yShift.toFixed(1) + "px");
+    });
 
-      document.getElementById("back-home-txt").textContent = s.home;
-      document.getElementById("logout-txt").textContent = s.logout;
-      document.getElementById("page-title").textContent = s.page;
-
-      document.getElementById("t-toast").textContent = s.toastT;
-      document.getElementById("d-toast").textContent = s.toastD;
-      document.getElementById("t-sound").textContent = s.soundT;
-      document.getElementById("d-sound").textContent = s.soundD;
-      document.getElementById("t-motion").textContent = s.motionT;
-      document.getElementById("d-motion").textContent = s.motionD;
-
-      document.getElementById("save-btn").textContent = s.save;
-      document.getElementById("go-profile-txt").textContent = s.profile;
-
-      document.getElementById("lang-toggle").title = (currentLang === "en") ? "English" : "العربية";
-    }
-
-    // ---------- Firestore helpers ----------
-    async function getSettings(uid){
-      const ref = doc(db, "users", uid, "settings", "main");
-      const snap = await getDoc(ref);
-      return snap.exists() ? snap.data() : null;
-    }
-
-    async function saveSettings(uid, data){
-      const ref = doc(db, "users", uid, "settings", "main");
-      await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true });
-    }
-
-    async function getProfile(uid){
-      // ✅ نفس المسار اللي بالبروفايل
-      const ref = doc(db, "users", uid, "profile", "main");
-      const snap = await getDoc(ref);
-      return snap.exists() ? snap.data() : null;
-    }
-
-    // ---------- UI ----------
-    const msg = document.getElementById("msg");
-    const toastEnabled = document.getElementById("toastEnabled");
-    const toastSound = document.getElementById("toastSound");
-    const reduceMotion = document.getElementById("reduceMotion");
-
-    const saveBtn = document.getElementById("save-btn");
-    const logoutBtn = document.getElementById("logout-btn");
-    const langToggle = document.getElementById("lang-toggle");
-
-    // mini profile header
-    const avatarImg = document.getElementById("avatar-img");
-    const uName = document.getElementById("u-name");
-    const uEmail = document.getElementById("u-email");
-
-    function setMsg(text, ok=false){
-      msg.style.color = ok ? "#22c55e" : "#9ca3af";
-      msg.textContent = text || "";
-    }
-
-    let currentUid = null;
-
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        applyLang("ar");
-        setMsg(l10n[currentLang].notSigned);
-        setTimeout(() => window.location.href = "login.html", 700);
-        return;
-      }
-
-      currentUid = user.uid;
-
-      // ✅ اعرض بيانات أساسية فوراً (ثم نبدّلها لو في Firestore)
-      uName.textContent = (user.displayName || user.email || "User");
-      uEmail.textContent = user.email || "";
-      avatarImg.src = user.photoURL || "me.jpg";
-
-      try{
-        setMsg(l10n[currentLang].loading);
-
-        // 1) Settings
-        const s = await getSettings(user.uid);
-        applyLang(s?.lang || "ar");
-
-        toastEnabled.checked = (s?.toastEnabled ?? true);
-        toastSound.checked   = (s?.toastSound ?? true);
-        reduceMotion.checked = (s?.reduceMotion ?? false);
-
-        // لو أول مرة: ثبّت defaults مرة واحدة
-        if (!s) {
-          await saveSettings(user.uid, {
-            lang: currentLang,
-            toastEnabled: true,
-            toastSound: true,
-            reduceMotion: false
-          });
+    // إخفاء شاشة التحميل بدون أي أنيميشن إضافية
+    const preloader = document.getElementById("preloader");
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        if (preloader) {
+          preloader.classList.add("preloader-hidden");
         }
-
-        // 2) Profile (username + photoURL)
-        const p = await getProfile(user.uid);
-        const display = (p?.username || "").trim() || (user.displayName || user.email || "User");
-        uName.textContent = display;
-
-        if (p?.photoURL) avatarImg.src = p.photoURL;
-
-        setMsg("");
-      }catch(e){
-        console.error(e);
-        applyLang("ar");
-        setMsg(l10n[currentLang].err);
-      }
-    });
-
-    // 🌐 تبديل اللغة + حفظ Firestore
-    langToggle.addEventListener("click", async () => {
-      const next = (currentLang === "ar") ? "en" : "ar";
-      applyLang(next);
-      if (!currentUid) return;
-
-      try{
-        await saveSettings(currentUid, { lang: next });
-      }catch(e){
-        console.error(e);
-      }
-    });
-
-    // حفظ الإعدادات
-    saveBtn.addEventListener("click", async () => {
-      if (!currentUid) return;
-      try{
-        setMsg(l10n[currentLang].loading);
-        await saveSettings(currentUid, {
-          lang: currentLang,
-          toastEnabled: !!toastEnabled.checked,
-          toastSound: !!toastSound.checked,
-          reduceMotion: !!reduceMotion.checked
-        });
-        setMsg(l10n[currentLang].saved, true);
-      }catch(e){
-        console.error(e);
-        setMsg(l10n[currentLang].err);
-      }
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
+      }, 500);
     });
   </script>
 </body>
