@@ -590,7 +590,7 @@
 
     // ======= Data (EDIT ME) =======
     // ضع رابط القناة هنا:
-    const CHANNEL_URL = "https://www.youtube.com/@YOUR_CHANNEL_HERE";
+    const CHANNEL_URL = "https://www.youtube.com/@mlo5ya";
 
     // فيديوهاتك: (ضع روابط الفيديوهات + عنوان + نوع + صورة)
     // type: "long" | "short" | "live"
@@ -831,14 +831,39 @@
       renderVideos();
     });
 
-    // ======= Latest Video =======
+    // ======= Latest Video (AUTO from latest-long.json) =======
     $("btn-subscribe").href = CHANNEL_URL;
 
-    $("btn-latest").addEventListener("click", ()=>{
-      if(!videos.length) return;
-      // افتراضيًا: أول عنصر بالمصفوفة (خليه أحدث فيديو)
-      window.open(videos[0].url, "_blank", "noopener");
-    });
+    async function bindLatestLongButton(){
+      const btn = $("btn-latest");
+      if(!btn) return;
+
+      // UI hint
+      btn.disabled = true;
+      btn.style.opacity = "0.75";
+      btn.title = (currentLang === "en") ? "Loading latest video..." : "جارِ تحميل أحدث فيديو...";
+
+      try{
+        const res = await fetch("./latest-long.json", { cache: "no-store" });
+        if(!res.ok) throw new Error("latest-long.json not found");
+        const data = await res.json();
+
+        // script creates: { latestLong: { url, videoId, title, publishedAt, ... } }
+        const url = data?.latestLong?.url;
+        if(!url) throw new Error("Missing latestLong.url");
+
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.onclick = () => window.open(url, "_blank", "noopener");
+        btn.title = (currentLang === "en") ? "Open latest long video" : "افتح أحدث فيديو طويل تلقائيًا";
+      }catch(e){
+        // fallback to channel videos page
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.onclick = () => window.open(CHANNEL_URL + "/videos", "_blank", "noopener");
+        btn.title = (currentLang === "en") ? "Open channel videos" : "فتح صفحة فيديوهات القناة";
+      }
+    }
 
     // ======= Modal =======
     const modal = $("modal");
@@ -953,6 +978,9 @@
       // re-render to update labels
       renderVideos();
       renderIdeas();
+
+      // re-bind latest button (updates tooltip language too)
+      bindLatestLongButton();
     }
 
     langToggle.addEventListener("click", ()=>{
@@ -973,7 +1001,8 @@
     renderVideos();
     renderThumbs();
     renderIdeas();
-    applyLang();
+    applyLang(); // calls bindLatestLongButton() as well
+    bindLatestLongButton();
   </script>
 </body>
 </html>
