@@ -209,7 +209,7 @@
     }
     .search .icon{ color:rgba(156,163,175,.9); }
 
-    /* 🔒 نخفي فلاتر النوع (Long/Short/Live) — الصفحة صارت Long فقط */
+    /* نخفي فلاتر النوع (صفحة الفيديوهات Long فقط) */
     .filters{ display:none !important; }
 
     .grid{
@@ -297,7 +297,7 @@
     .mini:hover{ transform:translateY(-1px); border-color:rgba(250,204,21,.35); filter:brightness(1.05); }
     .mini.yellow{ border-color:rgba(250,204,21,.45); color:var(--yellow); }
 
-    /* Load more */
+    /* Load more (shared) */
     .loadmore-wrap{
       display:flex;
       justify-content:center;
@@ -315,17 +315,30 @@
       box-shadow:var(--shadow-soft);
     }
 
-    /* Thumbnails grid more dense */
+    /* ===== Thumbnails grid: 15 columns x (rows depends on items) ===== */
     .thumb-grid{
       display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap:12px;
+      grid-template-columns: repeat(15, minmax(0, 1fr));
+      gap:10px;
+    }
+    /* Responsive: نزّل الأعمدة عشان ما تصير صغيرة جدًا */
+    @media (max-width: 1200px){
+      .thumb-grid{ grid-template-columns: repeat(10, minmax(0, 1fr)); }
     }
     @media (max-width: 980px){
-      .thumb-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .thumb-grid{ grid-template-columns: repeat(6, minmax(0, 1fr)); }
     }
     @media (max-width: 700px){
+      .thumb-grid{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @media (max-width: 520px){
       .thumb-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .thumb-card{ border-radius:14px; }
+    .thumb-card .thumb{
+      aspect-ratio: 16 / 9;
+      border-radius:14px;
     }
 
     .thumb-overlay{
@@ -336,16 +349,16 @@
       transition:opacity .15s ease;
       display:flex;
       align-items:flex-end;
-      padding:10px;
+      padding:8px;
       gap:8px;
     }
     .thumb-card:hover .thumb-overlay{ opacity:1; }
 
     .thumb-name{
-      font-size:.85rem;
+      font-size:.78rem;
       color:var(--white);
-      font-weight:700;
-      line-height:1.3;
+      font-weight:800;
+      line-height:1.25;
       flex:1;
       display:-webkit-box;
       -webkit-line-clamp:2;
@@ -501,7 +514,7 @@
     <header class="header">
       <h1 class="title" id="page-title">YouTube</h1>
       <p class="subtitle" id="page-subtitle">
-        هنا بتلاقي فيديوهاتي المنشورة، ثمبنيلات من شغلي، وأفكار قادمة — كله بنفس ستايل Mlo5.
+        هنا بتلاقي فيديوهاتي المنشورة (Long فقط)، ثمبنيلات من شغلي، وأفكار قادمة — كله بنفس ستايل Mlo5.
       </p>
 
       <div class="pill-row">
@@ -525,18 +538,13 @@
             <span class="icon">🔎</span>
             <input id="search" type="text" placeholder="ابحث عن فيديو..." autocomplete="off"/>
           </div>
-          <div class="filters" id="filters">
-            <button class="chip active" data-filter="all" id="f-all">الكل</button>
-            <button class="chip" data-filter="long" id="f-long">Long</button>
-            <button class="chip" data-filter="short" id="f-short">Shorts</button>
-            <button class="chip" data-filter="live" id="f-live">Live</button>
-          </div>
+          <div class="filters" id="filters"></div>
         </div>
 
         <!-- VIDEOS -->
         <div id="panel-videos">
           <div class="grid" id="videos-grid"></div>
-          <div class="empty hidden" id="videos-empty">ما لقيت نتائج. جرّب كلمة ثانية أو غيّر الفلتر.</div>
+          <div class="empty hidden" id="videos-empty">ما لقيت نتائج. جرّب كلمة ثانية.</div>
 
           <div class="loadmore-wrap hidden" id="loadmore-wrap">
             <button class="btn" id="btn-loadmore">➕ عرض المزيد</button>
@@ -548,6 +556,12 @@
         <div id="panel-thumbs" class="hidden">
           <div class="thumb-grid" id="thumbs-grid"></div>
           <div class="empty hidden" id="thumbs-empty">لسا ما أضفت ثمبنيلات. حط روابط الصور داخل مصفوفة thumbs.</div>
+
+          <!-- Thumbs load more: 15 أعمدة × 5 صفوف = 75 -->
+          <div class="loadmore-wrap hidden" id="thumbs-loadmore-wrap">
+            <button class="btn" id="btn-thumbs-loadmore">➕ عرض المزيد</button>
+            <div class="loadmore-hint" id="thumbs-loadmore-hint">0 / 0</div>
+          </div>
         </div>
 
         <!-- IDEAS -->
@@ -588,50 +602,35 @@
     // ======= Data (EDIT ME) =======
     const CHANNEL_URL = "https://www.youtube.com/@mlo5ya";
 
-    // Videos (auto)
+    // Videos
     let allVideos = [];      // raw list from latest-videos.json
-    let longVideos = [];     // LONG ONLY (filtered)
+    let longVideos = [];     // LONG ONLY
 
-    // Pagination rules:
-    const FIRST_PAGE = 15;   // أول عرض
-    const MORE_STEP  = 6;    // كل ضغطة "عرض المزيد" تزيد 6
+    // Pagination (Videos): 15 then +6
+    const FIRST_PAGE = 15;
+    const MORE_STEP  = 6;
     let visibleCount = FIRST_PAGE;
 
-    async function loadVideos(){
-      const grid = document.getElementById("videos-grid");
-      const empty = document.getElementById("videos-empty");
+    // Thumbnails (manual)
+    const thumbs = [
+      { name: "Thumbnail 1 — Geometry Dash", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumb+1", tag:"Geometry Dash" },
+      { name: "Thumbnail 2 — RoK",           img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumb+2", tag:"RoK" },
+      { name: "Thumbnail 3 — Hollow Knight", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumb+3", tag:"Hollow Knight" },
+    ];
 
-      if (grid) {
-        grid.innerHTML = `<div class="empty">⏳ جارِ تحميل أحدث الفيديوهات...</div>`;
-      }
-      if (empty) empty.classList.add("hidden");
+    // Thumbnails pagination: 15 columns × 5 rows = 75
+    const THUMB_COLS = 15;
+    const THUMB_ROWS = 5;
+    const THUMB_FIRST = THUMB_COLS * THUMB_ROWS; // 75
+    const THUMB_STEP  = THUMB_FIRST;             // كل كبسة تزيد 75 (نفس المبدأ)
+    let thumbsVisibleCount = THUMB_FIRST;
 
-      try{
-        const res = await fetch("./latest-videos.json", { cache: "no-store" });
-        if(!res.ok) throw new Error("latest-videos.json not found");
-
-        const data = await res.json();
-        const list = Array.isArray(data?.videos) ? data.videos : [];
-
-        allVideos = list;
-        buildLongOnly(true);
-      }catch(e){
-        allVideos = [];
-        longVideos = [];
-        visibleCount = FIRST_PAGE;
-        setCounts();
-        renderVideos();
-      }
-    }
-
-    function guessType(v){
-      const url = (v.url || "").toLowerCase();
-      const title = (v.title || "").toLowerCase();
-
-      if (url.includes("/shorts/")) return "short";
-      if (title.includes("live") || title.includes("بث") || title.includes("مباشر") || url.includes("live")) return "live";
-      return "long";
-    }
+    // Ideas
+    const ideas = [
+      { title:"سلسلة جديدة: تحديات Geometry Dash (موبايل)", game:"Geometry Dash", kind:"Long", status:"soon" },
+      { title:"Shorts: Quiz Time (سؤال/تحدي سريع)", game:"Mixed", kind:"Short", status:"making" },
+      { title:"بث: تجربة لعبة جديدة ترند", game:"Trending", kind:"Live", status:"shelf" }
+    ];
 
     // ======= Helpers =======
     const $ = (id) => document.getElementById(id);
@@ -656,14 +655,55 @@
         .replaceAll("'","&#039;");
     }
 
+    // ======= Strict type guess =======
+    function guessType(v){
+      const url = (v.url || "").toLowerCase();
+      const title = (v.title || "").toLowerCase();
+
+      // 🔒 قفل صارم: أي shorts هو short مهما كان
+      if (url.includes("/shorts/")) return "short";
+
+      if (title.includes("live") || title.includes("بث") || title.includes("مباشر") || url.includes("live")) return "live";
+      return "long";
+    }
+
+    // ======= Load Videos =======
+    async function loadVideos(){
+      const grid = $("videos-grid");
+      const empty = $("videos-empty");
+
+      if (grid) grid.innerHTML = `<div class="empty">⏳ جارِ تحميل أحدث الفيديوهات...</div>`;
+      if (empty) empty.classList.add("hidden");
+
+      try{
+        const res = await fetch("./latest-videos.json", { cache: "no-store" });
+        if(!res.ok) throw new Error("latest-videos.json not found");
+
+        const data = await res.json();
+        const list = Array.isArray(data?.videos) ? data.videos : [];
+
+        allVideos = list;
+        buildLongOnly(true);
+      }catch(e){
+        allVideos = [];
+        longVideos = [];
+        visibleCount = FIRST_PAGE;
+        setCounts();
+        renderVideos();
+      }
+    }
+
     function buildLongOnly(resetVisible){
       const enriched = (allVideos || []).map(v => ({
         ...v,
         type: v.type || guessType(v)
       }));
 
-      // ✅ LONG ONLY (تجاهل الشورتس واللايف)
-      longVideos = enriched.filter(v => v.type === "long");
+      // ✅ LONG ONLY + قفل نهائي يمنع أي /shorts/
+      longVideos = enriched.filter(v => {
+        const url = (v.url || "").toLowerCase();
+        return v.type === "long" && !url.includes("/shorts/");
+      });
 
       if (resetVisible) visibleCount = FIRST_PAGE;
 
@@ -671,6 +711,7 @@
       renderVideos();
     }
 
+    // ======= Load More UI (Videos) =======
     function updateLoadMore(totalCount){
       const wrap = $("loadmore-wrap");
       const btn  = $("btn-loadmore");
@@ -688,7 +729,7 @@
       btn.textContent = s.loadMore;
     }
 
-    // ======= Render: Videos (LONG ONLY + search + pagination) =======
+    // ======= Render Videos (LONG ONLY) =======
     function renderVideos(){
       const q = ($("search")?.value || "").trim().toLowerCase();
       const grid = $("videos-grid");
@@ -743,34 +784,46 @@
       updateLoadMore(fullList.length);
     }
 
-    // Load more click (يزيد 6)
     $("btn-loadmore")?.addEventListener("click", ()=>{
       visibleCount += MORE_STEP;
       renderVideos();
     });
 
-    // Search resets pagination
     $("search")?.addEventListener("input", ()=>{
       visibleCount = FIRST_PAGE;
       renderVideos();
     });
 
-    // ======= Thumbnails (manual) =======
-    const thumbs = [
-      { name: "Thumbnail 1 — Geometry Dash", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+1", tag:"Geometry Dash" },
-      { name: "Thumbnail 2 — RoK",           img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+2", tag:"RoK" },
-      { name: "Thumbnail 3 — Hollow Knight", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+3", tag:"Hollow Knight" }
-    ];
+    // ======= Render Thumbnails (Manual + 15x5 + Load more) =======
+    function updateThumbsLoadMore(totalCount){
+      const wrap = $("thumbs-loadmore-wrap");
+      const btn  = $("btn-thumbs-loadmore");
+      const hint = $("thumbs-loadmore-hint");
+      if(!wrap || !btn || !hint) return;
+
+      const shown = Math.min(thumbsVisibleCount, totalCount);
+      hint.textContent = `${shown} / ${totalCount}`;
+
+      const hasMore = totalCount > thumbsVisibleCount;
+      wrap.classList.toggle("hidden", totalCount === 0);
+      btn.disabled = !hasMore;
+
+      const s = l10n[currentLang] || l10n.ar;
+      btn.textContent = s.loadMore;
+    }
 
     function renderThumbs(){
       const grid = $("thumbs-grid");
       const empty = $("thumbs-empty");
       if(!grid) return;
 
-      grid.innerHTML = "";
-      empty.classList.toggle("hidden", thumbs.length > 0);
+      const total = thumbs.length;
+      const list = thumbs.slice(0, thumbsVisibleCount);
 
-      thumbs.forEach(t=>{
+      grid.innerHTML = "";
+      empty.classList.toggle("hidden", total > 0);
+
+      list.forEach(t=>{
         const card = document.createElement("div");
         card.className = "thumb-card";
         card.innerHTML = `
@@ -791,15 +844,16 @@
           openModal(name, img);
         });
       });
+
+      updateThumbsLoadMore(total);
     }
 
-    // ======= Ideas =======
-    const ideas = [
-      { title:"سلسلة جديدة: تحديات Geometry Dash (موبايل)", game:"Geometry Dash", kind:"Long", status:"soon" },
-      { title:"Shorts: Quiz Time (سؤال/تحدي سريع)", game:"Mixed", kind:"Short", status:"making" },
-      { title:"بث: تجربة لعبة جديدة ترند", game:"Trending", kind:"Live", status:"shelf" }
-    ];
+    $("btn-thumbs-loadmore")?.addEventListener("click", ()=>{
+      thumbsVisibleCount += THUMB_STEP; // يزيد 75
+      renderThumbs();
+    });
 
+    // ======= Ideas (Kanban) =======
     function renderIdeas(){
       const kanban = $("kanban");
       const empty = $("ideas-empty");
@@ -922,7 +976,7 @@
       if(e.key === "Escape") closeModal();
     });
 
-    // ======= Language (AR/EN) =======
+    // ======= Language =======
     const LANG_KEY = "mlo5-lang";
     const langToggle = $("lang-toggle");
     let currentLang = localStorage.getItem(LANG_KEY) || "ar";
@@ -932,7 +986,7 @@
         docTitle: "YouTube - Mlo5",
         back: "← عودة للصفحة الرئيسية",
         title: "YouTube",
-        subtitle: "هنا بتلاقي فيديوهاتي المنشورة (طويلة فقط)، ثمبنيلات من شغلي، وأفكار قادمة — كله بنفس ستايل Mlo5.",
+        subtitle: "هنا بتلاقي فيديوهاتي المنشورة (Long فقط)، ثمبنيلات من شغلي، وأفكار قادمة — كله بنفس ستايل Mlo5.",
         subscribe: "⭐ اشترك بالقناة",
         latest: "▶ أحدث فيديو",
         searchPH: "ابحث عن فيديو...",
@@ -997,8 +1051,9 @@
       document.documentElement.lang = currentLang === "en" ? "en" : "ar";
       document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
 
-      // Re-render after language
+      // update buttons text + rerender
       renderVideos();
+      renderThumbs();
       renderIdeas();
       bindLatestLongButton();
     }
@@ -1011,8 +1066,7 @@
 
     // ======= Counters =======
     function setCounts(){
-      // ✅ عداد الفيديوهات = عدد الفيديوهات الطويلة فقط
-      $("count-v").textContent = (longVideos || []).length;
+      $("count-v").textContent = (longVideos || []).length; // فيديوهات طويلة فقط
       $("count-t").textContent = thumbs.length;
       $("count-i").textContent = ideas.length;
     }
