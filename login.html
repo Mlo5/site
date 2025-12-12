@@ -38,6 +38,65 @@
       width: 100%;
       border: 1px solid rgba(250,204,21,.5);
       box-shadow: 0 18px 45px rgba(0,0,0,.9);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ✅ Top controls (Home + Lang) */
+    .top-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      direction: ltr;
+    }
+
+    .top-btn {
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.6);
+      background: rgba(0, 0, 0, 0.6);
+      color: var(--white);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .top-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(250, 204, 21, 0.12);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.95);
+    }
+
+    .lang-toggle {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: var(--yellow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9);
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .lang-toggle:hover {
+      transform: translateY(-1px);
+      background: radial-gradient(circle at top, #facc15, #fbbf24);
+      color: #000;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 1);
     }
 
     .login-title {
@@ -125,8 +184,18 @@
 <body>
 
   <div class="login-card">
+
+    <!-- ✅ Home + Lang -->
+    <div class="top-controls">
+      <a id="home-btn" class="top-btn" href="index.html" aria-label="الصفحة الرئيسية">
+        ⟵ <span id="homeText">الصفحة الرئيسية</span>
+      </a>
+
+      <button id="lang-toggle" class="lang-toggle" title="العربية">🌐</button>
+    </div>
+
     <div class="login-title">M L O 5</div>
-    <div class="login-subtitle">
+    <div id="subtitle" class="login-subtitle">
       سجّل دخولك مباشرة بحساب Google أو عبر رابط آمن
     </div>
 
@@ -135,16 +204,16 @@
       متابعة باستخدام Google
     </button>
 
-    <div class="divider">أو</div>
+    <div id="or-divider" class="divider">أو</div>
 
     <!-- ✅ Magic Link -->
     <form id="login-form">
       <div class="form-group">
-        <label>البريد الإلكتروني</label>
+        <label id="emailLabel">البريد الإلكتروني</label>
         <input id="email" type="email" placeholder="example@email.com" />
       </div>
 
-      <button class="btn login-btn" type="submit">
+      <button id="magicBtn" class="btn login-btn" type="submit">
         إرسال رابط تسجيل الدخول
       </button>
 
@@ -181,7 +250,7 @@
     const auth = getAuth(app);
 
     // ✅ الصفحة اللي بدنا نروح إلها بعد تسجيل الدخول
-    const HOME_URL = "https://mlo5.github.io/site/"; // أو "https://mlo5.github.io/site/index.html"
+    const HOME_URL = "https://mlo5.github.io/site/";
 
     const form = document.getElementById("login-form");
     const emailInput = document.getElementById("email");
@@ -202,7 +271,6 @@
     getRedirectResult(auth).then((result) => {
       if (result?.user) window.location.href = HOME_URL;
     }).catch((e) => {
-      // خليه silent
       console.error(e);
     });
 
@@ -217,7 +285,6 @@
         await signInWithPopup(auth, provider);
         window.location.href = HOME_URL;
       } catch (err) {
-        // لو popup انمنع (خصوصًا iOS/Safari)
         if (err?.code === "auth/popup-blocked" || err?.code === "auth/popup-closed-by-user") {
           await signInWithRedirect(auth, provider);
           return;
@@ -239,7 +306,7 @@
     // ✅ Magic Link (اختياري)
     // -------------------------
     const actionCodeSettings = {
-      url: "https://mlo5.github.io/site/login.html", // يرجع لنفس صفحة اللوجين لإكمال الدخول
+      url: "https://mlo5.github.io/site/login.html",
       handleCodeInApp: true
     };
 
@@ -260,7 +327,6 @@
       }
     });
 
-    // إذا فتح رابط الماجيك لينك داخل نفس الصفحة
     if (isSignInWithEmailLink(auth, window.location.href)) {
       let email = localStorage.getItem("mlo5-email");
       if (!email) email = prompt("أدخل بريدك الإلكتروني للتأكيد:");
@@ -274,6 +340,74 @@
           console.error(e);
           setMsg("❌ الرابط غير صالح أو منتهي.", "var(--red)");
         });
+    }
+
+    // -------------------------
+    // ✅ Language Toggle (AR/EN)
+    // -------------------------
+    const langToggle = document.getElementById("lang-toggle");
+    const LANG_KEY = "mlo5-lang";
+
+    const t = {
+      ar: {
+        dir: "rtl",
+        home: "الصفحة الرئيسية",
+        subtitle: "سجّل دخولك مباشرة بحساب Google أو عبر رابط آمن",
+        google: "متابعة باستخدام Google",
+        or: "أو",
+        emailLabel: "البريد الإلكتروني",
+        emailPh: "example@email.com",
+        magic: "إرسال رابط تسجيل الدخول",
+        langTitle: "العربية"
+      },
+      en: {
+        dir: "ltr",
+        home: "Home",
+        subtitle: "Sign in with Google or via a secure link",
+        google: "Continue with Google",
+        or: "OR",
+        emailLabel: "Email",
+        emailPh: "example@email.com",
+        magic: "Send sign-in link",
+        langTitle: "English"
+      }
+    };
+
+    function applyLang(lang) {
+      const s = t[lang] || t.ar;
+
+      document.documentElement.lang = lang === "en" ? "en" : "ar";
+      document.documentElement.dir = s.dir;
+
+      // (اختياري) خليه RTL/LTR للكارد نفسها
+      document.body.style.direction = s.dir;
+
+      const homeText = document.getElementById("homeText");
+      const subtitle = document.getElementById("subtitle");
+      const orDivider = document.getElementById("or-divider");
+      const emailLabel = document.getElementById("emailLabel");
+      const magicBtn = document.getElementById("magicBtn");
+
+      if (homeText) homeText.textContent = s.home;
+      if (subtitle) subtitle.textContent = s.subtitle;
+      if (googleBtn) googleBtn.textContent = s.google;
+      if (orDivider) orDivider.textContent = s.or;
+      if (emailLabel) emailLabel.textContent = s.emailLabel;
+      if (emailInput) emailInput.placeholder = s.emailPh;
+      if (magicBtn) magicBtn.textContent = s.magic;
+
+      if (langToggle) langToggle.title = s.langTitle;
+    }
+
+    let savedLang = localStorage.getItem(LANG_KEY) || "ar";
+    applyLang(savedLang);
+
+    if (langToggle) {
+      langToggle.addEventListener("click", () => {
+        savedLang = savedLang === "ar" ? "en" : "ar";
+        localStorage.setItem(LANG_KEY, savedLang);
+        applyLang(savedLang);
+      });
     }
   </script>
 
