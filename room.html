@@ -139,10 +139,11 @@
 
     .userMeta{display:flex;flex-direction:column;gap:3px;min-width:0}
     .userMeta b{
-      font-size:.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:190px;
+      font-size:1.05rem; /* ✅ أكبر للأعضاء */
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:190px;
       display:flex; align-items:center; gap:8px;
     }
-    .userRow.admin .userMeta b{font-size:1.02rem;} /* اسم الأدمن أكبر شوي */
+    .userRow.admin .userMeta b{font-size:1.25rem;} /* ✅ اسم الأدمن أكبر */
     .userMeta span{font-size:.8rem;color:var(--muted);display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
     .miniPill{
       border-radius:999px;border:1px solid rgba(148,163,184,.7);
@@ -227,9 +228,10 @@
       text-align:center;
     }
 
+    /* ✅ reply button beside message (not above name) */
     .replyBtn{
       position:absolute;
-      top:8px;
+      bottom:8px;
       left:10px;
       border-radius:999px;
       border:1px solid rgba(250,204,21,.45);
@@ -528,6 +530,47 @@
     #modalBox .modalCard:hover{
       box-shadow: 0 0 0 1px rgba(250,204,21,.14), 0 0 26px rgba(250,204,21,.10), 0 18px 45px rgba(0,0,0,.95);
     }
+
+    /* ✅ ADMIN NAME badge (white name + blinking skull, black bg only) */
+    .adminNameWrap{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:#000;
+      padding:4px 10px;
+      border-radius:999px;
+    }
+    .adminNameText{
+      color:#fff !important;
+      font-weight:900;
+      font-size:1.25rem; /* ✅ كبير */
+      white-space:nowrap;
+    }
+    .adminSkull{
+      display:inline-block;
+      animation: skullBlink 1.2s infinite;
+    }
+    @keyframes skullBlink{
+      0%{opacity:1}
+      50%{opacity:.2}
+      100%{opacity:1}
+    }
+    .adminRoomDots{
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.45);
+      color:var(--yellow);
+      border-radius:999px;
+      padding:6px 10px;
+      cursor:pointer;
+      font-size:.95rem;
+      user-select:none;
+      height:36px;
+      min-width:42px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .adminRoomDots:disabled{opacity:.5;cursor:not-allowed}
   </style>
 </head>
 
@@ -576,7 +619,7 @@
         <div class="panel-head">
           <div class="h">
             <b>الدردشة العامة</b>
-            <span>لا تظهر رسائل قبل دخولك</span>
+            <span id="chatHint">دردش وخلي الشباب <span style="color:#facc15">تستفاد</span></span>
           </div>
           <div class="badge" id="ignoreCount">تجاهل: 0</div>
         </div>
@@ -705,6 +748,12 @@
     </div>
   </div>
 
+  <!-- ✅ Room lock menu (admin only) -->
+  <div class="menu" id="roomMenu">
+    <button id="roomLockBtn">🔒 قفل الروم</button>
+    <button id="roomUnlockBtn">🔓 فتح الروم</button>
+  </div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
@@ -712,7 +761,7 @@
     getFirestore, collection, addDoc, serverTimestamp,
     query, where, orderBy, onSnapshot, doc, setDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-  import { getDatabase, ref, set, onDisconnect, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+  import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
@@ -788,6 +837,13 @@
   const ctxBanBtn = document.getElementById("ctxBanBtn");
   const ctxUnbanBtn = document.getElementById("ctxUnbanBtn");
 
+  // Room lock menu
+  const roomMenu = document.getElementById("roomMenu");
+  const roomLockBtn = document.getElementById("roomLockBtn");
+  const roomUnlockBtn = document.getElementById("roomUnlockBtn");
+
+  const chatHint = document.getElementById("chatHint");
+
   // App modal
   const appModal = document.getElementById("appModal");
   const appModalTitle = document.getElementById("appModalTitle");
@@ -817,6 +873,9 @@
 
   // reply state
   let replyTarget = null;
+
+  // room lock state
+  let roomLocked = false;
 
   const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
   const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎👏🙏🔥💛⭐⚡🎮💀".split("");
@@ -938,6 +997,7 @@
   document.addEventListener("click",(e)=>{
     if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) hideEmoji();
     if (!ctxMenu.contains(e.target)) hideCtxMenu();
+    if (!roomMenu.contains(e.target) && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
   });
 
   emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
@@ -996,6 +1056,16 @@
     ctxUser = null;
   }
 
+  // Room menu
+  function showRoomMenu(x,y){
+    roomMenu.style.left = x + "px";
+    roomMenu.style.top  = y + "px";
+    roomMenu.style.display = "block";
+  }
+  function hideRoomMenu(){
+    roomMenu.style.display = "none";
+  }
+
   // ✅ system messages to everyone (in Global)
   async function writeSystemText(text, type="system"){
     return addDoc(collection(db, "globalMessages"), {
@@ -1032,13 +1102,15 @@
     await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة الأدمن`, "unmute");
   }
 
-  // Clear for all (Admin) ✅ يمسح كل شيء حتى النظام (بدون ترك رسالة "clear")
+  // Clear for all (Admin) ✅ يمسح مباشرة + رسالة للجميع
   async function adminClearForAll(){
     if (!isAdmin) return;
     const clearedAtMs = Date.now();
     await setDoc(doc(db, "globalMeta", "clear"), {
       clearedAtMs, byUid:user.uid, byName: profile?.name || "Admin", createdAt: serverTimestamp()
     }, { merge:true });
+
+    await writeSystemText("🧹 الأدمن مسح الشات", "clear");
   }
   adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
 
@@ -1122,9 +1194,16 @@
       const until = m.mutedUntil || 0;
       const muted = (m.muted === true) || (Date.now() < until);
 
-      msgInput.disabled = muted;
-      sendBtn.disabled = muted;
-      msgInput.placeholder = muted ? "تم كتمك" : "اكتب رسالتك...";
+      // room lock has priority for non-admin
+      if (!isAdmin && roomLocked){
+        msgInput.disabled = true;
+        sendBtn.disabled = true;
+        msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
+      } else {
+        msgInput.disabled = muted;
+        sendBtn.disabled = muted;
+        msgInput.placeholder = muted ? "تم كتمك" : "اكتب رسالتك...";
+      }
 
       // ✅ also reflect in onlineUsers for instant badge
       try{ await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted: !!muted }); }catch{}
@@ -1141,7 +1220,43 @@
     });
   }
 
-  // Online list (✅ admin first + admin blink tag + mute badge)
+  // ✅ Room lock listener
+  function startRoomLockListener(){
+    onValue(ref(rtdb, "roomState/locked"), (snap)=>{
+      roomLocked = snap.val() === true;
+
+      // update hint text for all
+      if (roomLocked){
+        chatHint.innerHTML = "🚫 الروم مقفل";
+      } else {
+        chatHint.innerHTML = 'دردش وخلي الشباب <span style="color:#facc15">تستفاد</span>';
+      }
+
+      // disable sending for non-admin
+      if (!isAdmin){
+        msgInput.disabled = roomLocked ? true : msgInput.disabled;
+        sendBtn.disabled = roomLocked ? true : sendBtn.disabled;
+        msgInput.placeholder = roomLocked ? "🚫 الروم مقفل بواسطة الأدمن" : (msgInput.placeholder === "🚫 الروم مقفل بواسطة الأدمن" ? "اكتب رسالتك..." : msgInput.placeholder);
+      }
+    });
+  }
+
+  async function setRoomLocked(next){
+    if (!isAdmin) return;
+    await set(ref(rtdb, "roomState/locked"), !!next);
+    await writeSystemText(next ? "🔒 الأدمن قفل الروم" : "🔓 الأدمن فتح الروم", next ? "lock" : "unlock");
+  }
+
+  roomLockBtn.addEventListener("click", async ()=>{
+    hideRoomMenu();
+    await setRoomLocked(true);
+  });
+  roomUnlockBtn.addEventListener("click", async ()=>{
+    hideRoomMenu();
+    await setRoomLocked(false);
+  });
+
+  // Online list (✅ admin first + admin blink tag + mute badge + admin name + room dots)
   function startOnlineListener(){
     onValue(ref(rtdb, "onlineUsers"), (snap)=>{
       const users = snap.val() || {};
@@ -1174,8 +1289,15 @@
             ? `<span class="miniPill" style="border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)">🔇 مكتوم</span>`
             : "";
 
+          // ✅ Admin fixed name + skull + black bg
           const nameHtml = isRowAdmin
-            ? `<span style="color:#000;font-weight:900">${escapeHtml(u.name||"Admin")}</span> ${guestHtml}`
+            ? `
+              <span class="adminNameWrap">
+                <span class="adminNameText">𝕄𝕃𝕆𝟝 ヅ</span>
+                <span class="adminSkull">💀</span>
+              </span>
+              ${guestHtml}
+            `
             : `<span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span> ${guestHtml}`;
 
           left.innerHTML = `
@@ -1189,6 +1311,28 @@
 
           const actions = document.createElement("div");
           actions.className = "actionsRow";
+
+          // ✅ admin room dots beside admin name (visible to all, clickable only for admin)
+          if (isRowAdmin){
+            const dots = document.createElement("button");
+            dots.type = "button";
+            dots.className = "adminRoomDots";
+            dots.textContent = "⋮";
+            dots.title = "قفل/فتح الروم";
+            dots.disabled = !isAdmin;
+
+            dots.addEventListener("click",(e)=>{
+              e.stopPropagation();
+              if (!isAdmin) return;
+
+              // set correct buttons visibility
+              roomLockBtn.style.display = roomLocked ? "none" : "block";
+              roomUnlockBtn.style.display = roomLocked ? "block" : "none";
+              showRoomMenu(e.clientX, e.clientY);
+            });
+
+            actions.appendChild(dots);
+          }
 
           if (u.uid !== user.uid){
             const btn = document.createElement("button");
@@ -1214,7 +1358,7 @@
 
             actions.appendChild(btn);
 
-            // ✅ ⋮ فقط للأدمن
+            // ✅ ⋮ فقط للأدمن (خيارات كتم/طرد/حظر...)
             if (isAdmin){
               const more = document.createElement("button");
               more.type = "button";
@@ -1307,7 +1451,13 @@
           const adminTag = isMsgAdmin ? `<span class="adminBlink" title="ADMIN"></span>` : "";
 
           const nameHtml = isMsgAdmin
-            ? `<span style="color:#000;font-weight:900">${escapeHtml(m.name||"Admin")}</span> ${guestHtml}`
+            ? `
+              <span class="adminNameWrap">
+                <span class="adminNameText">𝕄𝕃𝕆𝟝 ヅ</span>
+                <span class="adminSkull">💀</span>
+              </span>
+              ${guestHtml}
+            `
             : `<span style="color:${escapeHtml(m.nameColor || "#facc15")}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
 
           const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
@@ -1380,12 +1530,23 @@
     hideCtxMenu();
   });
 
-  // Send GLOBAL (profanity only for non-admin) ✅ styled modal + reply payload
+  // Send GLOBAL (profanity only for non-admin) ✅ styled modal + reply payload + room lock
   chatForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     if (!user || !profile) return;
     const text = collapseSpaces(msgInput.value);
     if (!text) return;
+
+    // ✅ room lock
+    if (roomLocked && !isAdmin){
+      showAppModal({
+        title:"🚫 الروم مقفل",
+        text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.",
+        actions:[{label:"حسناً", onClick:()=>hideAppModal()}]
+      });
+      return;
+    }
+
     if (msgInput.disabled) return;
 
     if (!isAdmin && isProfane(text)){
@@ -1545,9 +1706,17 @@
 
     loadIgnoreWindows();
     startClearMetaListener();
+    startRoomLockListener();
     startOnlineListener();
     startGlobalMessagesListener();
     startModerationListener();
+
+    // enforce lock immediately for non-admin
+    if (roomLocked && !isAdmin){
+      msgInput.disabled = true;
+      sendBtn.disabled = true;
+      msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
+    }
   }
 
   // Boot: ALWAYS show modal + set random colors by default
