@@ -37,11 +37,7 @@
     }
     .pill:hover{transform:translateY(-1px); background:rgba(250,204,21,.12)}
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 320px;
-      gap:14px;
-    }
+    .grid{display:grid;grid-template-columns: 1fr 320px;gap:14px;}
     @media(max-width:900px){ .grid{grid-template-columns:1fr;} }
 
     .card{
@@ -72,6 +68,7 @@
       max-width:70%;
     }
     .room-sub{color:var(--muted); font-size:.85rem;}
+    .muted{color:var(--muted); font-size:.9rem;}
 
     .chat-box{
       height: 60vh;
@@ -98,7 +95,8 @@
     .name{font-weight:900;color:var(--yellow);font-size:.9rem;}
     .time{color:rgba(156,163,175,.9);font-size:.75rem;white-space:nowrap;}
     .text{color:var(--white);font-size:.92rem;line-height:1.45;word-wrap:break-word;}
-    .system{text-align:center;color:rgba(156,163,175,.95);font-size:.85rem;margin:10px 0;}
+
+    .system{text-align:center;color: rgba(156,163,175,.95);font-size:.85rem;margin:10px 0;}
 
     .composer{display:flex;gap:10px;margin-top:10px;}
     .composer input{
@@ -106,15 +104,36 @@
       background:rgba(0,0,0,.45);color:var(--white);
       padding:10px 12px;font-size:.95rem;outline:none;
     }
-    .composer input:focus{border-color: rgba(250,204,21,.8);box-shadow:0 0 0 4px rgba(250,204,21,.18);}
-    .send{border:none;cursor:pointer;padding:10px 14px;border-radius:999px;font-weight:900;background: var(--yellow);color:#111;white-space:nowrap;}
+    .composer input:focus{
+      border-color: rgba(250,204,21,.8);
+      box-shadow:0 0 0 4px rgba(250,204,21,.18);
+    }
+    .send{
+      border:none;cursor:pointer;padding:10px 14px;border-radius:999px;
+      font-weight:900;background: var(--yellow);color:#111;white-space:nowrap;
+    }
 
-    .side-title{font-weight:900;color:var(--yellow);margin-bottom:8px;}
+    .side-title{font-weight:900;color: var(--yellow);margin-bottom:8px;}
     .online-list{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:4px;}
-    .online{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.45);}
+    .online{
+      display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.45);
+    }
     .online .o-name{font-weight:900;}
     .online .o-sub{color:var(--muted); font-size:.8rem; margin-top:2px;}
-    .muted{color:var(--muted); font-size:.9rem;}
+
+    /* ✅ Debug bar */
+    .debug{
+      margin-bottom:12px;
+      border:1px dashed rgba(250,204,21,.55);
+      background:rgba(0,0,0,.35);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:.88rem;
+      color:#e5e7eb;
+    }
+    .debug b{color:var(--yellow)}
+    .debug .err{color:#fca5a5; margin-top:6px; white-space:pre-wrap}
   </style>
 </head>
 
@@ -126,12 +145,19 @@
       <button class="pill" id="logout-btn" type="button">⎋ <span>تسجيل خروج</span></button>
     </div>
 
+    <div class="debug" id="debug">
+      <div>الحالة: <b id="dbg-state">بدء التشغيل…</b></div>
+      <div>الغرفة: <b id="dbg-room">…</b></div>
+      <div>UID: <b id="dbg-uid">…</b></div>
+      <div class="err" id="dbg-err"></div>
+    </div>
+
     <div class="grid">
       <div class="card">
         <div class="room-head">
           <div>
             <div class="room-title" id="room-title">ROOM</div>
-            <div class="room-sub" id="room-sub">Online chat (Firestore realtime)</div>
+            <div class="room-sub">Online chat (Firestore realtime)</div>
           </div>
           <div class="muted" id="me-badge">...</div>
         </div>
@@ -140,7 +166,7 @@
 
         <div class="composer">
           <input id="text" placeholder="اكتب رسالة..." maxlength="600" />
-          <button class="send" id="send">إرسال</button>
+          <button class="send" id="send" type="button">إرسال</button>
         </div>
       </div>
 
@@ -154,7 +180,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
     import {
       getFirestore,
       doc, getDoc, setDoc, addDoc,
@@ -169,15 +195,26 @@
       appId: "1:142086858806:web:64c50f3a8d6250a2049097"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    // ------- debug helpers -------
+    const dbgState = document.getElementById("dbg-state");
+    const dbgRoom  = document.getElementById("dbg-room");
+    const dbgUid   = document.getElementById("dbg-uid");
+    const dbgErr   = document.getElementById("dbg-err");
+    function setState(s){ dbgState.textContent = s; }
+    function setErr(e){
+      const msg = (e && e.message) ? e.message : String(e || "");
+      dbgErr.textContent = msg ? ("ERROR: " + msg) : "";
+    }
 
+    // -------- room param --------
     const params = new URLSearchParams(location.search);
     const roomId = (params.get("room") || "").trim();
     if (!roomId) location.href = "chatrooms.html";
 
-    document.getElementById("room-title").textContent = String(roomId).toUpperCase();
+    dbgRoom.textContent = roomId;
+
+    const roomTitleEl = document.getElementById("room-title");
+    roomTitleEl.textContent = String(roomId).toUpperCase();
 
     const chatEl = document.getElementById("chat");
     const onlineListEl = document.getElementById("online-list");
@@ -185,10 +222,6 @@
     const meBadge = document.getElementById("me-badge");
     const input = document.getElementById("text");
     const sendBtn = document.getElementById("send");
-
-    const roomRef = doc(db, "chatRooms", roomId);
-    const messagesRef = collection(db, "chatRooms", roomId, "messages");
-    const presenceCol = collection(db, "chatRooms", roomId, "presence");
 
     function escapeHtml(s){
       return (s || "").replace(/[&<>"']/g, (c)=>({
@@ -201,16 +234,33 @@
     }
     function scrollToBottom(){ chatEl.scrollTop = chatEl.scrollHeight; }
 
+    // -------- Firebase init --------
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ✅ مهم: ثبّت الـ auth persistence
+    try { await setPersistence(auth, browserLocalPersistence); } catch(e){ /* ignore */ }
+
+    // Firestore locations
+    const roomRef = doc(db, "chatRooms", roomId);
+    const messagesRef = collection(db, "chatRooms", roomId, "messages");
+    const presenceCol = collection(db, "chatRooms", roomId, "presence");
+
     async function getChatProfile(uid){
+      // 1) جرّب sessionStorage (البيانات اللي دخلتها من chatrooms)
+      try{
+        const s = sessionStorage.getItem("mlo5-chat");
+        if (s) {
+          const parsed = JSON.parse(s);
+          if (parsed?.name && parsed?.age && parsed?.gender) return parsed;
+        }
+      }catch{}
+
+      // 2) جرّب Firestore
       const ref = doc(db, "users", uid, "chatProfile", "main");
       const snap = await getDoc(ref);
       return snap.exists() ? snap.data() : null;
-    }
-    function getSessionChat(){
-      try{
-        const raw = sessionStorage.getItem("mlo5-chat");
-        return raw ? JSON.parse(raw) : null;
-      }catch{ return null; }
     }
 
     function renderMessage(m){
@@ -304,13 +354,10 @@
     let unsubPresence = null;
 
     async function writeSystem(text){
-      try{
-        await addDoc(messagesRef, { type:"system", text, createdAt: serverTimestamp() });
-      }catch(e){ console.error(e); }
+      await addDoc(messagesRef, { type:"system", text, createdAt: serverTimestamp() });
     }
 
     async function upsertPresence(){
-      if (!currentUid || !me) return;
       const ref = doc(db, "chatRooms", roomId, "presence", currentUid);
       await setDoc(ref, {
         uid: currentUid,
@@ -324,108 +371,121 @@
 
     function startHeartbeat(){
       if (heartbeatTimer) clearInterval(heartbeatTimer);
-      heartbeatTimer = setInterval(() => {
-        upsertPresence().catch(()=>{});
-      }, 20000);
-    }
-
-    async function joinRoom(){
-      try{ await setDoc(roomRef, { updatedAt: serverTimestamp() }, { merge:true }); }catch{}
-      await upsertPresence();
-      startHeartbeat();
-      await writeSystem(`${me.name} دخل الغرفة ✅`);
-    }
-
-    async function leaveRoom(){
-      if (!currentUid || !me) return;
-      await writeSystem(`${me.name} خرج من الغرفة 👋`);
-      try{ await upsertPresence(); }catch{}
+      heartbeatTimer = setInterval(() => upsertPresence().catch(()=>{}), 20000);
     }
 
     function attachRealtime(){
+      // messages
       const qMsgs = query(messagesRef, orderBy("createdAt","asc"), limit(200));
-      unsubMessages = onSnapshot(qMsgs, (snap) => {
-        chatEl.innerHTML = "";
-        snap.forEach((d) => renderMessage(d.data()));
-        scrollToBottom();
-      });
+      unsubMessages = onSnapshot(qMsgs,
+        (snap) => {
+          chatEl.innerHTML = "";
+          snap.forEach((d) => renderMessage(d.data()));
+          scrollToBottom();
+        },
+        (err) => {
+          setErr(err);
+          setState("Firestore messages snapshot ERROR");
+        }
+      );
 
-      unsubPresence = onSnapshot(presenceCol, (snap) => {
-        const now = Date.now();
-        const online = [];
-        snap.forEach((d) => {
-          const data = d.data();
-          const last = data.lastActive?.toDate ? data.lastActive.toDate().getTime() : 0;
-          if (now - last <= 65000) online.push(data);
-        });
-        online.sort((a,b)=> (a.name||"").localeCompare(b.name||""));
-        renderOnline(online);
-      });
+      // presence
+      unsubPresence = onSnapshot(presenceCol,
+        (snap) => {
+          const now = Date.now();
+          const online = [];
+          snap.forEach((d) => {
+            const data = d.data();
+            const last = data.lastActive?.toDate ? data.lastActive.toDate().getTime() : 0;
+            if (now - last <= 65000) online.push(data);
+          });
+          online.sort((a,b)=> (a.name||"").localeCompare(b.name||""));
+          renderOnline(online);
+        },
+        (err) => {
+          setErr(err);
+          setState("Firestore presence snapshot ERROR");
+        }
+      );
+    }
+
+    async function joinRoom(){
+      await setDoc(roomRef, { updatedAt: serverTimestamp() }, { merge:true });
+      await upsertPresence();
+      startHeartbeat();
+      await writeSystem(`${me.name} دخل الغرفة ✅`);
     }
 
     async function send(){
       if (!currentUid || !me) return;
       const text = (input.value || "").trim();
       if (!text) return;
-
       input.value = "";
-      try{
-        await addDoc(messagesRef, {
-          type: "user",
-          text,
-          uid: currentUid,
-          name: me.name,
-          photoURL: me.photoURL || "",
-          createdAt: serverTimestamp()
-        });
-        upsertPresence().catch(()=>{});
-      }catch(e){ console.error(e); }
+
+      await addDoc(messagesRef, {
+        type: "user",
+        text,
+        uid: currentUid,
+        name: me.name,
+        photoURL: me.photoURL || "",
+        createdAt: serverTimestamp()
+      });
+      upsertPresence().catch(()=>{});
     }
 
-    sendBtn.addEventListener("click", send);
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+    sendBtn.addEventListener("click", () => send().catch(e=>setErr(e)));
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") send().catch(e=>setErr(e)); });
 
     document.getElementById("logout-btn").addEventListener("click", async () => {
-      try{ await leaveRoom(); }catch{}
+      try{ await writeSystem(`${me?.name || "User"} خرج من الغرفة 👋`); }catch{}
       await signOut(auth);
       location.href = "index.html";
     });
 
-    window.addEventListener("beforeunload", () => { try{ leaveRoom(); }catch{} });
-
+    // -------- Auth gate --------
+    setState("بانتظار تسجيل الدخول…");
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { setTimeout(() => location.href = "login.html", 300); return; }
-      currentUid = user.uid;
-
-      // ✅ 1) جرّب Firestore
-      let chat = null;
-      try{ chat = await getChatProfile(user.uid); }catch{}
-
-      // ✅ 2) لو فاضي: خد من sessionStorage (الحل اللي بيفك المشكلة عندك)
-      if (!chat?.name || !chat?.age || !chat?.gender){
-        const sess = getSessionChat();
-        if (sess?.name && sess?.age && sess?.gender){
-          chat = sess;
+      try{
+        if (!user) {
+          setState("غير مسجل دخول → تحويل للـ login");
+          setTimeout(() => location.href = "login.html", 500);
+          return;
         }
+
+        currentUid = user.uid;
+        dbgUid.textContent = currentUid;
+
+        setState("تحميل بيانات المستخدم…");
+        const chat = await getChatProfile(currentUid);
+
+        if (!chat?.name || !chat?.age || !chat?.gender) {
+          setState("لا يوجد بيانات شات → ارجع لغرف الدردشة");
+          location.href = "chatrooms.html";
+          return;
+        }
+
+        me = {
+          name: chat.name,
+          age: chat.age,
+          gender: chat.gender,
+          photoURL: user.photoURL || ""
+        };
+
+        meBadge.textContent = `${me.name} · ${me.gender === "male" ? "ذكر" : "أنثى"} · ${me.age}`;
+
+        setState("تشغيل Realtime…");
+        attachRealtime();
+
+        setState("دخول الغرفة…");
+        await joinRoom();
+
+        setState("✅ شغال");
+
+      }catch(e){
+        console.error(e);
+        setErr(e);
+        setState("❌ Error أثناء تشغيل الغرفة");
       }
-
-      // ✅ 3) لو برضه فاضي: رجّعه للغرف
-      if (!chat?.name || !chat?.age || !chat?.gender){
-        location.href = "chatrooms.html";
-        return;
-      }
-
-      me = {
-        name: chat.name,
-        age: chat.age,
-        gender: chat.gender,
-        photoURL: user.photoURL || ""
-      };
-
-      meBadge.textContent = `${me.name} · ${me.gender === "male" ? "ذكر" : "أنثى"} · ${me.age}`;
-
-      attachRealtime();
-      await joinRoom();
     });
   </script>
 </body>
