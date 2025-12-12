@@ -132,8 +132,22 @@
     .ignoreBtn.ignored{border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)}
     .ignoreBtn:disabled{opacity:.5;cursor:not-allowed}
 
-    .statusWrap{display:flex;align-items:center;gap:8px;justify-content:flex-end;direction:rtl}
+    .dotsBtn{
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.45);
+      color:var(--yellow);
+      border-radius:999px;
+      padding:6px 10px;
+      cursor:pointer;
+      font-size:1.05rem;
+      user-select:none;
+      line-height:1;
+    }
+    .dotsBtn:disabled{opacity:.5;cursor:not-allowed}
 
+    .rowActions{display:flex;align-items:center;gap:8px;justify-content:flex-end;direction:ltr}
+
+    .statusWrap{display:flex;align-items:center;gap:8px;justify-content:flex-end;direction:rtl}
     select,input{
       border-radius:999px;
       border:1px solid rgba(250,204,21,.55);
@@ -170,6 +184,7 @@
       padding:10px 12px;
       line-height:1.5;
       word-break:break-word;
+      position:relative;
     }
     .msg.me{
       margin-right:auto;
@@ -179,6 +194,51 @@
 
     .msgHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;color:var(--muted);font-size:.85rem}
     .nameTag{font-weight:900;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+
+    .msgTools{display:inline-flex;align-items:center;gap:8px}
+    .replyBtn{
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.35);
+      color:var(--yellow);
+      border-radius:999px;
+      padding:4px 10px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:.85rem;
+      user-select:none;
+    }
+
+    .replyBar{
+      display:none;
+      margin-top:10px;
+      border:1px dashed rgba(250,204,21,.55);
+      background:rgba(0,0,0,.45);
+      border-radius:16px;
+      padding:8px 10px;
+      color:var(--muted);
+      font-size:.85rem;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .replyBar b{color:var(--yellow)}
+    .replyCancel{
+      border:1px solid rgba(250,204,21,.75);
+      background:rgba(0,0,0,.75);
+      color:var(--yellow);
+      border-radius:999px;
+      width:34px;height:34px;
+      cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;
+      user-select:none;
+    }
+    .replyQuote{
+      border-right:3px solid rgba(250,204,21,.75);
+      padding-right:10px;
+      margin-bottom:8px;
+      color:rgba(156,163,175,.95);
+      font-size:.9rem;
+    }
 
     .msgTimeUnder{margin-top:6px;font-size:.78rem;color:rgba(156,163,175,.92);text-align:left;direction:ltr}
 
@@ -280,21 +340,33 @@
     }
     .menu button:hover{background:rgba(250,204,21,.12); color:var(--yellow)}
 
-    /* ADMIN tag */
+    /* ADMIN visual: مستطيل كامل + وميض خفيف أسود + خط الاسم أسود */
+    .adminPill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:3px 10px;
+      border-radius:12px;
+      background:var(--yellow);
+      color:#000;
+      font-weight:900;
+      position:relative;
+      overflow:hidden;
+    }
+    .adminPill::after{
+      content:"";
+      position:absolute; inset:-20%;
+      background:rgba(0,0,0,.25);
+      transform:rotate(10deg);
+      animation:adminBlink 1.2s infinite;
+    }
+    @keyframes adminBlink{0%,100%{opacity:.25}50%{opacity:.05}}
     .adminTag{
       font-size:1.05rem;
       filter:drop-shadow(0 0 8px rgba(250,204,21,.55));
       animation:blink 1s infinite;
     }
     @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-
-    .adminNameBadge{
-      background:var(--yellow);
-      color:#000;
-      padding:2px 8px;
-      border-radius:999px;
-      font-weight:900;
-    }
 
     /* guest pill */
     .guestPill{
@@ -464,6 +536,15 @@
           <div class="chatCol">
             <div id="messages"></div>
 
+            <div class="replyBar" id="replyBar">
+              <div>
+                <span>رد على: </span>
+                <b id="replyToName">—</b>
+                <span id="replyToText" style="margin-right:8px;"></span>
+              </div>
+              <button class="replyCancel" id="replyCancel" type="button" title="إلغاء الرد">✕</button>
+            </div>
+
             <form id="chatForm" class="composer">
               <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled />
               <button class="clearBtn" id="clearBtn" type="button" title="مسح النص عندك فقط">✖</button>
@@ -577,19 +658,21 @@
   <!-- Context menu -->
   <div class="menu" id="ctxMenu">
     <button id="ctxDmBtn">محادثة خاصة</button>
-    <div id="adminActions" style="display:none;margin-top:6px;border-top:1px solid rgba(250,204,21,.25);padding-top:6px;">
-      <button id="ctxBanBtn">حظر</button>
-      <button id="ctxKickBtn">طرد</button>
-      <button id="ctxMuteBtn">كتم (5 دقائق)</button>
-    </div>
+    <button id="ctxBanBtn" style="display:none;">حظر</button>
+    <button id="ctxKickBtn" style="display:none;">طرد</button>
+    <button id="ctxMuteBtn" style="display:none;">كتم (5 دقائق)</button>
   </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import {
+    getAuth, onAuthStateChanged,
+    signInAnonymously, signOut,
+    setPersistence, inMemoryPersistence
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, serverTimestamp,
-    query, where, orderBy, onSnapshot, doc, setDoc
+    query, orderBy, onSnapshot, doc, setDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
@@ -601,9 +684,7 @@
     appId: "1:142086858806:web:64c50f3a8d6250a2049097"
   };
 
-  // Admin
   const ADMIN_UIDS = ["VFjSs6kH2jcFJnddE7SXIpipzDi2"];
-  // (معلومة: هذا ليس سر على GitHub Pages، لكنه فقط خطوة إضافية. الأدمن الحقيقي = UID)
   const ADMIN_USERNAME = "MLO5";
   const ADMIN_PASSWORD = "APRIL3049";
 
@@ -630,6 +711,11 @@
   const adminClearBtn = document.getElementById("adminClearBtn");
   const emojiBtn = document.getElementById("emojiBtn");
   const chatSplit = document.getElementById("chatSplit");
+
+  const replyBar = document.getElementById("replyBar");
+  const replyToNameEl = document.getElementById("replyToName");
+  const replyToTextEl = document.getElementById("replyToText");
+  const replyCancel = document.getElementById("replyCancel");
 
   const dmCol = document.getElementById("dmCol");
   const dmSub = document.getElementById("dmSub");
@@ -664,7 +750,6 @@
 
   const ctxMenu = document.getElementById("ctxMenu");
   const ctxDmBtn = document.getElementById("ctxDmBtn");
-  const adminActions = document.getElementById("adminActions");
   const ctxBanBtn = document.getElementById("ctxBanBtn");
   const ctxKickBtn = document.getElementById("ctxKickBtn");
   const ctxMuteBtn = document.getElementById("ctxMuteBtn");
@@ -685,6 +770,7 @@
   let dmKey = null;
   let dmUnsub = null;
 
+  let replyTo = null; // {uid,name,text}
   const adminSessionKey = (uid) => `adminSession_${uid}`;
   let isAdmin = false;
   let isGuest = false;
@@ -696,6 +782,7 @@
 
   let ignoreWindows = {};
 
+  // profanity for GLOBAL only (DM مسموح فيه)
   const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
   const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎👏🙏🔥💛⭐⚡🎮💀".split("");
 
@@ -749,6 +836,18 @@
     return BAD_WORDS.some(w => t.includes(w));
   }
 
+  // ✅ قواعد DM:
+  // - الضيف: ممنوع DM مع أي أحد
+  // - أي مسجل (غير ضيف): يقدر DM مع الأدمن
+  // - المسجل (غير ضيف): DM مع المسجلين فقط (مش مع الضيوف)
+  function canOpenDmWith(peer){
+    if (!peer) return false;
+    if (isGuest) return false;
+    const peerIsAdmin = ADMIN_UIDS.includes(peer.uid) || peer.isAdmin === true;
+    if (peerIsAdmin) return true;
+    return peer.isGuest !== true;
+  }
+
   // Emoji picker
   let activeEmojiTarget = null;
   function buildEmojiGrid(){
@@ -796,6 +895,22 @@
   nameEmojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(nameInput); });
 
   clearBtn.addEventListener("click",(e)=>{ e.preventDefault(); msgInput.value=""; msgInput.focus(); });
+
+  // Reply
+  function setReplyTarget(m){
+    replyTo = m ? { uid:m.uid, name:m.name, text:m.text } : null;
+    if (!replyTo){
+      replyBar.style.display = "none";
+      replyToNameEl.textContent = "—";
+      replyToTextEl.textContent = "";
+      return;
+    }
+    replyToNameEl.textContent = replyTo.name || "مستخدم";
+    const t = (replyTo.text || "").slice(0, 60);
+    replyToTextEl.textContent = `— "${t}${(replyTo.text||"").length>60 ? "..." : ""}"`;
+    replyBar.style.display = "flex";
+  }
+  replyCancel.addEventListener("click", ()=> setReplyTarget(null));
 
   // Ignore windows
   function loadIgnoreWindows(){
@@ -911,8 +1026,11 @@
     });
   }
 
-  // Connection indicator
+  // Connection indicator (مرة وحدة)
+  let connWatching = false;
   function watchConnection(){
+    if (connWatching) return;
+    connWatching = true;
     const connRef = ref(rtdb, ".info/connected");
     onValue(connRef, (snap)=>{
       const connected = snap.val() === true;
@@ -930,12 +1048,14 @@
       if (m.banned === true){
         alert("تم حظرك من الشات.");
         try{ await remove(ref(rtdb, "onlineUsers/" + user.uid)); }catch{}
+        if (user?.isAnonymous) try{ await signOut(auth); }catch{}
         location.href = "index.html";
         return;
       }
       if (m.kickedAt && Date.now() - m.kickedAt < 15000){
         alert("تم طردك من الشات.");
         try{ await remove(ref(rtdb, "onlineUsers/" + user.uid)); }catch{}
+        if (user?.isAnonymous) try{ await signOut(auth); }catch{}
         location.href = "index.html";
         return;
       }
@@ -958,7 +1078,7 @@
     });
   }
 
-  // Online list
+  // Online list (زر ⋯ بجانب التجاهل)
   function startOnlineListener(){
     onValue(ref(rtdb, "onlineUsers"), (snap)=>{
       const users = snap.val() || {};
@@ -977,76 +1097,97 @@
 
           const gHtml = genderSymbolHtml(u.gender);
           const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-          const adminVisual = u.isAdmin ? `
-            <span class="adminTag">🏷️</span>
-            <span class="adminNameBadge">${escapeHtml(u.name||"Admin")}</span>
-            ${guestHtml}
-          ` : `
-            <span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span>
-            ${guestHtml}
-          `;
+
+          const isRowAdmin = (ADMIN_UIDS.includes(u.uid) || u.isAdmin === true);
+
+          const nameVisual = isRowAdmin
+            ? `<span class="adminTag">🏷️</span><span class="adminPill">${escapeHtml(u.name||"Admin")}</span>${guestHtml}`
+            : `<span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span>${guestHtml}`;
 
           left.innerHTML = `
-            <b>${gHtml} ${adminVisual}</b>
+            <b>${gHtml} ${nameVisual}</b>
             <span>
               <span class="miniPill">${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
-              ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile.nameColor)};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
+              ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile?.nameColor||"#facc15")};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
             </span>
           `;
           row.appendChild(left);
 
-          if (u.uid !== user.uid){
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "ignoreBtn";
+          // actions right
+          const actions = document.createElement("div");
+          actions.className = "rowActions";
 
-            const targetIsAdmin = ADMIN_UIDS.includes(u.uid) || u.isAdmin === true;
+          if (u.uid !== user.uid){
+            // ignore button (ممنوع تجاهل الأدمن)
+            const ign = document.createElement("button");
+            ign.type = "button";
+            ign.className = "ignoreBtn";
+
+            const targetIsAdmin = (ADMIN_UIDS.includes(u.uid) || u.isAdmin === true);
             const ignored = isCurrentlyIgnored(u.uid);
 
-            btn.textContent = ignored ? "🚫" : "⛔";
-            btn.classList.toggle("ignored", ignored);
-            btn.disabled = targetIsAdmin;
-            btn.title = targetIsAdmin ? "لا يمكن تجاهل الأدمن" : (ignored ? "إلغاء التجاهل" : "تجاهل");
+            ign.textContent = ignored ? "🚫" : "⛔";
+            ign.classList.toggle("ignored", ignored);
+            ign.disabled = targetIsAdmin;
+            ign.title = targetIsAdmin ? "لا يمكن تجاهل الأدمن" : (ignored ? "إلغاء التجاهل" : "تجاهل");
 
-            btn.addEventListener("click",(e)=>{
+            ign.addEventListener("click",(e)=>{
               e.stopPropagation();
               if (targetIsAdmin) return;
               toggleIgnore(u.uid);
               const nowIgnored = isCurrentlyIgnored(u.uid);
-              btn.textContent = nowIgnored ? "🚫" : "⛔";
-              btn.classList.toggle("ignored", nowIgnored);
+              ign.textContent = nowIgnored ? "🚫" : "⛔";
+              ign.classList.toggle("ignored", nowIgnored);
             });
 
-            row.appendChild(btn);
+            // dots button (بديل الضغط على الاسم)
+            const dots = document.createElement("button");
+            dots.type = "button";
+            dots.className = "dotsBtn";
+            dots.textContent = "⋯";
+            dots.title = "خيارات";
 
-            row.addEventListener("click",(e)=>{
+            dots.addEventListener("click",(e)=>{
+              e.stopPropagation();
+
               ctxUser = {
                 uid: u.uid,
                 name: u.name,
                 gender: u.gender,
                 nameColor: u.nameColor || "#facc15",
                 textColor: u.textColor || "#f9fafb",
-                isAdmin: u.isAdmin === true,
+                isAdmin: u.isAdmin === true || ADMIN_UIDS.includes(u.uid),
                 isGuest: u.isGuest === true
               };
-              adminActions.style.display = (isAdmin && ctxUser.uid !== user.uid && !ctxUser.isAdmin) ? "block" : "none";
+
+              // ✅ القائمة حسب نوعك
+              const canDm = canOpenDmWith(ctxUser);
+              ctxDmBtn.style.display = canDm ? "block" : "none";
+
+              const showAdminActions = (isAdmin && ctxUser.uid !== user.uid && !ctxUser.isAdmin);
+              ctxBanBtn.style.display = showAdminActions ? "block" : "none";
+              ctxKickBtn.style.display = showAdminActions ? "block" : "none";
+              ctxMuteBtn.style.display = showAdminActions ? "block" : "none";
+
               showCtxMenu(e.clientX, e.clientY);
             });
-          } else {
-            row.style.cursor = "default";
+
+            actions.appendChild(ign);
+            actions.appendChild(dots);
           }
 
+          row.appendChild(actions);
           onlineList.appendChild(row);
         });
     });
   }
 
-  // Global messages
+  // Global messages (ترتيب طبيعي 100%: asc)
   function startGlobalMessagesListener(){
     initialLoaded = false;
+
     const q = query(
       collection(db, "globalMessages"),
-      where("createdAtMs", ">=", joinAtMs),
       orderBy("createdAtMs", "asc")
     );
 
@@ -1058,8 +1199,11 @@
       snap.forEach((docx)=>{
         const m = docx.data();
         const t = Number(m.createdAtMs || 0);
+
+        // ✅ لا يرى شيء قبل دخوله
         if (t < cutoff) return;
 
+        // ignore windows
         if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) return;
 
         if (m.system){
@@ -1068,6 +1212,7 @@
           div.textContent = m.text || "";
           messagesDiv.appendChild(div);
 
+          // ✅ صوت فقط دخول/خروج (ليس رسالة)
           if (!isFirst && (m.type==="join" || m.type==="leave") && m.actorUid && m.actorUid !== user.uid){
             const now = Date.now();
             if (now - lastSoundAt > 800){
@@ -1082,15 +1227,33 @@
 
           const gHtml = genderSymbolHtml(m.gender);
           const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-          const nameHtml = m.isAdmin
-            ? `<span class="adminTag">🏷️</span> <span class="adminNameBadge">${escapeHtml(m.name||"Admin")}</span> ${guestHtml}`
+          const isMsgAdmin = (m.isAdmin === true || ADMIN_UIDS.includes(m.uid));
+
+          const nameHtml = isMsgAdmin
+            ? `<span class="adminTag">🏷️</span> <span class="adminPill">${escapeHtml(m.name||"Admin")}</span> ${guestHtml}`
             : `<span style="color:${escapeHtml(m.nameColor || "#facc15")}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
 
+          const replyHtml = m.replyTo
+            ? `<div class="replyQuote">رد على <b style="color:var(--yellow)">${escapeHtml(m.replyTo.name||"مستخدم")}</b>: "${escapeHtml((m.replyTo.text||"").slice(0,120))}${(m.replyTo.text||"").length>120?"...":""}"</div>`
+            : "";
+
           div.innerHTML = `
-            <div class="msgHead"><div class="nameTag">${gHtml} ${nameHtml}</div></div>
+            <div class="msgHead">
+              <div class="nameTag">${gHtml} ${nameHtml}</div>
+              <div class="msgTools">
+                <button class="replyBtn" type="button">↩︎ رد</button>
+              </div>
+            </div>
+            ${replyHtml}
             <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${escapeHtml(m.text||"")}</div>
             <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
           `;
+
+          // reply click
+          div.querySelector(".replyBtn").addEventListener("click", ()=>{
+            setReplyTarget({ uid:m.uid, name:m.name, text:m.text });
+          });
+
           messagesDiv.appendChild(div);
         }
       });
@@ -1102,6 +1265,11 @@
 
   // DM
   function openDmWith(peer){
+    if (!canOpenDmWith(peer)){
+      alert("❌ المحادثة الخاصة غير متاحة (الضيف ممنوع، أو الطرف الآخر ضيف).");
+      return;
+    }
+
     dmPeer = peer;
     dmKey = participantsKey(user.uid, peer.uid);
 
@@ -1118,7 +1286,6 @@
 
     const q = query(
       collection(db, "dmMessages"),
-      where("participantsKey", "==", dmKey),
       orderBy("createdAtMs", "asc")
     );
 
@@ -1126,6 +1293,13 @@
       dmMessages.innerHTML = "";
       snap.forEach((d)=>{
         const m = d.data();
+
+        // ✅ فقط رسائل بين الشخصين
+        const ok =
+          (m.participantsKey === dmKey) ||
+          ((m.fromUid === user.uid && m.toUid === peer.uid) || (m.fromUid === peer.uid && m.toUid === user.uid));
+        if (!ok) return;
+
         const div = document.createElement("div");
         div.className = "msg" + (m.fromUid === user.uid ? " me" : "");
 
@@ -1136,13 +1310,9 @@
         const fromTextColor = fromMe ? profile.textColor : (peer.textColor || "#f9fafb");
         const gHtml = genderSymbolHtml(fromGender);
 
-        const fromGuestHtml = fromMe
-          ? (isGuest ? ` <span class="guestPill">[ضيف]</span>` : "")
-          : (peer.isGuest ? ` <span class="guestPill">[ضيف]</span>` : "");
-
         div.innerHTML = `
           <div class="msgHead">
-            <div class="nameTag">${gHtml} <span style="color:${escapeHtml(fromNameColor)}">${escapeHtml(fromName)}</span>${fromGuestHtml}</div>
+            <div class="nameTag">${gHtml} <span style="color:${escapeHtml(fromNameColor)}">${escapeHtml(fromName)}</span></div>
           </div>
           <div style="color:${escapeHtml(fromTextColor)}">${escapeHtml(m.text||"")}</div>
           <div class="msgTimeUnder">${escapeHtml(formatTime(Number(m.createdAtMs||0)))}</div>
@@ -1168,6 +1338,8 @@
     const text = collapseSpaces(dmInput.value);
     if (!text) return;
     dmInput.value = "";
+
+    // ✅ DM مسموح فيه كلام سيء (لا فلتر)
     await addDoc(collection(db, "dmMessages"), {
       participantsKey: dmKey,
       fromUid: user.uid,
@@ -1179,12 +1351,27 @@
   });
 
   // Menu actions
-  ctxDmBtn.addEventListener("click", ()=>{ if (ctxUser) openDmWith(ctxUser); hideCtxMenu(); });
-  ctxBanBtn.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await adminBan(ctxUser.uid); hideCtxMenu(); });
-  ctxKickBtn.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await adminKick(ctxUser.uid); hideCtxMenu(); });
-  ctxMuteBtn.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await adminMute5(ctxUser.uid); hideCtxMenu(); });
+  ctxDmBtn.addEventListener("click", ()=>{
+    if (ctxUser) openDmWith(ctxUser);
+    hideCtxMenu();
+  });
+  ctxBanBtn.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await adminBan(ctxUser.uid);
+    hideCtxMenu();
+  });
+  ctxKickBtn.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await adminKick(ctxUser.uid);
+    hideCtxMenu();
+  });
+  ctxMuteBtn.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await adminMute5(ctxUser.uid);
+    hideCtxMenu();
+  });
 
-  // Send GLOBAL (profanity only for non-admin)
+  // Send GLOBAL
   chatForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     if (!user || !profile) return;
@@ -1197,9 +1384,9 @@
       return;
     }
 
-    msgInput.value = "";
-    await addDoc(collection(db, "globalMessages"), {
-      system:false, text,
+    const payload = {
+      system:false,
+      text,
       uid:user.uid,
       name:profile.name,
       gender:profile.gender,
@@ -1209,25 +1396,39 @@
       isAdmin, isGuest,
       createdAt: serverTimestamp(),
       createdAtMs: Date.now()
-    });
+    };
+
+    if (replyTo){
+      payload.replyTo = { uid: replyTo.uid, name: replyTo.name, text: replyTo.text };
+    }
+
+    msgInput.value = "";
+    setReplyTarget(null);
+
+    await addDoc(collection(db, "globalMessages"), payload);
   });
 
-  // Exit
-  exitBtn.addEventListener("click", async ()=>{
+  // Exit (✅ الضيف لا يبقى مسجل بالموقع)
+  async function leaveAndGoHome(){
     try{
       if (user && profile){
         await writeSystem("leave");
         await remove(ref(rtdb, "onlineUsers/" + user.uid));
       }
     }catch{}
+    try{
+      if (auth.currentUser?.isAnonymous) await signOut(auth);
+    }catch{}
     location.href = "index.html";
-  });
+  }
+
+  exitBtn.addEventListener("click", async ()=> leaveAndGoHome());
 
   // Status
   statusSelect.addEventListener("change", async ()=>{
     if (!user || !profile) return;
     const s = statusSelect.value || "online";
-    localStorage.setItem(statusKey(user.uid), s);
+    if (!user.isAnonymous) localStorage.setItem(statusKey(user.uid), s);
     await updatePresenceStatus(s);
   });
 
@@ -1235,6 +1436,10 @@
   adminLoginBtn.addEventListener("click", ()=>{
     setErr(adminErr, "");
     if (!user) return;
+    if (user.isAnonymous){
+      setErr(adminErr, "الأدمن لا يعمل للضيف.");
+      return;
+    }
     const uidAllowed = ADMIN_UIDS.includes(user.uid);
     if (!uidAllowed){
       setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
@@ -1253,9 +1458,7 @@
   });
 
   // Choice: login / guest
-  function showForm(){
-    formBox.style.display = "block";
-  }
+  function showForm(){ formBox.style.display = "block"; }
 
   chooseLogin.addEventListener("click", ()=>{
     setErr(modalErr,"");
@@ -1263,7 +1466,6 @@
       location.href = "login.html";
       return;
     }
-    // لو المستخدم Anonymous وبدّه "تسجيل دخول" -> نحوله login
     if (user.isAnonymous){
       location.href = "login.html";
       return;
@@ -1272,18 +1474,24 @@
     showForm();
   });
 
+  // ✅ Guest fix: inMemoryPersistence + signInAnonymously
   chooseGuest.addEventListener("click", async ()=>{
     setErr(modalErr,"");
-    // لو مسجل دخول بحساب فعلي: ما نخرب جلسة الموقع
+
+    // لو مسجل فعلي: لا نخرب جلسة الموقع
     if (user && !user.isAnonymous){
       setErr(modalErr, "أنت مسجل دخول بالفعل—استخدم خيار تسجيل دخول.");
       return;
     }
+
     try{
-      if (!user){
+      // ✅ يخلي الضيف مؤقت داخل صفحة الشات فقط (لا يبين على باقي الموقع)
+      await setPersistence(auth, inMemoryPersistence);
+
+      if (!auth.currentUser){
         await signInAnonymously(auth);
       }
-      // بعد signInAnonymously، onAuthStateChanged رح يحدث user
+      // بعد ذلك onAuthStateChanged يحدث user
       isGuest = true;
       showForm();
     }catch(err){
@@ -1292,7 +1500,7 @@
     }
   });
 
-  // Enter chat (always manual)
+  // Enter chat (manual)
   enterBtn.addEventListener("click", async ()=>{
     setErr(modalErr, "");
 
@@ -1313,25 +1521,31 @@
       textColor: textColorInput.value || "#f9fafb"
     };
 
-    // ✅ حفظ بيانات المسجل فقط. الضيف: ما نخزن دائمًا
+    // ✅ حفظ بيانات المسجل فقط
     if (!user.isAnonymous){
       localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
     }
 
-    const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
+    const savedStatus = (!user.isAnonymous ? (localStorage.getItem(statusKey(user.uid)) || "online") : "online");
     statusSelect.value = savedStatus;
 
     await enterChat(savedStatus);
   });
 
   async function enterChat(statusVal){
-    isGuest = !!user?.isAnonymous; // الضيف = Anonymous
-    isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
+    isGuest = !!user?.isAnonymous;
+
+    isAdmin =
+      !isGuest &&
+      ADMIN_UIDS.includes(user.uid) &&
+      (localStorage.getItem(adminSessionKey(user.uid)) === "1");
+
     adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
 
     msgInput.disabled = false;
     sendBtn.disabled = false;
 
+    // ✅ فلتر “لا يرى ما قبل دخوله”
     joinAtMs = Date.now();
 
     await updatePresenceStatus(statusVal, true);
@@ -1346,13 +1560,12 @@
     startModerationListener();
   }
 
-  // Boot: ALWAYS show modal (no auto-enter)
+  // Boot: ALWAYS show modal
   onAuthStateChanged(auth, async (u)=>{
     user = u || null;
-    meBadge.textContent = "أنت";
     watchConnection();
 
-    // Prefill if logged-in and have saved profile (لكن ما ندخل تلقائيًا)
+    // Prefill for logged-in user only
     if (user && !user.isAnonymous){
       const savedProfile = localStorage.getItem(profKey(user.uid));
       if (savedProfile){
@@ -1365,16 +1578,23 @@
           textColorInput.value = p.textColor || "#f9fafb";
         }catch{}
       }
+    } else {
+      // ضيف / غير مسجل: افاضي
+      nameInput.value = "";
+      genderInput.value = "";
+      ageInput.value = "";
+      nameColorInput.value = "#facc15";
+      textColorInput.value = "#f9fafb";
     }
 
-    // Always show modal
+    // ALWAYS show modal when opening chat
     formBox.style.display = "none";
     setErr(modalErr, "");
     setErr(adminErr, "");
     modal.style.display = "flex";
   });
 
-  // beforeunload cleanup
+  // ✅ تنظيف عند مغادرة الصفحة (وعدم تثبيت الضيف بالموقع)
   window.addEventListener("beforeunload", ()=>{
     try{
       if (user && profile){
@@ -1382,16 +1602,9 @@
         remove(ref(rtdb, "onlineUsers/" + user.uid));
       }
     }catch{}
-  });
-
-  // DM close
-  dmClose.addEventListener("click", ()=>{
-    if (dmUnsub) dmUnsub();
-    dmUnsub = null;
-    dmPeer = null;
-    dmKey = null;
-    dmCol.style.display = "none";
-    chatSplit.classList.remove("hasDm");
+    try{
+      if (auth.currentUser?.isAnonymous) signOut(auth);
+    }catch{}
   });
 </script>
 </body>
