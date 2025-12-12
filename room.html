@@ -113,37 +113,15 @@
       border-color:rgba(0,0,0,.9);
       box-shadow:0 0 0 1px rgba(0,0,0,.8), 0 10px 22px rgba(0,0,0,.6);
     }
-    .userRow.admin .userMeta b,
     .userRow.admin .userMeta span{ color:#000 !important; }
-
-    .adminBlink{
-      width:10px;height:10px;border-radius:50%;
-      background:#111;
-      box-shadow:0 0 0 2px rgba(0,0,0,.85), 0 0 14px rgba(0,0,0,.8);
-      position:relative;
-      display:inline-block;
-    }
-    .adminBlink:after{
-      content:"";
-      position:absolute; inset:-4px;
-      border-radius:999px;
-      border:2px solid rgba(0,0,0,.85);
-      animation: pulseAdmin 1.2s infinite;
-      opacity:.9;
-    }
-    @keyframes pulseAdmin{
-      0%{transform:scale(.75);opacity:.95}
-      70%{transform:scale(1.35);opacity:.15}
-      100%{transform:scale(1.55);opacity:0}
-    }
 
     .userMeta{display:flex;flex-direction:column;gap:3px;min-width:0}
     .userMeta b{
-      font-size:1.05rem; /* ✅ أكبر للأعضاء */
+      font-size:1.05rem;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:190px;
       display:flex; align-items:center; gap:8px;
     }
-    .userRow.admin .userMeta b{font-size:1.25rem;} /* ✅ اسم الأدمن أكبر */
+    .userRow.admin .userMeta b{font-size:1.25rem;}
     .userMeta span{font-size:.8rem;color:var(--muted);display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
     .miniPill{
       border-radius:999px;border:1px solid rgba(148,163,184,.7);
@@ -213,7 +191,6 @@
 
     .msgHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;color:var(--muted);font-size:.85rem}
     .nameTag{font-weight:900;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
-
     .msgTimeUnder{margin-top:6px;font-size:.78rem;color:rgba(156,163,175,.92);text-align:left;direction:ltr}
 
     .system{
@@ -228,18 +205,27 @@
       text-align:center;
     }
 
-    /* ✅ reply button beside message (not above name) */
-    .replyBtn{
-      position:absolute;
-      bottom:8px;
-      left:10px;
+    /* ✅ reply OUTSIDE bubble */
+    .msgWrap{
+      display:flex;
+      gap:10px;
+      align-items:flex-end;
+      max-width:100%;
+    }
+    .msgWrap.me{justify-content:flex-end}
+    .msgWrap .replyBtnOut{
       border-radius:999px;
       border:1px solid rgba(250,204,21,.45);
       background:rgba(0,0,0,.55);
       color:var(--yellow);
       cursor:pointer;
       font-size:.8rem;
-      padding:4px 10px;
+      padding:6px 10px;
+      height:34px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
     }
 
     .replyPreview{
@@ -543,7 +529,7 @@
     .adminNameText{
       color:#fff !important;
       font-weight:900;
-      font-size:1.25rem; /* ✅ كبير */
+      font-size:1.25rem;
       white-space:nowrap;
     }
     .adminSkull{
@@ -555,6 +541,7 @@
       50%{opacity:.2}
       100%{opacity:1}
     }
+
     .adminRoomDots{
       border:1px solid rgba(250,204,21,.55);
       background:rgba(0,0,0,.45);
@@ -570,7 +557,6 @@
       align-items:center;
       justify-content:center;
     }
-    .adminRoomDots:disabled{opacity:.5;cursor:not-allowed}
   </style>
 </head>
 
@@ -759,7 +745,8 @@
   import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import {
     getFirestore, collection, addDoc, serverTimestamp,
-    query, where, orderBy, onSnapshot, doc, setDoc
+    query, where, orderBy, onSnapshot, doc, setDoc,
+    getDocs, writeBatch, limit
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
@@ -797,7 +784,6 @@
   const sendBtn = document.getElementById("sendBtn");
   const adminClearBtn = document.getElementById("adminClearBtn");
   const emojiBtn = document.getElementById("emojiBtn");
-  const chatSplit = document.getElementById("chatSplit");
 
   const replyPreview = document.getElementById("replyPreview");
   const replyPreviewName = document.getElementById("replyPreviewName");
@@ -1034,7 +1020,7 @@
     return false;
   }
   function toggleIgnore(uid){
-    if (ADMIN_UIDS.includes(uid)) return; // لا يمكن تجاهل الأدمن
+    if (ADMIN_UIDS.includes(uid)) return;
     ignoreWindows[uid] = ignoreWindows[uid] || [];
     const arr = ignoreWindows[uid];
     const activeIdx = arr.findIndex(w => w.end == null);
@@ -1066,7 +1052,7 @@
     roomMenu.style.display = "none";
   }
 
-  // ✅ system messages to everyone (in Global)
+  // ✅ system messages
   async function writeSystemText(text, type="system"){
     return addDoc(collection(db, "globalMessages"), {
       system:true, type,
@@ -1089,8 +1075,6 @@
     await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: Date.now(), reason:"unban", by:user.uid });
     await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة الأدمن`, "unban");
   }
-
-  // ✅ Mute until admin unmute (no 5 minutes) + update online badge immediately
   async function adminMute(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, mutedAt: Date.now() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:true });
@@ -1102,14 +1086,37 @@
     await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة الأدمن`, "unmute");
   }
 
-  // Clear for all (Admin) ✅ يمسح مباشرة + رسالة للجميع
+  // ✅ HARD delete ALL messages in globalMessages (including system) in batches
+  async function hardDeleteAllGlobalMessages(){
+    const colRef = collection(db, "globalMessages");
+    while (true){
+      const q = query(colRef, orderBy("createdAtMs","asc"), limit(450));
+      const snap = await getDocs(q);
+      if (snap.empty) break;
+
+      const batch = writeBatch(db);
+      snap.docs.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+
+      // small yield (no UI change)
+      await new Promise(r=>setTimeout(r, 30));
+    }
+  }
+
+  // Clear for all (Admin) ✅ يمسح كل شيء + يضيف رسالة واحدة جديدة
   async function adminClearForAll(){
     if (!isAdmin) return;
+
+    // أولاً: امسح الكل نهائياً
+    await hardDeleteAllGlobalMessages();
+
+    // ثانياً: حدّث clear meta (للتوافق)
     const clearedAtMs = Date.now();
     await setDoc(doc(db, "globalMeta", "clear"), {
       clearedAtMs, byUid:user.uid, byName: profile?.name || "Admin", createdAt: serverTimestamp()
     }, { merge:true });
 
+    // ثالثاً: رسالة واحدة جديدة
     await writeSystemText("🧹 الأدمن مسح الشات", "clear");
   }
   adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
@@ -1134,7 +1141,6 @@
     if (first) onDisconnect(onlineRef).remove();
   }
 
-  // Join/Leave system (and sound only for them)
   async function writeJoinLeave(type){
     const text =
       type === "join" ? `${profile.name} دخل الشات` :
@@ -1146,7 +1152,6 @@
     });
   }
 
-  // Connection indicator
   function watchConnection(){
     const connRef = ref(rtdb, ".info/connected");
     onValue(connRef, (snap)=>{
@@ -1156,7 +1161,6 @@
     });
   }
 
-  // Moderation listener (self) ✅ styled modals
   function startModerationListener(){
     onValue(ref(rtdb, `moderation/${user.uid}`), async (snap)=>{
       const m = snap.val();
@@ -1194,7 +1198,6 @@
       const until = m.mutedUntil || 0;
       const muted = (m.muted === true) || (Date.now() < until);
 
-      // room lock has priority for non-admin
       if (!isAdmin && roomLocked){
         msgInput.disabled = true;
         sendBtn.disabled = true;
@@ -1205,12 +1208,10 @@
         msgInput.placeholder = muted ? "تم كتمك" : "اكتب رسالتك...";
       }
 
-      // ✅ also reflect in onlineUsers for instant badge
       try{ await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted: !!muted }); }catch{}
     });
   }
 
-  // Clear meta
   let globalClearedAtMs = 0;
   function startClearMetaListener(){
     onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
@@ -1220,23 +1221,28 @@
     });
   }
 
-  // ✅ Room lock listener
   function startRoomLockListener(){
     onValue(ref(rtdb, "roomState/locked"), (snap)=>{
       roomLocked = snap.val() === true;
 
-      // update hint text for all
       if (roomLocked){
         chatHint.innerHTML = "🚫 الروم مقفل";
       } else {
         chatHint.innerHTML = 'دردش وخلي الشباب <span style="color:#facc15">تستفاد</span>';
       }
 
-      // disable sending for non-admin
       if (!isAdmin){
-        msgInput.disabled = roomLocked ? true : msgInput.disabled;
-        sendBtn.disabled = roomLocked ? true : sendBtn.disabled;
-        msgInput.placeholder = roomLocked ? "🚫 الروم مقفل بواسطة الأدمن" : (msgInput.placeholder === "🚫 الروم مقفل بواسطة الأدمن" ? "اكتب رسالتك..." : msgInput.placeholder);
+        if (roomLocked){
+          msgInput.disabled = true;
+          sendBtn.disabled = true;
+          msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
+        } else {
+          if (msgInput.placeholder === "🚫 الروم مقفل بواسطة الأدمن"){
+            msgInput.disabled = false;
+            sendBtn.disabled = false;
+            msgInput.placeholder = "اكتب رسالتك...";
+          }
+        }
       }
     });
   }
@@ -1256,7 +1262,6 @@
     await setRoomLocked(false);
   });
 
-  // Online list (✅ admin first + admin blink tag + mute badge + admin name + room dots)
   function startOnlineListener(){
     onValue(ref(rtdb, "onlineUsers"), (snap)=>{
       const users = snap.val() || {};
@@ -1265,7 +1270,6 @@
       onlineCount.textContent = String(arr.length);
       onlineList.innerHTML = "";
 
-      // ✅ ترتيب: الأدمن أولاً ثم بالاسم
       arr.sort((a,b)=>{
         const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
         const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid);
@@ -1282,14 +1286,10 @@
           const gHtml = genderSymbolHtml(u.gender);
           const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
 
-          const adminTag = isRowAdmin ? `<span class="adminBlink" title="ADMIN"></span>` : "";
-
-          // ✅ NEW: muted badge (no name color change)
           const mutedBadge = (u.muted === true)
             ? `<span class="miniPill" style="border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)">🔇 مكتوم</span>`
             : "";
 
-          // ✅ Admin fixed name + skull + black bg
           const nameHtml = isRowAdmin
             ? `
               <span class="adminNameWrap">
@@ -1301,7 +1301,7 @@
             : `<span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span> ${guestHtml}`;
 
           left.innerHTML = `
-            <b>${adminTag} ${gHtml} ${nameHtml} ${mutedBadge}</b>
+            <b>${gHtml} ${nameHtml} ${mutedBadge}</b>
             <span>
               <span class="miniPill">${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
               ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile?.nameColor||"#facc15")};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
@@ -1312,20 +1312,16 @@
           const actions = document.createElement("div");
           actions.className = "actionsRow";
 
-          // ✅ admin room dots beside admin name (visible to all, clickable only for admin)
-          if (isRowAdmin){
+          // ✅ ⋮ قفل/فتح الروم يظهر للأدمن فقط
+          if (isRowAdmin && isAdmin){
             const dots = document.createElement("button");
             dots.type = "button";
             dots.className = "adminRoomDots";
             dots.textContent = "⋮";
             dots.title = "قفل/فتح الروم";
-            dots.disabled = !isAdmin;
 
             dots.addEventListener("click",(e)=>{
               e.stopPropagation();
-              if (!isAdmin) return;
-
-              // set correct buttons visibility
               roomLockBtn.style.display = roomLocked ? "none" : "block";
               roomUnlockBtn.style.display = roomLocked ? "block" : "none";
               showRoomMenu(e.clientX, e.clientY);
@@ -1358,7 +1354,6 @@
 
             actions.appendChild(btn);
 
-            // ✅ ⋮ فقط للأدمن (خيارات كتم/طرد/حظر...)
             if (isAdmin){
               const more = document.createElement("button");
               more.type = "button";
@@ -1392,7 +1387,6 @@
     });
   }
 
-  // Global messages (✅ ترتيب ثابت + reply)
   function startGlobalMessagesListener(){
     initialLoaded = false;
     const q = query(
@@ -1441,6 +1435,9 @@
             }
           }
         } else {
+          const wrap = document.createElement("div");
+          wrap.className = "msgWrap" + (m.uid === user.uid ? " me" : "");
+
           const div = document.createElement("div");
           div.className = "msg" + (m.uid === user.uid ? " me" : "");
           div.dataset.mid = it.id;
@@ -1448,7 +1445,6 @@
           const gHtml = genderSymbolHtml(m.gender);
           const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
           const isMsgAdmin = (m.isAdmin === true) || ADMIN_UIDS.includes(m.uid);
-          const adminTag = isMsgAdmin ? `<span class="adminBlink" title="ADMIN"></span>` : "";
 
           const nameHtml = isMsgAdmin
             ? `
@@ -1469,14 +1465,19 @@
             ` : "";
 
           div.innerHTML = `
-            <button class="replyBtn" type="button" title="رد">↩ رد</button>
-            <div class="msgHead"><div class="nameTag">${adminTag} ${gHtml} ${nameHtml}</div></div>
+            <div class="msgHead"><div class="nameTag">${gHtml} ${nameHtml}</div></div>
             ${replyBlock}
             <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${escapeHtml(m.text||"")}</div>
             <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
           `;
 
-          div.querySelector(".replyBtn").addEventListener("click", ()=>{
+          const btn = document.createElement("button");
+          btn.className = "replyBtnOut";
+          btn.type = "button";
+          btn.title = "رد";
+          btn.textContent = "↩ رد";
+
+          btn.addEventListener("click", ()=>{
             replyTarget = {
               id: it.id,
               uid: m.uid,
@@ -1489,7 +1490,9 @@
             msgInput.focus();
           });
 
-          messagesDiv.appendChild(div);
+          wrap.appendChild(btn);
+          wrap.appendChild(div);
+          messagesDiv.appendChild(wrap);
         }
       }
 
@@ -1530,14 +1533,13 @@
     hideCtxMenu();
   });
 
-  // Send GLOBAL (profanity only for non-admin) ✅ styled modal + reply payload + room lock
+  // Send GLOBAL + room lock
   chatForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     if (!user || !profile) return;
     const text = collapseSpaces(msgInput.value);
     if (!text) return;
 
-    // ✅ room lock
     if (roomLocked && !isAdmin){
       showAppModal({
         title:"🚫 الروم مقفل",
@@ -1619,14 +1621,10 @@
     adminClearBtn.style.display = "inline-flex";
   });
 
-  // Choice: login / guest
   function showForm(){ formBox.style.display = "block"; }
 
-  homeBtn.addEventListener("click", ()=>{
-    location.href = "index.html";
-  });
+  homeBtn.addEventListener("click", ()=>{ location.href = "index.html"; });
 
-  // ✅ NEW: back button to login/guest list
   backListBtn.addEventListener("click", ()=>{
     setErr(modalErr,"");
     formBox.style.display = "none";
@@ -1647,9 +1645,7 @@
       return;
     }
     try{
-      if (!user){
-        await signInAnonymously(auth);
-      }
+      if (!user){ await signInAnonymously(auth); }
       isGuest = true;
       showForm();
     }catch(err){
@@ -1658,7 +1654,6 @@
     }
   });
 
-  // Enter chat
   enterBtn.addEventListener("click", async ()=>{
     setErr(modalErr, "");
 
@@ -1711,7 +1706,6 @@
     startGlobalMessagesListener();
     startModerationListener();
 
-    // enforce lock immediately for non-admin
     if (roomLocked && !isAdmin){
       msgInput.disabled = true;
       sendBtn.disabled = true;
@@ -1719,13 +1713,11 @@
     }
   }
 
-  // Boot: ALWAYS show modal + set random colors by default
   onAuthStateChanged(auth, async (u)=>{
     user = u || null;
     meBadge.textContent = "أنت";
     watchConnection();
 
-    // ✅ افتراضي عشوائي دائماً، لكن إذا المستخدم مسجل وعنده بيانات محفوظة نعبّيها
     let loadedSaved = false;
     if (user && !user.isAnonymous){
       const savedProfile = localStorage.getItem(profKey(user.uid));
@@ -1752,7 +1744,6 @@
     modal.style.display = "flex";
   });
 
-  // beforeunload cleanup
   window.addEventListener("beforeunload", ()=>{
     try{
       if (user && profile){
