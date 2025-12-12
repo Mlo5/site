@@ -42,9 +42,7 @@
       grid-template-columns: 1fr 320px;
       gap:14px;
     }
-    @media(max-width:900px){
-      .grid{grid-template-columns:1fr;}
-    }
+    @media(max-width:900px){ .grid{grid-template-columns:1fr;} }
 
     .card{
       border:1px solid var(--card-border);
@@ -74,7 +72,6 @@
       max-width:70%;
     }
     .room-sub{color:var(--muted); font-size:.85rem;}
-    .muted{color:var(--muted); font-size:.9rem;}
 
     .chat-box{
       height: 60vh;
@@ -86,69 +83,38 @@
       overflow:auto;
     }
 
-    .msg-row{display:flex; gap:10px; margin-bottom:10px; align-items:flex-start;}
+    .msg-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
     .avatar{
       width:34px;height:34px;border-radius:50%;
-      overflow:hidden;
-      border:1px solid rgba(250,204,21,.55);
-      background:#000;
-      flex:0 0 auto;
+      overflow:hidden;border:1px solid rgba(250,204,21,.55);
+      background:#000;flex:0 0 auto;
     }
     .avatar img{width:100%;height:100%;object-fit:cover;display:block}
     .bubble{
-      flex:1;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      padding:10px 10px;
-      background: rgba(15,23,42,.65);
+      flex:1;border-radius:14px;border:1px solid rgba(255,255,255,.10);
+      padding:10px;background: rgba(15,23,42,.65);
     }
-    .meta{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px;}
-    .name{font-weight:900; color:var(--yellow); font-size:.9rem;}
-    .time{color:rgba(156,163,175,.9); font-size:.75rem; white-space:nowrap;}
-    .text{color:var(--white); font-size:.92rem; line-height:1.45; word-wrap:break-word;}
+    .meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;}
+    .name{font-weight:900;color:var(--yellow);font-size:.9rem;}
+    .time{color:rgba(156,163,175,.9);font-size:.75rem;white-space:nowrap;}
+    .text{color:var(--white);font-size:.92rem;line-height:1.45;word-wrap:break-word;}
+    .system{text-align:center;color:rgba(156,163,175,.95);font-size:.85rem;margin:10px 0;}
 
-    .system{
-      text-align:center;
-      color: rgba(156,163,175,.95);
-      font-size:.85rem;
-      margin: 10px 0;
-    }
-
-    .composer{display:flex; gap:10px; margin-top:10px;}
+    .composer{display:flex;gap:10px;margin-top:10px;}
     .composer input{
-      flex:1;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.45);
-      color:var(--white);
-      padding:10px 12px;
-      font-size:.95rem;
-      outline:none;
+      flex:1;border-radius:999px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.45);color:var(--white);
+      padding:10px 12px;font-size:.95rem;outline:none;
     }
-    .composer input:focus{border-color: rgba(250,204,21,.8); box-shadow:0 0 0 4px rgba(250,204,21,.18);}
-    .send{
-      border:none;
-      cursor:pointer;
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:900;
-      background: var(--yellow);
-      color:#111;
-      white-space:nowrap;
-    }
-    .send:disabled{opacity:.65; cursor:not-allowed;}
+    .composer input:focus{border-color: rgba(250,204,21,.8);box-shadow:0 0 0 4px rgba(250,204,21,.18);}
+    .send{border:none;cursor:pointer;padding:10px 14px;border-radius:999px;font-weight:900;background: var(--yellow);color:#111;white-space:nowrap;}
 
-    .side-title{font-weight:900; color: var(--yellow); margin-bottom:8px;}
-    .online-list{display:flex; flex-direction:column; gap:8px; max-height: 60vh; overflow:auto; padding-right: 4px;}
-    .online{
-      display:flex; align-items:center; gap:10px;
-      padding:10px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.45);
-    }
+    .side-title{font-weight:900;color:var(--yellow);margin-bottom:8px;}
+    .online-list{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:4px;}
+    .online{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.45);}
     .online .o-name{font-weight:900;}
     .online .o-sub{color:var(--muted); font-size:.8rem; margin-top:2px;}
+    .muted{color:var(--muted); font-size:.9rem;}
   </style>
 </head>
 
@@ -207,21 +173,22 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // -------- helpers --------
     const params = new URLSearchParams(location.search);
     const roomId = (params.get("room") || "").trim();
     if (!roomId) location.href = "chatrooms.html";
 
-    const roomTitleEl = document.getElementById("room-title");
-    roomTitleEl.textContent = String(roomId).toUpperCase();
+    document.getElementById("room-title").textContent = String(roomId).toUpperCase();
 
     const chatEl = document.getElementById("chat");
     const onlineListEl = document.getElementById("online-list");
     const onlineCountEl = document.getElementById("online-count");
     const meBadge = document.getElementById("me-badge");
-
     const input = document.getElementById("text");
     const sendBtn = document.getElementById("send");
+
+    const roomRef = doc(db, "chatRooms", roomId);
+    const messagesRef = collection(db, "chatRooms", roomId, "messages");
+    const presenceCol = collection(db, "chatRooms", roomId, "presence");
 
     function escapeHtml(s){
       return (s || "").replace(/[&<>"']/g, (c)=>({
@@ -229,26 +196,23 @@
       }[c]));
     }
     function fmtTime(date){
-      try{
-        return new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(date);
-      }catch{ return ""; }
+      try{ return new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(date); }
+      catch{ return ""; }
     }
-    function scrollToBottom(){
-      chatEl.scrollTop = chatEl.scrollHeight;
-    }
-
-    // Firestore locations
-    const roomRef = doc(db, "chatRooms", roomId);
-    const messagesRef = collection(db, "chatRooms", roomId, "messages");
-    const presenceCol = collection(db, "chatRooms", roomId, "presence");
+    function scrollToBottom(){ chatEl.scrollTop = chatEl.scrollHeight; }
 
     async function getChatProfile(uid){
       const ref = doc(db, "users", uid, "chatProfile", "main");
       const snap = await getDoc(ref);
       return snap.exists() ? snap.data() : null;
     }
+    function getSessionChat(){
+      try{
+        const raw = sessionStorage.getItem("mlo5-chat");
+        return raw ? JSON.parse(raw) : null;
+      }catch{ return null; }
+    }
 
-    // -------- realtime: messages --------
     function renderMessage(m){
       if (m.type === "system"){
         const div = document.createElement("div");
@@ -299,7 +263,6 @@
       chatEl.appendChild(row);
     }
 
-    // -------- realtime: online users (presence) --------
     function renderOnline(list){
       onlineListEl.innerHTML = "";
       list.forEach((u) => {
@@ -334,7 +297,6 @@
       onlineCountEl.textContent = `Online: ${list.length}`;
     }
 
-    // -------- main --------
     let currentUid = null;
     let me = null;
     let heartbeatTimer = null;
@@ -344,9 +306,7 @@
     async function writeSystem(text){
       try{
         await addDoc(messagesRef, { type:"system", text, createdAt: serverTimestamp() });
-      }catch(e){
-        console.error(e);
-      }
+      }catch(e){ console.error(e); }
     }
 
     async function upsertPresence(){
@@ -366,42 +326,23 @@
       if (heartbeatTimer) clearInterval(heartbeatTimer);
       heartbeatTimer = setInterval(() => {
         upsertPresence().catch(()=>{});
-      }, 20000); // كل 20 ثانية
+      }, 20000);
     }
-
-    // ✅ امنع تكرار "دخل الغرفة" لو عمل ريفرش بنفس التبويب
-    function joinFlagKey(){ return `mlo5-joined:${roomId}`; }
 
     async function joinRoom(){
       try{ await setDoc(roomRef, { updatedAt: serverTimestamp() }, { merge:true }); }catch{}
-
       await upsertPresence();
       startHeartbeat();
-
-      const already = sessionStorage.getItem(joinFlagKey());
-      if (!already){
-        sessionStorage.setItem(joinFlagKey(), "1");
-        await writeSystem(`${me.name} دخل الغرفة ✅`);
-      }
+      await writeSystem(`${me.name} دخل الغرفة ✅`);
     }
 
     async function leaveRoom(){
       if (!currentUid || !me) return;
-
-      // best-effort: لا تعتمد عليها 100% عند الإغلاق المفاجئ
-      const leftKey = `mlo5-left:${roomId}`;
-      if (!sessionStorage.getItem(leftKey)){
-        sessionStorage.setItem(leftKey,"1");
-        try{ await writeSystem(`${me.name} خرج من الغرفة 👋`); }catch{}
-      }
-
+      await writeSystem(`${me.name} خرج من الغرفة 👋`);
       try{ await upsertPresence(); }catch{}
-      if (heartbeatTimer) clearInterval(heartbeatTimer);
-      heartbeatTimer = null;
     }
 
     function attachRealtime(){
-      // messages
       const qMsgs = query(messagesRef, orderBy("createdAt","asc"), limit(200));
       unsubMessages = onSnapshot(qMsgs, (snap) => {
         chatEl.innerHTML = "";
@@ -409,32 +350,25 @@
         scrollToBottom();
       });
 
-      // presence
       unsubPresence = onSnapshot(presenceCol, (snap) => {
         const now = Date.now();
         const online = [];
-
         snap.forEach((d) => {
           const data = d.data();
           const last = data.lastActive?.toDate ? data.lastActive.toDate().getTime() : 0;
-          // Online لو آخر نشاط خلال 65 ثانية
           if (now - last <= 65000) online.push(data);
         });
-
         online.sort((a,b)=> (a.name||"").localeCompare(b.name||""));
         renderOnline(online);
       });
     }
 
-    // إرسال رسالة
     async function send(){
       if (!currentUid || !me) return;
       const text = (input.value || "").trim();
       if (!text) return;
 
       input.value = "";
-      sendBtn.disabled = true;
-
       try{
         await addDoc(messagesRef, {
           type: "user",
@@ -445,66 +379,49 @@
           createdAt: serverTimestamp()
         });
         upsertPresence().catch(()=>{});
-      }catch(e){
-        console.error(e);
-      }finally{
-        sendBtn.disabled = false;
-        input.focus();
-      }
+      }catch(e){ console.error(e); }
     }
 
     sendBtn.addEventListener("click", send);
     input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 
-    // Logout
     document.getElementById("logout-btn").addEventListener("click", async () => {
       try{ await leaveRoom(); }catch{}
       await signOut(auth);
       location.href = "index.html";
     });
 
-    // خروج best-effort
     window.addEventListener("beforeunload", () => { try{ leaveRoom(); }catch{} });
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "hidden") {
-        try{ leaveRoom(); }catch{}
-      } else {
-        upsertPresence().catch(()=>{});
-      }
-    });
 
-    // -------- Auth + identity --------
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { location.href = "login.html"; return; }
+      if (!user) { setTimeout(() => location.href = "login.html", 300); return; }
       currentUid = user.uid;
 
-      // 1) from sessionStorage
-      let fromSession = null;
-      try{ fromSession = JSON.parse(sessionStorage.getItem("mlo5-chat") || "null"); }catch{}
-
-      // 2) fallback from Firestore
+      // ✅ 1) جرّب Firestore
       let chat = null;
-      if (!fromSession?.name || !fromSession?.age || !fromSession?.gender) {
-        chat = await getChatProfile(user.uid);
+      try{ chat = await getChatProfile(user.uid); }catch{}
+
+      // ✅ 2) لو فاضي: خد من sessionStorage (الحل اللي بيفك المشكلة عندك)
+      if (!chat?.name || !chat?.age || !chat?.gender){
+        const sess = getSessionChat();
+        if (sess?.name && sess?.age && sess?.gender){
+          chat = sess;
+        }
       }
 
-      const name = (fromSession?.name || chat?.name || "").trim();
-      const age = Number(fromSession?.age || chat?.age || 0);
-      const gender = (fromSession?.gender || chat?.gender || "").trim();
-
-      if (!name || !age || age < 8 || age > 99 || !gender) {
+      // ✅ 3) لو برضه فاضي: رجّعه للغرف
+      if (!chat?.name || !chat?.age || !chat?.gender){
         location.href = "chatrooms.html";
         return;
       }
 
-      // تأكد الحفظ في Firestore (حتى لو دخل من session)
-      try{
-        await setDoc(doc(db,"users",user.uid,"chatProfile","main"),{
-          name, age, gender, updatedAt: serverTimestamp()
-        },{merge:true});
-      }catch{}
+      me = {
+        name: chat.name,
+        age: chat.age,
+        gender: chat.gender,
+        photoURL: user.photoURL || ""
+      };
 
-      me = { name, age, gender, photoURL: user.photoURL || "" };
       meBadge.textContent = `${me.name} · ${me.gender === "male" ? "ذكر" : "أنثى"} · ${me.age}`;
 
       attachRealtime();
