@@ -1,227 +1,86 @@
-<!-- ⚠️ الكود كامل كما طُلب – نفس الستايل – نفس Firebase -->
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<title>منتدى المتابعين - MLO5</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
 
-<style>
-/* ========== نفس ستايل موقعك (بدون تغيير) ========== */
-:root{
---bg-dark:#020202;
---yellow:#facc15;
---white:#f9fafb;
---muted:#9ca3af;
---border-subtle:rgba(156,163,175,.35);
+    function signedIn() { return request.auth != null; }
+
+    function isAdmin() {
+      return signedIn() && request.auth.uid in [
+        "VFjSs6kH2jcFJnddE7SXIpipzDi2"
+      ];
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // يسمح فقط بتحديث اللايكات بدون العبث بباقي الحقول
+    function onlyLikesChanged() {
+      return request.resource.data.diff(resource.data).changedKeys().hasOnly(["likes"]);
+    }
+
+    // =========================
+    // ✅ Global Chat
+    // =========================
+    match /globalMessages/{id} {
+      allow read: if signedIn();
+      allow create: if signedIn();
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    match /globalMeta/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // =========================
+    // ✅ Forum (Followers)
+    // =========================
+    match /forumPosts/{postId} {
+      allow read: if signedIn();
+
+      // إنشاء بوست
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 1
+        && request.resource.data.text.size() <= 1500;
+
+      // تحديث:
+      // - أي مستخدم مسجل يقدر يعمل Like/Unlike فقط
+      // - صاحب البوست أو الأدمن يقدر يعدّل أي شيء (لو مستقبلاً عملت Edit)
+      allow update: if signedIn() && (
+        onlyLikesChanged() ||
+        isOwner(resource.data.uid) ||
+        isAdmin()
+      );
+
+      // ✅ حذف بوست:
+      // - الأدمن
+      // - أو صاحب البوست نفسه
+      allow delete: if isAdmin() || isOwner(resource.data.uid);
+
+      // ✅ Comments Subcollection
+      match /comments/{commentId} {
+        allow read: if signedIn();
+
+        allow create: if signedIn()
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() >= 1
+          && request.resource.data.text.size() <= 400;
+
+        allow update: if false;
+
+        // ✅ حذف تعليق:
+        // - الأدمن
+        // - أو صاحب التعليق نفسه
+        // - أو صاحب البوست (عشان يحذف تعليقات الناس على بوسته)
+        allow delete: if isAdmin()
+          || isOwner(resource.data.uid)
+          || isOwner(get(/databases/$(database)/documents/forumPosts/$(postId)).data.uid);
+      }
+    }
+  }
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-font-family:"Tajawal",sans-serif;
-background:var(--bg-dark);
-color:var(--white);
-min-height:100vh;
-}
-.page{max-width:1100px;margin:auto;padding:20px}
-.card{
-background:#050505;
-border:1px solid var(--border-subtle);
-border-radius:18px;
-padding:14px;
-margin-bottom:16px;
-}
-h2{color:var(--yellow)}
-textarea,input{
-width:100%;
-background:#000;
-border:1px solid var(--yellow);
-border-radius:14px;
-color:#fff;
-padding:12px;
-}
-.btn{
-border:1px solid var(--yellow);
-background:#000;
-color:var(--yellow);
-border-radius:999px;
-padding:10px 16px;
-cursor:pointer;
-font-weight:900;
-}
-.post{
-border:1px solid var(--border-subtle);
-border-radius:18px;
-padding:12px;
-margin-bottom:14px;
-background:#000;
-}
-.postHead{
-display:flex;
-justify-content:space-between;
-align-items:center;
-font-size:.9rem;
-color:var(--muted);
-}
-.adminName{
-color:#ef4444;
-font-weight:900;
-}
-.actions{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin-top:8px;
-}
-.miniBtn{
-border:1px solid var(--yellow);
-background:#000;
-color:var(--yellow);
-border-radius:999px;
-padding:6px 12px;
-cursor:pointer;
-}
-.heart{color:#ef4444}
-.pinned{border-color:#ef4444}
-.pinIcon{color:#ef4444;font-weight:900}
-.comment{
-border:1px solid var(--border-subtle);
-border-radius:14px;
-padding:8px;
-margin-top:8px;
-}
-.reply{
-font-size:.85rem;
-color:var(--muted);
-margin-bottom:4px;
-}
-.ayah{
-text-align:center;
-color:var(--muted);
-margin-top:10px;
-font-size:.9rem;
-}
-</style>
-</head>
-
-<body>
-<div class="page">
-
-<!-- ========== انشر بوست (فوق) ========== -->
-<div class="card">
-<h2>انشر بوست</h2>
-<textarea id="postText" placeholder="اكتب منشورك..."></textarea><br><br>
-<button class="btn" id="publishBtn">🚀 نشر</button>
-<div class="ayah">﴿ مَا يَلْفِظُ مِنْ قَوْلٍ إِلَّا لَدَيْهِ رَقِيبٌ عَتِيدٌ ﴾</div>
-</div>
-
-<!-- ========== المنشورات ========== -->
-<div id="posts"></div>
-
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import {
-getFirestore, collection, addDoc, onSnapshot,
-serverTimestamp, query, orderBy, updateDoc,
-arrayUnion, arrayRemove, deleteDoc, doc
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-const firebaseConfig={
-apiKey:"AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
-authDomain:"mlo5-users.firebaseapp.com",
-projectId:"mlo5-users"
-};
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-
-let user=null;
-const ADMIN_UID="VFjSs6kH2jcFJnddE7SXIpipzDi2";
-
-onAuthStateChanged(auth,u=>{
-user=u;
-loadPosts();
-});
-
-const postsBox=document.getElementById("posts");
-
-async function loadPosts(){
-const q=query(
-collection(db,"forumPosts"),
-orderBy("pinned","desc"),
-orderBy("createdAt","desc")
-);
-
-onSnapshot(q,snap=>{
-postsBox.innerHTML="";
-snap.forEach(d=>{
-const p=d.data();
-const isAdmin=user?.uid===ADMIN_UID;
-const isOwner=user?.uid===p.uid;
-
-const div=document.createElement("div");
-div.className="post"+(p.pinned?" pinned":"");
-div.innerHTML=`
-<div class="postHead">
-<div>
-<span class="${isAdmin?"adminName":""}">${p.name}</span>
-${p.pinned?'<span class="pinIcon"> 📌</span>':""}
-</div>
-<div>
-${(isAdmin||isOwner)?'<button class="miniBtn del">🗑️</button>':""}
-${isAdmin?'<button class="miniBtn pin">📌</button>':""}
-</div>
-</div>
-<div>${p.text}</div>
-
-<div class="actions">
-<button class="miniBtn heart">❤️ احببته (${(p.likes||[]).length})</button>
-</div>
-
-<div class="comments"></div>
-`;
-postsBox.appendChild(div);
-
-/* حذف */
-div.querySelector(".del")?.addEventListener("click",()=>{
-if(confirm("حذف المنشور؟"))
-deleteDoc(doc(db,"forumPosts",d.id));
-});
-
-/* تثبيت */
-div.querySelector(".pin")?.addEventListener("click",()=>{
-updateDoc(doc(db,"forumPosts",d.id),{pinned:!p.pinned});
-});
-
-/* لايك */
-div.querySelector(".heart").addEventListener("click",()=>{
-const liked=(p.likes||[]).includes(user.uid);
-updateDoc(doc(db,"forumPosts",d.id),{
-likes: liked?arrayRemove(user.uid):arrayUnion(user.uid)
-});
-});
-});
-});
-}
-
-/* نشر */
-document.getElementById("publishBtn").onclick=async()=>{
-const text=postText.value.trim();
-if(!text)return;
-await addDoc(collection(db,"forumPosts"),{
-text,
-uid:user.uid,
-name:user.displayName||"User",
-likes:[],
-pinned:false,
-createdAt:serverTimestamp()
-});
-postText.value="";
-};
-</script>
-</body>
-</html>
