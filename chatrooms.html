@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>غرف الدردشة - M L O 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="32x32" />
+  <meta name="theme-color" content="#020202" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg-dark:#020202;
+      --yellow:#facc15;
+      --white:#f9fafb;
+      --muted:#9ca3af;
+      --border-subtle: rgba(156, 163, 175, 0.35);
+      --radius-lg: 18px;
+      --radius-full: 999px;
+      --grid-x: 0px;
+      --grid-y: 0px;
+      --danger:#f87171;
+      --ok:#22c55e;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family:"Tajawal",system-ui,-apple-system,"Segoe UI",sans-serif;
+      background:var(--bg-dark);
+      color:var(--white);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+      position:relative;
+      padding:18px;
+      transition: background .25s ease, color .25s ease;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background-image: radial-gradient(circle, rgba(249, 250, 251, 0.55) 1px, transparent 1px);
+      background-size: 30px 30px;
+      background-position: calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
+      opacity:.22;
+      mix-blend-mode: screen;
+    }
+
+    .page{
+      width:100%;
+      max-width:1100px;
+      margin:auto;
+      position:relative;
+      z-index:1;
+    }
+
+    /* top bar */
+    .top-bar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-start;
+      direction:ltr;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.45);
+      background:rgba(0,0,0,.55);
+      color:var(--white);
+      text-decoration:none;
+      cursor:pointer;
+      user-select:none;
+      transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+      font-weight:800;
+      font-size:.9rem;
+      box-shadow:0 10px 24px rgba(0,0,0,.75);
+    }
+    .pill:hover{transform:translateY(-1px); background:rgba(250,204,21,.12); box-shadow:0 14px 32px rgba(0,0,0,.9);}
+
+    .lang-toggle{
+      width:40px;height:40px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.7);
+      background:radial-gradient(circle at top,#111,#020202);
+      color:var(--yellow);
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1rem;
+      box-shadow:0 10px 24px rgba(0,0,0,.85);
+      transition: transform .15s ease, background .15s ease, color .15s ease;
+    }
+    .lang-toggle:hover{
+      transform:translateY(-1px);
+      background:radial-gradient(circle at top,#facc15,#fbbf24);
+      color:#000;
+    }
+
+    /* header */
+    .hero{
+      border:1px solid var(--border-subtle);
+      background:linear-gradient(145deg,#020202,#050505);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 12px 30px rgba(0,0,0,.85);
+      margin-bottom:14px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero-title{
+      font-family:"Poppins",system-ui,sans-serif;
+      font-weight:800;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--yellow);
+      font-size:1.05rem;
+      direction:ltr;
+      margin-bottom:6px;
+    }
+
+    .hero-sub{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.5;
+    }
+
+    /* rooms grid */
+    .rooms{
+      border:1px solid var(--border-subtle);
+      background:linear-gradient(145deg,#020202,#050505);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 12px 30px rgba(0,0,0,.85);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:12px;
+    }
+
+    @media(max-width:900px){
+      .grid{grid-template-columns: repeat(2, minmax(0,1fr));}
+    }
+    @media(max-width:520px){
+      .grid{grid-template-columns: 1fr;}
+    }
+
+    .room-card{
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      background: linear-gradient(145deg, #020202, #050505);
+      border-radius:18px;
+      padding:14px 14px 16px;
+      border: 1px solid rgba(156, 163, 175, 0.35);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(55, 65, 81, 0.5);
+      position:relative;
+      overflow:hidden;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      cursor:pointer;
+      min-height:110px;
+    }
+
+    .room-card::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: radial-gradient(circle at top, rgba(250,204,21,.18), transparent 55%);
+      opacity:0;
+      transition: opacity .2s ease;
+      pointer-events:none;
+    }
+
+    .room-card:hover{
+      transform: translateY(-4px);
+      border-color: rgba(250, 204, 21, 0.9);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(250, 204, 21, 0.5);
+    }
+    .room-card:hover::before{opacity:1;}
+
+    .room-label{
+      font-size:.8rem;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .room-title{
+      font-size:1.05rem;
+      font-weight:800;
+      color:var(--yellow);
+      margin-bottom:6px;
+    }
+    .room-body{
+      font-size:.85rem;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    /* modal */
+    .overlay{
+      position:fixed;
+      inset:0;
+      z-index:60;
+      background: rgba(0,0,0,.75);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      backdrop-filter: blur(8px);
+    }
+    .overlay.show{display:flex;}
+
+    .modal{
+      width:100%;
+      max-width:520px;
+      border-radius:22px;
+      border:1px solid rgba(250,204,21,.55);
+      background: radial-gradient(circle at top, #111, #020202);
+      box-shadow: 0 18px 45px rgba(0,0,0,.9);
+      padding:18px;
+    }
+    .modal-title{
+      font-family:"Poppins",system-ui,sans-serif;
+      font-weight:800;
+      letter-spacing:.12em;
+      color:var(--yellow);
+      direction:ltr;
+      font-size:1rem;
+      margin-bottom:6px;
+    }
+    .modal-sub{
+      color:var(--muted);
+      font-size:.9rem;
+      margin-bottom:14px;
+      line-height:1.5;
+    }
+
+    .form-row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    @media(max-width:520px){
+      .form-row{grid-template-columns:1fr;}
+    }
+
+    label{display:block;color:var(--muted);font-size:.85rem;margin-bottom:6px}
+    input, select{
+      width:100%;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.45);
+      color:var(--white);
+      padding:10px 12px;
+      font-size:.92rem;
+      outline:none;
+    }
+    input:focus, select:focus{
+      border-color: rgba(250,204,21,.8);
+      box-shadow:0 0 0 4px rgba(250,204,21,.18);
+    }
+
+    .modal-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+      justify-content:flex-start;
+      direction:ltr;
+    }
+    .btn{
+      border:none;
+      cursor:pointer;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:.92rem;
+    }
+    .btn-primary{background:var(--yellow);color:#111;}
+    .btn-ghost{
+      background:rgba(0,0,0,.55);
+      color:var(--white);
+      border:1px solid rgba(250,204,21,.35);
+    }
+
+    .msg{margin-top:10px; min-height:1.2em; color:var(--muted); font-size:.9rem;}
+
+    /* hide rooms until allowed */
+    #roomsWrap{display:none;}
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+
+  <main class="page">
+    <div class="top-bar">
+      <a class="pill" id="back-home" href="index.html">⬅︎ <span id="back-home-txt">الرئيسية</span></a>
+      <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
+      <a class="pill" id="go-profile" href="profile.html">👤 <span id="go-profile-txt">الملف الشخصي</span></a>
+      <button class="pill" id="logout-btn" type="button">⎋ <span id="logout-txt">تسجيل خروج</span></button>
+    </div>
+
+    <section class="hero">
+      <div class="hero-title" id="page-title">CHAT ROOMS</div>
+      <div class="hero-sub" id="page-sub">
+        اختر غرفة وابدأ الدردشة. (هسا الغرف تجريبية — بعدين بنربطها بالرسائل الفعلية)
+      </div>
+    </section>
+
+    <section class="rooms" id="roomsWrap">
+      <div class="grid" id="roomsGrid"></div>
+      <div class="msg" id="mainMsg"></div>
+    </section>
+  </main>
+
+  <!-- ✅ modal قبل الدخول للغرف -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <div class="modal-title" id="modal-title">BEFORE YOU ENTER</div>
+      <div class="modal-sub" id="modal-sub">
+        بدنا معلومات بسيطة مرة واحدة عشان نرتّب تجربة غرف الدردشة.
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label id="lbl-name">الاسم</label>
+          <input id="f-name" type="text" placeholder="مثال: حمزة" />
+        </div>
+        <div>
+          <label id="lbl-age">العمر</label>
+          <input id="f-age" type="number" inputmode="numeric" min="8" max="99" placeholder="مثال: 22" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div>
+          <label id="lbl-gender">الجنس</label>
+          <select id="f-gender">
+            <option value="">— اختر —</option>
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
+          </select>
+        </div>
+        <div>
+          <label id="lbl-note">ملاحظة</label>
+          <input id="f-note" type="text" placeholder="اختياري (مثال: Gamer)" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="save-info" type="button">حفظ والمتابعة</button>
+        <a class="btn btn-ghost" id="go-back" href="index.html" style="text-decoration:none;display:inline-flex;align-items:center;">⬅︎ رجوع</a>
+      </div>
+
+      <div class="msg" id="modalMsg"></div>
+    </div>
+  </div>
+
+  <script>
+    // تحريك شبكة النقاط (ستايل موقعك)
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+    });
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+      authDomain: "mlo5-users.firebaseapp.com",
+      projectId: "mlo5-users",
+      appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ---------------- L10N ----------------
+    const l10n = {
+      ar: {
+        title: "غرف الدردشة - M L O 5",
+        home: "الرئيسية",
+        profile: "الملف الشخصي",
+        logout: "تسجيل خروج",
+        pageTitle: "CHAT ROOMS",
+        pageSub: "اختر غرفة وابدأ الدردشة. (الغرف تجريبية — لاحقًا بنربط الرسائل)",
+        modalTitle: "BEFORE YOU ENTER",
+        modalSub: "بدنا معلومات بسيطة مرة واحدة عشان نرتّب تجربة غرف الدردشة.",
+        name: "الاسم",
+        age: "العمر",
+        gender: "الجنس",
+        note: "ملاحظة",
+        saveGo: "حفظ والمتابعة",
+        back: "⬅︎ رجوع",
+        genderMale: "ذكر",
+        genderFemale: "أنثى",
+        req: "❌ عبّي الاسم + العمر + الجنس.",
+        saving: "جارٍ الحفظ…",
+        saved: "✅ تمام! بدخلّك على الغرف…",
+        notSigned: "لازم تسجل دخول أولًا.",
+      },
+      en: {
+        title: "Chat Rooms - M L O 5",
+        home: "Home",
+        profile: "Profile",
+        logout: "Logout",
+        pageTitle: "CHAT ROOMS",
+        pageSub: "Pick a room and start chatting. (Demo rooms — we’ll add real messages later)",
+        modalTitle: "BEFORE YOU ENTER",
+        modalSub: "We need a few details (one-time) to improve your chat experience.",
+        name: "Name",
+        age: "Age",
+        gender: "Gender",
+        note: "Note",
+        saveGo: "Save & Continue",
+        back: "⬅︎ Back",
+        genderMale: "Male",
+        genderFemale: "Female",
+        req: "❌ Please fill name, age, and gender.",
+        saving: "Saving…",
+        saved: "✅ Done! Entering rooms…",
+        notSigned: "Please sign in first.",
+      }
+    };
+
+    const overlay = document.getElementById("overlay");
+    const roomsWrap = document.getElementById("roomsWrap");
+    const roomsGrid = document.getElementById("roomsGrid");
+    const mainMsg = document.getElementById("mainMsg");
+
+    const backHomeTxt = document.getElementById("back-home-txt");
+    const goProfileTxt = document.getElementById("go-profile-txt");
+    const logoutTxt = document.getElementById("logout-txt");
+    const langToggle = document.getElementById("lang-toggle");
+
+    const modalMsg = document.getElementById("modalMsg");
+    const fName = document.getElementById("f-name");
+    const fAge = document.getElementById("f-age");
+    const fGender = document.getElementById("f-gender");
+    const fNote = document.getElementById("f-note");
+    const saveInfoBtn = document.getElementById("save-info");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    let currentUid = null;
+    let currentLang = "ar";
+
+    function setModalMsg(text, ok=false){
+      modalMsg.style.color = ok ? "var(--ok)" : "var(--muted)";
+      modalMsg.textContent = text || "";
+    }
+    function setMainMsg(text){
+      mainMsg.textContent = text || "";
+    }
+
+    function applyLang(lang){
+      currentLang = (lang === "en") ? "en" : "ar";
+      const s = l10n[currentLang];
+
+      document.title = s.title;
+      document.documentElement.lang = currentLang === "en" ? "en" : "ar";
+      document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
+
+      backHomeTxt.textContent = s.home;
+      goProfileTxt.textContent = s.profile;
+      logoutTxt.textContent = s.logout;
+
+      document.getElementById("page-title").textContent = s.pageTitle;
+      document.getElementById("page-sub").textContent = s.pageSub;
+
+      document.getElementById("modal-title").textContent = s.modalTitle;
+      document.getElementById("modal-sub").textContent = s.modalSub;
+      document.getElementById("lbl-name").textContent = s.name;
+      document.getElementById("lbl-age").textContent = s.age;
+      document.getElementById("lbl-gender").textContent = s.gender;
+      document.getElementById("lbl-note").textContent = s.note;
+      saveInfoBtn.textContent = s.saveGo;
+
+      // options
+      const opt0 = fGender.querySelector('option[value=""]');
+      const optM = fGender.querySelector('option[value="male"]');
+      const optF = fGender.querySelector('option[value="female"]');
+      if (opt0) opt0.textContent = "— " + (currentLang === "en" ? "Select" : "اختر") + " —";
+      if (optM) optM.textContent = s.genderMale;
+      if (optF) optF.textContent = s.genderFemale;
+
+      langToggle.title = (currentLang === "en") ? "English" : "العربية";
+    }
+
+    // ---------------- Firestore paths ----------------
+    async function getSettings(uid){
+      const ref = doc(db, "users", uid, "settings", "main");
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+    async function setLang(uid, lang){
+      const ref = doc(db, "users", uid, "settings", "main");
+      await setDoc(ref, { lang, updatedAt: serverTimestamp() }, { merge: true });
+    }
+
+    async function getChatGate(uid){
+      // وثيقة بسيطة مرة واحدة قبل دخول الغرف
+      const ref = doc(db, "users", uid, "chatGate", "main");
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+    async function saveChatGate(uid, data){
+      const ref = doc(db, "users", uid, "chatGate", "main");
+      await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true });
+    }
+
+    // ---------------- Rooms UI ----------------
+    const rooms = [
+      { titleAr:"غرفة الجيمينغ", titleEn:"Gaming Room", bodyAr:"حديث عام عن الألعاب.", bodyEn:"General gaming chat." },
+      { titleAr:"هولو نايت", titleEn:"Hollow Knight", bodyAr:"كل شيء عن Hollow Knight.", bodyEn:"All about Hollow Knight." },
+      { titleAr:"ماينكرافت", titleEn:"Minecraft", bodyAr:"بناء + سيرفايفل.", bodyEn:"Build + survival." },
+      { titleAr:"نقاشات عامة", titleEn:"General Talk", bodyAr:"سوالف خفيفة.", bodyEn:"Casual talk." },
+
+      { titleAr:"روك (RoK)", titleEn:"Rise of Kingdoms", bodyAr:"تحالفات وخطط.", bodyEn:"Alliances & plans." },
+      { titleAr:"ستريم و OBS", titleEn:"Streaming / OBS", bodyAr:"إعدادات وبث.", bodyEn:"Streaming tips." },
+      { titleAr:"مونتاج", titleEn:"Editing", bodyAr:"Premiere / Shorts.", bodyEn:"Premiere / Shorts." },
+      { titleAr:"تحديات", titleEn:"Challenges", bodyAr:"تحديات ألعاب.", bodyEn:"Game challenges." },
+
+      { titleAr:"سيرفر ديسكورد", titleEn:"Discord", bodyAr:"كل شيء ديسكورد.", bodyEn:"Discord topics." },
+      { titleAr:"أخبار ألعاب", titleEn:"Game News", bodyAr:"آخر الأخبار.", bodyEn:"Latest news." },
+      { titleAr:"مساعدة تقنية", titleEn:"Tech Help", bodyAr:"حل مشاكل.", bodyEn:"Fix issues." },
+      { titleAr:"أفكار محتوى", titleEn:"Content Ideas", bodyAr:"أفكار يوتيوب.", bodyEn:"YouTube ideas." },
+    ];
+
+    function renderRooms(){
+      roomsGrid.innerHTML = "";
+      rooms.forEach((r, i) => {
+        const a = document.createElement("a");
+        a.className = "room-card";
+        a.href = "soon.html"; // مؤقت — لاحقًا بنعمل صفحة غرفة فعلية
+        a.innerHTML = `
+          <div class="room-label">${currentLang === "en" ? "Room" : "غرفة"} • #${i+1}</div>
+          <div class="room-title">${currentLang === "en" ? r.titleEn : r.titleAr}</div>
+          <div class="room-body">${currentLang === "en" ? r.bodyEn : r.bodyAr}</div>
+        `;
+        roomsGrid.appendChild(a);
+      });
+    }
+
+    // ---------------- Auth gate ----------------
+    applyLang("ar"); // default سريع
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        applyLang("ar");
+        setMainMsg(l10n[currentLang].notSigned);
+        // تحويل لصفحة اللوجين
+        setTimeout(() => window.location.href = "login.html", 600);
+        return;
+      }
+
+      currentUid = user.uid;
+
+      // حمّل اللغة من Firestore لو موجودة
+      try{
+        const s = await getSettings(user.uid);
+        applyLang(s?.lang || "ar");
+      }catch(e){
+        applyLang("ar");
+      }
+
+      renderRooms();
+
+      // هل المستخدم عبّى بيانات دخول الغرف من قبل؟
+      try{
+        const gate = await getChatGate(user.uid);
+        if (!gate?.name || !gate?.age || !gate?.gender) {
+          overlay.classList.add("show");
+          roomsWrap.style.display = "none";
+        } else {
+          overlay.classList.remove("show");
+          roomsWrap.style.display = "block";
+        }
+      }catch(e){
+        // لو صار خطأ، افتح المودال عشان نجمع البيانات
+        overlay.classList.add("show");
+        roomsWrap.style.display = "none";
+      }
+    });
+
+    // 🌐 تبديل اللغة + حفظها في Firestore
+    langToggle.addEventListener("click", async () => {
+      const next = (currentLang === "ar") ? "en" : "ar";
+      applyLang(next);
+      renderRooms();
+      if (!currentUid) return;
+      try{ await setLang(currentUid, next); }catch(e){ console.error(e); }
+    });
+
+    // حفظ معلومات المودال (مرة واحدة + كل تعديل يحفظ)
+    saveInfoBtn.addEventListener("click", async () => {
+      const name = (fName.value || "").trim();
+      const age = Number(fAge.value || 0);
+      const gender = (fGender.value || "").trim();
+      const note = (fNote.value || "").trim();
+
+      if (!name || !age || !gender) {
+        setModalMsg(l10n[currentLang].req);
+        return;
+      }
+
+      if (!currentUid) return;
+
+      try{
+        setModalMsg(l10n[currentLang].saving);
+        await saveChatGate(currentUid, { name, age, gender, note, createdAt: serverTimestamp() });
+        setModalMsg(l10n[currentLang].saved, true);
+
+        setTimeout(() => {
+          overlay.classList.remove("show");
+          roomsWrap.style.display = "block";
+          setModalMsg("");
+        }, 450);
+      }catch(e){
+        console.error(e);
+        setModalMsg("❌ Error saving.");
+      }
+    });
+
+    // تسجيل خروج
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
