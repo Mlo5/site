@@ -1,163 +1,250 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<title>الدردشة العامة - MLO5</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<title>الشات العام - MLO5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Tajawal', sans-serif;
-  background: #0f0f14;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+body{
+  margin:0;
+  font-family:'Tajawal',sans-serif;
+  background:#0f0f14;
+  color:#fff;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+header{
+  padding:12px;
+  background:#151521;
+  text-align:center;
+  font-weight:bold;
+}
+#chat{
+  flex:1;
+  display:flex;
+}
+#messages{
+  flex:1;
+  padding:15px;
+  overflow-y:auto;
+}
+.msg{
+  background:#1c1c2b;
+  padding:10px 14px;
+  border-radius:10px;
+  margin-bottom:8px;
+  max-width:75%;
+}
+.me{background:#4f46e5;margin-right:auto;}
+.system{
+  background:transparent;
+  color:#9ca3af;
+  text-align:center;
+  font-size:13px;
+}
+#online{
+  width:220px;
+  border-right:1px solid #222;
+  padding:12px;
+}
+.user{
+  font-size:14px;
+  margin-bottom:6px;
+}
+form{
+  display:flex;
+  padding:10px;
+  background:#151521;
+}
+input,select{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+}
+#msgInput{flex:1;}
+button{
+  background:#4f46e5;
+  border:none;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-right:8px;
 }
 
-header {
-  padding: 15px;
-  background: #151521;
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
+/* Modal */
+#modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-
-#messages {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
+#modalBox{
+  background:#151521;
+  padding:20px;
+  border-radius:12px;
+  width:300px;
 }
-
-.message {
-  margin-bottom: 10px;
-  padding: 10px 14px;
-  background: #1c1c2b;
-  border-radius: 10px;
-  max-width: 75%;
-}
-
-.message.me {
-  background: #4f46e5;
-  margin-right: auto;
-}
-
-.username {
-  font-size: 12px;
-  opacity: .7;
-  margin-bottom: 4px;
-}
-
-form {
-  display: flex;
-  padding: 10px;
-  background: #151521;
-}
-
-input {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-}
-
-button {
-  margin-right: 10px;
-  padding: 12px 20px;
-  background: #4f46e5;
-  border: none;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
+#modalBox h3{text-align:center;margin-top:0;}
+#modalBox input,#modalBox select{
+  width:100%;
+  margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
-<header>💬 الدردشة العامة</header>
+<header>💬 الشات العام</header>
 
-<div id="messages"></div>
+<div id="chat">
+  <div id="online">
+    <b>المتواجدون</b>
+    <div id="onlineList"></div>
+  </div>
+  <div id="messages"></div>
+</div>
 
 <form id="chatForm">
-  <input type="text" id="messageInput" placeholder="اكتب رسالتك..." required />
-  <button type="submit">إرسال</button>
+  <input id="msgInput" placeholder="اكتب رسالتك..." required>
+  <button>إرسال</button>
 </form>
 
-<!-- Firebase -->
+<!-- نافذة البيانات -->
+<div id="modal">
+  <div id="modalBox">
+    <h3>بيانات الدخول</h3>
+    <input id="nameInput" placeholder="اسمك">
+    <select id="genderInput">
+      <option value="">الجنس</option>
+      <option>ذكر</option>
+      <option>أنثى</option>
+    </select>
+    <input id="ageInput" type="number" placeholder="العمر">
+    <button id="enterBtn">دخول الشات</button>
+  </div>
+</div>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getDatabase, ref, set, onDisconnect, onValue, remove } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "API_KEY",
-  authDomain: "PROJECT.firebaseapp.com",
-  projectId: "PROJECT_ID",
+  apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+  authDomain: "mlo5-users.firebaseapp.com",
+  databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
+  projectId: "mlo5-users",
+  appId: "1:142086858806:web:64c50f3a8d6250a2049097"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const rtdb = getDatabase(app);
 
-const messagesDiv = document.getElementById("messages");
-const form = document.getElementById("chatForm");
-const input = document.getElementById("messageInput");
+let userData = null;
+let user = null;
 
-let currentUser = null;
-
-// تأكد أن المستخدم مسجّل
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.href = "login.html";
-  } else {
-    currentUser = user;
-    loadMessages();
-  }
+// تأكيد تسجيل الدخول
+onAuthStateChanged(auth, u=>{
+  if(!u) location.href="login.html";
+  user = u;
 });
 
-// إرسال رسالة
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!input.value.trim()) return;
+// دخول الشات
+enterBtn.onclick = async ()=>{
+  const name = nameInput.value.trim();
+  const gender = genderInput.value;
+  const age = ageInput.value;
 
-  await addDoc(collection(db, "globalChat"), {
-    text: input.value,
-    uid: currentUser.uid,
-    email: currentUser.email,
+  if(!name || !gender || !age) return alert("عبّي كل البيانات");
+
+  userData = { name, gender, age };
+
+  document.getElementById("modal").remove();
+
+  const onlineRef = ref(rtdb,"onlineUsers/"+user.uid);
+  set(onlineRef,userData);
+  onDisconnect(onlineRef).remove();
+
+  // رسالة دخول
+  addDoc(collection(db,"globalMessages"),{
+    text: `${name} دخل الشات`,
+    system:true,
     createdAt: serverTimestamp()
   });
 
-  input.value = "";
-});
+  loadChat();
+  loadOnline();
+};
 
-// تحميل الرسائل مباشرة
-function loadMessages() {
-  const q = query(
-    collection(db, "globalChat"),
-    orderBy("createdAt")
-  );
-
-  onSnapshot(q, snapshot => {
-    messagesDiv.innerHTML = "";
-    snapshot.forEach(doc => {
-      const msg = doc.data();
-      const div = document.createElement("div");
-      div.className = "message" + (msg.uid === currentUser.uid ? " me" : "");
-      div.innerHTML = `
-        <div class="username">${msg.email}</div>
-        <div>${msg.text}</div>
-      `;
-      messagesDiv.appendChild(div);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+// تحميل الشات
+function loadChat(){
+  const q = query(collection(db,"globalMessages"),orderBy("createdAt"));
+  onSnapshot(q,snap=>{
+    messages.innerHTML="";
+    snap.forEach(d=>{
+      const m=d.data();
+      const div=document.createElement("div");
+      if(m.system){
+        div.className="system";
+        div.textContent=m.text;
+      }else{
+        div.className="msg"+(m.uid===user.uid?" me":"");
+        div.textContent=m.name+": "+m.text;
+      }
+      messages.appendChild(div);
+      messages.scrollTop=messages.scrollHeight;
     });
   });
 }
+
+// إرسال رسالة
+chatForm.onsubmit=async e=>{
+  e.preventDefault();
+  await addDoc(collection(db,"globalMessages"),{
+    text: msgInput.value,
+    uid: user.uid,
+    name: userData.name,
+    createdAt: serverTimestamp()
+  });
+  msgInput.value="";
+};
+
+// أونلاين
+function loadOnline(){
+  const refOnline=ref(rtdb,"onlineUsers");
+  onValue(refOnline,snap=>{
+    onlineList.innerHTML="";
+    snap.forEach(u=>{
+      const d=u.val();
+      const div=document.createElement("div");
+      div.className="user";
+      div.textContent="🟢 "+d.name;
+      onlineList.appendChild(div);
+    });
+  });
+}
+
+// رسالة خروج
+window.addEventListener("beforeunload",()=>{
+  if(userData){
+    addDoc(collection(db,"globalMessages"),{
+      text: `${userData.name} خرج من الشات`,
+      system:true,
+      createdAt: serverTimestamp()
+    });
+  }
+});
 </script>
 
 </body>
