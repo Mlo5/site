@@ -1,250 +1,610 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>الشات العام - MLO5</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>الشات العام - MLO5</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
 
-<style>
-body{
-  margin:0;
-  font-family:'Tajawal',sans-serif;
-  background:#0f0f14;
-  color:#fff;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-}
-header{
-  padding:12px;
-  background:#151521;
-  text-align:center;
-  font-weight:bold;
-}
-#chat{
-  flex:1;
-  display:flex;
-}
-#messages{
-  flex:1;
-  padding:15px;
-  overflow-y:auto;
-}
-.msg{
-  background:#1c1c2b;
-  padding:10px 14px;
-  border-radius:10px;
-  margin-bottom:8px;
-  max-width:75%;
-}
-.me{background:#4f46e5;margin-right:auto;}
-.system{
-  background:transparent;
-  color:#9ca3af;
-  text-align:center;
-  font-size:13px;
-}
-#online{
-  width:220px;
-  border-right:1px solid #222;
-  padding:12px;
-}
-.user{
-  font-size:14px;
-  margin-bottom:6px;
-}
-form{
-  display:flex;
-  padding:10px;
-  background:#151521;
-}
-input,select{
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  outline:none;
-}
-#msgInput{flex:1;}
-button{
-  background:#4f46e5;
-  border:none;
-  color:#fff;
-  padding:10px 16px;
-  border-radius:8px;
-  cursor:pointer;
-  margin-right:8px;
-}
+  <style>
+    :root{
+      --bg:#0f0f14;
+      --panel:#151521;
+      --card:#1c1c2b;
+      --stroke:rgba(255,255,255,.08);
+      --text:#fff;
+      --muted:rgba(255,255,255,.65);
+      --accent:#4f46e5;
+      --accent2:#22c55e;
+      --danger:#ef4444;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:'Tajawal', system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(79,70,229,.25), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, rgba(34,197,94,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
 
-/* Modal */
-#modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.7);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-#modalBox{
-  background:#151521;
-  padding:20px;
-  border-radius:12px;
-  width:300px;
-}
-#modalBox h3{text-align:center;margin-top:0;}
-#modalBox input,#modalBox select{
-  width:100%;
-  margin-bottom:10px;
-}
-</style>
+    header{
+      padding:12px 14px;
+      background:linear-gradient(180deg, rgba(21,21,33,.92), rgba(21,21,33,.72));
+      border-bottom:1px solid var(--stroke);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      position:sticky;
+      top:0;
+      z-index:10;
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-family:'Poppins','Tajawal',sans-serif;
+      font-weight:800;
+      letter-spacing:.5px;
+    }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      display:flex; align-items:center; gap:8px;
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:50%;}
+    .dot.online{background:var(--accent2);}
+    .dot.offline{background:var(--danger);}
+
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:700;
+      cursor:pointer;
+      color:#fff;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--stroke);
+    }
+    .btn:hover{background:rgba(255,255,255,.09)}
+    .btnDanger{background:rgba(239,68,68,.16); border-color: rgba(239,68,68,.35);}
+    .btnDanger:hover{background:rgba(239,68,68,.22)}
+
+    /* layout */
+    .wrap{
+      flex:1;
+      display:grid;
+      grid-template-columns: 320px 1fr; /* online | chat */
+      gap:12px;
+      padding:12px;
+      min-height:0;
+    }
+    .panel{
+      background:rgba(21,21,33,.72);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      overflow:hidden;
+      min-height:0;
+      backdrop-filter: blur(10px);
+      display:flex;
+      flex-direction:column;
+    }
+    .panelHead{
+      padding:12px;
+      border-bottom:1px solid var(--stroke);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .panelTitle{font-weight:800}
+    .small{font-size:12px;color:var(--muted)}
+
+    /* online list */
+    .onlineList{
+      padding:12px;
+      overflow:auto;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .userRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+    }
+    .userRow .u{display:flex; flex-direction:column; gap:2px; min-width:0;}
+    .userRow .u b{
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:190px;
+    }
+    .userRow .u span{font-size:11px;color:var(--muted)}
+    .badge{
+      font-size:11px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+      color:rgba(255,255,255,.8);
+      white-space:nowrap;
+    }
+
+    /* chat */
+    .chatTop{
+      padding:12px;
+      border-bottom:1px solid var(--stroke);
+      background:rgba(21,21,33,.65);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .chatTitle{display:flex; flex-direction:column; gap:2px;}
+    .chatTitle b{font-size:14px}
+    .chatTitle .sub{font-size:12px;color:var(--muted)}
+
+    #messages{
+      flex:1;
+      padding:14px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:0;
+    }
+    .msg{
+      max-width:78%;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:10px 12px;
+      line-height:1.45;
+      word-break:break-word;
+    }
+    .msg.me{
+      margin-right:auto;
+      background:rgba(79,70,229,.18);
+      border-color: rgba(79,70,229,.45);
+    }
+    .meta{
+      font-size:11px;
+      color:rgba(255,255,255,.65);
+      margin-bottom:4px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .tag{
+      font-size:10px;
+      padding:2px 6px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.03);
+    }
+
+    .system{
+      align-self:center;
+      text-align:center;
+      color:#9ca3af;
+      font-size:13px;
+      background:transparent;
+      border:none;
+      padding:4px 8px;
+      max-width:100%;
+    }
+
+    form{
+      display:flex;
+      gap:10px;
+      padding:12px;
+      border-top:1px solid var(--stroke);
+      background:rgba(21,21,33,.65);
+    }
+    input, select{
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(0,0,0,.25);
+      color:#fff;
+      outline:none;
+    }
+    #msgInput{flex:1;}
+    .sendBtn{
+      padding:12px 16px;
+      border:none;
+      border-radius:12px;
+      background:var(--accent);
+      color:#fff;
+      cursor:pointer;
+      font-weight:800;
+    }
+    .sendBtn:disabled{opacity:.6; cursor:not-allowed}
+
+    /* modal */
+    #modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.7);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+    }
+    #modalBox{
+      width:min(420px, 92vw);
+      background:rgba(21,21,33,.92);
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 18px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+    }
+    #modalBox h3{
+      margin:0 0 8px 0;
+      text-align:center;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    #modalBox .hint{
+      text-align:center;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:12px;
+    }
+    #modalBox .row{display:flex; gap:10px;}
+    #modalBox input,#modalBox select{width:100%; margin:0 0 10px 0;}
+    #enterBtn{
+      width:100%;
+      margin-top:6px;
+      padding:12px 14px;
+      border-radius:12px;
+      border:none;
+      background:var(--accent);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    @media (max-width: 950px){
+      .wrap{grid-template-columns: 1fr;}
+      /* online panel يصير فوق الشات */
+    }
+  </style>
 </head>
 
 <body>
+  <header>
+    <div class="brand">M L O 5 <span style="font-weight:600;opacity:.7">• الشات العام</span></div>
 
-<header>💬 الشات العام</header>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <div class="pill" id="statusPill">
+        <span class="dot offline" id="connDot"></span>
+        <span id="connText">غير متصل</span>
+      </div>
+      <button class="btn btnDanger" id="exitBtn" type="button">خروج</button>
+    </div>
+  </header>
 
-<div id="chat">
-  <div id="online">
-    <b>المتواجدون</b>
-    <div id="onlineList"></div>
+  <div class="wrap">
+    <!-- Online -->
+    <div class="panel">
+      <div class="panelHead">
+        <div>
+          <div class="panelTitle">المتواجدين الآن</div>
+          <div class="small"><span>العدد:</span> <b id="onlineCount">0</b></div>
+        </div>
+        <div class="badge" id="meBadge">—</div>
+      </div>
+      <div class="onlineList" id="onlineList"></div>
+    </div>
+
+    <!-- Chat -->
+    <div class="panel">
+      <div class="chatTop">
+        <div class="chatTitle">
+          <b>الدردشة العامة</b>
+          <div class="sub" id="chatSub">اكتب رسالة وتواصل مع الكل</div>
+        </div>
+        <div class="pill">Global</div>
+      </div>
+
+      <div id="messages"></div>
+
+      <form id="chatForm">
+        <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled />
+        <button class="sendBtn" id="sendBtn" disabled>إرسال</button>
+      </form>
+    </div>
   </div>
-  <div id="messages"></div>
-</div>
 
-<form id="chatForm">
-  <input id="msgInput" placeholder="اكتب رسالتك..." required>
-  <button>إرسال</button>
-</form>
-
-<!-- نافذة البيانات -->
-<div id="modal">
-  <div id="modalBox">
-    <h3>بيانات الدخول</h3>
-    <input id="nameInput" placeholder="اسمك">
-    <select id="genderInput">
-      <option value="">الجنس</option>
-      <option>ذكر</option>
-      <option>أنثى</option>
-    </select>
-    <input id="ageInput" type="number" placeholder="العمر">
-    <button id="enterBtn">دخول الشات</button>
+  <!-- Modal -->
+  <div id="modal">
+    <div id="modalBox">
+      <h3>بيانات الدخول</h3>
+      <div class="hint">لازم تعبّي بياناتك مرة قبل الدخول للشات</div>
+      <input id="nameInput" placeholder="اسمك" />
+      <div class="row">
+        <select id="genderInput">
+          <option value="">الجنس</option>
+          <option value="ذكر">ذكر</option>
+          <option value="أنثى">أنثى</option>
+        </select>
+        <input id="ageInput" type="number" min="1" max="99" placeholder="العمر" />
+      </div>
+      <button id="enterBtn" type="button">دخول الشات</button>
+    </div>
   </div>
-</div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import { getDatabase, ref, set, onDisconnect, onValue, remove } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  import { getDatabase, ref, set, onDisconnect, onValue, remove } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
-  authDomain: "mlo5-users.firebaseapp.com",
-  databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
-  projectId: "mlo5-users",
-  appId: "1:142086858806:web:64c50f3a8d6250a2049097"
-};
+  // ✅ Firebase CDN config (تبعتك)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+    authDomain: "mlo5-users.firebaseapp.com",
+    databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
+    projectId: "mlo5-users",
+    appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+  };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const rtdb = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const rtdb = getDatabase(app);
 
-let userData = null;
-let user = null;
+  // UI
+  const modal = document.getElementById("modal");
+  const nameInput = document.getElementById("nameInput");
+  const genderInput = document.getElementById("genderInput");
+  const ageInput = document.getElementById("ageInput");
+  const enterBtn = document.getElementById("enterBtn");
 
-// تأكيد تسجيل الدخول
-onAuthStateChanged(auth, u=>{
-  if(!u) location.href="login.html";
-  user = u;
-});
+  const connDot = document.getElementById("connDot");
+  const connText = document.getElementById("connText");
 
-// دخول الشات
-enterBtn.onclick = async ()=>{
-  const name = nameInput.value.trim();
-  const gender = genderInput.value;
-  const age = ageInput.value;
+  const meBadge = document.getElementById("meBadge");
+  const onlineList = document.getElementById("onlineList");
+  const onlineCount = document.getElementById("onlineCount");
 
-  if(!name || !gender || !age) return alert("عبّي كل البيانات");
+  const messagesDiv = document.getElementById("messages");
+  const chatForm = document.getElementById("chatForm");
+  const msgInput = document.getElementById("msgInput");
+  const sendBtn = document.getElementById("sendBtn");
 
-  userData = { name, gender, age };
+  const exitBtn = document.getElementById("exitBtn");
 
-  document.getElementById("modal").remove();
+  // Audio for join notifications
+  const joinSound = new Audio("toast.mp3");
+  joinSound.preload = "auto";
+  joinSound.volume = 1.0;
 
-  const onlineRef = ref(rtdb,"onlineUsers/"+user.uid);
-  set(onlineRef,userData);
-  onDisconnect(onlineRef).remove();
+  let user = null;
+  let profile = null; // {name, gender, age}
+  let initialMessagesLoaded = false;
+  let lastJoinPlayedAt = 0; // simple guard
 
-  // رسالة دخول
-  addDoc(collection(db,"globalMessages"),{
-    text: `${name} دخل الشات`,
-    system:true,
-    createdAt: serverTimestamp()
+  // ✅ must be logged in
+  onAuthStateChanged(auth, (u) => {
+    if (!u) {
+      location.href = "login.html";
+      return;
+    }
+    user = u;
+    meBadge.textContent = u.email || u.uid;
+    watchConnection();
   });
 
-  loadChat();
-  loadOnline();
-};
-
-// تحميل الشات
-function loadChat(){
-  const q = query(collection(db,"globalMessages"),orderBy("createdAt"));
-  onSnapshot(q,snap=>{
-    messages.innerHTML="";
-    snap.forEach(d=>{
-      const m=d.data();
-      const div=document.createElement("div");
-      if(m.system){
-        div.className="system";
-        div.textContent=m.text;
-      }else{
-        div.className="msg"+(m.uid===user.uid?" me":"");
-        div.textContent=m.name+": "+m.text;
+  // Exit (sign out)
+  exitBtn.addEventListener("click", async () => {
+    try {
+      // اكتب رسالة خروج + شيل أونلاين قبل تسجيل الخروج
+      if (user && profile) {
+        await writeSystem("leave");
+        await remove(ref(rtdb, "onlineUsers/" + user.uid));
       }
-      messages.appendChild(div);
-      messages.scrollTop=messages.scrollHeight;
-    });
+    } catch(e) {
+      // ignore
+    }
+    await signOut(auth);
+    location.href = "index.html";
   });
-}
 
-// إرسال رسالة
-chatForm.onsubmit=async e=>{
-  e.preventDefault();
-  await addDoc(collection(db,"globalMessages"),{
-    text: msgInput.value,
-    uid: user.uid,
-    name: userData.name,
-    createdAt: serverTimestamp()
+  // Enter chat after profile filled
+  enterBtn.addEventListener("click", async () => {
+    if (!user) return;
+
+    const name = nameInput.value.trim();
+    const gender = genderInput.value;
+    const age = ageInput.value.trim();
+
+    if (!name || !gender || !age) {
+      alert("عبّي الاسم + الجنس + العمر");
+      return;
+    }
+
+    profile = { name, gender, age: Number(age) };
+
+    // Enable chat input now (user interacted => audio will work)
+    msgInput.disabled = false;
+    sendBtn.disabled = false;
+
+    // presence (Realtime DB)
+    const myOnlineRef = ref(rtdb, "onlineUsers/" + user.uid);
+    await set(myOnlineRef, { ...profile, uid: user.uid, email: user.email || "" });
+    onDisconnect(myOnlineRef).remove();
+
+    // System join message (Firestore)
+    await writeSystem("join");
+
+    // Start listeners
+    modal.remove();
+    startOnlineListener();
+    startMessagesListener();
   });
-  msgInput.value="";
-};
 
-// أونلاين
-function loadOnline(){
-  const refOnline=ref(rtdb,"onlineUsers");
-  onValue(refOnline,snap=>{
-    onlineList.innerHTML="";
-    snap.forEach(u=>{
-      const d=u.val();
-      const div=document.createElement("div");
-      div.className="user";
-      div.textContent="🟢 "+d.name;
-      onlineList.appendChild(div);
-    });
-  });
-}
+  // Firestore: write system messages
+  async function writeSystem(type){
+    // type: "join" | "leave"
+    const text =
+      type === "join" ? `${profile.name} دخل الشات` :
+      type === "leave" ? `${profile.name} خرج من الشات` :
+      "";
 
-// رسالة خروج
-window.addEventListener("beforeunload",()=>{
-  if(userData){
-    addDoc(collection(db,"globalMessages"),{
-      text: `${userData.name} خرج من الشات`,
-      system:true,
+    return addDoc(collection(db, "globalMessages"), {
+      system: true,
+      type,
+      text,
+      actorUid: user.uid,
+      actorName: profile.name,
       createdAt: serverTimestamp()
     });
   }
-});
+
+  // Messages listener (Firestore)
+  function startMessagesListener(){
+    const q = query(collection(db, "globalMessages"), orderBy("createdAt", "asc"));
+    onSnapshot(q, (snap) => {
+      messagesDiv.innerHTML = "";
+
+      // نعتبر أول snapshot “تحميل أولي” وما نشغل أصوات عليه
+      const isFirst = !initialMessagesLoaded;
+
+      snap.forEach((doc) => {
+        const m = doc.data();
+
+        // Render
+        if (m.system) {
+          const div = document.createElement("div");
+          div.className = "system";
+          div.textContent = m.text || "";
+          messagesDiv.appendChild(div);
+
+          // 🔊 Play sound for JOIN events (not self), only after initial load
+          if (!isFirst && m.type === "join" && m.actorUid && m.actorUid !== user.uid) {
+            // guard بسيط ضد تكرار نفس اللحظة
+            const now = Date.now();
+            if (now - lastJoinPlayedAt > 800) {
+              lastJoinPlayedAt = now;
+              joinSound.currentTime = 0;
+              joinSound.play().catch(() => {
+                // لو المتصفح منع الصوت، ما بنعمل شي
+              });
+            }
+          }
+        } else {
+          const div = document.createElement("div");
+          div.className = "msg" + (m.uid === user.uid ? " me" : "");
+          div.innerHTML = `
+            <div class="meta">
+              <span class="tag">${escapeHtml(m.name || "مستخدم")}</span>
+              <span>${escapeHtml(m.email || "")}</span>
+            </div>
+            <div>${escapeHtml(m.text || "")}</div>
+          `;
+          messagesDiv.appendChild(div);
+        }
+      });
+
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      initialMessagesLoaded = true;
+    });
+  }
+
+  // Send message
+  chatForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!user || !profile) return;
+
+    const text = msgInput.value.trim();
+    if (!text) return;
+
+    msgInput.value = "";
+
+    await addDoc(collection(db, "globalMessages"), {
+      system: false,
+      text,
+      uid: user.uid,
+      name: profile.name,
+      email: user.email || "",
+      createdAt: serverTimestamp()
+    });
+  });
+
+  // Online list listener (Realtime DB)
+  function startOnlineListener(){
+    const allOnlineRef = ref(rtdb, "onlineUsers");
+    onValue(allOnlineRef, (snap) => {
+      const users = snap.val() || {};
+      const arr = Object.values(users);
+
+      onlineCount.textContent = String(arr.length);
+      onlineList.innerHTML = "";
+
+      arr
+        .sort((a,b)=> (a.name||"").localeCompare(b.name||""))
+        .forEach((u) => {
+          const row = document.createElement("div");
+          row.className = "userRow";
+          const isMe = u.uid === user.uid;
+          row.innerHTML = `
+            <div class="u">
+              <b>${escapeHtml(u.name || "مستخدم")}</b>
+              <span>${isMe ? "أنت" : (u.gender ? `${u.gender} • ${u.age || ""}` : "أونلاين")}</span>
+            </div>
+            <div class="badge">${isMe ? "✅" : "🟢"}</div>
+          `;
+          onlineList.appendChild(row);
+        });
+    });
+  }
+
+  // Connection pill
+  function watchConnection(){
+    const connRef = ref(rtdb, ".info/connected");
+    onValue(connRef, (snap) => {
+      const connected = snap.val() === true;
+      connDot.className = "dot " + (connected ? "online" : "offline");
+      connText.textContent = connected ? "متصل" : "غير متصل";
+    });
+  }
+
+  // محاولة كتابة رسالة خروج عند إغلاق الصفحة:
+  // (مش مضمونة 100% — لكن الأونلاين مضمون بسبب onDisconnect)
+  window.addEventListener("beforeunload", () => {
+    try {
+      if (user && profile) {
+        // best effort
+        writeSystem("leave");
+      }
+    } catch(e){}
+  });
+
+  function escapeHtml(s=""){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
 </script>
 
 </body>
