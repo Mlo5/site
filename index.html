@@ -85,6 +85,9 @@
       background: rgba(0, 0, 0, 0.6);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(15, 23, 42, 0.9);
       transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .top-login-link:hover {
@@ -295,7 +298,7 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      cursor: pointer; /* ✅ عشان يحس المستخدم إنها قابلة للكبس */
+      cursor: pointer;
     }
 
     .hero-slide.is-active { opacity: 1; }
@@ -439,7 +442,7 @@
 
     .footer-top {
       display: flex;
-      justify-content: flex-end; /* ✅ صار فقط أيقونات */
+      justify-content: flex-end;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
@@ -526,7 +529,6 @@
     .preloader-logo img { max-width: 200px; height: auto; animation: preloader-blink 0.35s infinite alternate; }
     @keyframes preloader-blink { 0% { opacity: 0.35; } 100% { opacity: 1; } }
 
-    /* ✅ Toast الاشتراك (صار ظاهر دائمًا) */
     .subscribe-toast {
       position: fixed;
       left: 18px;
@@ -539,7 +541,6 @@
       transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
-    /* (احتفظنا بالكلاس لو احتجته لاحقًا) */
     .subscribe-toast.subscribe-toast--visible {
       opacity: 1;
       transform: translateY(0);
@@ -638,8 +639,23 @@
     <div class="card-shell">
       <div class="card-shell-inner">
 
+        <!-- ✅ TOP BAR (معدّل) -->
         <div class="top-bar">
           <a id="login-link" href="login.html" class="top-login-link">تسجيل دخول</a>
+
+          <!-- ✅ يظهر فقط بعد تسجيل الدخول -->
+          <div id="user-menu" class="top-nav-item top-nav-dropdown" style="display:none;">
+            <span class="top-nav-label" id="user-label">User</span>
+            <div class="dropdown-menu">
+              <a href="profile.html" class="dropdown-item">الملف الشخصي</a>
+              <a href="settings.html" class="dropdown-item">الإعدادات</a>
+              <button id="logout-btn" class="dropdown-item" type="button"
+                style="text-align:right;width:100%;background:transparent;border:none;cursor:pointer;">
+                تسجيل خروج
+              </button>
+            </div>
+          </div>
+
           <button id="lang-toggle" class="lang-toggle" title="العربية">🌐</button>
         </div>
 
@@ -672,13 +688,12 @@
           <a href="contact.html" class="top-nav-item" id="menu5">قائمة 5</a>
         </nav>
 
-        <!-- ✅ السلايدر (Hover يوقف - Click يفتح رابط) -->
+        <!-- ✅ السلايدر -->
         <section class="video-section">
           <div class="video-wrapper">
             <div class="video-inner">
               <div id="hero-slider" class="hero-slider">
                 <div class="hero-slider-track">
-                  <!-- ضع رابطك لاحقًا داخل data-link -->
                   <div class="hero-slide is-active" data-link="https://www.youtube.com/@mlo5ya">
                     <img src="slide1.jpg" alt="صورة 1" loading="eager">
                   </div>
@@ -789,7 +804,6 @@
           </div>
         </section>
 
-        <!-- ✅ Footer (أيقونات فقط) -->
         <footer class="footer">
           <div class="footer-top">
             <div class="social-links">
@@ -808,7 +822,6 @@
     </div>
   </main>
 
-  <!-- ✅ Toast الاشتراك (ظاهر دائمًا) -->
   <div id="subscribe-toast" class="subscribe-toast subscribe-toast--visible" aria-live="polite">
     <div class="subscribe-toast-inner">
       <button class="subscribe-toast-close" aria-label="إغلاق التنبيه">×</button>
@@ -825,7 +838,6 @@
   </div>
 
   <audio id="toast-sound" src="toast.mp3" preload="auto"></audio>
-
   <button id="scroll-top" class="scroll-top-btn" aria-label="العودة للأعلى">↑</button>
 
   <script>
@@ -857,7 +869,7 @@
     let userInteracted = false;
     document.addEventListener("click", () => { userInteracted = true; }, { once: true });
 
-    // ✅ اختيار اللغة (حذفنا footerText لأنه انشال)
+    // ✅ اختيار اللغة
     const langToggle = document.getElementById("lang-toggle");
     const LANG_KEY = "mlo5-lang";
     const l10n = {
@@ -1003,14 +1015,10 @@
       });
     }
 
-    // ✅ Toast: زر الإغلاق يخفيه فقط (لكن يرجع يظهر دائمًا عند إعادة تحميل الصفحة)
+    // ✅ Toast
     const toast = document.getElementById("subscribe-toast");
     const toastClose = toast ? toast.querySelector(".subscribe-toast-close") : null;
     const toastSound = document.getElementById("toast-sound");
-
-    if (toast && userInteracted && toastSound && typeof toastSound.play === "function") {
-      try { toastSound.currentTime = 0; toastSound.play().catch(() => {}); } catch (e) {}
-    }
 
     if (toastClose) {
       toastClose.addEventListener("click", () => {
@@ -1031,7 +1039,7 @@
       });
     }
 
-    // ✅ سلايدر: نقاط + سحب + تشغيل تلقائي + (Hover يوقف على الصورة) + (Click يفتح رابط)
+    // ✅ سلايدر
     (function initHeroSlider() {
       const slider = document.getElementById("hero-slider");
       if (!slider) return;
@@ -1063,7 +1071,6 @@
         autoTimer = setInterval(goNext, AUTO_DELAY);
       }
 
-      // النقاط
       dots.forEach((dot) => {
         dot.addEventListener("click", () => {
           const idx = Number(dot.getAttribute("data-index") || "0");
@@ -1072,7 +1079,6 @@
         });
       });
 
-      // Hover على أي صورة = يوقف
       slides.forEach((slide) => {
         const img = slide.querySelector("img");
         if (!img) return;
@@ -1080,14 +1086,12 @@
         img.addEventListener("mouseenter", () => stopAuto());
         img.addEventListener("mouseleave", () => startAuto());
 
-        // Click = يفتح رابط (من data-link)
         img.addEventListener("click", () => {
           const link = slide.getAttribute("data-link") || "#";
           if (link && link !== "#") window.open(link, "_blank", "noopener");
         });
       });
 
-      // سحب باللمس/الماوس
       let startX = null;
       let isTouching = false;
 
@@ -1125,87 +1129,49 @@
     })();
   </script>
 
-  <script>
-    const MLO5_USERS_KEY = "mlo5-users";
-    const MLO5_CURRENT_USER_KEY = "mlo5-current-user-email";
+  <!-- ✅ Firebase Auth UI (اسم المستخدم + تسجيل خروج) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 
-    function mlo5IndexLoadUsers() {
-      try {
-        const raw = localStorage.getItem(MLO5_USERS_KEY);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        return [];
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+      authDomain: "mlo5-users.firebaseapp.com",
+      projectId: "mlo5-users",
+      appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loginLink = document.getElementById("login-link");
+    const userMenu = document.getElementById("user-menu");
+    const userLabel = document.getElementById("user-label");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const name = (user.displayName || "").trim();
+        const email = (user.email || "").trim();
+        const raw = name || email || "User";
+        const displayName = raw.length > 16 ? raw.slice(0, 14) + "…" : raw;
+
+        userLabel.textContent = displayName;
+
+        if (loginLink) loginLink.style.display = "none";
+        if (userMenu) userMenu.style.display = "inline-flex";
+      } else {
+        if (userMenu) userMenu.style.display = "none";
+        if (loginLink) loginLink.style.display = "inline-flex";
       }
-    }
+    });
 
-    function mlo5IndexGetCurrentUserEmail() {
-      return localStorage.getItem(MLO5_CURRENT_USER_KEY) || null;
-    }
-
-    (function () {
-      const loginLink = document.getElementById("login-link");
-      if (!loginLink) return;
-
-      const currentEmail = mlo5IndexGetCurrentUserEmail();
-      if (!currentEmail) return;
-
-      const users = mlo5IndexLoadUsers();
-      const currentUser = users.find((u) => u.email === currentEmail) || null;
-
-      const rawName = (currentUser && currentUser.name && currentUser.name.trim()) || currentEmail;
-      const displayName = rawName.length > 16 ? rawName.slice(0, 14) + "…" : rawName;
-
-      const topBar = loginLink.parentElement;
-      if (!topBar) return;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "top-nav-item top-nav-dropdown";
-
-      const label = document.createElement("span");
-      label.className = "top-nav-label";
-      label.textContent = displayName;
-
-      const menu = document.createElement("div");
-      menu.className = "dropdown-menu";
-
-      function makeItem(text, href, isButton) {
-        const el = isButton ? document.createElement("button") : document.createElement("a");
-        el.className = "dropdown-item";
-        if (!isButton && href) el.href = href;
-        el.textContent = text;
-        if (isButton) {
-          el.type = "button";
-          el.style.textAlign = "right";
-          el.style.width = "100%";
-          el.style.background = "transparent";
-          el.style.border = "none";
-          el.style.cursor = "pointer";
-        }
-        return el;
-      }
-
-      const profileItem = makeItem("الملف الشخصي", "profile.html", false);
-      const settingsItem = makeItem("الإعدادات", "settings.html", false);
-      const logoutItem = makeItem("تسجيل خروج", "", true);
-
-      logoutItem.addEventListener("click", () => {
-        localStorage.removeItem(MLO5_CURRENT_USER_KEY);
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async () => {
+        await signOut(auth);
         window.location.href = "index.html";
       });
-
-      menu.appendChild(profileItem);
-      menu.appendChild(settingsItem);
-      menu.appendChild(logoutItem);
-
-      wrapper.appendChild(label);
-      wrapper.appendChild(menu);
-
-      topBar.replaceChild(wrapper, loginLink);
-    })();
+    }
   </script>
 </body>
 </html>
-
-
-
-
