@@ -592,34 +592,33 @@
     // ضع رابط القناة هنا:
     const CHANNEL_URL = "https://www.youtube.com/@mlo5ya";
 
-    // فيديوهاتك: (ضع روابط الفيديوهات + عنوان + نوع + صورة)
-    // type: "long" | "short" | "live"
-    const videos = [
-      {
-        title: "مثال: أقوى لحظة في Geometry Dash 🔥",
-        url: "https://www.youtube.com/watch?v=VIDEO_ID_1",
-        type: "long",
-        duration: "16:27",
-        date: "2025-12-10",
-        thumb: "https://i.ytimg.com/vi/VIDEO_ID_1/hqdefault.jpg"
-      },
-      {
-        title: "مثال: شورت سريع (Clip) 😱",
-        url: "https://www.youtube.com/shorts/SHORT_ID_2",
-        type: "short",
-        duration: "0:28",
-        date: "2025-12-08",
-        thumb: "https://i.ytimg.com/vi/SHORT_ID_2/hqdefault.jpg"
-      },
-      {
-        title: "مثال: بث مباشر - تحديات 🔴",
-        url: "https://www.youtube.com/watch?v=LIVE_ID_3",
-        type: "live",
-        duration: "Live",
-        date: "2025-12-07",
-        thumb: "https://i.ytimg.com/vi/LIVE_ID_3/hqdefault.jpg"
-      }
-    ];
+    // فيديوهاتك (تلقائي من latest-videos.json)
+let videos = [];
+    async function loadVideos(){
+  const grid = document.getElementById("videos-grid");
+  const empty = document.getElementById("videos-empty");
+
+  if (grid) {
+    grid.innerHTML = `<div class="empty">⏳ جارِ تحميل أحدث الفيديوهات...</div>`;
+  }
+  if (empty) empty.classList.add("hidden");
+
+  try{
+    const res = await fetch("./latest-videos.json", { cache: "no-store" });
+    if(!res.ok) throw new Error("latest-videos.json not found");
+
+    const data = await res.json();
+    const list = Array.isArray(data?.videos) ? data.videos : [];
+
+    videos = list.slice(0, 15);
+  }catch(e){
+    videos = [];
+  }
+
+  setCounts();
+  renderVideos();
+}
+
 
     // ثمبنيلات (ضع رابط الصورة + اسم/وصف + تصنيف اختياري)
     const thumbs = [
@@ -997,12 +996,12 @@
     }
 
     // ======= Init =======
-    setCounts();
-    renderVideos();
-    renderThumbs();
-    renderIdeas();
-    applyLang(); // calls bindLatestLongButton() as well
-    bindLatestLongButton();
+renderThumbs();
+renderIdeas();
+applyLang(); // calls bindLatestLongButton() as well
+loadVideos(); // تحميل وعرض آخر 15 فيديو تلقائيًا
+bindLatestLongButton();
   </script>
 </body>
 </html>
+
