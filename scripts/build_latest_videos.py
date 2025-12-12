@@ -2,7 +2,7 @@ import os, re, json, requests, feedparser
 from datetime import datetime, timezone
 
 CHANNEL_HANDLE_URL = os.environ.get("CHANNEL_HANDLE_URL", "").strip()
-OUT_PATH = os.environ.get("OUT_PATH", "site/latest-videos.json")
+OUT_PATH = os.environ.get("OUT_PATH", "latest-videos.json")
 LIMIT = int(os.environ.get("LIMIT", "15"))
 
 def now_iso():
