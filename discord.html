@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <title>Discord - Mlo5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg-dark:#020202;
+      --yellow:#facc15;
+      --white:#f9fafb;
+      --muted:#9ca3af;
+      --border:rgba(156,163,175,.22);
+      --border-strong:rgba(30,30,30,.95);
+      --shadow:0 18px 45px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,.95);
+      --shadow-soft:0 10px 24px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.9);
+      --radius:22px;
+      --radius-full:999px;
+      --grid-x:0px;
+      --grid-y:0px;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+
+    body{
+      font-family:"Tajawal",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg-dark);
+      color:var(--white);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+      padding:16px;
+      position:relative;
+      cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+    }
+
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image: radial-gradient(circle, rgba(249,250,251,.55) 1px, transparent 1px);
+      background-size:30px 30px;
+      background-position: calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
+      opacity:.25; mix-blend-mode:screen;
+    }
+
+    .page{
+      position:relative; z-index:1;
+      width:100%; max-width:1100px; margin:auto;
+    }
+
+    .top-bar{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px; flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .left-actions, .right-actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+    .back-link{
+      font-size:.85rem; color:var(--muted);
+      text-decoration:none;
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 12px; border-radius:var(--radius-full);
+      background:rgba(10,10,10,.9);
+      border:1px solid var(--border-strong);
+      box-shadow:var(--shadow-soft);
+      transition:transform .15s ease, background .15s ease;
+    }
+    .back-link:hover{ background:rgba(20,20,20,.95); transform:translateY(-1px); }
+
+    .lang-toggle{
+      width:36px; height:36px; border-radius:var(--radius-full);
+      border:1px solid rgba(148,163,184,.7);
+      background:radial-gradient(circle at top,#111,#020202);
+      color:var(--yellow);
+      display:inline-flex; align-items:center; justify-content:center;
+      cursor:pointer; font-size:1rem;
+      box-shadow:var(--shadow-soft);
+      transition:transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+    }
+    .lang-toggle:hover{
+      transform:translateY(-1px);
+      background:radial-gradient(circle at top,#facc15,#fbbf24);
+      color:#000;
+      box-shadow:0 14px 30px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.8);
+    }
+
+    .btn{
+      border:1px solid rgba(250,204,21,.35);
+      background:rgba(10,10,10,.88);
+      color:var(--yellow);
+      padding:10px 14px;
+      border-radius:var(--radius-full);
+      cursor:pointer;
+      font-size:.88rem;
+      display:inline-flex; align-items:center; gap:8px;
+      box-shadow:var(--shadow-soft);
+      transition:transform .15s ease, background .15s ease, filter .15s ease;
+      text-decoration:none;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform:translateY(-1px); filter:brightness(1.05); background:rgba(18,18,18,.92); }
+    .btn.primary{
+      background:radial-gradient(circle at top,#facc15,#fbbf24);
+      color:#000;
+      border:1px solid rgba(250,204,21,.8);
+    }
+
+    .header{ margin-bottom:14px; }
+    .title{
+      font-family:"Poppins","Tajawal",system-ui,sans-serif;
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size:1.6rem;
+      margin-bottom:6px;
+    }
+    .subtitle{
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.8;
+      max-width:900px;
+    }
+
+    .card{
+      background:radial-gradient(circle at top,#111,#020202);
+      border-radius:var(--radius);
+      border:1px solid rgba(20,20,20,.95);
+      box-shadow:var(--shadow);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background:radial-gradient(circle at top, rgba(250,204,21,.16), transparent 55%);
+      opacity:.7;
+      pointer-events:none;
+      mix-blend-mode:screen;
+    }
+    .card-inner{ position:relative; z-index:1; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:12px;
+      align-items:start;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border-radius:18px;
+      border:1px solid rgba(156,163,175,.14);
+      background:rgba(10,10,10,.55);
+      box-shadow:0 14px 30px rgba(0,0,0,.7);
+      overflow:hidden;
+      padding:14px;
+    }
+
+    .hero{
+      display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+      padding-bottom:12px;
+      border-bottom:1px solid rgba(156,163,175,.12);
+      margin-bottom:12px;
+    }
+    .logo{
+      width:54px; height:54px;
+      border-radius:16px;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(250,204,21,.10);
+      border:1px solid rgba(250,204,21,.35);
+      color:var(--yellow);
+      font-size:1.35rem;
+      box-shadow:var(--shadow-soft);
+    }
+    .hero h2{
+      font-family:"Poppins","Tajawal",system-ui,sans-serif;
+      font-size:1.05rem;
+      font-weight:800;
+      margin-bottom:2px;
+    }
+    .hero p{ color:rgba(156,163,175,.95); font-size:.86rem; line-height:1.7; }
+
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin-top:12px;
+    }
+
+    .invite-box{
+      display:flex; gap:10px; align-items:center;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid rgba(156,163,175,.18);
+      background:rgba(10,10,10,.65);
+      box-shadow:0 10px 24px rgba(0,0,0,.75);
+      margin-top:12px;
+    }
+    .invite-box code{
+      flex:1;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:rgba(156,163,175,.95);
+      font-size:.86rem;
+    }
+
+    .list{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .item{
+      border-radius:16px;
+      border:1px solid rgba(156,163,175,.14);
+      background:rgba(0,0,0,.22);
+      padding:10px 12px;
+      color:rgba(156,163,175,.95);
+      font-size:.88rem;
+      line-height:1.8;
+    }
+    .item b{ color:var(--white); }
+
+    .qr{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+      text-align:center;
+    }
+    .qr img{
+      width:min(240px, 100%);
+      border-radius:18px;
+      border:1px solid rgba(156,163,175,.18);
+      background:#0b0b0b;
+      box-shadow:0 14px 30px rgba(0,0,0,.7);
+    }
+    .hint{
+      font-size:.82rem;
+      color:rgba(156,163,175,.9);
+      line-height:1.8;
+    }
+
+    .toast{
+      position:fixed;
+      bottom:16px;
+      left:16px;
+      right:16px;
+      margin:auto;
+      max-width:520px;
+      z-index:60;
+      display:none;
+      padding:10px 12px;
+      border-radius:18px;
+      border:1px solid rgba(156,163,175,.18);
+      background:rgba(10,10,10,.85);
+      box-shadow:0 18px 45px rgba(0,0,0,.95);
+      color:var(--white);
+      font-size:.9rem;
+      line-height:1.6;
+      text-align:center;
+    }
+    .toast.show{ display:block; }
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+
+  <main class="page">
+    <div class="top-bar">
+      <div class="left-actions">
+        <a class="back-link" href="index.html" id="back-link">← عودة للصفحة الرئيسية</a>
+        <a class="btn primary" id="btn-join" href="#" target="_blank" rel="noopener">🚀 انضم للسيرفر</a>
+        <button class="btn" id="btn-copy">📋 نسخ الرابط</button>
+      </div>
+      <div class="right-actions">
+        <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
+      </div>
+    </div>
+
+    <header class="header">
+      <h1 class="title" id="page-title">Discord</h1>
+      <p class="subtitle" id="page-subtitle">
+        مجتمع Mlo5 للدردشة، التحديات، الإعلانات، ولقاءات البث — تعال وخلّينا نولّعها 🔥
+      </p>
+    </header>
+
+    <section class="card">
+      <div class="card-inner">
+        <div class="grid">
+          <!-- Left: main content -->
+          <div class="panel">
+            <div class="hero">
+              <div class="logo">💬</div>
+              <div>
+                <h2 id="hero-title">سيرفر Mlo5 الرسمي</h2>
+                <p id="hero-sub">ادخل وخليك قريب من كل جديد: بثوث، فيديوهات، مسابقات، ورومات لعب.</p>
+              </div>
+            </div>
+
+            <div class="invite-box">
+              <code id="invite-code">https://discord.com/invite/wCvzXh5r6X</code>
+              <button class="btn" id="btn-copy2">📋</button>
+            </div>
+
+            <div class="row">
+              <a class="btn primary" id="btn-join2" href="#" target="_blank" rel="noopener">🚀 انضم الآن</a>
+              <a class="btn" id="btn-open" href="#" target="_blank" rel="noopener">🌍 افتح بالديسكورد</a>
+            </div>
+
+            <div class="list">
+              <div class="item" id="rule-1"><b>✅ احترام الجميع:</b> ممنوع الإهانة والعنصرية.</div>
+              <div class="item" id="rule-2"><b>✅ بدون سبام:</b> لا تكرار رسائل أو روابط مزعجة.</div>
+              <div class="item" id="rule-3"><b>✅ محتوى مناسب:</b> ابتعد عن أي محتوى +18.</div>
+              <div class="item" id="rule-4"><b>✅ شارك وتفاعل:</b> اقتراحاتك ودعمك مهم!</div>
+            </div>
+
+            <p class="hint" id="note">
+              ملاحظة: إذا ما فتح معك في المتصفح، جرّب زر “افتح بالديسكورد” أو انسخ الرابط وافتحه من التطبيق.
+            </p>
+          </div>
+
+          <!-- Right: QR -->
+          <div class="panel qr">
+            <img id="qr-img" alt="Discord invite QR"/>
+            <div class="hint" id="qr-hint">
+              امسح الـ QR بالموبايل عشان تدخل بسرعة.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">✅</div>
+
+  <script>
+    // ======= Background grid move =======
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+    });
+
+    // ======= Config =======
+    const INVITE_URL = "https://discord.com/invite/wCvzXh5r6X";
+
+    const $ = (id) => document.getElementById(id);
+
+    function showToast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> t.classList.remove("show"), 1200);
+    }
+
+    async function copyInvite(){
+      try{
+        await navigator.clipboard.writeText(INVITE_URL);
+        showToast(currentLang === "en" ? "✅ Copied!" : "✅ تم النسخ!");
+      }catch(e){
+        showToast(currentLang === "en" ? "❌ Copy failed" : "❌ فشل النسخ");
+      }
+    }
+
+    // Buttons
+    $("btn-join").href = INVITE_URL;
+    $("btn-join2").href = INVITE_URL;
+    $("btn-open").href = INVITE_URL;
+
+    $("invite-code").textContent = INVITE_URL;
+    $("btn-copy").addEventListener("click", copyInvite);
+    $("btn-copy2").addEventListener("click", copyInvite);
+
+    // QR (بدون أي API keys)
+    // ملاحظة: إذا عندك مانع CORS عندك، احذف QR أو خليها صورة ثابتة.
+    function setQR(){
+      const qr = $("qr-img");
+      const encoded = encodeURIComponent(INVITE_URL);
+      qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=420x420&data=${encoded}`;
+    }
+    setQR();
+
+    // ======= Language =======
+    const LANG_KEY = "mlo5-lang";
+    const langToggle = $("lang-toggle");
+    let currentLang = localStorage.getItem(LANG_KEY) || "ar";
+
+    const l10n = {
+      ar: {
+        docTitle: "Discord - Mlo5",
+        back: "← عودة للصفحة الرئيسية",
+        title: "Discord",
+        subtitle: "مجتمع Mlo5 للدردشة، التحديات، الإعلانات، ولقاءات البث — تعال وخلّينا نولّعها 🔥",
+        join: "🚀 انضم للسيرفر",
+        copy: "📋 نسخ الرابط",
+        heroTitle: "سيرفر Mlo5 الرسمي",
+        heroSub: "ادخل وخليك قريب من كل جديد: بثوث، فيديوهات، مسابقات، ورومات لعب.",
+        joinNow: "🚀 انضم الآن",
+        openDiscord: "🌍 افتح بالديسكورد",
+        rule1: "<b>✅ احترام الجميع:</b> ممنوع الإهانة والعنصرية.",
+        rule2: "<b>✅ بدون سبام:</b> لا تكرار رسائل أو روابط مزعجة.",
+        rule3: "<b>✅ محتوى مناسب:</b> ابتعد عن أي محتوى +18.",
+        rule4: "<b>✅ شارك وتفاعل:</b> اقتراحاتك ودعمك مهم!",
+        note: "ملاحظة: إذا ما فتح معك في المتصفح، جرّب زر “افتح بالديسكورد” أو انسخ الرابط وافتحه من التطبيق.",
+        qrHint: "امسح الـ QR بالموبايل عشان تدخل بسرعة.",
+        langTitle: "العربية"
+      },
+      en: {
+        docTitle: "Discord - Mlo5",
+        back: "← Back to home",
+        title: "Discord",
+        subtitle: "The official Mlo5 community for chat, challenges, announcements, and stream hangouts — join us 🔥",
+        join: "🚀 Join server",
+        copy: "📋 Copy link",
+        heroTitle: "Mlo5 Official Server",
+        heroSub: "Stay close to everything new: streams, videos, events, and gaming rooms.",
+        joinNow: "🚀 Join now",
+        openDiscord: "🌍 Open in Discord",
+        rule1: "<b>✅ Be respectful:</b> No insults or hate.",
+        rule2: "<b>✅ No spam:</b> Don’t flood messages or links.",
+        rule3: "<b>✅ Keep it safe:</b> No 18+ content.",
+        rule4: "<b>✅ Engage:</b> Your support and ideas matter!",
+        note: "Note: If it doesn’t open in the browser, use “Open in Discord” or copy the link and open it in the app.",
+        qrHint: "Scan the QR on mobile to join quickly.",
+        langTitle: "English"
+      }
+    };
+
+    function applyLang(){
+      const s = l10n[currentLang] || l10n.ar;
+
+      document.title = s.docTitle;
+      $("back-link").textContent = s.back;
+
+      $("page-title").textContent = s.title;
+      $("page-subtitle").textContent = s.subtitle;
+
+      $("btn-join").textContent = s.join;
+      $("btn-copy").textContent = s.copy;
+
+      $("hero-title").textContent = s.heroTitle;
+      $("hero-sub").textContent = s.heroSub;
+
+      $("btn-join2").textContent = s.joinNow;
+      $("btn-open").textContent = s.openDiscord;
+
+      $("rule-1").innerHTML = s.rule1;
+      $("rule-2").innerHTML = s.rule2;
+      $("rule-3").innerHTML = s.rule3;
+      $("rule-4").innerHTML = s.rule4;
+
+      $("note").textContent = s.note;
+      $("qr-hint").textContent = s.qrHint;
+
+      langToggle.title = s.langTitle;
+
+      document.documentElement.lang = currentLang === "en" ? "en" : "ar";
+      document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
+    }
+
+    langToggle.addEventListener("click", ()=>{
+      currentLang = currentLang === "ar" ? "en" : "ar";
+      localStorage.setItem(LANG_KEY, currentLang);
+      applyLang();
+    });
+
+    applyLang();
+  </script>
+</body>
+</html>
