@@ -60,6 +60,20 @@
       margin-bottom:10px;
       direction:ltr;
     }
+
+    /* ✅ Profile mini header */
+    .profile-head{
+      display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    }
+    .avatar{
+      width:64px;height:64px;border-radius:50%;
+      overflow:hidden; border:2px solid rgba(250,204,21,.9);
+      background:#000; flex:0 0 auto;
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .u-title{font-weight:900;color:var(--yellow);font-size:1rem}
+    .u-sub{color:var(--muted);font-size:.86rem;margin-top:4px;line-height:1.35}
+
     .row{
       display:flex; gap:14px; align-items:center; justify-content:space-between;
       padding:12px 0;
@@ -67,12 +81,11 @@
     }
     .row:first-of-type{border-top:none}
     .row-left{min-width:0}
-    .row-title{font-weight:800; font-size:.95rem}
+    .row-title{font-weight:900; font-size:.95rem}
     .row-desc{color:var(--muted); font-size:.85rem; margin-top:4px; line-height:1.4}
+
     /* Toggle */
-    .toggle{
-      position:relative; width:52px; height:30px; flex:0 0 auto;
-    }
+    .toggle{ position:relative; width:52px; height:30px; flex:0 0 auto; }
     .toggle input{opacity:0; width:0; height:0}
     .slider{
       position:absolute; inset:0;
@@ -103,6 +116,7 @@
       background:var(--yellow);
       border-color:#000;
     }
+
     .actions{
       display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
     }
@@ -130,6 +144,17 @@
       <a class="pill" id="back-home" href="index.html">⬅︎ <span id="back-home-txt">الرئيسية</span></a>
       <button class="lang-toggle" id="lang-toggle" title="العربية">🌐</button>
       <button class="pill" id="logout-btn" type="button">⎋ <span id="logout-txt">تسجيل خروج</span></button>
+    </div>
+
+    <!-- ✅ mini profile header (shows everywhere) -->
+    <div class="card">
+      <div class="profile-head">
+        <div class="avatar"><img id="avatar-img" src="me.jpg" alt="avatar" /></div>
+        <div>
+          <div class="u-title" id="u-name">...</div>
+          <div class="u-sub" id="u-email">...</div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -274,6 +299,13 @@
       await setDoc(ref, { ...data, updatedAt: serverTimestamp() }, { merge: true });
     }
 
+    async function getProfile(uid){
+      // ✅ نفس المسار اللي بالبروفايل
+      const ref = doc(db, "users", uid, "profile", "main");
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+
     // ---------- UI ----------
     const msg = document.getElementById("msg");
     const toastEnabled = document.getElementById("toastEnabled");
@@ -283,6 +315,11 @@
     const saveBtn = document.getElementById("save-btn");
     const logoutBtn = document.getElementById("logout-btn");
     const langToggle = document.getElementById("lang-toggle");
+
+    // mini profile header
+    const avatarImg = document.getElementById("avatar-img");
+    const uName = document.getElementById("u-name");
+    const uEmail = document.getElementById("u-email");
 
     function setMsg(text, ok=false){
       msg.style.color = ok ? "#22c55e" : "#9ca3af";
@@ -301,20 +338,23 @@
 
       currentUid = user.uid;
 
-      // حمّل الإعدادات
+      // ✅ اعرض بيانات أساسية فوراً (ثم نبدّلها لو في Firestore)
+      uName.textContent = (user.displayName || user.email || "User");
+      uEmail.textContent = user.email || "";
+      avatarImg.src = user.photoURL || "me.jpg";
+
       try{
         setMsg(l10n[currentLang].loading);
-        const s = await getSettings(user.uid);
 
-        // لغة
+        // 1) Settings
+        const s = await getSettings(user.uid);
         applyLang(s?.lang || "ar");
 
-        // Defaults (لو أول مرة)
         toastEnabled.checked = (s?.toastEnabled ?? true);
-        toastSound.checked = (s?.toastSound ?? true);
+        toastSound.checked   = (s?.toastSound ?? true);
         reduceMotion.checked = (s?.reduceMotion ?? false);
 
-        // لو الوثيقة غير موجودة، ثبت defaults
+        // لو أول مرة: ثبّت defaults مرة واحدة
         if (!s) {
           await saveSettings(user.uid, {
             lang: currentLang,
@@ -323,6 +363,13 @@
             reduceMotion: false
           });
         }
+
+        // 2) Profile (username + photoURL)
+        const p = await getProfile(user.uid);
+        const display = (p?.username || "").trim() || (user.displayName || user.email || "User");
+        uName.textContent = display;
+
+        if (p?.photoURL) avatarImg.src = p.photoURL;
 
         setMsg("");
       }catch(e){
