@@ -1,1 +1,492 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Room - M L O 5</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
 
+  <style>
+    :root{
+      --bg-dark:#020202; --yellow:#facc15; --white:#f9fafb; --muted:#9ca3af;
+      --border: rgba(250,204,21,.45);
+      --card-border: rgba(156,163,175,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Tajawal",system-ui,-apple-system,"Segoe UI",sans-serif;
+      background:var(--bg-dark); color:var(--white);
+      min-height:100vh; padding:18px;
+      display:flex; justify-content:center;
+    }
+    .wrap{width:100%; max-width:1100px;}
+    .top-bar{
+      display:flex; gap:10px; align-items:center; justify-content:flex-start;
+      direction:ltr; margin-bottom:14px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 14px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.55);
+      color:var(--white); text-decoration:none;
+      cursor:pointer; user-select:none;
+      transition:transform .15s ease, background .15s ease;
+      font-weight:900; font-size:.9rem;
+    }
+    .pill:hover{transform:translateY(-1px); background:rgba(250,204,21,.12)}
+
+    .grid{display:grid;grid-template-columns: 1fr 320px;gap:14px;}
+    @media(max-width:900px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      border:1px solid var(--card-border);
+      background:linear-gradient(145deg,#020202,#050505);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:0 12px 30px rgba(0,0,0,.85);
+    }
+
+    .room-head{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      padding-bottom:10px;
+    }
+    .room-title{
+      font-family:"Poppins",system-ui,sans-serif;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--yellow);
+      font-size:1rem;
+      direction:ltr;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:70%;
+    }
+    .room-sub{color:var(--muted); font-size:.85rem;}
+    .muted{color:var(--muted); font-size:.9rem;}
+
+    .chat-box{
+      height: 60vh;
+      min-height: 420px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.45);
+      padding: 12px;
+      overflow:auto;
+    }
+
+    .msg-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+    .avatar{
+      width:34px;height:34px;border-radius:50%;
+      overflow:hidden;border:1px solid rgba(250,204,21,.55);
+      background:#000;flex:0 0 auto;
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .bubble{
+      flex:1;border-radius:14px;border:1px solid rgba(255,255,255,.10);
+      padding:10px;background: rgba(15,23,42,.65);
+    }
+    .meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;}
+    .name{font-weight:900;color:var(--yellow);font-size:.9rem;}
+    .time{color:rgba(156,163,175,.9);font-size:.75rem;white-space:nowrap;}
+    .text{color:var(--white);font-size:.92rem;line-height:1.45;word-wrap:break-word;}
+
+    .system{text-align:center;color: rgba(156,163,175,.95);font-size:.85rem;margin:10px 0;}
+
+    .composer{display:flex;gap:10px;margin-top:10px;}
+    .composer input{
+      flex:1;border-radius:999px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.45);color:var(--white);
+      padding:10px 12px;font-size:.95rem;outline:none;
+    }
+    .composer input:focus{
+      border-color: rgba(250,204,21,.8);
+      box-shadow:0 0 0 4px rgba(250,204,21,.18);
+    }
+    .send{
+      border:none;cursor:pointer;padding:10px 14px;border-radius:999px;
+      font-weight:900;background: var(--yellow);color:#111;white-space:nowrap;
+    }
+
+    .side-title{font-weight:900;color: var(--yellow);margin-bottom:8px;}
+    .online-list{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:4px;}
+    .online{
+      display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);background: rgba(0,0,0,.45);
+    }
+    .online .o-name{font-weight:900;}
+    .online .o-sub{color:var(--muted); font-size:.8rem; margin-top:2px;}
+
+    /* ✅ Debug bar */
+    .debug{
+      margin-bottom:12px;
+      border:1px dashed rgba(250,204,21,.55);
+      background:rgba(0,0,0,.35);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:.88rem;
+      color:#e5e7eb;
+    }
+    .debug b{color:var(--yellow)}
+    .debug .err{color:#fca5a5; margin-top:6px; white-space:pre-wrap}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top-bar">
+      <a class="pill" href="chatrooms.html">⬅︎ <span>الغرف</span></a>
+      <a class="pill" href="index.html">🏠 <span>الرئيسية</span></a>
+      <button class="pill" id="logout-btn" type="button">⎋ <span>تسجيل خروج</span></button>
+    </div>
+
+    <div class="debug" id="debug">
+      <div>الحالة: <b id="dbg-state">بدء التشغيل…</b></div>
+      <div>الغرفة: <b id="dbg-room">…</b></div>
+      <div>UID: <b id="dbg-uid">…</b></div>
+      <div class="err" id="dbg-err"></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="room-head">
+          <div>
+            <div class="room-title" id="room-title">ROOM</div>
+            <div class="room-sub">Online chat (Firestore realtime)</div>
+          </div>
+          <div class="muted" id="me-badge">...</div>
+        </div>
+
+        <div class="chat-box" id="chat"></div>
+
+        <div class="composer">
+          <input id="text" placeholder="اكتب رسالة..." maxlength="600" />
+          <button class="send" id="send" type="button">إرسال</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="side-title">المتواجدون الآن</div>
+        <div class="muted" id="online-count"></div>
+        <div class="online-list" id="online-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc, getDoc, setDoc, addDoc,
+      collection, query, orderBy, limit,
+      onSnapshot, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+      authDomain: "mlo5-users.firebaseapp.com",
+      projectId: "mlo5-users",
+      appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+    };
+
+    // ------- debug helpers -------
+    const dbgState = document.getElementById("dbg-state");
+    const dbgRoom  = document.getElementById("dbg-room");
+    const dbgUid   = document.getElementById("dbg-uid");
+    const dbgErr   = document.getElementById("dbg-err");
+    function setState(s){ dbgState.textContent = s; }
+    function setErr(e){
+      const msg = (e && e.message) ? e.message : String(e || "");
+      dbgErr.textContent = msg ? ("ERROR: " + msg) : "";
+    }
+
+    // -------- room param --------
+    const params = new URLSearchParams(location.search);
+    const roomId = (params.get("room") || "").trim();
+    if (!roomId) location.href = "chatrooms.html";
+
+    dbgRoom.textContent = roomId;
+
+    const roomTitleEl = document.getElementById("room-title");
+    roomTitleEl.textContent = String(roomId).toUpperCase();
+
+    const chatEl = document.getElementById("chat");
+    const onlineListEl = document.getElementById("online-list");
+    const onlineCountEl = document.getElementById("online-count");
+    const meBadge = document.getElementById("me-badge");
+    const input = document.getElementById("text");
+    const sendBtn = document.getElementById("send");
+
+    function escapeHtml(s){
+      return (s || "").replace(/[&<>"']/g, (c)=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
+    function fmtTime(date){
+      try{ return new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit"}).format(date); }
+      catch{ return ""; }
+    }
+    function scrollToBottom(){ chatEl.scrollTop = chatEl.scrollHeight; }
+
+    // -------- Firebase init --------
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ✅ مهم: ثبّت الـ auth persistence
+    try { await setPersistence(auth, browserLocalPersistence); } catch(e){ /* ignore */ }
+
+    // Firestore locations
+    const roomRef = doc(db, "chatRooms", roomId);
+    const messagesRef = collection(db, "chatRooms", roomId, "messages");
+    const presenceCol = collection(db, "chatRooms", roomId, "presence");
+
+    async function getChatProfile(uid){
+      // 1) جرّب sessionStorage (البيانات اللي دخلتها من chatrooms)
+      try{
+        const s = sessionStorage.getItem("mlo5-chat");
+        if (s) {
+          const parsed = JSON.parse(s);
+          if (parsed?.name && parsed?.age && parsed?.gender) return parsed;
+        }
+      }catch{}
+
+      // 2) جرّب Firestore
+      const ref = doc(db, "users", uid, "chatProfile", "main");
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+
+    function renderMessage(m){
+      if (m.type === "system"){
+        const div = document.createElement("div");
+        div.className = "system";
+        div.textContent = m.text || "";
+        chatEl.appendChild(div);
+        return;
+      }
+
+      const row = document.createElement("div");
+      row.className = "msg-row";
+
+      const av = document.createElement("div");
+      av.className = "avatar";
+      const img = document.createElement("img");
+      img.src = m.photoURL || "me.jpg";
+      img.alt = "avatar";
+      av.appendChild(img);
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = m.name || "User";
+
+      const time = document.createElement("div");
+      time.className = "time";
+      const dt = m.createdAt?.toDate ? m.createdAt.toDate() : null;
+      time.textContent = dt ? fmtTime(dt) : "";
+
+      meta.appendChild(name);
+      meta.appendChild(time);
+
+      const text = document.createElement("div");
+      text.className = "text";
+      text.innerHTML = escapeHtml(m.text || "");
+
+      bubble.appendChild(meta);
+      bubble.appendChild(text);
+
+      row.appendChild(av);
+      row.appendChild(bubble);
+
+      chatEl.appendChild(row);
+    }
+
+    function renderOnline(list){
+      onlineListEl.innerHTML = "";
+      list.forEach((u) => {
+        const item = document.createElement("div");
+        item.className = "online";
+
+        const av = document.createElement("div");
+        av.className = "avatar";
+        const img = document.createElement("img");
+        img.src = u.photoURL || "me.jpg";
+        img.alt = "avatar";
+        av.appendChild(img);
+
+        const box = document.createElement("div");
+        const nm = document.createElement("div");
+        nm.className = "o-name";
+        nm.textContent = u.name || "User";
+
+        const sub = document.createElement("div");
+        sub.className = "o-sub";
+        sub.textContent = `${u.gender === "male" ? "ذكر" : "أنثى"} · ${u.age || "?"}`;
+
+        box.appendChild(nm);
+        box.appendChild(sub);
+
+        item.appendChild(av);
+        item.appendChild(box);
+
+        onlineListEl.appendChild(item);
+      });
+
+      onlineCountEl.textContent = `Online: ${list.length}`;
+    }
+
+    let currentUid = null;
+    let me = null;
+    let heartbeatTimer = null;
+    let unsubMessages = null;
+    let unsubPresence = null;
+
+    async function writeSystem(text){
+      await addDoc(messagesRef, { type:"system", text, createdAt: serverTimestamp() });
+    }
+
+    async function upsertPresence(){
+      const ref = doc(db, "chatRooms", roomId, "presence", currentUid);
+      await setDoc(ref, {
+        uid: currentUid,
+        name: me.name,
+        age: me.age,
+        gender: me.gender,
+        photoURL: me.photoURL || "",
+        lastActive: serverTimestamp()
+      }, { merge:true });
+    }
+
+    function startHeartbeat(){
+      if (heartbeatTimer) clearInterval(heartbeatTimer);
+      heartbeatTimer = setInterval(() => upsertPresence().catch(()=>{}), 20000);
+    }
+
+    function attachRealtime(){
+      // messages
+      const qMsgs = query(messagesRef, orderBy("createdAt","asc"), limit(200));
+      unsubMessages = onSnapshot(qMsgs,
+        (snap) => {
+          chatEl.innerHTML = "";
+          snap.forEach((d) => renderMessage(d.data()));
+          scrollToBottom();
+        },
+        (err) => {
+          setErr(err);
+          setState("Firestore messages snapshot ERROR");
+        }
+      );
+
+      // presence
+      unsubPresence = onSnapshot(presenceCol,
+        (snap) => {
+          const now = Date.now();
+          const online = [];
+          snap.forEach((d) => {
+            const data = d.data();
+            const last = data.lastActive?.toDate ? data.lastActive.toDate().getTime() : 0;
+            if (now - last <= 65000) online.push(data);
+          });
+          online.sort((a,b)=> (a.name||"").localeCompare(b.name||""));
+          renderOnline(online);
+        },
+        (err) => {
+          setErr(err);
+          setState("Firestore presence snapshot ERROR");
+        }
+      );
+    }
+
+    async function joinRoom(){
+      await setDoc(roomRef, { updatedAt: serverTimestamp() }, { merge:true });
+      await upsertPresence();
+      startHeartbeat();
+      await writeSystem(`${me.name} دخل الغرفة ✅`);
+    }
+
+    async function send(){
+      if (!currentUid || !me) return;
+      const text = (input.value || "").trim();
+      if (!text) return;
+      input.value = "";
+
+      await addDoc(messagesRef, {
+        type: "user",
+        text,
+        uid: currentUid,
+        name: me.name,
+        photoURL: me.photoURL || "",
+        createdAt: serverTimestamp()
+      });
+      upsertPresence().catch(()=>{});
+    }
+
+    sendBtn.addEventListener("click", () => send().catch(e=>setErr(e)));
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") send().catch(e=>setErr(e)); });
+
+    document.getElementById("logout-btn").addEventListener("click", async () => {
+      try{ await writeSystem(`${me?.name || "User"} خرج من الغرفة 👋`); }catch{}
+      await signOut(auth);
+      location.href = "index.html";
+    });
+
+    // -------- Auth gate --------
+    setState("بانتظار تسجيل الدخول…");
+    onAuthStateChanged(auth, async (user) => {
+      try{
+        if (!user) {
+          setState("غير مسجل دخول → تحويل للـ login");
+          setTimeout(() => location.href = "login.html", 500);
+          return;
+        }
+
+        currentUid = user.uid;
+        dbgUid.textContent = currentUid;
+
+        setState("تحميل بيانات المستخدم…");
+        const chat = await getChatProfile(currentUid);
+
+        if (!chat?.name || !chat?.age || !chat?.gender) {
+          setState("لا يوجد بيانات شات → ارجع لغرف الدردشة");
+          location.href = "chatrooms.html";
+          return;
+        }
+
+        me = {
+          name: chat.name,
+          age: chat.age,
+          gender: chat.gender,
+          photoURL: user.photoURL || ""
+        };
+
+        meBadge.textContent = `${me.name} · ${me.gender === "male" ? "ذكر" : "أنثى"} · ${me.age}`;
+
+        setState("تشغيل Realtime…");
+        attachRealtime();
+
+        setState("دخول الغرفة…");
+        await joinRoom();
+
+        setState("✅ شغال");
+
+      }catch(e){
+        console.error(e);
+        setErr(e);
+        setState("❌ Error أثناء تشغيل الغرفة");
+      }
+    });
+  </script>
+</body>
+</html>
