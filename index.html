@@ -1203,42 +1203,9 @@
       topBar.replaceChild(wrapper, loginLink);
     })();
   </script>
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import {
-    getAuth,
-    isSignInWithEmailLink,
-    signInWithEmailLink
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
-    authDomain: "mlo5-users.firebaseapp.com",
-    projectId: "mlo5-users",
-    appId: "1:142086858806:web:64c50f3a8d6250a2049097"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  if (isSignInWithEmailLink(auth, window.location.href)) {
-    let email = localStorage.getItem("mlo5-email");
-    if (!email) {
-      email = prompt("أدخل بريدك الإلكتروني للتأكيد:");
-    }
-
-    signInWithEmailLink(auth, email, window.location.href)
-      .then(() => {
-        localStorage.removeItem("mlo5-email");
-        window.location.href = "index.html";
-      })
-      .catch(() => {
-        alert("الرابط غير صالح أو منتهي.");
-      });
-  }
-</script>
 </body>
 </html>
+
 
 
 
