@@ -19,7 +19,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install deps
-        run: pip install requests feedparser
+        run: pip install feedparser
 
       - name: Build latest-videos.json
         env:
