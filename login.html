@@ -102,13 +102,13 @@
 
   <div class="login-card">
     <div class="login-title">M L O 5</div>
-    <div class="login-subtitle">
-      تسجيل الدخول عبر رابط آمن (Magic Link)
+    <div id="login-subtitle" class="login-subtitle">
+      تسجيل الدخول عبر رابط آمن
     </div>
 
     <form id="login-form">
       <div class="form-group">
-        <label>البريد الإلكتروني</label>
+        <label id="email-label">البريد الإلكتروني</label>
         <input id="email" type="email" placeholder="example@email.com" required />
       </div>
 
@@ -134,18 +134,18 @@
       apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
       authDomain: "mlo5-users.firebaseapp.com",
       projectId: "mlo5-users",
+      storageBucket: "mlo5-users.firebasestorage.app",
+      messagingSenderId: "142086858806",
       appId: "1:142086858806:web:64c50f3a8d6250a2049097"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // ✅ redirect مؤقت للرئيسية
     const actionCodeSettings = {
-  url: "https://mlo5.github.io/site/login.html",
-  handleCodeInApp: true
-};
-
+      url: "https://mlo5.github.io/site/login.html",
+      handleCodeInApp: true
+    };
 
     const form = document.getElementById("login-form");
     const emailInput = document.getElementById("email");
@@ -155,27 +155,19 @@
       e.preventDefault();
       msg.textContent = "";
 
-      if (!emailInput.value) return;
-
       try {
         await sendSignInLinkToEmail(auth, emailInput.value, actionCodeSettings);
         localStorage.setItem("mlo5-email", emailInput.value);
-
-        console.log("Magic link request sent to Firebase");
-
         msg.style.color = "#22c55e";
-        msg.textContent = "📩 تم إرسال رابط تسجيل الدخول إلى بريدك الإلكتروني.";
-      } catch (err) {
-        console.error(err);
+        msg.textContent = "📩 تم إرسال رابط تسجيل الدخول إلى بريدك.";
+      } catch {
         msg.style.color = "#f87171";
-        msg.textContent = "❌ حدث خطأ، تأكد من البريد وحاول مرة أخرى.";
+        msg.textContent = "حدث خطأ، حاول مرة أخرى.";
       }
     });
 
-    // عند فتح الرابط من الإيميل
     if (isSignInWithEmailLink(auth, window.location.href)) {
       let email = localStorage.getItem("mlo5-email");
-
       if (!email) {
         email = prompt("أدخل بريدك الإلكتروني للتأكيد:");
       }
@@ -186,7 +178,6 @@
           window.location.href = "index.html";
         })
         .catch(() => {
-          msg.style.color = "#f87171";
           msg.textContent = "الرابط غير صالح أو منتهي.";
         });
     }
@@ -194,4 +185,3 @@
 
 </body>
 </html>
-
