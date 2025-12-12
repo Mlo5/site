@@ -340,6 +340,108 @@
       to { transform: rotate(360deg); }
     }
 
+    /* ✅ Human check UI */
+    .human-check {
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid rgba(156, 163, 175, 0.22);
+      border-radius: 18px;
+      background: rgba(10,10,10,0.86);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.55);
+    }
+    .hc-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      color: var(--white);
+    }
+    .hc-row input { width: 18px; height: 18px; accent-color: var(--yellow); }
+    .hc-math { margin-top: 10px; }
+    .hc-inline { display: flex; gap: 10px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+    #humanAnswer {
+      width: 120px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(35,35,35,0.96);
+      background: rgba(10,10,10,0.96);
+      color: var(--white);
+      outline: none;
+    }
+    #humanAnswer:focus {
+      border-color: rgba(250,204,21,0.9);
+      box-shadow:
+        0 0 0 1px rgba(250,204,21,0.7),
+        0 0 0 6px rgba(250,204,21,0.18);
+    }
+    .hint { display: block; margin-top: 6px; font-size: 0.78rem; color: var(--muted); min-height: 16px; }
+    .cooldown-note { font-size: 0.8rem; color: var(--muted); min-height: 16px; margin-top: 4px; }
+
+    /* ✅ Modal */
+    .modal { position: fixed; inset: 0; display: none; z-index: 9999; }
+    .modal[aria-hidden="false"] { display: block; }
+    .modal-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(8px);
+    }
+    .modal-card {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(520px, calc(100% - 28px));
+      padding: 18px 18px 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(20,20,20,0.95);
+      background: radial-gradient(circle at top, #111111, #020202);
+      box-shadow:
+        0 18px 55px rgba(0,0,0,0.95),
+        0 0 0 1px rgba(0,0,0,0.95);
+      overflow: hidden;
+    }
+    .modal-card::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: radial-gradient(circle at top, rgba(250, 204, 21, 0.16), transparent 55%);
+      opacity: .7;
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+    .modal-inner{ position: relative; z-index: 1; }
+    .modal-card h3 { margin: 0 0 8px; font-size: 1.05rem; color: var(--white); }
+    .modal-card p { margin: 0 0 14px; opacity: .9; line-height: 1.8; color: var(--muted); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+    .modal-x{
+      position:absolute;
+      top:10px;
+      left:10px;
+      width: 36px; height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(10,10,10,0.9);
+      color: var(--yellow);
+      cursor: pointer;
+      z-index: 2;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .modal-x:hover{ transform: translateY(-1px); background: rgba(20,20,20,0.95); }
+    .modal-btn{
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 2px solid #000;
+      background: var(--yellow);
+      color: #111827;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    }
+    .modal-btn:hover{ transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 12px 28px rgba(0,0,0,0.75); }
+    .modal-btn:active{ transform: translateY(0); box-shadow: 0 6px 16px rgba(0,0,0,0.8); }
+
   </style>
 </head>
 <body>
@@ -396,6 +498,28 @@
     <div class="error-text" id="error-message"></div>
   </div>
 
+  <!-- ✅ Human check (بدون backend) -->
+  <div class="human-check">
+    <label class="hc-row">
+      <input id="humanBox" type="checkbox" required />
+      <span id="human-text">أنا إنسان ✅</span>
+    </label>
+
+    <div class="hc-math">
+      <label class="label" for="humanAnswer" id="human-q-label">سؤال سريع ضد البوتات:</label>
+      <div class="hc-inline">
+        <span id="mathQ">—</span>
+        <input id="humanAnswer" name="human_answer" type="text" inputmode="numeric" autocomplete="off" required />
+      </div>
+      <small id="hcHint" class="hint">جاوب السؤال وبعدين ابعث.</small>
+    </div>
+
+    <input type="hidden" id="jsProof" name="js_proof" value="" />
+  </div>
+
+  <!-- Cooldown message -->
+  <div id="cooldownNote" class="cooldown-note" aria-live="polite"></div>
+
   <button class="btn" id="send-btn" type="submit">إرسال الرسالة</button>
 
   <div class="success-text" id="success-message"></div>
@@ -419,14 +543,29 @@
               </div>
 </div>
 <div class="contact-note" id="contact-note">
-              ملاحظة: نموذج "اتصل بنا" تجريبي حالياً – الرسالة تُحفظ في المتصفح (localStorage). لما تطلع
-              بسيرفر حقيقي، تقدر تربطه بإرسال الإيميل فعلياً.
+              ملاحظة: إذا واجهت سبام، النموذج محمي بـ Honeypot + تحقق بسيط + تأخير 45 ثانية بين كل إرسال.
             </div>
 </div>
 </div>
 </div>
 </section>
 </main>
+
+<!-- ✅ Success Modal -->
+<div id="successModal" class="modal" aria-hidden="true">
+  <div class="modal-backdrop" data-close="1"></div>
+
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-x" type="button" aria-label="إغلاق" data-close="1">×</button>
+    <div class="modal-inner">
+      <h3 id="modalTitle">✅ تم الإرسال بنجاح</h3>
+      <p id="modalMsg">وصلتني رسالتك. رح أرد عليك بأقرب وقت.</p>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn" data-close="1" id="modalOkBtn">تمام</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
     // تحريك شبكة النقاط
@@ -471,9 +610,21 @@
         contactEmailValue: "ih4.mlo5@gmail.com",
         contactSocialLabel: "السوشال ميديا:",
         contactSocialValue: "YouTube · Instagram · TikTok (تقدر تعدّل النص لاحقًا)",
-        contactNote: "ملاحظة: نموذج \"اتصل بنا\" تجريبي حالياً – الرسالة تُحفظ في المتصفح (localStorage). لما تطلع بسيرفر حقيقي، تقدر تربطه بإرسال الإيميل فعلياً.",
+        contactNote: "ملاحظة: إذا واجهت سبام، النموذج محمي بـ Honeypot + تحقق بسيط + تأخير 45 ثانية بين كل إرسال.",
         langTitle: "العربية",
         pageTitle: "اتصل بنا - M L O 5",
+
+        humanText: "أنا إنسان ✅",
+        humanQLabel: "سؤال سريع ضد البوتات:",
+        humanHint: "جاوب السؤال وبعدين ابعث.",
+        cooldownWait: (n) => `استنى ${n} ثانية قبل ما تبعث مرة ثانية.`,
+        modalTitle: "✅ تم الإرسال بنجاح",
+        modalMsg: "وصلتني رسالتك. رح أرد عليك بأقرب وقت.",
+        modalOk: "تمام",
+        humanWrong: "جواب السؤال غلط 😅 جرّب مرة ثانية.",
+        humanNeedCheck: "فعّل مربع (أنا إنسان) ✅",
+        fastFill: "استنى ثانيتين… وبعدين ابعث (حماية ضد البوتات).",
+        verifyIssue: "في مشكلة بالتحقق. حدّث الصفحة وجرب."
       },
       en: {
         back: "← Back to home",
@@ -500,9 +651,21 @@
         contactEmailValue: "ih4.mlo5@gmail.com",
         contactSocialLabel: "Social media:",
         contactSocialValue: "YouTube · Instagram · TikTok (you can edit this text later).",
-        contactNote: "Note: This contact form is demo-only – messages are stored locally (localStorage). When you move to a real server, you can wire it to send real emails.",
+        contactNote: "Note: Anti-spam enabled (honeypot + human check + 45s cooldown).",
         langTitle: "English",
         pageTitle: "Contact - M L O 5",
+
+        humanText: "I'm human ✅",
+        humanQLabel: "Quick anti-bot question:",
+        humanHint: "Answer then submit.",
+        cooldownWait: (n) => `Please wait ${n}s before sending again.`,
+        modalTitle: "✅ Message sent",
+        modalMsg: "Got your message. I'll get back to you soon.",
+        modalOk: "OK",
+        humanWrong: "Wrong answer 😅 Try again.",
+        humanNeedCheck: "Please check (I'm human) ✅",
+        fastFill: "Please wait a moment before submitting (anti-bot).",
+        verifyIssue: "Verification issue. Refresh and try again."
       },
     };
 
@@ -533,6 +696,16 @@
       const contactSocialValue = document.getElementById("contact-social-value");
       const contactNote = document.getElementById("contact-note");
 
+      // human check i18n
+      const humanText = document.getElementById("human-text");
+      const humanQLabel = document.getElementById("human-q-label");
+      const hcHint = document.getElementById("hcHint");
+
+      // modal i18n
+      const modalTitle = document.getElementById("modalTitle");
+      const modalMsg = document.getElementById("modalMsg");
+      const modalOkBtn = document.getElementById("modalOkBtn");
+
       if (backLink) backLink.textContent = s.back;
       if (pageTitle) pageTitle.textContent = s.title;
       if (pageSubtitle) pageSubtitle.textContent = s.subtitle;
@@ -556,6 +729,14 @@
       if (contactSocialValue) contactSocialValue.textContent = s.contactSocialValue;
       if (contactNote) contactNote.textContent = s.contactNote;
 
+      if (humanText) humanText.textContent = s.humanText;
+      if (humanQLabel) humanQLabel.textContent = s.humanQLabel;
+      if (hcHint && !hcHint.dataset.locked) hcHint.textContent = s.humanHint;
+
+      if (modalTitle) modalTitle.textContent = s.modalTitle;
+      if (modalMsg) modalMsg.textContent = s.modalMsg;
+      if (modalOkBtn) modalOkBtn.textContent = s.modalOk;
+
       if (langToggle) langToggle.title = s.langTitle;
 
       document.documentElement.lang = currentLang === "en" ? "en" : "ar";
@@ -569,6 +750,28 @@
         currentLang = currentLang === "ar" ? "en" : "ar";
         localStorage.setItem(LANG_KEY, currentLang);
         applyLang();
+      });
+    }
+
+    // ✅ Modal helpers
+    const modal = document.getElementById("successModal");
+    const modalMsgEl = document.getElementById("modalMsg");
+
+    function openModal(messageText) {
+      if (modalMsgEl && messageText) modalMsgEl.textContent = messageText;
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+    function closeModal() {
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target && e.target.dataset && e.target.dataset.close) closeModal();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.getAttribute("aria-hidden") === "false") closeModal();
       });
     }
 
@@ -607,7 +810,92 @@
       setSuccess("");
     }
 
+    // ✅ Anti-bot: cooldown + math + min-fill-time + js proof
+    const COOLDOWN_SECONDS = 45;
+    const LS_KEY = "mlo5_contact_last_submit_ts";
+
+    const humanBox = document.getElementById("humanBox");
+    const humanAnswer = document.getElementById("humanAnswer");
+    const mathQ = document.getElementById("mathQ");
+    const hcHint = document.getElementById("hcHint");
+    const jsProof = document.getElementById("jsProof");
+    const cooldownNote = document.getElementById("cooldownNote");
+
+    let expectedAnswer = null;
+    let fillStart = Date.now();
+    let countdownTimer = null;
+
+    function now() { return Date.now(); }
+
+    function setCooldown(tsMs) {
+      localStorage.setItem(LS_KEY, String(tsMs));
+    }
+
+    function getCooldownRemaining() {
+      const last = Number(localStorage.getItem(LS_KEY) || "0");
+      if (!last) return 0;
+      const diffSec = Math.floor((now() - last) / 1000);
+      return Math.max(0, COOLDOWN_SECONDS - diffSec);
+    }
+
+    function renderCooldown(submitBtn) {
+      const s = l10n[currentLang] || l10n.ar;
+      const remaining = getCooldownRemaining();
+
+      if (cooldownNote) {
+        cooldownNote.textContent = remaining > 0 ? s.cooldownWait(remaining) : "";
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = remaining > 0;
+      }
+    }
+
+    function startCooldownTicker(submitBtn) {
+      if (countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = setInterval(() => {
+        renderCooldown(submitBtn);
+        if (getCooldownRemaining() === 0) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+        }
+      }, 250);
+    }
+
+    function newMathChallenge() {
+      const a = Math.floor(2 + Math.random() * 8);
+      const b = Math.floor(2 + Math.random() * 8);
+      const op = Math.random() > 0.5 ? "+" : "×";
+
+      expectedAnswer = (op === "+") ? (a + b) : (a * b);
+      if (mathQ) mathQ.textContent = `${a} ${op} ${b} = ؟`;
+      if (humanAnswer) humanAnswer.value = "";
+    }
+
+    function markHumanInteraction() {
+      const token = `${Math.random().toString(16).slice(2)}-${Date.now().toString(16)}`;
+      if (jsProof) jsProof.value = token;
+    }
+
+    newMathChallenge();
+    markHumanInteraction();
+
+    // أول تفاعل فعلي
+    let started = false;
+    ["focusin", "input", "keydown", "pointerdown"].forEach(evt => {
+      document.addEventListener(evt, () => {
+        if (!started) {
+          started = true;
+          fillStart = now();
+        }
+      }, { once: true, passive: true });
+    });
+
     if (contactForm) {
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      renderCooldown(submitBtn);
+      startCooldownTicker(submitBtn);
+
       contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -617,6 +905,58 @@
 
         const s = l10n[currentLang] || l10n.ar;
         clearAllMessages();
+
+        // ✅ Cooldown
+        const remaining = getCooldownRemaining();
+        if (remaining > 0) {
+          renderCooldown(submitBtn);
+          return;
+        }
+
+        // ✅ Human checkbox
+        if (!humanBox || !humanBox.checked) {
+          if (hcHint) {
+            hcHint.dataset.locked = "1";
+            hcHint.textContent = s.humanNeedCheck;
+          }
+          return;
+        }
+
+        // ✅ Math answer
+        const ans = Number(String(humanAnswer?.value || "").trim());
+        if (!Number.isFinite(ans) || ans !== expectedAnswer) {
+          if (hcHint) {
+            hcHint.dataset.locked = "1";
+            hcHint.textContent = s.humanWrong;
+          }
+          newMathChallenge();
+          return;
+        }
+
+        // ✅ min fill time (3s)
+        const elapsedSec = Math.floor((now() - fillStart) / 1000);
+        if (elapsedSec < 3) {
+          if (hcHint) {
+            hcHint.dataset.locked = "1";
+            hcHint.textContent = s.fastFill;
+          }
+          return;
+        }
+
+        // ✅ JS proof
+        if (!jsProof || !jsProof.value || jsProof.value.length < 8) {
+          if (hcHint) {
+            hcHint.dataset.locked = "1";
+            hcHint.textContent = s.verifyIssue;
+          }
+          return;
+        }
+
+        // رجّع الهنت للوضع الطبيعي
+        if (hcHint) {
+          hcHint.dataset.locked = "";
+          hcHint.textContent = s.humanHint;
+        }
 
         const name = (contactForm.querySelector("#name")?.value || "").trim();
         const email = (contactForm.querySelector("#email")?.value || "").trim();
@@ -653,7 +993,6 @@
 
         const fd = new FormData(contactForm);
 
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
         if (submitBtn) {
           submitBtn.disabled = true;
           submitBtn.dataset.prevText = submitBtn.textContent || "";
@@ -669,8 +1008,21 @@
           });
 
           if (res.ok) {
-            setSuccess(s.success);
+            // ✅ set cooldown
+            setCooldown(now());
+            renderCooldown(submitBtn);
+            startCooldownTicker(submitBtn);
+
+            setSuccess(""); // ما بدنا النص القديم تحت
             contactForm.reset();
+
+            // ✅ reset challenge + proof
+            newMathChallenge();
+            markHumanInteraction();
+            fillStart = now();
+
+            // ✅ open modal
+            openModal(s.modalMsg);
           } else {
             let data = null;
             try { data = await res.json(); } catch (e) {}
@@ -681,9 +1033,10 @@
           setError("error-message", s.fail || "Failed to send.");
         } finally {
           if (submitBtn) {
-            submitBtn.disabled = false;
             submitBtn.classList.remove("loading");
             submitBtn.textContent = submitBtn.dataset.prevText || (s.sendBtn || "Send");
+            // بترجع تتعطل تلقائي حسب الكولداون
+            renderCooldown(submitBtn);
           }
         }
       });
