@@ -83,256 +83,7 @@
       z-index: 1;
     }
 
-    /* الشريط العلوي: تسجيل دخول + اختيار اللغة (ثابت يسار الشاشة) */
-    .top-bar {
-      display: flex;
-      justify-content: flex-start; /* يبقى على اليسار في كلتا اللغتين */
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .top-login-link {
-      font-size: 0.9rem;
-      color: var(--white);
-      text-decoration: none;
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(250, 204, 21, 0.6);
-      background: rgba(0, 0, 0, 0.6);
-      box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition:
-        background 0.15s ease,
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
-    }
-
-    .top-login-link:hover {
-      background: rgba(250, 204, 21, 0.15);
-      transform: translateY(-1px);
-      box-shadow:
-        0 12px 30px rgba(0, 0, 0, 0.95),
-        0 0 0 1px rgba(250, 204, 21, 0.7);
-    }
-
-    .lang-toggle {
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: radial-gradient(circle at top, #111111, #020202);
-      color: var(--yellow);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1rem;
-      box-shadow:
-        0 10px 24px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition:
-        background 0.15s ease,
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
-    }
-
-    .lang-toggle:hover {
-      transform: translateY(-1px);
-      background: radial-gradient(circle at top, #facc15, #fbbf24);
-      color: #000;
-      box-shadow:
-        0 14px 30px rgba(0, 0, 0, 1),
-        0 0 0 1px rgba(250, 204, 21, 0.8);
-    }
-
-    /* العنوان */
-    .hero-title {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .hero-title h1 {
-      font-family: "Poppins", system-ui, sans-serif;
-      font-weight: 800;
-      font-size: clamp(2.6rem, 5vw, 3.6rem);
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--white);
-      text-shadow: none;
-      white-space: nowrap;
-      direction: ltr;
-      unicode-bidi: bidi-override;
-    }
-
-    .hero-title h1 .logo-letter {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(16px);
-    }
-
-    .hero-title h1.hero-logo-animate .logo-letter {
-      animation: logo-bounce 0.7s cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
-    }
-
-    .hero-title h1.hero-logo-animate .logo-letter:nth-child(1) { animation-delay: 0s; }
-    .hero-title h1.hero-logo-animate .logo-letter:nth-child(2) { animation-delay: 0.08s; }
-    .hero-title h1.hero-logo-animate .logo-letter:nth-child(3) { animation-delay: 0.16s; }
-    .hero-title h1.hero-logo-animate .logo-letter:nth-child(4) { animation-delay: 0.24s; }
-
-    @keyframes logo-bounce {
-      0% { transform: translateY(18px); opacity: 0; }
-      40% { transform: translateY(-6px); opacity: 1; }
-      70% { transform: translateY(4px); }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-
-    .hero-sub {
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    .divider {
-      width: 100%;
-      margin: 18px auto;
-      position: relative;
-      height: 1px;
-    }
-
-    .divider-line {
-      height: 1px;
-      width: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(156, 163, 175, 0.4),
-        transparent
-      );
-    }
-
-    .divider-glow {
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      height: 12px;
-      width: 40%;
-      background: radial-gradient(
-        circle,
-        rgba(250, 204, 21, 0.5),
-        transparent 70%
-      );
-      opacity: 0.7;
-      filter: blur(3px);
-      pointer-events: none;
-    }
-
-    /* القوائم */
-    .top-nav {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 30px;
-      position: relative;
-      z-index: 5;
-    }
-
-    .top-nav--rtl {
-      flex-direction: row-reverse;
-    }
-
-    .top-nav--ltr {
-      flex-direction: row;
-    }
-
-    .top-nav-item {
-      position: relative;
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(250, 204, 21, 0.5);
-      background: rgba(0, 0, 0, 0.4);
-      color: var(--white);
-      font-size: 0.9rem;
-      cursor: pointer;
-      user-select: none;
-      text-decoration: none;
-      transition:
-        background 0.2s ease,
-        transform 0.15s ease,
-        box-shadow 0.2s ease,
-        color 0.2s ease;
-    }
-
-    .top-nav-item:hover {
-      transform: translateY(-1px);
-      background: rgba(250, 204, 21, 0.08);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
-    }
-
-    .top-nav-dropdown {
-      padding-right: 18px;
-      padding-left: 18px;
-    }
-
-    .top-nav-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .top-nav-label::after {
-      content: "▾";
-      font-size: 0.75rem;
-      opacity: 0.9;
-    }
-
-    .dropdown-menu {
-      position: absolute;
-      top: 115%;
-      right: 0;
-      min-width: 150px;
-      padding: 6px;
-      border-radius: 14px;
-      background: rgba(10, 10, 10, 0.96);
-      border: 1px solid rgba(250, 204, 21, 0.5);
-      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.9);
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(4px);
-      transition:
-        opacity 0.18s ease,
-        transform 0.18s ease;
-      backdrop-filter: blur(10px);
-      z-index: 10;
-    }
-
-    .top-nav-dropdown:hover .dropdown-menu {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .dropdown-item {
-      font-size: 0.8rem;
-      color: var(--muted);
-      padding: 6px 10px;
-      border-radius: 10px;
-      white-space: nowrap;
-      transition: background 0.15s ease, color 0.15s ease;
-      cursor: pointer;
-      text-decoration: none;
-      display: block;
-    }
-
-    .dropdown-item:hover {
-      background: rgba(250, 204, 21, 0.12);
-      color: var(--yellow);
-    }
-
-    /* شاشة التحميل */
+    /* شاشة التحميل بدون وميض */
     #preloader {
       position: fixed;
       inset: 0;
@@ -353,21 +104,16 @@
     .preloader-logo img {
       max-width: 200px;
       height: auto;
-      animation: preloader-blink 0.35s infinite alternate;
+      /* لا يوجد أي أنيميشن هنا */
     }
 
-    @keyframes preloader-blink {
-      0% { opacity: 0.35; }
-      100% { opacity: 1; }
-    }
-
-    /* محتوى صفحة Soon */
+    /* مربع Soon */
     .soon-wrapper {
-      margin-top: 10px;
+      margin-top: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 45vh;
+      min-height: 40vh;
     }
 
     .soon-card {
@@ -457,120 +203,90 @@
       z-index: 1;
     }
 
-    .footer {
-      margin-top: 40px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(31, 41, 55, 0.9);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    /* قسم "الرئيسية" بنفس ستايل الأقسام */
+    .sections {
+      margin-top: 30px;
     }
 
-    .footer-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+    .sections-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
     }
 
-    .footer-text {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .social-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-
-    .social-link {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-full);
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: radial-gradient(circle at top, #111111, #020202);
-      color: var(--yellow);
+    .section-card {
+      display: block;
       text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 700;
-      font-family: "Poppins", system-ui, sans-serif;
+      color: inherit;
+      background: linear-gradient(145deg, #020202, #050505);
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border-subtle);
       box-shadow:
-        0 10px 24px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        border-color 0.18s ease,
-        background 0.18s ease,
-        color 0.18s ease;
+        0 10px 28px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(55, 65, 81, 0.5);
+      position: relative;
       overflow: hidden;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
     }
 
-    .social-link::after {
+    .section-card::before {
       content: "";
       position: absolute;
       inset: -40%;
       background: radial-gradient(
         circle at top,
-        rgba(250, 204, 21, 0.15),
-        transparent 60%
+        rgba(250, 204, 21, 0.18),
+        transparent 55%
       );
       opacity: 0;
-      transform: translateX(-10px);
-      transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+      transition: opacity 0.2s ease;
       pointer-events: none;
-      mix-blend-mode: screen;
     }
 
-    .social-link:hover {
-      transform: translateY(-2px) scale(1.07) rotate(-6deg);
-      border-color: rgba(250, 204, 21, 0.95);
-      background: radial-gradient(circle at top, #facc15, #fbbf24);
-      color: #000;
+    .section-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(250, 204, 21, 0.9);
       box-shadow:
-        0 18px 42px rgba(0, 0, 0, 1),
-        0 0 0 1px rgba(250, 204, 21, 0.8);
+        0 16px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(250, 204, 21, 0.5);
     }
 
-    .social-link:hover::after {
+    .section-card:hover::before {
       opacity: 1;
-      transform: translateX(6px);
     }
 
-    .footer-bottom {
-      text-align: center;
-      font-size: 0.75rem;
-      color: rgba(107, 114, 128, 0.9);
-      margin-top: 2px;
+    .section-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--yellow);
+      margin-bottom: 6px;
+    }
+
+    .section-body {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
     }
 
     @media (max-width: 640px) {
-      .hero-title h1 {
-        letter-spacing: 0.28em;
-      }
-
-      .footer-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .social-links {
-        justify-content: flex-start;
+      .soon-wrapper {
+        margin-top: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- شاشة تحميل -->
+  <!-- شاشة تحميل بدون وميض -->
   <div id="preloader">
     <div class="preloader-logo">
       <img src="logo.png" alt="MLO5 Logo">
@@ -583,103 +299,45 @@
     <div class="card-shell">
       <div class="card-shell-inner">
 
-        <!-- تسجيل دخول + لغة (يسار) -->
-        <div class="top-bar">
-          <a id="login-link" href="login.html" class="top-login-link">تسجيل دخول</a>
-          <button id="lang-toggle" class="lang-toggle" title="العربية">
-            🌐
-          </button>
-        </div>
-
-        <!-- اللوغو -->
-        <header class="hero-title">
-          <h1 id="hero-logo" aria-label="M L O 5">
-            <span class="logo-letter">M</span>
-            <span class="logo-letter">L</span>
-            <span class="logo-letter">O</span>
-            <span class="logo-letter">5</span>
-          </h1>
-          <p id="hero-sub" class="hero-sub">صفحة قيد التحضير</p>
-        </header>
-
-        <div class="divider">
-          <div class="divider-line"></div>
-          <div class="divider-glow"></div>
-        </div>
-
-        <!-- القوائم نفسها تبع index -->
-        <nav class="top-nav top-nav--rtl">
-          <a href="index.html" class="top-nav-item" id="menu1">الرئيسية</a>
-          <a href="chat.html" class="top-nav-item" id="menu2">غرف الدردشة</a>
-
-          <div class="top-nav-item top-nav-dropdown" id="menu3-wrap">
-            <span class="top-nav-label" id="menu3-label">قائمة 3</span>
-            <div class="dropdown-menu">
-              <a href="submenu1.html" class="dropdown-item" id="submenu1">قائمة فرعية 1</a>
-              <a href="submenu2.html" class="dropdown-item" id="submenu2">قائمة فرعية 2</a>
-              <a href="submenu3.html" class="dropdown-item" id="submenu3">قائمة فرعية 3</a>
-            </div>
-          </div>
-
-          <a href="menu4.html" class="top-nav-item" id="menu4">قائمة 4</a>
-          <a href="contact.html" class="top-nav-item" id="menu5">اتصل بي</a>
-        </nav>
-
-        <!-- كرت Soon -->
+        <!-- مربع Soon -->
         <section class="soon-wrapper">
           <div class="soon-card">
             <div class="soon-title">
-              <span id="soon-main-text">Soon</span>
+              Soon
               <span class="soon-dots">
                 <span class="soon-dot"></span>
                 <span class="soon-dot"></span>
                 <span class="soon-dot"></span>
               </span>
             </div>
-            <p id="soon-sub-text" class="soon-sub">
+            <p class="soon-sub">
               هذه الصفحة قيد التطوير حاليًا. ترقّب تحديثات جديدة من MLO5 قريبًا 👀
             </p>
-            <div id="soon-tag" class="soon-tag">
+            <div class="soon-tag">
               🚧 تحت الإنشاء · MLO5
             </div>
           </div>
         </section>
 
-        <!-- الفوتر -->
-        <footer class="footer">
-          <div class="footer-top">
-            <p id="footer-text" class="footer-text">
-              تابعني على السوشال ميديا:
-            </p>
-
-            <div class="social-links">
-              <a href="https://www.youtube.com/@mlo5ya" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
-                Y
-              </a>
-              <a href="https://www.instagram.com/i.mlo5/" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
-                IG
-              </a>
-              <a href="https://www.facebook.com/hkafeh" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">
-                f
-              </a>
-            </div>
+        <!-- قسم واحد فقط: الرئيسية -->
+        <section class="sections">
+          <div class="sections-grid">
+            <a href="index.html" class="section-card">
+              <div class="section-label">قسم</div>
+              <h2 class="section-title">الرئيسية</h2>
+              <p class="section-body">
+                ارجع إلى الصفحة الرئيسية لموقع MLO5 وشوف كل المحتوى والأقسام.
+              </p>
+            </a>
           </div>
-
-          <div class="footer-bottom">
-            © <span id="year-span">2025</span> · صنع بحب 💛.
-          </div>
-        </footer>
+        </section>
 
       </div>
     </div>
   </main>
 
   <script>
-    // سنة الحقوق
-    const y = document.getElementById("year-span");
-    if (y) y.textContent = new Date().getFullYear();
-
-    // شبكة الخلفية تتحرك مع الماوس
+    // تحريك شبكة النقاط مع الماوس (نفس ستايل الموقع)
     const root = document.documentElement;
     document.addEventListener("mousemove", (e) => {
       const xRatio = e.clientX / window.innerWidth - 0.5;
@@ -691,203 +349,15 @@
       root.style.setProperty("--grid-y", yShift.toFixed(1) + "px");
     });
 
-    // شاشة التحميل + أنيميشن اللوغو
+    // إخفاء شاشة التحميل بدون أي أنيميشن إضافية
     const preloader = document.getElementById("preloader");
-    const heroLogo = document.getElementById("hero-logo");
     window.addEventListener("load", () => {
       setTimeout(() => {
         if (preloader) {
           preloader.classList.add("preloader-hidden");
         }
-        if (heroLogo) {
-          heroLogo.classList.add("hero-logo-animate");
-        }
-      }, 700);
+      }, 500);
     });
-
-    // اختيار اللغة
-    const langToggle = document.getElementById("lang-toggle");
-    const LANG_KEY = "mlo5-lang";
-    const l10n = {
-      ar: {
-        title: "M L O 5 — قريباً",
-        login: "تسجيل دخول",
-        heroSub: "صفحة قيد التحضير",
-        menu1: "الرئيسية",
-        menu2: "غرف الدردشة",
-        menu3: "قائمة 3",
-        menu4: "قائمة 4",
-        menu5: "اتصل بي",
-        submenu1: "قائمة فرعية 1",
-        submenu2: "قائمة فرعية 2",
-        submenu3: "قائمة فرعية 3",
-        soonMain: "Soon",
-        soonSub: "هذه الصفحة قيد التطوير حاليًا. ترقّب تحديثات جديدة من MLO5 قريبًا 👀",
-        soonTag: "🚧 تحت الإنشاء · MLO5",
-        footerText: "تابعني على السوشال ميديا:",
-        langTitle: "العربية",
-      },
-      en: {
-        title: "M L O 5 — Soon",
-        login: "Login",
-        heroSub: "This page is being prepared",
-        menu1: "Home",
-        menu2: "Chat Room",
-        menu3: "Menu 3",
-        menu4: "Menu 4",
-        menu5: "Contact Me",
-        submenu1: "Submenu 1",
-        submenu2: "Submenu 2",
-        submenu3: "Submenu 3",
-        soonMain: "Soon",
-        soonSub: "This page is currently under development. New updates from MLO5 are coming soon 👀",
-        soonTag: "🚧 Under Construction · MLO5",
-        footerText: "Follow me on social media:",
-        langTitle: "English",
-      },
-    };
-
-    function applyLang(lang) {
-      const strings = l10n[lang] || l10n["ar"];
-      document.title = strings.title;
-      document.documentElement.lang = lang === "en" ? "en" : "ar";
-      document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
-
-      // اتجاه القوائم
-      const topNav = document.querySelector(".top-nav");
-      if (topNav) {
-        topNav.classList.toggle("top-nav--rtl", lang !== "en");
-        topNav.classList.toggle("top-nav--ltr", lang === "en");
-      }
-
-      const loginLink = document.getElementById("login-link");
-      const heroSub = document.getElementById("hero-sub");
-      const menu1 = document.getElementById("menu1");
-      const menu2 = document.getElementById("menu2");
-      const menu3Label = document.getElementById("menu3-label");
-      const menu4 = document.getElementById("menu4");
-      const menu5 = document.getElementById("menu5");
-      const submenu1 = document.getElementById("submenu1");
-      const submenu2 = document.getElementById("submenu2");
-      const submenu3 = document.getElementById("submenu3");
-      const footerText = document.getElementById("footer-text");
-      const soonMainText = document.getElementById("soon-main-text");
-      const soonSubText = document.getElementById("soon-sub-text");
-      const soonTag = document.getElementById("soon-tag");
-
-      if (loginLink) loginLink.textContent = strings.login;
-      if (heroSub) heroSub.textContent = strings.heroSub;
-      if (menu1) menu1.textContent = strings.menu1;
-      if (menu2) menu2.textContent = strings.menu2;
-      if (menu3Label) menu3Label.textContent = strings.menu3;
-      if (menu4) menu4.textContent = strings.menu4;
-      if (menu5) menu5.textContent = strings.menu5;
-      if (submenu1) submenu1.textContent = strings.submenu1;
-      if (submenu2) submenu2.textContent = strings.submenu2;
-      if (submenu3) submenu3.textContent = strings.submenu3;
-      if (footerText) footerText.textContent = strings.footerText;
-      if (soonMainText) soonMainText.textContent = strings.soonMain;
-      if (soonSubText) soonSubText.textContent = strings.soonSub;
-      if (soonTag) soonTag.textContent = strings.soonTag;
-
-      if (langToggle) {
-        langToggle.title = strings.langTitle;
-      }
-    }
-
-    let savedLang = localStorage.getItem(LANG_KEY) || "ar";
-    applyLang(savedLang);
-
-    if (langToggle) {
-      langToggle.addEventListener("click", () => {
-        savedLang = savedLang === "ar" ? "en" : "ar";
-        localStorage.setItem(LANG_KEY, savedLang);
-        applyLang(savedLang);
-      });
-    }
-
-    // نظام المستخدم (نفس index لو حاب تربطه)
-    const MLO5_USERS_KEY = "mlo5-users";
-    const MLO5_CURRENT_USER_KEY = "mlo5-current-user-email";
-
-    function mlo5IndexLoadUsers() {
-      try {
-        const raw = localStorage.getItem(MLO5_USERS_KEY);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function mlo5IndexGetCurrentUserEmail() {
-      return localStorage.getItem(MLO5_CURRENT_USER_KEY) || null;
-    }
-
-    (function () {
-      const loginLink = document.getElementById("login-link");
-      if (!loginLink) return;
-
-      const currentEmail = mlo5IndexGetCurrentUserEmail();
-      if (!currentEmail) return;
-
-      const users = mlo5IndexLoadUsers();
-      const currentUser =
-        users.find((u) => u.email === currentEmail) || null;
-
-      const rawName =
-        (currentUser && currentUser.name && currentUser.name.trim()) ||
-        currentEmail;
-
-      const displayName =
-        rawName.length > 16 ? rawName.slice(0, 14) + "…" : rawName;
-
-      const topBar = loginLink.parentElement;
-      if (!topBar) return;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "top-nav-item top-nav-dropdown";
-
-      const label = document.createElement("span");
-      label.className = "top-nav-label";
-      label.textContent = displayName;
-
-      const menu = document.createElement("div");
-      menu.className = "dropdown-menu";
-
-      function makeItem(text, href, isButton) {
-        const el = isButton ? document.createElement("button") : document.createElement("a");
-        el.className = "dropdown-item";
-        if (!isButton && href) el.href = href;
-        el.textContent = text;
-        if (isButton) {
-          el.type = "button";
-          el.style.textAlign = "right";
-          el.style.width = "100%";
-          el.style.background = "transparent";
-          el.style.border = "none";
-          el.style.cursor = "pointer";
-        }
-        return el;
-      }
-
-      const profileItem = makeItem("الملف الشخصي", "profile.html", false);
-      const settingsItem = makeItem("الإعدادات", "settings.html", false);
-      const logoutItem = makeItem("تسجيل خروج", "", true);
-
-      logoutItem.addEventListener("click", () => {
-        localStorage.removeItem(MLO5_CURRENT_USER_KEY);
-        window.location.href = "index.html";
-      });
-
-      menu.appendChild(profileItem);
-      menu.appendChild(settingsItem);
-      menu.appendChild(logoutItem);
-
-      wrapper.appendChild(label);
-      wrapper.appendChild(menu);
-
-      topBar.replaceChild(wrapper, loginLink);
-    })();
   </script>
 </body>
 </html>
