@@ -56,8 +56,26 @@
       width:76px;height:76px;border-radius:50%;
       overflow:hidden; border:2px solid rgba(250,204,21,.9);
       background:#000;
+      position:relative;
     }
     .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+    .avatar-actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .file-btn{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px;
+      border:1px solid rgba(250,204,21,.35);
+      background:rgba(0,0,0,.55);
+      color:var(--white); cursor:pointer;
+      font-weight:800; font-size:.85rem;
+      transition:transform .15s ease, background .15s ease;
+    }
+    .file-btn:hover{transform:translateY(-1px); background:rgba(250,204,21,.12)}
+    input[type="file"]{display:none;}
+
     .h-title{font-weight:800;color:var(--yellow);font-size:1.1rem}
     .h-sub{color:var(--muted);font-size:.9rem;margin-top:4px}
     .grid{
@@ -112,11 +130,19 @@
 
     <div class="card">
       <div class="profile-head">
-        <div class="avatar"><img id="avatar-img" src="" alt="avatar" /></div>
+        <div class="avatar">
+          <img id="avatar-img" src="me.jpg" alt="avatar" />
+        </div>
         <div>
           <div class="h-title" id="u-name">...</div>
           <div class="h-sub" id="u-email">...</div>
           <div class="h-sub" id="u-meta">...</div>
+
+          <div class="avatar-actions">
+            <label class="file-btn" for="avatar-file">📷 <span id="pick-photo-txt">رفع صورة</span></label>
+            <input id="avatar-file" type="file" accept="image/*" />
+            <button class="file-btn" id="remove-photo" type="button">🗑️ <span id="remove-photo-txt">حذف الصورة</span></button>
+          </div>
         </div>
       </div>
     </div>
@@ -124,8 +150,8 @@
     <div class="card">
       <div class="grid">
         <div>
-          <label id="lbl-nickname">اسم عرض داخل الموقع</label>
-          <input id="nickname" placeholder="مثال: Mlo5" />
+          <label id="lbl-username">يوزر داخل الموقع</label>
+          <input id="username" placeholder="مثال: Mlo5" />
         </div>
         <div>
           <label id="lbl-instagram">انستغرام</label>
@@ -149,7 +175,9 @@
 
       <div class="actions">
         <button class="btn btn-primary" id="save-btn" type="button">حفظ</button>
-        <a class="btn btn-ghost" id="go-settings" href="settings.html" style="text-decoration:none;display:inline-flex;align-items:center;">⚙️ <span id="go-settings-txt" style="margin-inline-start:8px;">الإعدادات</span></a>
+        <a class="btn btn-ghost" id="go-settings" href="settings.html" style="text-decoration:none;display:inline-flex;align-items:center;">
+          ⚙️ <span id="go-settings-txt" style="margin-inline-start:8px;">الإعدادات</span>
+        </a>
       </div>
 
       <div class="msg" id="msg"></div>
@@ -179,13 +207,15 @@
         title: "الملف الشخصي - M L O 5",
         home: "الرئيسية",
         logout: "تسجيل خروج",
-        nickname: "اسم عرض داخل الموقع",
+        username: "يوزر داخل الموقع",
         instagram: "انستغرام",
         youtube: "يوتيوب",
         discord: "ديسكورد",
         bio: "نبذة",
         save: "حفظ",
         settings: "الإعدادات",
+        pickPhoto: "رفع صورة",
+        removePhoto: "حذف الصورة",
         loading: "جارٍ التحميل…",
         saved: "✅ تم الحفظ.",
         err: "❌ صار خطأ. جرّب مرة ثانية.",
@@ -195,13 +225,15 @@
         title: "Profile - M L O 5",
         home: "Home",
         logout: "Logout",
-        nickname: "Site Display Name",
+        username: "Website Username",
         instagram: "Instagram",
         youtube: "YouTube",
         discord: "Discord",
         bio: "Bio",
         save: "Save",
         settings: "Settings",
+        pickPhoto: "Upload Photo",
+        removePhoto: "Remove Photo",
         loading: "Loading…",
         saved: "✅ Saved.",
         err: "❌ Something went wrong. Try again.",
@@ -220,13 +252,15 @@
 
       document.getElementById("back-home-txt").textContent = s.home;
       document.getElementById("logout-txt").textContent = s.logout;
-      document.getElementById("lbl-nickname").textContent = s.nickname;
+      document.getElementById("lbl-username").textContent = s.username;
       document.getElementById("lbl-instagram").textContent = s.instagram;
       document.getElementById("lbl-youtube").textContent = s.youtube;
       document.getElementById("lbl-discord").textContent = s.discord;
       document.getElementById("lbl-bio").textContent = s.bio;
       document.getElementById("save-btn").textContent = s.save;
       document.getElementById("go-settings-txt").textContent = s.settings;
+      document.getElementById("pick-photo-txt").textContent = s.pickPhoto;
+      document.getElementById("remove-photo-txt").textContent = s.removePhoto;
 
       document.getElementById("lang-toggle").title = (currentLang === "en") ? "English" : "العربية";
     }
@@ -257,11 +291,14 @@
     // ---------- UI ----------
     const msg = document.getElementById("msg");
     const avatarImg = document.getElementById("avatar-img");
+    const avatarFile = document.getElementById("avatar-file");
+    const removePhotoBtn = document.getElementById("remove-photo");
+
     const uName = document.getElementById("u-name");
     const uEmail = document.getElementById("u-email");
     const uMeta = document.getElementById("u-meta");
 
-    const nickname = document.getElementById("nickname");
+    const username = document.getElementById("username");
     const instagram = document.getElementById("instagram");
     const youtube = document.getElementById("youtube");
     const discord = document.getElementById("discord");
@@ -276,7 +313,48 @@
       msg.textContent = text || "";
     }
 
+    // الصورة اللي راح تنحفظ بالـ Firestore (DataURL بعد الضغط)
+    let pendingPhotoDataUrl = null;
     let currentUid = null;
+
+    // --- image utils: compress to 256x256 JPEG ---
+    function readFileAsDataURL(file){
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function compressImageToDataUrl(file, size=256, quality=0.82){
+      const dataUrl = await readFileAsDataURL(file);
+      const img = new Image();
+      img.src = dataUrl;
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+
+      // crop square from center
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      const side = Math.min(w, h);
+      const sx = Math.floor((w - side) / 2);
+      const sy = Math.floor((h - side) / 2);
+
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, size, size);
+      ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+
+      return canvas.toDataURL("image/jpeg", quality);
+    }
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -298,22 +376,30 @@
       }
 
       // اعرض بيانات Firebase الأساسية
-      avatarImg.src = user.photoURL || "me.jpg";
       uName.textContent = (user.displayName || user.email || "User");
       uEmail.textContent = user.email || "";
       uMeta.textContent = user.metadata?.creationTime ? ("Joined: " + user.metadata.creationTime) : "";
 
-      // اقرأ البروفايل من Firestore
+      // اقرأ البروفايل من Firestore (الاسم + الصورة + السوشال)
       try{
         const p = await getProfile(user.uid);
-        nickname.value = p?.nickname || "";
+
+        username.value = p?.username || "";
         bio.value = p?.bio || "";
         instagram.value = p?.socials?.instagram || "";
         youtube.value = p?.socials?.youtube || "";
         discord.value = p?.socials?.discord || "";
+
+        // الصورة: من Firestore أولًا، وإلا photoURL من Google، وإلا me.jpg
+        if (p?.photoDataUrl) avatarImg.src = p.photoDataUrl;
+        else if (user.photoURL) avatarImg.src = user.photoURL;
+        else avatarImg.src = "me.jpg";
+
+        pendingPhotoDataUrl = null;
         setMsg("");
       }catch(e){
         console.error(e);
+        avatarImg.src = user.photoURL || "me.jpg";
         setMsg(l10n[currentLang].err);
       }
     });
@@ -326,20 +412,67 @@
       try{ await setLang(currentUid, next); }catch(e){ console.error(e); }
     });
 
+    // رفع صورة: preview + ضغط + تجهيز للحفظ
+    avatarFile.addEventListener("change", async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      try{
+        setMsg(l10n[currentLang].loading);
+
+        // ضغط الصورة
+        const compressed = await compressImageToDataUrl(file, 256, 0.82);
+
+        // Preview فوري
+        avatarImg.src = compressed;
+
+        // نخزنها لحد ما المستخدم يضغط حفظ
+        pendingPhotoDataUrl = compressed;
+
+        setMsg("✅ جاهزة للحفظ. اضغط حفظ.", true);
+      }catch(err){
+        console.error(err);
+        setMsg(l10n[currentLang].err);
+      }finally{
+        // عشان تقدر تختار نفس الملف مرة ثانية
+        avatarFile.value = "";
+      }
+    });
+
+    // حذف الصورة (يرجع للافتراضي)
+    removePhotoBtn.addEventListener("click", () => {
+      pendingPhotoDataUrl = ""; // نخزنها كفاضية عشان تنمسح من Firestore عند الحفظ
+      avatarImg.src = "me.jpg";
+      setMsg("✅ رح تنحذف بعد ما تضغط حفظ.", true);
+    });
+
     // حفظ البروفايل Firestore
     saveBtn.addEventListener("click", async () => {
       if (!currentUid) return;
+
       try{
         setMsg(l10n[currentLang].loading);
-        await saveProfile(currentUid, {
-          nickname: (nickname.value || "").trim(),
+
+        const data = {
+          username: (username.value || "").trim(),
           bio: (bio.value || "").trim(),
           socials: {
             instagram: (instagram.value || "").trim(),
             youtube: (youtube.value || "").trim(),
             discord: (discord.value || "").trim()
           }
-        });
+        };
+
+        // لو المستخدم اختار صورة جديدة: نخزنها
+        if (pendingPhotoDataUrl !== null) {
+          // لو كانت "" يعني حذف
+          if (pendingPhotoDataUrl === "") data.photoDataUrl = null;
+          else data.photoDataUrl = pendingPhotoDataUrl;
+        }
+
+        await saveProfile(currentUid, data);
+
+        pendingPhotoDataUrl = null;
         setMsg(l10n[currentLang].saved, true);
       }catch(e){
         console.error(e);
