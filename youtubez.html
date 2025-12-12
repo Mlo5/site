@@ -209,27 +209,8 @@
     }
     .search .icon{ color:rgba(156,163,175,.9); }
 
-    .filters{
-      display:flex; gap:8px; flex-wrap:wrap;
-      align-items:center;
-    }
-    .chip{
-      border:1px solid rgba(156,163,175,.2);
-      background:rgba(10,10,10,.72);
-      color:rgba(156,163,175,.95);
-      padding:7px 10px;
-      border-radius:var(--radius-full);
-      cursor:pointer;
-      font-size:.82rem;
-      transition:transform .15s ease, border-color .15s ease, color .15s ease, background .15s ease;
-      user-select:none;
-    }
-    .chip:hover{ transform:translateY(-1px); border-color:rgba(250,204,21,.35); color:var(--white); }
-    .chip.active{
-      background:rgba(250,204,21,.12);
-      border-color:rgba(250,204,21,.6);
-      color:var(--yellow);
-    }
+    /* 🔒 نخفي فلاتر النوع (Long/Short/Live) — الصفحة صارت Long فقط */
+    .filters{ display:none !important; }
 
     .grid{
       display:grid;
@@ -557,7 +538,6 @@
           <div class="grid" id="videos-grid"></div>
           <div class="empty hidden" id="videos-empty">ما لقيت نتائج. جرّب كلمة ثانية أو غيّر الفلتر.</div>
 
-          <!-- LOAD MORE -->
           <div class="loadmore-wrap hidden" id="loadmore-wrap">
             <button class="btn" id="btn-loadmore">➕ عرض المزيد</button>
             <div class="loadmore-hint" id="loadmore-hint">0 / 0</div>
@@ -609,12 +589,13 @@
     const CHANNEL_URL = "https://www.youtube.com/@mlo5ya";
 
     // Videos (auto)
-    let allVideos = [];          // raw list from latest-videos.json
-    let filteredVideos = [];     // after type filter only (ALL/LONG/SHORT/LIVE)
+    let allVideos = [];      // raw list from latest-videos.json
+    let longVideos = [];     // LONG ONLY (filtered)
 
-    // Load More config
-    const PAGE_SIZE = 15;
-    let visibleCount = PAGE_SIZE;
+    // Pagination rules:
+    const FIRST_PAGE = 15;   // أول عرض
+    const MORE_STEP  = 6;    // كل ضغطة "عرض المزيد" تزيد 6
+    let visibleCount = FIRST_PAGE;
 
     async function loadVideos(){
       const grid = document.getElementById("videos-grid");
@@ -633,11 +614,11 @@
         const list = Array.isArray(data?.videos) ? data.videos : [];
 
         allVideos = list;
-        applyFilter(true);
+        buildLongOnly(true);
       }catch(e){
         allVideos = [];
-        filteredVideos = [];
-        visibleCount = PAGE_SIZE;
+        longVideos = [];
+        visibleCount = FIRST_PAGE;
         setCounts();
         renderVideos();
       }
@@ -675,21 +656,16 @@
         .replaceAll("'","&#039;");
     }
 
-    // ======= Render: Videos =======
-    let currentFilter = "all";
-
-    function applyFilter(resetVisible){
+    function buildLongOnly(resetVisible){
       const enriched = (allVideos || []).map(v => ({
         ...v,
         type: v.type || guessType(v)
       }));
 
-      if (currentFilter === "long") filteredVideos = enriched.filter(v => v.type === "long");
-      else if (currentFilter === "short") filteredVideos = enriched.filter(v => v.type === "short");
-      else if (currentFilter === "live") filteredVideos = enriched.filter(v => v.type === "live");
-      else filteredVideos = enriched; // "all" = كل الفيديوهات (Long + Shorts + Live)
+      // ✅ LONG ONLY (تجاهل الشورتس واللايف)
+      longVideos = enriched.filter(v => v.type === "long");
 
-      if (resetVisible) visibleCount = PAGE_SIZE;
+      if (resetVisible) visibleCount = FIRST_PAGE;
 
       setCounts();
       renderVideos();
@@ -712,13 +688,14 @@
       btn.textContent = s.loadMore;
     }
 
+    // ======= Render: Videos (LONG ONLY + search + pagination) =======
     function renderVideos(){
       const q = ($("search")?.value || "").trim().toLowerCase();
       const grid = $("videos-grid");
       const empty = $("videos-empty");
       if(!grid) return;
 
-      const fullList = (filteredVideos || []).filter(v=>{
+      const fullList = (longVideos || []).filter(v=>{
         if(!q) return true;
         return (v.title || "").toLowerCase().includes(q);
       });
@@ -736,7 +713,7 @@
           <div class="vc-body">
             <div class="vc-title">${escapeHTML(v.title || "")}</div>
             <div class="meta">
-              <span class="badge yellow">🎯 ${escapeHTML(typeLabel(v.type, currentLang))}</span>
+              <span class="badge yellow">🎯 ${escapeHTML(typeLabel("long", currentLang))}</span>
               <span class="badge">⏱️ ${escapeHTML(v.duration || "")}</span>
               <span class="badge">📅 ${escapeHTML(fmtDate(v.date))}</span>
             </div>
@@ -766,13 +743,19 @@
       updateLoadMore(fullList.length);
     }
 
-    // Load more click
+    // Load more click (يزيد 6)
     $("btn-loadmore")?.addEventListener("click", ()=>{
-      visibleCount += PAGE_SIZE;
+      visibleCount += MORE_STEP;
       renderVideos();
     });
 
-    // ======= Render: Thumbnails =======
+    // Search resets pagination
+    $("search")?.addEventListener("input", ()=>{
+      visibleCount = FIRST_PAGE;
+      renderVideos();
+    });
+
+    // ======= Thumbnails (manual) =======
     const thumbs = [
       { name: "Thumbnail 1 — Geometry Dash", img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+1", tag:"Geometry Dash" },
       { name: "Thumbnail 2 — RoK",           img: "https://via.placeholder.com/1280x720.png?text=Mlo5+Thumbnail+2", tag:"RoK" },
@@ -810,7 +793,7 @@
       });
     }
 
-    // ======= Render: Ideas (Kanban) =======
+    // ======= Ideas =======
     const ideas = [
       { title:"سلسلة جديدة: تحديات Geometry Dash (موبايل)", game:"Geometry Dash", kind:"Long", status:"soon" },
       { title:"Shorts: Quiz Time (سؤال/تحدي سريع)", game:"Mixed", kind:"Short", status:"making" },
@@ -884,24 +867,6 @@
       });
     });
 
-    // ======= Filters =======
-    document.querySelectorAll(".chip").forEach(chip=>{
-      chip.addEventListener("click", ()=>{
-        currentFilter = chip.getAttribute("data-filter") || "all";
-        document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
-        chip.classList.add("active");
-
-        // reset pagination when filter changes
-        applyFilter(true);
-      });
-    });
-
-    $("search")?.addEventListener("input", ()=>{
-      // reset pagination when search changes
-      visibleCount = PAGE_SIZE;
-      renderVideos();
-    });
-
     // ======= Latest Video (AUTO from latest-long.json) =======
     $("btn-subscribe").href = CHANNEL_URL;
 
@@ -967,7 +932,7 @@
         docTitle: "YouTube - Mlo5",
         back: "← عودة للصفحة الرئيسية",
         title: "YouTube",
-        subtitle: "هنا بتلاقي فيديوهاتي المنشورة، ثمبنيلات من شغلي، وأفكار قادمة — كله بنفس ستايل Mlo5.",
+        subtitle: "هنا بتلاقي فيديوهاتي المنشورة (طويلة فقط)، ثمبنيلات من شغلي، وأفكار قادمة — كله بنفس ستايل Mlo5.",
         subscribe: "⭐ اشترك بالقناة",
         latest: "▶ أحدث فيديو",
         searchPH: "ابحث عن فيديو...",
@@ -975,8 +940,7 @@
         tabV: "🎬 الفيديوهات",
         tabT: "🖼️ الثمبنيلات",
         tabI: "💡 أفكار قادمة",
-        fAll: "الكل",
-        vEmpty: "ما لقيت نتائج. جرّب كلمة ثانية أو غيّر الفلتر.",
+        vEmpty: "ما لقيت نتائج. جرّب كلمة ثانية.",
         tEmpty: "لسا ما أضفت ثمبنيلات. حط روابط الصور داخل مصفوفة thumbs.",
         iEmpty: "لسا ما أضفت أفكار. حطها داخل مصفوفة ideas.",
         lastUpdate: "آخر تحديث: 12 ديسمبر 2025",
@@ -987,7 +951,7 @@
         docTitle: "YouTube - Mlo5",
         back: "← Back to home",
         title: "YouTube",
-        subtitle: "Here you’ll find published videos, my thumbnails, and upcoming ideas — all in the Mlo5 style.",
+        subtitle: "Here you’ll find my published videos (long only), thumbnails, and upcoming ideas — all in the Mlo5 style.",
         subscribe: "⭐ Subscribe",
         latest: "▶ Latest video",
         searchPH: "Search videos...",
@@ -995,8 +959,7 @@
         tabV: "🎬 Videos",
         tabT: "🖼️ Thumbnails",
         tabI: "💡 Upcoming Ideas",
-        fAll: "All",
-        vEmpty: "No results. Try another keyword or change the filter.",
+        vEmpty: "No results. Try another keyword.",
         tEmpty: "No thumbnails yet. Add image links in the thumbs array.",
         iEmpty: "No ideas yet. Add them in the ideas array.",
         lastUpdate: "Last updated: December 12, 2025",
@@ -1023,8 +986,6 @@
       $("tab-t").textContent = s.tabT;
       $("tab-i").textContent = s.tabI;
 
-      $("f-all").textContent = s.fAll;
-
       $("videos-empty").textContent = s.vEmpty;
       $("thumbs-empty").textContent = s.tEmpty;
       $("ideas-empty").textContent = s.iEmpty;
@@ -1036,7 +997,7 @@
       document.documentElement.lang = currentLang === "en" ? "en" : "ar";
       document.documentElement.dir  = currentLang === "en" ? "ltr" : "rtl";
 
-      // update load more text + re-render
+      // Re-render after language
       renderVideos();
       renderIdeas();
       bindLatestLongButton();
@@ -1050,8 +1011,8 @@
 
     // ======= Counters =======
     function setCounts(){
-      // عدد الفيديوهات = كل اللي متحمّل من json (مش بس المعروض)
-      $("count-v").textContent = (allVideos || []).length;
+      // ✅ عداد الفيديوهات = عدد الفيديوهات الطويلة فقط
+      $("count-v").textContent = (longVideos || []).length;
       $("count-t").textContent = thumbs.length;
       $("count-i").textContent = ideas.length;
     }
