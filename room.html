@@ -493,6 +493,34 @@
         min-height:0;
       }
       .badgeBtn{display:inline-flex;} /* ✅ زر المتواجدين */
+
+      /* ✅ بابل الرسالة مثل واتساب: على قد الرسالة */
+      .msg{
+        max-width:86%;
+        padding:10px 12px 10px; /* كان كبير بسبب زر الرد */
+        border-radius:18px;
+      }
+
+      /* ✅ نخفي الرد على الهاتف بالكامل */
+      .replyBtn{ display:none !important; }
+      .replyPreview{ display:none !important; }
+
+      /* ✅ نخفي زر الإرسال + زر الإيموجي بالموبايل فقط */
+      .sendBtn{ display:none !important; }
+      .emojiBtn{ display:none !important; }
+
+      /* ✅ نخلي حقل الكتابة ياخذ العرض كله */
+      .composer{ gap:0; }
+      #msgInput{
+        width:100%;
+      }
+
+      /* ✅ وقت الرسالة أصغر ومرتب */
+      .msgTimeUnder{
+        margin-top:4px;
+        font-size:.72rem;
+        opacity:.9;
+      }
     }
 
     #appModal{
@@ -1075,6 +1103,20 @@
   });
 
   emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+
+  /* ✅ إرسال من كيبورد الموبايل فقط (بدون زر إرسال) */
+  try{
+    if (IS_MOBILE_DEVICE){
+      msgInput.setAttribute("enterkeyhint", "send");
+      msgInput.addEventListener("keydown", (e)=>{
+        if (e.key === "Enter"){
+          e.preventDefault();
+          if (chatForm?.requestSubmit) chatForm.requestSubmit();
+          else chatForm.dispatchEvent(new Event("submit", { cancelable:true, bubbles:true }));
+        }
+      });
+    }
+  }catch{}
 
   function loadIgnoreWindows(){
     try{ ignoreWindows = JSON.parse(localStorage.getItem(ignoreKey(user.uid)) || "{}"); }
