@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2025-12-14T17:33:33Z",
+  "generatedAt": "2025-12-14T19:26:06Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "لعبة الحبار 🔥.",
+      "url": "https://www.youtube.com/shorts/0XxI-67gVqg",
+      "type": "long",
+      "duration": "",
+      "date": "2025-12-14",
+      "thumb": "https://i.ytimg.com/vi/0XxI-67gVqg/hqdefault.jpg",
+      "videoId": "0XxI-67gVqg"
+    },
     {
       "title": "الحقيقة المرة 💔!",
       "url": "https://www.youtube.com/shorts/UiYkMGS5cHo",
@@ -127,15 +136,6 @@
       "date": "2025-12-04",
       "thumb": "https://i.ytimg.com/vi/JXwNda1vWOk/hqdefault.jpg",
       "videoId": "JXwNda1vWOk"
-    },
-    {
-      "title": "حادث غريب 😔",
-      "url": "https://www.youtube.com/shorts/cb9FqhQOO2g",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-03",
-      "thumb": "https://i.ytimg.com/vi/cb9FqhQOO2g/hqdefault.jpg",
-      "videoId": "cb9FqhQOO2g"
     }
   ]
 }
