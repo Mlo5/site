@@ -494,10 +494,27 @@
       }
       .badgeBtn{display:inline-flex;} /* ✅ زر المتواجدين */
 
-      /* ✅✅✅ موبايل فقط: إخفاء زر الإيموجي وزر الإرسال */
-      .emojiBtn, .sendBtn{ display:none !important; }
-      .composer{ gap:10px; }
-      #msgInput{ width:100%; }
+      /* ✅✅✅ (Mobile-only) تصغير فقاعات الرسائل */
+      .msg{
+        max-width:88%;
+        padding:8px 10px 34px;
+        border-radius:14px;
+        font-size:.9rem;
+      }
+      .msgHead{font-size:.75rem;margin-bottom:4px}
+      .msgTimeUnder{font-size:.7rem}
+      .replyBtn{
+        height:30px;
+        padding:4px 8px;
+        font-size:.7rem;
+        bottom:6px;
+        right:8px;
+      }
+
+      /* ✅✅✅ (Mobile-only) إخفاء زر الإرسال + الإيموجي */
+      .sendBtn,.emojiBtn{
+        display:none !important;
+      }
     }
 
     #appModal{
@@ -695,7 +712,7 @@
             </div>
 
             <form id="chatForm" class="composer">
-              <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled />
+              <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
               <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع (Admin)">🧹</button>
               <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
               <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
@@ -809,7 +826,7 @@
   import {
     getFirestore, collection, addDoc, serverTimestamp,
     query, where, orderBy, onSnapshot, doc, setDoc,
-    getDocs, writeBatch, limit
+    getDocs, writeBatch, limit, limitToLast
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
@@ -916,10 +933,6 @@
   let user = null;
   let profile = null;
   let joinAtMs = null;
-
-  /* ✅✅✅ NEW: للموبايل فقط نستخدم joinAtServerTs للفلترة */
-  let joinAtServerTs = null;
-
   let initialLoaded = false;
   let lastSoundAt = 0;
 
@@ -1135,7 +1148,7 @@
     ignoreWindows[uid] = ignoreWindows[uid] || [];
     const arr = ignoreWindows[uid];
     const activeIdx = arr.findIndex(w => w.end == null);
-    const now = nowMs(); /* ✅ (Mobile only offset, desktop = Date.now) */
+    const now = nowMs();
     if (activeIdx >= 0) arr[activeIdx].end = now;
     else arr.push({start: now, end: null});
     saveIgnoreWindows();
@@ -1164,7 +1177,7 @@
       system:true, type,
       text,
       createdAt: serverTimestamp(),
-      createdAtMs: nowMs() /* ✅ */
+      createdAtMs: nowMs()
     });
   }
 
@@ -1207,7 +1220,7 @@
   async function adminClearForAll(){
     if (!isAdmin) return;
     await hardDeleteAllGlobalMessages();
-    const clearedAtMs = nowMs(); /* ✅ */
+    const clearedAtMs = nowMs();
     await setDoc(doc(db, "globalMeta", "clear"), {
       clearedAtMs, byUid:user.uid, byName: profile?.name || "Admin", createdAt: serverTimestamp()
     }, { merge:true });
@@ -1229,7 +1242,7 @@
       isAdmin,
       isGuest,
       muted:false,
-      device: myDevice /* ✅ */
+      device: myDevice
     };
     await set(onlineRef, payload);
     if (first) onDisconnect(onlineRef).remove();
@@ -1242,7 +1255,7 @@
     return addDoc(collection(db, "globalMessages"), {
       system:true, type, text,
       actorUid:user.uid, actorName:profile.name,
-      createdAt: serverTimestamp(), createdAtMs: nowMs() /* ✅ */
+      createdAt: serverTimestamp(), createdAtMs: nowMs()
     });
   }
 
@@ -1375,7 +1388,7 @@
 
         const gHtml = genderSymbolHtml(u.gender);
         const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-        const devHtml = deviceIconHtml(u.device === "mobile" ? "mobile" : "desktop"); /* ✅ */
+        const devHtml = deviceIconHtml(u.device === "mobile" ? "mobile" : "desktop");
 
         const mutedBadge = (u.muted === true)
           ? `<span class="miniPill" style="border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)">🔇 مكتوم</span>`
@@ -1472,23 +1485,22 @@
   function startGlobalMessagesListener(){
     initialLoaded = false;
 
-    /* ✅✅✅ موبايل: فلترة على createdAt (serverTimestamp) */
-    const qMobile = query(
-      collection(db, "globalMessages"),
-      where("createdAt", ">=", joinAtServerTs),
-      orderBy("createdAt", "asc")
-    );
+    // ✅✅✅ (Mobile-only) إصلاح ظهور الرسائل: لا نستخدم where(createdAtMs>=joinAtMs) بالموبايل
+    // لأن اختلاف createdAtMs بين الأجهزة ممكن يخفي رسائل الناس.
+    // الديسكتوب يبقى كما هو بدون أي تغيير.
+    const q = __MOBILE_DEVICE
+      ? query(
+          collection(db, "globalMessages"),
+          orderBy("createdAt", "asc"),
+          limitToLast(600)
+        )
+      : query(
+          collection(db, "globalMessages"),
+          where("createdAtMs", ">=", joinAtMs),
+          orderBy("createdAtMs", "asc")
+        );
 
-    /* ✅ ديسكتوب: كما هو */
-    const qDesktop = query(
-      collection(db, "globalMessages"),
-      where("createdAtMs", ">=", joinAtMs),
-      orderBy("createdAtMs", "asc")
-    );
-
-    const qUse = (__MOBILE_DEVICE ? qMobile : qDesktop);
-
-    onSnapshot(qUse, (snap)=>{
+    onSnapshot(q, (snap)=>{
       messagesDiv.innerHTML = "";
       const isFirst = !initialLoaded;
       const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
@@ -1509,6 +1521,8 @@
       for (const it of items){
         const m = it.m;
         const t = it.t;
+
+        // ✅ فلترة "من بعد الدخول" للجميع، وعلى الموبايل ما بنظهر أي قديم
         if (t < cutoff) continue;
 
         if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) continue;
@@ -1537,7 +1551,7 @@
 
           const gHtml = genderSymbolHtml(m.gender);
           const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-          const devHtml = deviceIconHtml(m.device === "mobile" ? "mobile" : "desktop"); /* ✅ */
+          const devHtml = deviceIconHtml(m.device === "mobile" ? "mobile" : "desktop");
 
           const nameHtml =
             `<span style="color:${escapeHtml(m.nameColor || "#facc15")}">${escapeHtml(m.name||"مستخدم")}</span> ${devHtml} ${guestHtml}`;
@@ -1612,6 +1626,31 @@
     hideCtxMenu();
   });
 
+  // ✅✅✅ (Mobile-only) إرسال من الكيبورد بدون زر (Enter + دبل-سبيس)
+  let __lastSpaceSendAt = 0;
+  msgInput.addEventListener("keydown",(e)=>{
+    if (!__MOBILE_DEVICE) return;
+
+    if (e.key === "Enter"){
+      e.preventDefault();
+      if (!msgInput.disabled) chatForm.requestSubmit();
+      return;
+    }
+
+    if (e.key === " "){
+      const v = msgInput.value || "";
+      const now = Date.now();
+      const fast = (now - __lastSpaceSendAt) < 320;
+      __lastSpaceSendAt = now;
+
+      // دبل سبيس سريع => إرسال (بدون ما نخرب النص)
+      if (fast && collapseSpaces(v).length > 0){
+        e.preventDefault();
+        if (!msgInput.disabled) chatForm.requestSubmit();
+      }
+    }
+  });
+
   chatForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     if (!user || !profile) return;
@@ -1654,30 +1693,10 @@
       textColor:profile.textColor,
       isAdmin, isGuest,
       replyTo,
-      device: myDevice, /* ✅ */
+      device: myDevice,
       createdAt: serverTimestamp(),
-      createdAtMs: nowMs() /* ✅ */
+      createdAtMs: nowMs()
     });
-  });
-
-  /* ✅✅✅ موبايل فقط: إرسال بالـ Double Space (ضغطتين Space بسرعة) */
-  let __lastSpaceAt = 0;
-  msgInput.addEventListener("keydown", (e)=>{
-    if (!__MOBILE_DEVICE) return;
-    if (e.key !== " ") return;
-
-    const now = Date.now();
-    const dt = now - __lastSpaceAt;
-    __lastSpaceAt = now;
-
-    // إذا ضغطتين بسرعة: أرسل
-    if (dt > 0 && dt < 420){
-      e.preventDefault();
-      if (msgInput.disabled) return;
-      const t = collapseSpaces(msgInput.value);
-      if (!t) return;
-      chatForm.requestSubmit();
-    }
   });
 
   function cleanupGuestLocal(){
@@ -1794,7 +1813,12 @@
     const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
     statusSelect.value = savedStatus;
 
-    await enterChat(savedStatus);
+    try{
+      await enterChat(savedStatus);
+    }catch(err){
+      console.error(err);
+      setErr(modalErr, "❌ صار خطأ بالدخول للشات. جرّب مرة ثانية.");
+    }
   });
 
   async function enterChat(statusVal){
@@ -1805,25 +1829,7 @@
     msgInput.disabled = false;
     sendBtn.disabled = false;
 
-    joinAtMs = nowMs(); /* ✅ كما هو */
-
-    /* ✅✅✅ موبايل فقط: نجيب "لحظة الدخول" بوقت سيرفر Firestore (موحّد) */
-    if (__MOBILE_DEVICE){
-      joinAtServerTs = null;
-      const joinRef = doc(collection(db, "joinMarks"));
-      await setDoc(joinRef, { createdAt: serverTimestamp(), uid: user.uid });
-
-      await new Promise((resolve)=>{
-        const unsub = onSnapshot(joinRef, (s)=>{
-          const d = s.data();
-          if (d?.createdAt){
-            joinAtServerTs = d.createdAt;
-            unsub();
-            resolve();
-          }
-        });
-      });
-    }
+    joinAtMs = nowMs();
 
     await updatePresenceStatus(statusVal, true);
     await writeJoinLeave("join");
@@ -1843,7 +1849,6 @@
       msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
     }
 
-    /* ✅ بالموبايل: اقفل Drawer تلقائيًا بعد الدخول */
     closeOnlineDrawer();
   }
 
