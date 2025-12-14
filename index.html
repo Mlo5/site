@@ -1762,12 +1762,24 @@
     }
     setRating(selectedRating);
 
-    stars.forEach(s => {
-      s.addEventListener("click", () => {
-        const r = Number(s.dataset.rate || "5");
-        setRating(r);
-      });
-    });
+    // ✅ Stars: touch + click + pointer (works on phones too)
+stars.forEach((s) => {
+  const pick = (e) => {
+    e.preventDefault();
+    const r = Number(s.dataset.rate || "5");
+    setRating(r);
+  };
+
+  s.addEventListener("pointerdown", pick, { passive: false });
+  s.addEventListener("click", pick);
+
+  // optional: keyboard support
+  s.setAttribute("tabindex", "0");
+  s.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") pick(e);
+  });
+});
+
 
     function escapeHtml(s){
       return String(s)
@@ -1966,3 +1978,4 @@
   </script>
 </body>
 </html>
+
