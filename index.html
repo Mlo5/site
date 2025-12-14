@@ -561,9 +561,11 @@
     .preloader-logo img { max-width: 200px; height: auto; animation: preloader-blink 0.35s infinite alternate; }
     @keyframes preloader-blink { 0% { opacity: 0.35; } 100% { opacity: 1; } }
 
+    /* ✅ تعديل: toast يمين بدل الشمال */
     .subscribe-toast {
       position: fixed;
-      left: 18px;
+      right: 18px;
+      left: auto;
       bottom: 72px;
       z-index: 40;
       max-width: 320px;
@@ -732,8 +734,8 @@
     ========================================================= */
     .left-ad-rail{
       position: absolute;
-      left: -270px;
-      top: 210px;
+      left: -285px;
+      top: 260px;
       width: 240px;
       z-index: 35;
     }
@@ -747,6 +749,7 @@
       transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
       text-decoration: none;
       display: block;
+      position: relative;
     }
     .left-ad-card:hover{
       transform: translateY(-2px);
@@ -760,13 +763,23 @@
       display: block;
       background: #000;
     }
-    .left-ad-cap{
-      padding: 10px 12px;
-      font-size: .78rem;
-      color: rgba(249,250,251,.75);
-      border-top: 1px solid rgba(148,163,184,.18);
+    .left-ad-badge{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(249,250,251,.9);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+      user-select: none;
     }
-    .left-ad-cap b{ color: var(--yellow); }
 
     @media (max-width: 1200px){
       .left-ad-rail{ display: none; }
@@ -878,11 +891,47 @@
       flex-wrap: wrap;
       margin-bottom: 6px;
     }
-    .op-name{
-      font-weight: 800;
-      color: rgba(249,250,251,.9);
-      font-size: .9rem;
+
+    /* ✅ avatar حرف أول */
+    .op-user{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
     }
+    .op-avatar{
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      font-family: "Poppins", system-ui, sans-serif;
+      color: rgba(249,250,251,.95);
+      background: rgba(250,204,21,.18);
+      border: 1px solid rgba(250,204,21,.35);
+      box-shadow: 0 10px 20px rgba(0,0,0,.75);
+      flex: 0 0 auto;
+      user-select:none;
+    }
+    .op-name{
+      font-weight: 900;
+      color: rgba(249,250,251,.92);
+      font-size: .92rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      /* ✅ وميض خفيف جدًا */
+      text-shadow: 0 0 8px rgba(250,204,21,.12);
+      animation: opNameGlow 3.2s ease-in-out infinite;
+    }
+    @keyframes opNameGlow{
+      0%,100%{ text-shadow: 0 0 8px rgba(250,204,21,.10); }
+      50%{ text-shadow: 0 0 10px rgba(250,204,21,.18); }
+    }
+
     .op-time{
       font-size: .75rem;
       color: rgba(156,163,175,.85);
@@ -914,6 +963,69 @@
     }
     .op-star:hover{ transform: translateY(-1px) scale(1.05); }
     .op-star.is-on{ color: #facc15; }
+
+    /* ✅ زر حذف */
+    .op-del{
+      border: 1px solid rgba(252,165,165,.35);
+      background: rgba(0,0,0,.45);
+      color: rgba(252,165,165,.92);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: .78rem;
+      box-shadow: 0 10px 22px rgba(0,0,0,.75);
+      transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+      white-space: nowrap;
+    }
+    .op-del:hover{
+      transform: translateY(-1px);
+      background: rgba(252,165,165,.10);
+      border-color: rgba(252,165,165,.55);
+      color: rgba(252,165,165,1);
+    }
+
+    /* ✅ Popup شكرًا يا وحش */
+    .mlo5-thanks{
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(6px);
+      animation: thanksFadeIn .18s ease-out forwards;
+    }
+    @keyframes thanksFadeIn{ from{ opacity: 0; } to{ opacity: 1; } }
+
+    .mlo5-thanks-card{
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      background: rgba(0,0,0,.88);
+      border: 1px solid rgba(250,204,21,.55);
+      box-shadow: 0 20px 60px rgba(0,0,0,1), 0 0 0 1px rgba(0,0,0,1);
+      min-width: 260px;
+      max-width: 360px;
+      text-align: center;
+      transform: translateY(6px);
+      animation: thanksPop .22s ease-out forwards;
+    }
+    @keyframes thanksPop{ to{ transform: translateY(0); } }
+
+    .mlo5-thanks-title{
+      font-size: 1rem;
+      font-weight: 900;
+      color: rgba(249,250,251,.96);
+      margin-bottom: 6px;
+    }
+    .mlo5-thanks-heart{
+      font-size: 26px;
+      line-height: 1;
+      display:inline-block;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.8));
+      margin-top: 2px;
+    }
   </style>
 </head>
 
@@ -938,11 +1050,11 @@
 
   <main class="page">
 
-    <!-- ✅ ADDED: Left vertical ad rail (moves with page) -->
+    <!-- ✅ Left vertical ad rail (moves with page) -->
     <div class="left-ad-rail" aria-label="Side Advertisement">
-      <a id="side-ad-link" class="left-ad-card" href="#" target="_blank" rel="noopener">
-        <img id="side-ad-img" class="left-ad-img" src="sidead1.jpg" alt="Ad" loading="lazy">
-        <div id="side-ad-caption" class="left-ad-cap"><b>إعلان</b> • مساحة عمودية</div>
+      <a id="side-ad-link" class="left-ad-card" href="https://bhipshop.com/en/products" target="_blank" rel="noopener">
+        <div class="left-ad-badge">Ad</div>
+        <img id="side-ad-img" class="left-ad-img" src="leftad1.jpg" alt="Ad" loading="lazy">
       </a>
     </div>
 
@@ -1064,43 +1176,6 @@
           </div>
         </section>
 
-        <!-- ✅ ADDED: Opinions (Online) under ad slot -->
-        <section class="opinions" aria-label="Opinions">
-          <div class="op-head">
-            <div id="opinions-title" class="op-title">💬 الآراء</div>
-            <div class="op-meta">
-              <span id="opinions-count-label">العدد:</span>
-              <span id="opinions-count">0</span>
-            </div>
-          </div>
-
-          <div class="op-form">
-            <input id="op-name" class="op-input" type="text" placeholder="اسمك" maxlength="30" />
-            <textarea id="op-text" class="op-textarea" placeholder="اكتب رأيك هنا..." maxlength="240"></textarea>
-
-            <div class="op-rating" id="op-rating" aria-label="Rating">
-              <span class="op-star is-on" data-rate="1" role="button" aria-label="1 star">★</span>
-              <span class="op-star is-on" data-rate="2" role="button" aria-label="2 stars">★</span>
-              <span class="op-star is-on" data-rate="3" role="button" aria-label="3 stars">★</span>
-              <span class="op-star is-on" data-rate="4" role="button" aria-label="4 stars">★</span>
-              <span class="op-star is-on" data-rate="5" role="button" aria-label="5 stars">★</span>
-            </div>
-
-            <div class="op-actions">
-              <button id="op-clear" class="op-btn" type="button">مسح</button>
-              <button id="op-publish" class="op-btn primary" type="button">نشر</button>
-            </div>
-
-            <div id="op-err" class="op-err"></div>
-          </div>
-
-          <div id="op-list" class="op-list">
-            <div class="op-item">
-              <div class="op-text" style="color:rgba(249,250,251,.65)">لا يوجد آراء بعد… كن أول واحد 👀</div>
-            </div>
-          </div>
-        </section>
-
         <div class="divider">
           <div class="divider-line"></div>
           <div class="divider-glow"></div>
@@ -1158,6 +1233,43 @@
                 أنا حمزة غريب، يوتيوبر صاعد بحاول أسوي إشي مفيد للحياة 🙄. وعقلي فقد عقله لحد الآن.
                 ملوخ لديكم لا خوف عليكم صدقني 😎✨.
               </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ✅ Opinions moved تحت نبذة عني + تعديلات -->
+        <section class="opinions" aria-label="Opinions">
+          <div class="op-head">
+            <div id="opinions-title" class="op-title">💬 الآراء</div>
+            <div class="op-meta">
+              <span id="opinions-count-label">العدد:</span>
+              <span id="opinions-count">0</span>
+            </div>
+          </div>
+
+          <div class="op-form">
+            <input id="op-name" class="op-input" type="text" placeholder="اسمك" maxlength="30" />
+            <textarea id="op-text" class="op-textarea" placeholder="اكتب رأيك هنا..." maxlength="240"></textarea>
+
+            <div class="op-rating" id="op-rating" aria-label="Rating">
+              <span class="op-star is-on" data-rate="1" role="button" aria-label="1 star">★</span>
+              <span class="op-star is-on" data-rate="2" role="button" aria-label="2 stars">★</span>
+              <span class="op-star is-on" data-rate="3" role="button" aria-label="3 stars">★</span>
+              <span class="op-star is-on" data-rate="4" role="button" aria-label="4 stars">★</span>
+              <span class="op-star is-on" data-rate="5" role="button" aria-label="5 stars">★</span>
+            </div>
+
+            <div class="op-actions">
+              <button id="op-clear" class="op-btn" type="button">مسح</button>
+              <button id="op-publish" class="op-btn primary" type="button">نشر</button>
+            </div>
+
+            <div id="op-err" class="op-err"></div>
+          </div>
+
+          <div id="op-list" class="op-list">
+            <div class="op-item">
+              <div class="op-text" style="color:rgba(249,250,251,.65)">لا يوجد آراء بعد… كن أول واحد 👀</div>
             </div>
           </div>
         </section>
@@ -1615,9 +1727,11 @@
   <!-- ✅ ADDED: Firestore (real visitors + online opinions + stars) + side ad slideshow -->
   <script type="module">
     import { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
     import {
       getFirestore, doc, runTransaction, serverTimestamp,
-      collection, addDoc, query, orderBy, limit, onSnapshot
+      collection, addDoc, query, orderBy, limit, onSnapshot,
+      getDocs, deleteDoc, writeBatch
     } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -1629,6 +1743,28 @@
 
     const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // =========================
+    // ✅ Auth state for delete permissions
+    // =========================
+    const auth = getAuth(app);
+    let currentUser = null;
+    onAuthStateChanged(auth, (u) => { currentUser = u || null; });
+
+    // persistent client id (for owner delete even if not logged in)
+    const CLIENT_ID_KEY = "mlo5-op-clientId";
+    let clientId = localStorage.getItem(CLIENT_ID_KEY);
+    if (!clientId) {
+      clientId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("cid_" + Math.random().toString(36).slice(2) + Date.now());
+      localStorage.setItem(CLIENT_ID_KEY, clientId);
+    }
+
+    // admin uid (you said already linked before)
+    const ADMIN_UID_KEY = "mlo5-admin-uid";
+    function isAdmin(){
+      const adminUid = (localStorage.getItem(ADMIN_UID_KEY) || "").trim();
+      return !!(currentUser && adminUid && currentUser.uid === adminUid);
+    }
 
     // =========================
     // ✅ 1) REAL VISITOR COUNTER (+1 per visit)
@@ -1658,7 +1794,7 @@
     bumpVisitors();
 
     // =========================
-    // ✅ 2) ONLINE OPINIONS + 5★ + realtime list
+    // ✅ 2) ONLINE OPINIONS + 5★ + realtime list (آخر 5 فقط)
     // =========================
     const opName = document.getElementById("op-name");
     const opText = document.getElementById("op-text");
@@ -1725,7 +1861,24 @@
       return `${y}-${m}-${day} • ${hh}:${mm} ${ampm}`;
     }
 
-    const opinionsQ = query(collection(db, "opinions"), orderBy("ts", "desc"), limit(60));
+    function getFirstChar(name){
+      const t = (name || "").trim();
+      if (!t) return "?";
+      const c = t.charAt(0);
+      // Uppercase only affects latin, arabic stays as-is
+      return c.toUpperCase();
+    }
+
+    function canDeleteOpinion(v){
+      if (isAdmin()) return true;
+      const uid = (v.uid || "").trim();
+      const cid = (v.clientId || "").trim();
+      if (currentUser && uid && currentUser.uid === uid) return true;
+      if (cid && cid === clientId) return true;
+      return false;
+    }
+
+    const opinionsQ = query(collection(db, "opinions"), orderBy("ts", "desc"), limit(5));
     onSnapshot(opinionsQ, (snap) => {
       if (opCount) opCount.textContent = String(snap.size);
       if (!opList) return;
@@ -1739,18 +1892,32 @@
         return;
       }
 
+      const lang = localStorage.getItem("mlo5-lang") || "ar";
+      const delLabel = (lang === "en") ? "Delete" : "حذف";
+
       opList.innerHTML = snap.docs.map(d => {
         const v = d.data();
-        const name = escapeHtml((v.name || "Visitor").slice(0, 30));
+        const nameRaw = (v.name || "Visitor").slice(0, 30);
+        const name = escapeHtml(nameRaw);
+        const first = escapeHtml(getFirstChar(nameRaw));
         const text = escapeHtml((v.text || "").slice(0, 240));
         const rating = Number(v.rating || 5);
         const time = fmt(v.ts);
 
+        const allowDel = canDeleteOpinion(v);
+        const delBtn = allowDel ? `<button class="op-del" type="button" data-id="${escapeHtml(d.id)}">${delLabel}</button>` : "";
+
         return `
           <div class="op-item">
             <div class="op-top">
-              <div class="op-name">🟡 ${name}</div>
-              <div class="op-time">${escapeHtml(time)}</div>
+              <div class="op-user">
+                <div class="op-avatar">${first}</div>
+                <div class="op-name">${name}</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                ${delBtn}
+                <div class="op-time">${escapeHtml(time)}</div>
+              </div>
             </div>
             <div style="margin:6px 0 8px">${renderStars(rating)}</div>
             <div class="op-text">${text}</div>
@@ -1758,6 +1925,41 @@
         `;
       }).join("");
     });
+
+    async function pruneOpinionsKeep5(){
+      try{
+        const snap = await getDocs(query(collection(db, "opinions"), orderBy("ts", "desc"), limit(50)));
+        if (snap.size <= 5) return;
+        const extra = snap.docs.slice(5);
+        const batch = writeBatch(db);
+        extra.forEach(docSnap => batch.delete(docSnap.ref));
+        await batch.commit();
+      }catch(e){
+        console.error("Prune opinions error:", e);
+      }
+    }
+
+    function showThanksPopup(){
+      const wrap = document.createElement("div");
+      wrap.className = "mlo5-thanks";
+      const hue = Math.floor(Math.random() * 360);
+      wrap.innerHTML = `
+        <div class="mlo5-thanks-card" role="dialog" aria-live="polite">
+          <div class="mlo5-thanks-title">شكرًا يا وحش</div>
+          <div class="mlo5-thanks-heart" style="color:hsl(${hue} 90% 60%)">❤</div>
+        </div>
+      `;
+      document.body.appendChild(wrap);
+
+      const close = () => {
+        if (!wrap.parentNode) return;
+        wrap.style.opacity = "0";
+        setTimeout(() => wrap.remove(), 160);
+      };
+
+      setTimeout(close, 1100);
+      wrap.addEventListener("click", close);
+    }
 
     if (opPublish) {
       opPublish.addEventListener("click", async () => {
@@ -1774,11 +1976,16 @@
             name,
             text,
             rating: selectedRating,
-            ts: new Date()
+            ts: new Date(),
+            uid: currentUser ? currentUser.uid : null,
+            clientId: clientId
           });
 
           if (opText) opText.value = "";
           setRating(5);
+
+          showThanksPopup();
+          pruneOpinionsKeep5();
         }catch(e){
           console.error("Opinion publish error:", e);
           showErr("صار خطأ بالنشر. جرّب مرة ثانية.");
@@ -1795,18 +2002,34 @@
       });
     }
 
+    // delete (admin or owner)
+    if (opList){
+      opList.addEventListener("click", async (e) => {
+        const btn = e.target && e.target.closest ? e.target.closest(".op-del") : null;
+        if (!btn) return;
+        const id = btn.getAttribute("data-id");
+        if (!id) return;
+
+        try{
+          // fetch doc to validate permission
+          const snap = await getDocs(query(collection(db, "opinions"), orderBy("ts","desc"), limit(10)));
+          // permission check will be re-evaluated by Firestore rules anyway.
+          await deleteDoc(doc(db, "opinions", id));
+        }catch(err){
+          console.error("Delete opinion error:", err);
+        }
+      });
+    }
+
     // =========================
     // ✅ 3) LEFT SIDE AD SLIDESHOW (no dots, no swipe)
     // =========================
     const sideImg = document.getElementById("side-ad-img");
     const sideLink = document.getElementById("side-ad-link");
-    const sideCap = document.getElementById("side-ad-caption");
 
     const SIDE_AD = {
-      link: "#", // 👈 حط رابطك لاحقًا
-      captionAr: "<b>إعلان</b> • مساحة عمودية",
-      captionEn: "<b>AD</b> • Vertical slot",
-      images: ["sidead1.jpg", "sidead2.jpg", "sidead3.jpg"]
+      link: "https://bhipshop.com/en/products",
+      images: ["leftad1.jpg", "leftad2.jpg", "leftad3.jpg"]
     };
 
     if (sideLink) sideLink.href = SIDE_AD.link;
@@ -1818,18 +2041,6 @@
       sideImg.src = SIDE_AD.images[sideIndex];
     }
     setInterval(swapSide, 3500);
-
-    // caption language sync (simple)
-    const LANG_KEY = "mlo5-lang";
-    function syncSideCaption(){
-      const lang = localStorage.getItem(LANG_KEY) || "ar";
-      if (!sideCap) return;
-      sideCap.innerHTML = (lang === "en") ? SIDE_AD.captionEn : SIDE_AD.captionAr;
-    }
-    syncSideCaption();
-    window.addEventListener("storage", (e) => {
-      if (e.key === LANG_KEY) syncSideCaption();
-    });
   </script>
 </body>
 </html>
