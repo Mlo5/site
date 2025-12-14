@@ -1060,6 +1060,60 @@
       line-height: 1.8;
     }
 
+    /* =========================================================
+       ✅ MOBILE FIX PACK (ONLY for phones)
+       1) Mobile 3-dots menu فوق الإعلان العامودي
+       2) Support + Visitors ثابتين أثناء السكرول
+       3) إضافة أيقونات بدون تعديل النصوص/JS
+    ========================================================= */
+    @media (max-width: 640px){
+
+      /* 1) خفض طبقة إعلان الهاتف عشان ما يغطي القوائم */
+      .left-ad-rail{
+        z-index: 1 !important;
+      }
+
+      /* رفع طبقة الناف بار وقائمة الموبايل فوق أي شيء */
+      .top-nav{ z-index: 200 !important; }
+      .mobile-nav-wrap{ z-index: 210 !important; }
+      .mobile-nav-menu{ z-index: 220 !important; }
+
+      /* 2) تثبيت Support + Visitors بأسفل اليسار (بدون تعارض مع زر ↑ والـ Toast) */
+      .top-bar-right{
+        position: fixed !important;
+        left: 18px !important;
+        right: auto !important;
+        bottom: 18px !important;
+        top: auto !important;
+        width: auto !important;
+        margin-left: 0 !important;
+        z-index: 80 !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+        direction: ltr !important;
+        pointer-events: auto !important;
+      }
+
+      /* شكل أحلى شوي لما تكون ثابتة */
+      .support-btn, .visitors-pill{
+        padding: 8px 12px !important;
+        backdrop-filter: blur(10px);
+      }
+
+      /* 3) أيقونات (بدون تغيير HTML) */
+      .support-btn::before{
+        content: "💛";
+        display: inline-block;
+        margin-right: 6px;
+      }
+      .visitors-pill::before{
+        content: "👀";
+        display: inline-block;
+        margin-right: 6px;
+      }
+    }
+
   </style>
 </head>
 
