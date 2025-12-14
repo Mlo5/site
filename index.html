@@ -42,6 +42,17 @@
       cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
     }
 
+    /* ✅ ADDED: Custom Scrollbar (بدون ما يرجع ديفولت) */
+    html { scrollbar-width: thin; scrollbar-color: rgba(250,204,21,.55) rgba(255,255,255,.08); }
+    body::-webkit-scrollbar { width: 10px; }
+    body::-webkit-scrollbar-track { background: rgba(255,255,255,.06); }
+    body::-webkit-scrollbar-thumb{
+      background: rgba(250,204,21,.35);
+      border-radius: 999px;
+      border: 2px solid rgba(0,0,0,.55);
+    }
+    body::-webkit-scrollbar-thumb:hover{ background: rgba(250,204,21,.55); }
+
     .page {
       width: 100%;
       max-width: 1100px;
@@ -654,6 +665,256 @@
       color: #000;
       box-shadow: 0 14px 32px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.9);
     }
+
+    /* ✅ ADDED: Right fixed Support + Visitor counter (ثابت يمين حتى لو EN) */
+    .right-tools{
+      position: fixed;
+      top: 16px;
+      right: 16px; /* ثابت يمين دائمًا */
+      z-index: 80;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      direction: ltr; /* حتى لا تتبدل المحاذاة مع RTL/LTR */
+    }
+
+    .support-btn{
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 800;
+      background: var(--yellow);
+      color: #111827;
+      box-shadow: 0 14px 30px rgba(250,204,21,.22);
+      transition: transform .15s ease, box-shadow .15s ease;
+      white-space: nowrap;
+    }
+    .support-btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px rgba(250,204,21,.30);
+    }
+
+    .visitor-badge{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(250,204,21,.10);
+      border: 1px solid rgba(250,204,21,.25);
+      box-shadow: 0 12px 28px rgba(0,0,0,.70);
+      font-weight: 800;
+      color: rgba(249,250,251,.92);
+      white-space: nowrap;
+    }
+    .visitor-badge .num{
+      color: var(--yellow);
+      letter-spacing: .3px;
+    }
+
+    /* ✅ ADDED: Left Ad rail (واحد فقط) + slideshow */
+    .left-ad-rail{
+      position: fixed;
+      left: 16px;
+      top: 120px;
+      width: 240px;
+      z-index: 35;
+    }
+
+    .left-ad-box{
+      border-radius: 18px;
+      border: 1px dashed rgba(250, 204, 21, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 18px 45px rgba(0,0,0,.90), 0 0 0 1px rgba(0,0,0,1);
+      position: relative;
+      min-height: 520px; /* بالطول */
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .left-ad-box:hover{
+      transform: translateY(-2px);
+      border-color: rgba(250,204,21,.9);
+      box-shadow: 0 22px 55px rgba(0,0,0,.95), 0 0 0 1px rgba(250,204,21,.35);
+    }
+
+    .left-ad-box img{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity .45s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none; /* يمنع سحب/تفاعل */
+    }
+    .left-ad-box img.is-active{ opacity: 1; }
+
+    .left-ad-badge{
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(250,204,21,.45);
+      color: rgba(249,250,251,.92);
+      font-weight: 800;
+      font-size: .75rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      z-index: 2;
+      direction: ltr;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1180px){
+      .left-ad-rail{ display:none; } /* نخفيه على الشاشات الأصغر حتى ما يزاحم */
+    }
+
+    /* ✅ ADDED: Opinions section (احترافي) */
+    .opinions-wrap{
+      margin-top: 12px;
+      margin-bottom: 10px;
+    }
+    .opinions-card{
+      border-radius: 18px;
+      border: 1px solid rgba(250,204,21,.35);
+      background: rgba(0,0,0,.55);
+      box-shadow: 0 18px 45px rgba(0,0,0,.88), 0 0 0 1px rgba(15,23,42,.9);
+      padding: 14px;
+    }
+    .opinions-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .opinions-title{
+      font-weight: 800;
+      color: var(--yellow);
+      font-size: .95rem;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .opinions-count{
+      font-size: .78rem;
+      color: rgba(249,250,251,.65);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .opinions-grid{
+      display:grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 760px){
+      .opinions-grid{ grid-template-columns: 1fr; }
+    }
+    .op-label{
+      font-size: .78rem;
+      color: rgba(249,250,251,.78);
+      font-weight: 800;
+      margin: 8px 0 6px;
+      display:block;
+    }
+    .op-input, .op-textarea{
+      width: 100%;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(156,163,175,.25);
+      color: var(--white);
+      border-radius: 14px;
+      padding: 12px;
+      outline: none;
+      font-family: inherit;
+    }
+    .op-textarea{
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+    .op-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .op-btn{
+      cursor:pointer;
+      border:none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 800;
+      background: var(--yellow);
+      color:#111827;
+      box-shadow: 0 14px 30px rgba(250,204,21,.18);
+      transition: transform .15s ease;
+    }
+    .op-btn:hover{ transform: translateY(-1px); }
+    .op-btn-ghost{
+      background: rgba(0,0,0,.45);
+      color: rgba(249,250,251,.88);
+      border: 1px solid rgba(250,204,21,.35);
+      box-shadow: none;
+    }
+    .op-err{
+      display:none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(239,68,68,.10);
+      border: 1px solid rgba(239,68,68,.25);
+      color: #fecaca;
+      font-weight: 800;
+      font-size: .85rem;
+    }
+    .op-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height: 360px;
+      overflow:auto;
+      padding-right: 4px;
+    }
+    .op-item{
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(156,163,175,.18);
+      background: rgba(255,255,255,.04);
+    }
+    .op-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 6px;
+    }
+    .op-name{
+      font-weight: 800;
+      color: rgba(249,250,251,.92);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .op-time{
+      font-size: .72rem;
+      color: rgba(249,250,251,.60);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .op-text{
+      color: rgba(249,250,251,.86);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: .86rem;
+    }
   </style>
 </head>
 
@@ -666,6 +927,25 @@
   </div>
 
   <div class="bg-grid"></div>
+
+  <!-- ✅ ADDED: Right fixed tools -->
+  <div class="right-tools">
+    <button id="support-btn" class="support-btn" type="button">💛 ادعمني!</button>
+    <div class="visitor-badge" title="Visitor Counter">
+      <span id="visitor-label">👁️ الزوار</span>
+      <span class="num" id="visitor-count">0</span>
+    </div>
+  </div>
+
+  <!-- ✅ ADDED: Left Ad Rail (one box) -->
+  <div class="left-ad-rail">
+    <div id="left-ad-box" class="left-ad-box" role="button" aria-label="Left Ad">
+      <div class="left-ad-badge" id="left-ad-badge">AD</div>
+      <img class="is-active" src="leftad1.jpg" alt="Ad 1" loading="eager">
+      <img src="leftad2.jpg" alt="Ad 2" loading="lazy">
+      <img src="leftad3.jpg" alt="Ad 3" loading="lazy">
+    </div>
+  </div>
 
   <main class="page">
     <div class="card-shell">
@@ -783,6 +1063,37 @@
             <a id="ad-slot-cta" href="https://bhipshop.com/en/shop/zkeaotkjtkm" class="ad-slot-cta" target="_blank" rel="noopener">تفاصيل أكثر</a>
             <a id="ad-slot-ads" href="contact.html" class="ad-slot-cta">📢 أعلن عندنا</a>
             <div id="ad-slot-label" class="ad-slot-label">إعلان</div>
+          </div>
+        </section>
+
+        <!-- ✅ ADDED: Opinions section تحت المساحة الإعلانية -->
+        <section class="opinions-wrap">
+          <div class="opinions-card">
+            <div class="opinions-head">
+              <div class="opinions-title" id="opinions-title">⭐ آراء الزوار</div>
+              <div class="opinions-count" id="opinions-count">0</div>
+            </div>
+
+            <div class="opinions-grid">
+              <div>
+                <label class="op-label" id="op-name-label" for="op-name">الاسم</label>
+                <input id="op-name" class="op-input" type="text" maxlength="30" placeholder="مثال: حمزة">
+
+                <label class="op-label" id="op-text-label" for="op-text">رأيك</label>
+                <textarea id="op-text" class="op-textarea" maxlength="240" placeholder="اكتب رأيك عن الموقع أو اقتراحاتك..."></textarea>
+
+                <div class="op-row">
+                  <button class="op-btn" id="op-publish" type="button">نشر الرأي</button>
+                  <button class="op-btn op-btn-ghost" id="op-clear" type="button">مسح (محليًا)</button>
+                </div>
+
+                <div class="op-err" id="op-err"></div>
+              </div>
+
+              <div>
+                <div class="op-list" id="op-list"></div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -948,6 +1259,18 @@
         adCta: "تفاصيل أكثر",
         adLabel: "",
         adSell: "أعلن عندنا 📢",
+
+        /* ✅ ADDED: Support + Visitors + Opinions */
+        supportBtn: "💛 ادعمني!",
+        visitorsLabel: "👁️ الزوار",
+        opinionsTitle: "⭐ آراء الزوار",
+        opNameLabel: "الاسم",
+        opTextLabel: "رأيك",
+        opNamePh: "مثال: حمزة",
+        opTextPh: "اكتب رأيك عن الموقع أو اقتراحاتك...",
+        opPublish: "نشر الرأي",
+        opClear: "مسح (محليًا)",
+        opEmpty: "لا يوجد آراء بعد… كن أول واحد يكتب رأيه 👀"
       },
       en: {
         title: "𝕄𝕃𝕆𝟝 ヅ.",
@@ -989,6 +1312,18 @@
         adCta: "Learn more",
         adLabel: "",
         adSell: "Advertise with us 📢",
+
+        /* ✅ ADDED: Support + Visitors + Opinions */
+        supportBtn: "💛 Support me!",
+        visitorsLabel: "👁️ Visitors",
+        opinionsTitle: "⭐ Visitor Opinions",
+        opNameLabel: "Name",
+        opTextLabel: "Your opinion",
+        opNamePh: "Example: Hamza",
+        opTextPh: "Write your feedback or suggestions...",
+        opPublish: "Post",
+        opClear: "Clear (local)",
+        opEmpty: "No opinions yet… be the first 👀"
       },
     };
 
@@ -1081,6 +1416,31 @@
       if (adCta) adCta.textContent = strings.adCta;
       if (adLabel) adLabel.textContent = strings.adLabel;
       if (adSell) adSell.textContent = strings.adSell;
+
+      /* ✅ ADDED: Support + Visitors + Opinions localization */
+      const supportBtn = document.getElementById("support-btn");
+      const visitorLabel = document.getElementById("visitor-label");
+      const opTitle = document.getElementById("opinions-title");
+      const opNameLabel = document.getElementById("op-name-label");
+      const opTextLabel = document.getElementById("op-text-label");
+      const opName = document.getElementById("op-name");
+      const opText = document.getElementById("op-text");
+      const opPublish = document.getElementById("op-publish");
+      const opClear = document.getElementById("op-clear");
+
+      if (supportBtn) supportBtn.textContent = strings.supportBtn;
+      if (visitorLabel) visitorLabel.textContent = strings.visitorsLabel;
+
+      if (opTitle) opTitle.textContent = strings.opinionsTitle;
+      if (opNameLabel) opNameLabel.textContent = strings.opNameLabel;
+      if (opTextLabel) opTextLabel.textContent = strings.opTextLabel;
+      if (opName) opName.placeholder = strings.opNamePh;
+      if (opText) opText.placeholder = strings.opTextPh;
+      if (opPublish) opPublish.textContent = strings.opPublish;
+      if (opClear) opClear.textContent = strings.opClear;
+
+      // إعادة رسم قائمة الآراء بالنص الصحيح للفراغ
+      if (typeof window.__renderOpinions === "function") window.__renderOpinions();
     }
 
     let savedLang = localStorage.getItem(LANG_KEY) || "ar";
@@ -1205,6 +1565,154 @@
       goTo(0);
       startAuto();
     })();
+
+    /* ✅ ADDED: Support button → support.html */
+    const supportBtnEl = document.getElementById("support-btn");
+    if (supportBtnEl) {
+      supportBtnEl.addEventListener("click", () => {
+        window.location.href = "support.html";
+      });
+    }
+
+    /* ✅ ADDED: Visitor counter (Demo local) */
+    (function initVisitorCounter(){
+      const KEY = "mlo5_visits_local_demo";
+      let visits = Number(localStorage.getItem(KEY) || 0);
+      visits += 1;
+      localStorage.setItem(KEY, String(visits));
+      const el = document.getElementById("visitor-count");
+      if (el) el.textContent = visits.toLocaleString();
+    })();
+
+    /* ✅ ADDED: Opinions (LocalStorage Demo) */
+    (function initOpinions(){
+      const KEY = "mlo5_opinions_local_v1";
+      const opName = document.getElementById("op-name");
+      const opText = document.getElementById("op-text");
+      const opList = document.getElementById("op-list");
+      const opCount = document.getElementById("opinions-count");
+      const opErr = document.getElementById("op-err");
+      const opPublish = document.getElementById("op-publish");
+      const opClear = document.getElementById("op-clear");
+
+      function load(){
+        try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }catch(e){ return []; }
+      }
+      function save(arr){
+        localStorage.setItem(KEY, JSON.stringify(arr));
+      }
+      function fmt(ts){
+        const d = new Date(ts);
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,"0");
+        const day = String(d.getDate()).padStart(2,"0");
+        let hh = d.getHours();
+        const ampm = hh >= 12 ? "PM" : "AM";
+        hh = hh % 12; if(hh === 0) hh = 12;
+        const mm = String(d.getMinutes()).padStart(2,"0");
+        return `${y}-${m}-${day} • ${hh}:${mm} ${ampm}`;
+      }
+      function escapeHtml(s){
+        return String(s)
+          .replaceAll("&","&amp;")
+          .replaceAll("<","&lt;")
+          .replaceAll(">","&gt;")
+          .replaceAll('"',"&quot;")
+          .replaceAll("'","&#039;");
+      }
+      function showErr(msg){
+        if (!opErr) return;
+        opErr.style.display = "block";
+        opErr.textContent = msg;
+      }
+      function hideErr(){
+        if (!opErr) return;
+        opErr.style.display = "none";
+        opErr.textContent = "";
+      }
+
+      window.__renderOpinions = function render(){
+        const arr = load();
+        if (opCount) opCount.textContent = `${arr.length}`;
+
+        const lang = localStorage.getItem("mlo5-lang") || "ar";
+        const emptyMsg = (l10n[lang] && l10n[lang].opEmpty) ? l10n[lang].opEmpty : l10n.ar.opEmpty;
+
+        if (!opList) return;
+
+        if (arr.length === 0){
+          opList.innerHTML = `
+            <div class="op-item">
+              <div class="op-text" style="color:rgba(249,250,251,.65)">${escapeHtml(emptyMsg)}</div>
+            </div>
+          `;
+          return;
+        }
+
+        const view = arr.slice().reverse(); // newest first
+        opList.innerHTML = view.map(it => `
+          <div class="op-item">
+            <div class="op-top">
+              <div class="op-name">🟡 ${escapeHtml(it.name || "زائر")}</div>
+              <div class="op-time">${escapeHtml(fmt(it.ts))}</div>
+            </div>
+            <div class="op-text">${escapeHtml(it.text || "")}</div>
+          </div>
+        `).join("");
+      };
+
+      if (opPublish) {
+        opPublish.addEventListener("click", () => {
+          hideErr();
+          const name = (opName ? opName.value : "").trim().replace(/\s+/g," ");
+          const text = (opText ? opText.value : "").trim();
+
+          if (name.length < 3) return showErr("الاسم لازم يكون 3 أحرف على الأقل.");
+          if (text.length < 5) return showErr("الرأي لازم يكون 5 أحرف على الأقل.");
+
+          const arr = load();
+          arr.push({ name, text, ts: Date.now() });
+          save(arr);
+
+          if (opText) opText.value = "";
+          window.__renderOpinions();
+        });
+      }
+
+      if (opClear) {
+        opClear.addEventListener("click", () => {
+          localStorage.removeItem(KEY);
+          window.__renderOpinions();
+        });
+      }
+
+      window.__renderOpinions();
+    })();
+
+    /* ✅ ADDED: Left Ad slideshow (بدون نقاط/سحب) + click to link */
+    (function initLeftAd(){
+      const box = document.getElementById("left-ad-box");
+      if (!box) return;
+
+      // ضع رابطك هنا لاحقًا
+      const AD_CLICK_URL = "https://bhipshop.com/en/products";
+
+      box.addEventListener("click", () => {
+        if (AD_CLICK_URL && AD_CLICK_URL !== "#") window.open(AD_CLICK_URL, "_blank", "noopener");
+      });
+
+      const imgs = Array.from(box.querySelectorAll("img"));
+      if (imgs.length <= 1) return;
+
+      let i = 0;
+      const DELAY = 3500;
+
+      setInterval(() => {
+        imgs[i].classList.remove("is-active");
+        i = (i + 1) % imgs.length;
+        imgs[i].classList.add("is-active");
+      }, DELAY);
+    })();
   </script>
 
   <!-- ✅ Firebase Auth UI (اسم المستخدم + تسجيل خروج) -->
@@ -1253,4 +1761,3 @@
   </script>
 </body>
 </html>
-
