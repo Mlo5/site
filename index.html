@@ -66,12 +66,21 @@
     .card-shell { border-radius: 0; padding: 0; background: transparent; box-shadow: none; border: none; }
     .card-shell-inner { position: relative; z-index: 1; }
 
+    /* ✅ TOP BAR */
     .top-bar {
       display: flex;
       justify-content: flex-start;
       align-items: center;
       gap: 10px;
       margin-bottom: 10px;
+      direction: ltr;
+      flex-wrap: wrap;
+    }
+    .top-bar-right{
+      margin-left: auto; /* pushes to right in LTR */
+      display: flex;
+      align-items: center;
+      gap: 10px;
       direction: ltr;
       flex-wrap: wrap;
     }
@@ -111,7 +120,7 @@
       font-size: 1rem;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(15, 23, 42, 0.9);
       transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-      white-space: nowrap;
+      flex: 0 0 auto;
     }
 
     .lang-toggle:hover {
@@ -119,6 +128,48 @@
       background: radial-gradient(circle at top, #facc15, #fbbf24);
       color: #000;
       box-shadow: 0 14px 30px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.8);
+    }
+
+    /* ✅ Support + Visitors (NOT fixed, in top-bar right) */
+    .support-btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.9);
+      background: rgba(0, 0, 0, 0.86);
+      color: var(--yellow);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 24px rgba(0,0,0,.92), 0 0 0 1px rgba(0,0,0,1);
+      transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+      white-space: nowrap;
+    }
+    .support-btn:hover{
+      transform: translateY(-1px);
+      background: rgba(250, 204, 21, 0.13);
+      box-shadow: 0 14px 32px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.85);
+    }
+    .visitors-pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background: rgba(0, 0, 0, 0.72);
+      color: var(--white);
+      font-size: 0.82rem;
+      box-shadow: 0 10px 24px rgba(0,0,0,.9), 0 0 0 1px rgba(15, 23, 42, 0.9);
+      white-space: nowrap;
+    }
+    .visitors-pill b{
+      color: var(--yellow);
+      font-family: "Poppins", system-ui, sans-serif;
+      letter-spacing: .02em;
     }
 
     .hero-title { text-align: center; margin-bottom: 10px; }
@@ -238,131 +289,7 @@
 
     .dropdown-item:hover { background: rgba(250, 204, 21, 0.12); color: var(--yellow); }
 
-    /* ✅ Mobile hamburger */
-    .hamburger{
-      display:none;
-      width: 36px; height: 36px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: radial-gradient(circle at top, #111111, #020202);
-      color: var(--yellow);
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      font-size: 1.2rem;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition: transform .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease;
-    }
-    .hamburger:hover{
-      transform: translateY(-1px);
-      background: rgba(250,204,21,.12);
-      box-shadow: 0 14px 30px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.5);
-    }
-
-    /* ✅ Support + visitors near login (top-bar) */
-    .top-actions{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      direction:ltr;
-      white-space: nowrap;
-    }
-    .support-btn{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(250, 204, 21, 0.9);
-      background: rgba(0, 0, 0, 0.86);
-      color: var(--yellow);
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 0.9rem;
-      box-shadow: 0 14px 35px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,1);
-      transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
-      white-space: nowrap;
-    }
-    .support-btn:hover{
-      transform: translateY(-1px);
-      background: rgba(250, 204, 21, 0.13);
-      box-shadow: 0 18px 40px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.85);
-    }
-    .visitors-pill{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.65);
-      background: rgba(0, 0, 0, 0.72);
-      color: var(--white);
-      font-size: 0.82rem;
-      box-shadow: 0 14px 35px rgba(0,0,0,.92), 0 0 0 1px rgba(15, 23, 42, 0.9);
-      white-space: nowrap;
-    }
-    .visitors-pill b{
-      color: var(--yellow);
-      font-family: "Poppins", system-ui, sans-serif;
-      letter-spacing: .02em;
-    }
-
-    /* ✅ Slider + side ad aligned (left of slider, parallel, doesn't move navbar/content) */
-    .hero-row{
-      display:flex;
-      gap: 14px;
-      align-items: stretch;
-    }
-    .side-ad{
-      flex: 0 0 240px;
-      max-width: 240px;
-    }
-    .side-ad-card{
-      border-radius: 18px;
-      border: 1px solid rgba(250,204,21,.55);
-      background: rgba(0,0,0,.55);
-      box-shadow: 0 18px 45px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,1);
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-      text-decoration: none;
-      display: block;
-      position: relative;
-      height: 100%;
-    }
-    .side-ad-card:hover{
-      transform: translateY(-2px);
-      border-color: rgba(250,204,21,.9);
-      box-shadow: 0 22px 55px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.6);
-    }
-    .side-ad-img{
-      width: 100%;
-      height: 100%;
-      min-height: 420px;
-      object-fit: cover;
-      display: block;
-      background: #000;
-    }
-    .side-ad-badge{
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: .72rem;
-      font-weight: 900;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: rgba(249,250,251,.9);
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(8px);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .video-section { margin-top: 10px; margin-bottom: 10px; flex: 1 1 auto; min-width: 0; }
+    .video-section { margin-top: 10px; margin-bottom: 10px; position: relative; }
 
     .video-wrapper {
       position: relative;
@@ -375,7 +302,6 @@
       z-index: 1;
       border: 2px solid #f9fafb;
       transition: box-shadow 0.25s ease, border-color 0.25s ease;
-      height: 100%;
     }
 
     .video-wrapper::before {
@@ -609,47 +535,35 @@
       flex-wrap: wrap;
     }
 
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
     .footer-bottom {
       text-align: center;
       font-size: 0.75rem;
       color: rgba(107, 114, 128, 0.9);
       margin-top: 2px;
     }
+    .footer-rights{
+      text-align:center;
+      font-size: 0.72rem;
+      color: rgba(107, 114, 128, 0.9);
+      margin-top: -6px;
+      direction: ltr; /* ثابت انجليزي */
+    }
 
     @media (max-width: 900px) { .sections-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-
-    @media (max-width: 720px){
-      .hamburger{ display:inline-flex; }
-      .top-nav{ display:none; }
-      .top-nav.mobile-open{
-        display:flex;
-        flex-direction: column;
-        align-items: stretch;
-        justify-content:flex-start;
-        gap: 10px;
-        margin-bottom: 14px;
-      }
-      .top-nav.mobile-open .top-nav-item{
-        justify-content: center;
-        text-align: center;
-      }
-
-      .hero-row{
-        flex-direction: column;
-      }
-      .side-ad{
-        max-width: 100%;
-        width: 100%;
-      }
-      .side-ad-img{
-        min-height: 240px;
-      }
-    }
 
     @media (max-width: 640px) {
       .hero-title h1 { letter-spacing: 0.28em; }
       .sections-grid { grid-template-columns: 1fr; }
       .footer-top { flex-direction: column; align-items: flex-start; }
+      .social-links { justify-content: flex-start; }
+      .top-bar-right{ width: 100%; justify-content: flex-start; margin-left: 0; }
     }
 
     #preloader {
@@ -668,7 +582,7 @@
     .preloader-logo img { max-width: 200px; height: auto; animation: preloader-blink 0.35s infinite alternate; }
     @keyframes preloader-blink { 0% { opacity: 0.35; } 100% { opacity: 1; } }
 
-    /* ✅ Toast: slide from bottom + fade */
+    /* ✅ Toast (حركة ظهور من تحت + fade) */
     .subscribe-toast {
       position: fixed;
       right: 18px;
@@ -676,11 +590,12 @@
       bottom: 72px;
       z-index: 40;
       max-width: 320px;
-      pointer-events: auto;
+      transform: translateY(18px);
       opacity: 0;
-      transform: translateY(26px);
-      transition: opacity 0.28s ease, transform 0.28s ease;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
+
     .subscribe-toast.subscribe-toast--visible {
       opacity: 1;
       transform: translateY(0);
@@ -716,13 +631,14 @@
       color: #111827;
       white-space: nowrap;
       margin-top: 4px;
-      animation: subPulse 2s infinite;
+      animation: toastBtnGlow 2.4s ease-in-out infinite;
+      box-shadow: 0 0 0 rgba(250,204,21,0);
     }
-    @keyframes subPulse{
-      0%{ box-shadow: 0 0 0 rgba(250,204,21,0); }
-      50%{ box-shadow: 0 0 18px rgba(250,204,21,.6); }
-      100%{ box-shadow: 0 0 0 rgba(250,204,21,0); }
+    @keyframes toastBtnGlow{
+      0%,100%{ box-shadow: 0 0 0 rgba(250,204,21,0); }
+      50%{ box-shadow: 0 0 18px rgba(250,204,21,.35); }
     }
+
     .subscribe-toast-btn:hover { filter: brightness(1.05); }
 
     .subscribe-toast-close {
@@ -780,7 +696,64 @@
     body::-webkit-scrollbar-thumb:hover { filter: brightness(1.05); }
 
     /* =========================================================
-       ✅ Opinions section + Grid + Yellow card
+       ✅ Side vertical ad rail (LEFT gutter, NOT affecting slider)
+       - anchored to video-section
+    ========================================================= */
+    .left-ad-rail{
+      position: absolute;
+      left: -285px;
+      right: auto;
+      top: 0;
+      width: 240px;
+      z-index: 35;
+    }
+    .left-ad-card{
+      border-radius: 18px;
+      border: 1px solid rgba(250,204,21,.55);
+      background: rgba(0,0,0,.55);
+      box-shadow: 0 18px 45px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,1);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      text-decoration: none;
+      display: block;
+      position: relative;
+    }
+    .left-ad-card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(250,204,21,.9);
+      box-shadow: 0 22px 55px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.6);
+    }
+    .left-ad-img{
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+    .left-ad-badge{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(249,250,251,.9);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+      user-select: none;
+    }
+    @media (max-width: 1200px){
+      .left-ad-rail{ display: none; }
+    }
+
+    /* =========================================================
+       ✅ Opinions section (GRID + yellow cards)
     ========================================================= */
     .opinions{
       margin-top: 14px;
@@ -865,33 +838,23 @@
       color: #fca5a5;
     }
 
-    /* ✅ Grid */
     .op-list{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 10px;
       margin-top: 8px;
     }
 
-    /* ✅ Yellow accent card */
+    /* ✅ yellow card */
     .op-item{
       border-radius: 16px;
-      border: 1px solid rgba(250,204,21,.55);
-      background: linear-gradient(145deg, rgba(250,204,21,.24), rgba(0,0,0,.38));
+      border: 1px solid rgba(17,24,39,.25);
+      background: linear-gradient(145deg, rgba(250,204,21,.92), rgba(245,158,11,.88));
       padding: 12px;
-      box-shadow: 0 12px 26px rgba(0,0,0,.75);
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 12px 26px rgba(0,0,0,.55);
+      color: #111827;
     }
-    .op-item::before{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: radial-gradient(circle at top, rgba(250,204,21,.22), transparent 60%);
-      opacity:.9;
-      pointer-events:none;
-      mix-blend-mode: screen;
-    }
+
     .op-top{
       display:flex;
       align-items:center;
@@ -899,8 +862,6 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 6px;
-      position: relative;
-      z-index: 1;
     }
 
     .op-user{
@@ -908,104 +869,56 @@
       align-items:center;
       gap: 10px;
       min-width: 0;
-      position: relative;
-      z-index: 1;
     }
     .op-avatar{
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 999px;
       display:flex;
       align-items:center;
       justify-content:center;
       font-weight: 900;
       font-family: "Poppins", system-ui, sans-serif;
-      color: rgba(249,250,251,.95);
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(250,204,21,.55);
-      box-shadow: 0 10px 20px rgba(0,0,0,.75);
+      color: rgba(17,24,39,.95);
+      background: rgba(255,255,255,.45);
+      border: 1px solid rgba(17,24,39,.25);
+      box-shadow: 0 10px 20px rgba(0,0,0,.35);
       flex: 0 0 auto;
       user-select:none;
     }
     .op-name{
       font-weight: 900;
-      color: rgba(20,20,20,.98);
+      color: rgba(17,24,39,.95);
       font-size: .92rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+
+      /* ✅ وميض خفيف جدًا */
       text-shadow: 0 0 8px rgba(250,204,21,.12);
       animation: opNameGlow 3.2s ease-in-out infinite;
-      background: rgba(250,204,21,.55);
-      padding: 2px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.25);
     }
     @keyframes opNameGlow{
-      0%,100%{ box-shadow: 0 0 10px rgba(250,204,21,.12); }
-      50%{ box-shadow: 0 0 14px rgba(250,204,21,.22); }
+      0%,100%{ text-shadow: 0 0 8px rgba(250,204,21,.10); }
+      50%{ text-shadow: 0 0 10px rgba(250,204,21,.18); }
     }
 
     .op-time{
       font-size: .75rem;
-      color: rgba(249,250,251,.85);
+      color: rgba(17,24,39,.75);
       direction:ltr;
-      position: relative;
-      z-index: 1;
     }
     .op-text{
       font-size: .85rem;
-      color: rgba(20,20,20,.92);
+      color: rgba(17,24,39,.92);
       line-height: 1.6;
       white-space: pre-wrap;
       word-break: break-word;
-      position: relative;
-      z-index: 1;
     }
 
-    .op-rating{
-      display:flex;
-      gap:6px;
-      align-items:center;
-      margin-top: 2px;
-      direction:ltr;
-      justify-content: flex-start;
-    }
-    .op-star{
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
-      color: rgba(249,250,251,.25);
-      transition: transform .12s ease, color .12s ease;
-      user-select:none;
-    }
-    .op-star:hover{ transform: translateY(-1px) scale(1.05); }
-    .op-star.is-on{ color: #facc15; }
-
-    .op-del{
-      border: 1px solid rgba(0,0,0,.25);
-      background: rgba(0,0,0,.35);
-      color: rgba(255,255,255,.92);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-weight: 900;
-      cursor: pointer;
-      font-size: .78rem;
-      box-shadow: 0 10px 22px rgba(0,0,0,.75);
-      transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
-      white-space: nowrap;
-      position: relative;
-      z-index: 1;
-    }
-    .op-del:hover{
-      transform: translateY(-1px);
-      background: rgba(0,0,0,.55);
-      border-color: rgba(0,0,0,.35);
-      color: rgba(255,255,255,1);
-    }
-
-    /* ✅ Popup "شكرًا يا وحش" (unchanged) */
-    .mlo5-thanks{
+    /* ✅ Popup thanks / verse */
+    .mlo5-thanks,
+    .mlo5-verse{
       position: fixed;
       inset: 0;
       z-index: 120;
@@ -1018,14 +931,15 @@
     }
     @keyframes thanksFadeIn{ from{ opacity: 0; } to{ opacity: 1; } }
 
-    .mlo5-thanks-card{
+    .mlo5-thanks-card,
+    .mlo5-verse-card{
       border-radius: 18px;
       padding: 16px 16px 14px;
       background: rgba(0,0,0,.88);
       border: 1px solid rgba(250,204,21,.55);
       box-shadow: 0 20px 60px rgba(0,0,0,1), 0 0 0 1px rgba(0,0,0,1);
       min-width: 260px;
-      max-width: 360px;
+      max-width: 420px;
       text-align: center;
       transform: translateY(6px);
       animation: thanksPop .22s ease-out forwards;
@@ -1046,43 +960,13 @@
       margin-top: 2px;
     }
 
-    /* ✅ Ayah popup (for banned words) */
-    #ayah-popup{
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,.45);
-      backdrop-filter: blur(6px);
-    }
-    .ayah-card{
-      background: rgba(0,0,0,.9);
-      border: 1px solid rgba(250,204,21,.7);
-      border-radius: 18px;
-      padding: 18px;
-      max-width: 340px;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,1);
-      animation: ayahPop .25s ease;
-    }
-    @keyframes ayahPop{ from{ transform: translateY(10px); opacity: 0; } to{ transform: translateY(0); opacity: 1; } }
-    .ayah-text{
-      color: #facc15;
+    .mlo5-verse-text{
       font-size: .95rem;
+      font-weight: 800;
+      color: rgba(249,250,251,.95);
       line-height: 1.8;
-      margin-bottom: 12px;
     }
-    #ayah-close{
-      border: none;
-      border-radius: 999px;
-      padding: 7px 16px;
-      background: #facc15;
-      font-weight: 900;
-      cursor: pointer;
-      color: #111827;
-    }
+
   </style>
 </head>
 
@@ -1103,18 +987,6 @@
 
         <!-- ✅ TOP BAR -->
         <div class="top-bar">
-          <!-- ✅ Mobile hamburger -->
-          <button id="hamburger" class="hamburger" type="button" aria-label="Menu">☰</button>
-
-          <!-- ✅ Support + visitors moved near login -->
-          <div class="top-actions" aria-label="Support and visitors">
-            <a id="support-btn" class="support-btn" href="support.html">ادعمني!</a>
-            <div class="visitors-pill" title="Visitors">
-              <span id="visitors-label">الزوار:</span>
-              <b id="visitor-count">—</b>
-            </div>
-          </div>
-
           <a id="login-link" href="login.html" class="top-login-link">تسجيل دخول</a>
 
           <!-- ✅ يظهر فقط بعد تسجيل الدخول -->
@@ -1131,6 +1003,15 @@
           </div>
 
           <button id="lang-toggle" class="lang-toggle" title="العربية">🌐</button>
+
+          <!-- ✅ Support + Visitors (right side, same level, NOT fixed) -->
+          <div class="top-bar-right" aria-label="Support and visitors">
+            <a id="support-btn" class="support-btn" href="support.html">ادعمني!</a>
+            <div class="visitors-pill" title="Visitors">
+              <span id="visitors-label">الزوار:</span>
+              <b id="visitor-count">—</b>
+            </div>
+          </div>
         </div>
 
         <header class="hero-title">
@@ -1145,7 +1026,7 @@
           <div class="divider-glow"></div>
         </div>
 
-        <nav class="top-nav" aria-label="Navigation">
+        <nav class="top-nav">
           <a href="index.html" class="top-nav-item" id="menu1">قائمة 1</a>
           <a href="room.html" class="top-nav-item" id="menu2">قائمة 2</a>
 
@@ -1161,63 +1042,64 @@
           <a href="privacy.html" class="top-nav-item" id="menu4">سياسة الخصوصية</a>
           <a href="terms.html" class="top-nav-item" id="menu6">الشروط والأحكام</a>
           <a href="contact.html" class="top-nav-item" id="menu5">قائمة 5</a>
+
         </nav>
 
-        <!-- ✅ السلايدر + الإعلان العامودي بمحاذاة السلايدر وعلى يساره -->
-        <div class="hero-row">
-          <div class="side-ad" aria-label="Side Advertisement">
-            <a id="side-ad-link" class="side-ad-card" href="https://bhipshop.com/en/products" target="_blank" rel="noopener">
-              <div class="side-ad-badge">Ad</div>
-              <img id="side-ad-img" class="side-ad-img" src="leftad1.jpg" alt="Ad" loading="lazy">
+        <!-- ✅ السلايدر -->
+        <section class="video-section">
+
+          <!-- ✅ Left vertical ad rail (LEFT gutter, does NOT affect slider) -->
+          <div class="left-ad-rail" aria-label="Side Advertisement">
+            <a id="side-ad-link" class="left-ad-card" href="https://bhipshop.com/en/products" target="_blank" rel="noopener">
+              <div class="left-ad-badge">Ad</div>
+              <img id="side-ad-img" class="left-ad-img" src="leftad1.jpg" alt="Ad" loading="lazy">
             </a>
           </div>
 
-          <section class="video-section">
-            <div class="video-wrapper">
-              <div class="video-inner">
-                <div id="hero-slider" class="hero-slider">
-                  <div class="hero-slider-track">
-                    <div class="hero-slide is-active" data-link="https://www.youtube.com/@mlo5ya">
-                      <img src="slide1.jpg" alt="صورة 1" loading="eager">
-                    </div>
-                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=F4ReNHSz6o4">
-                      <img src="slide2.jpg" alt="صورة 2" loading="lazy">
-                    </div>
-                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=iR3z-bOzi2I">
-                      <img src="slide3.jpg" alt="صورة 3" loading="lazy">
-                    </div>
-                    <div class="hero-slide" data-link="#">
-                      <img src="slide4.jpg" alt="صورة 4" loading="lazy">
-                    </div>
-                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=fWQk1OFeVe8&pp=2AYB">
-                      <img src="slide5.jpg" alt="صورة 5" loading="lazy">
-                    </div>
-                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=JXwNda1vWOk">
-                      <img src="slide6.jpg" alt="صورة 6" loading="lazy">
-                    </div>
-                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=aMxFIGrSrWk&pp=2AYB">
-                      <img src="slide7.jpg" alt="صورة 7" loading="lazy">
-                    </div>
-                    <div class="hero-slide" data-link="#">
-                      <img src="slide8.jpg" alt="صورة 8" loading="lazy">
-                    </div>
+          <div class="video-wrapper">
+            <div class="video-inner">
+              <div id="hero-slider" class="hero-slider">
+                <div class="hero-slider-track">
+                  <div class="hero-slide is-active" data-link="https://www.youtube.com/@mlo5ya">
+                    <img src="slide1.jpg" alt="صورة 1" loading="eager">
                   </div>
+                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=F4ReNHSz6o4">
+                    <img src="slide2.jpg" alt="صورة 2" loading="lazy">
+                  </div>
+                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=iR3z-bOzi2I">
+                    <img src="slide3.jpg" alt="صورة 3" loading="lazy">
+                  </div>
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide4.jpg" alt="صورة 4" loading="lazy">
+                  </div>
+                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=fWQk1OFeVe8&pp=2AYB">
+                    <img src="slide5.jpg" alt="صورة 5" loading="lazy">
+                  </div>
+                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=JXwNda1vWOk">
+                    <img src="slide6.jpg" alt="صورة 6" loading="lazy">
+                  </div>
+                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=aMxFIGrSrWk&pp=2AYB">
+                    <img src="slide7.jpg" alt="صورة 7" loading="lazy">
+                  </div>
+                  <div class="hero-slide" data-link="#">
+                    <img src="slide8.jpg" alt="صورة 8" loading="lazy">
+                  </div>
+                </div>
 
-                  <div class="hero-slider-dots">
-                    <button class="hero-slider-dot is-active" data-index="0" type="button"></button>
-                    <button class="hero-slider-dot" data-index="1" type="button"></button>
-                    <button class="hero-slider-dot" data-index="2" type="button"></button>
-                    <button class="hero-slider-dot" data-index="3" type="button"></button>
-                    <button class="hero-slider-dot" data-index="4" type="button"></button>
-                    <button class="hero-slider-dot" data-index="5" type="button"></button>
-                    <button class="hero-slider-dot" data-index="6" type="button"></button>
-                    <button class="hero-slider-dot" data-index="7" type="button"></button>
-                  </div>
+                <div class="hero-slider-dots">
+                  <button class="hero-slider-dot is-active" data-index="0" type="button"></button>
+                  <button class="hero-slider-dot" data-index="1" type="button"></button>
+                  <button class="hero-slider-dot" data-index="2" type="button"></button>
+                  <button class="hero-slider-dot" data-index="3" type="button"></button>
+                  <button class="hero-slider-dot" data-index="4" type="button"></button>
+                  <button class="hero-slider-dot" data-index="5" type="button"></button>
+                  <button class="hero-slider-dot" data-index="6" type="button"></button>
+                  <button class="hero-slider-dot" data-index="7" type="button"></button>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
 
         <!-- ✅ إعلان (صورة + زر تفاصيل + زر إعلان) -->
         <section class="ad-slot ad-rich">
@@ -1297,6 +1179,12 @@
           </div>
         </section>
 
+        <!-- ✅ Divider بين نبذة عني والآراء -->
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-glow"></div>
+        </div>
+
         <!-- ✅ Opinions -->
         <section class="opinions" aria-label="Opinions">
           <div class="op-head">
@@ -1320,7 +1208,6 @@
             </div>
 
             <div class="op-actions">
-              <button id="op-clear" class="op-btn" type="button">مسح</button>
               <button id="op-publish" class="op-btn primary" type="button">نشر</button>
             </div>
 
@@ -1329,7 +1216,7 @@
 
           <div id="op-list" class="op-list">
             <div class="op-item">
-              <div class="op-text" style="color:rgba(20,20,20,.78)">لا يوجد آراء بعد… كن أول واحد 👀</div>
+              <div class="op-text" style="color:rgba(249,250,251,.95)">لا يوجد آراء بعد… كن أول واحد 👀</div>
             </div>
           </div>
         </section>
@@ -1340,22 +1227,14 @@
           <div class="footer-bottom">
             © <span id="year-span">2025</span> · صنع بحب 💛.
           </div>
+          <div class="footer-rights">All rights reserved ©</div>
         </footer>
 
       </div>
     </div>
   </main>
 
-  <!-- ✅ Ayah popup -->
-  <div id="ayah-popup" aria-live="polite" role="dialog">
-    <div class="ayah-card">
-      <div class="ayah-text">( مَا يَلْفِظُ مِنْ قَوْلٍ إِلا لَدَيْهِ رَقِيبٌ عَتِيدٌ )</div>
-      <button id="ayah-close" type="button">حسنًا</button>
-    </div>
-  </div>
-
-  <!-- ✅ Toast (start hidden, then animate in) -->
-  <div id="subscribe-toast" class="subscribe-toast" aria-live="polite">
+  <div id="subscribe-toast" class="subscribe-toast subscribe-toast--visible" aria-live="polite">
     <div class="subscribe-toast-inner">
       <button class="subscribe-toast-close" aria-label="إغلاق التنبيه">×</button>
       <div class="subscribe-toast-text">
@@ -1396,20 +1275,7 @@
         if (preloader) preloader.classList.add("preloader-hidden");
         if (heroLogo) heroLogo.classList.add("hero-logo-animate");
       }, 700);
-
-      // ✅ Toast animate in
-      const toast = document.getElementById("subscribe-toast");
-      if (toast) requestAnimationFrame(() => toast.classList.add("subscribe-toast--visible"));
     });
-
-    // ✅ Mobile hamburger toggle
-    const burger = document.getElementById("hamburger");
-    const nav = document.querySelector(".top-nav");
-    if (burger && nav){
-      burger.addEventListener("click", () => {
-        nav.classList.toggle("mobile-open");
-      });
-    }
 
     // ✅ اختيار اللغة
     const langToggle = document.getElementById("lang-toggle");
@@ -1465,7 +1331,6 @@
         opinionsCountLabel: "العدد:",
         opNamePh: "اسمك",
         opTextPh: "اكتب رأيك هنا...",
-        opClear: "مسح",
         opPublish: "نشر",
       },
       en: {
@@ -1518,7 +1383,6 @@
         opinionsCountLabel: "Count:",
         opNamePh: "Your name",
         opTextPh: "Write your opinion here...",
-        opClear: "Clear",
         opPublish: "Publish",
       },
     };
@@ -1624,14 +1488,12 @@
       const opCountLabel = document.getElementById("opinions-count-label");
       const opName = document.getElementById("op-name");
       const opText = document.getElementById("op-text");
-      const opClear = document.getElementById("op-clear");
       const opPublish = document.getElementById("op-publish");
 
       if (opTitle) opTitle.textContent = strings.opinionsTitle;
       if (opCountLabel) opCountLabel.textContent = strings.opinionsCountLabel;
       if (opName) opName.placeholder = strings.opNamePh;
       if (opText) opText.placeholder = strings.opTextPh;
-      if (opClear) opClear.textContent = strings.opClear;
       if (opPublish) opPublish.textContent = strings.opPublish;
     }
 
@@ -1646,13 +1508,13 @@
       });
     }
 
-    // ✅ Toast close
+    // ✅ Toast
     const toast = document.getElementById("subscribe-toast");
     const toastClose = toast ? toast.querySelector(".subscribe-toast-close") : null;
+
     if (toastClose) {
       toastClose.addEventListener("click", () => {
-        toast.classList.remove("subscribe-toast--visible");
-        setTimeout(() => { toast.style.display = "none"; }, 220);
+        toast.style.display = "none";
       });
     }
 
@@ -1804,14 +1666,14 @@
     }
   </script>
 
-  <!-- ✅ Firestore (visitors + opinions + stars) + side ad slideshow -->
+  <!-- ✅ Firestore (visitors + opinions) + side ad slideshow -->
   <script type="module">
     import { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
     import {
       getFirestore, doc, runTransaction, serverTimestamp,
       collection, addDoc, query, orderBy, limit, onSnapshot,
-      getDocs, deleteDoc, writeBatch
+      getDocs, writeBatch
     } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -1825,56 +1687,19 @@
     const db = getFirestore(app);
 
     // =========================
-    // ✅ Auth state for delete permissions
+    // ✅ Auth state (for storing uid only)
     // =========================
     const auth = getAuth(app);
     let currentUser = null;
     onAuthStateChanged(auth, (u) => { currentUser = u || null; });
 
-    // persistent client id (for owner delete even if not logged in)
+    // persistent client id
     const CLIENT_ID_KEY = "mlo5-op-clientId";
     let clientId = localStorage.getItem(CLIENT_ID_KEY);
     if (!clientId) {
       clientId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("cid_" + Math.random().toString(36).slice(2) + Date.now());
       localStorage.setItem(CLIENT_ID_KEY, clientId);
     }
-
-    // admin uid
-    const ADMIN_UID_KEY = "mlo5-admin-uid";
-    function isAdmin(){
-      const adminUid = (localStorage.getItem(ADMIN_UID_KEY) || "").trim();
-      return !!(currentUser && adminUid && currentUser.uid === adminUid);
-    }
-
-    // =========================
-    // ✅ Emoji list (auto, code chooses)
-    // =========================
-    const OP_EMOJIS = ["😎","🔥","👑","🦁","🐺","🐉","💎","⚡","🧠","🎮","👾","🛡️","🧿","🦂","✨","🎯"];
-    function randomEmoji(){
-      return OP_EMOJIS[Math.floor(Math.random() * OP_EMOJIS.length)];
-    }
-
-    // =========================
-    // ✅ Banned words + Ayah popup
-    // =========================
-    const BANNED_WORDS = [
-      "كلمة_ممنوعة1",
-      "كلمة_ممنوعة2",
-      "سب",
-      "شتيمة"
-    ];
-    function containsBannedWord(text){
-      const t = String(text || "").toLowerCase();
-      return BANNED_WORDS.some(w => t.includes(String(w).toLowerCase()));
-    }
-    const ayahPopup = document.getElementById("ayah-popup");
-    const ayahClose = document.getElementById("ayah-close");
-    ayahClose?.addEventListener("click", () => {
-      if (ayahPopup) ayahPopup.style.display = "none";
-    });
-    ayahPopup?.addEventListener("click", (e) => {
-      if (e.target === ayahPopup) ayahPopup.style.display = "none";
-    });
 
     // =========================
     // ✅ 1) REAL VISITOR COUNTER (+1 per visit)
@@ -1904,7 +1729,7 @@
     bumpVisitors();
 
     // =========================
-    // ✅ 2) ONLINE OPINIONS + 5★ + realtime list (آخر 5 فقط)
+    // ✅ 2) ONLINE OPINIONS (realtime, آخر 5)
     // =========================
     const opName = document.getElementById("op-name");
     const opText = document.getElementById("op-text");
@@ -1912,7 +1737,6 @@
     const opCount = document.getElementById("opinions-count");
     const opErr = document.getElementById("op-err");
     const opPublish = document.getElementById("op-publish");
-    const opClear = document.getElementById("op-clear");
     const starsWrap = document.getElementById("op-rating");
     const stars = starsWrap ? Array.from(starsWrap.querySelectorAll(".op-star")) : [];
 
@@ -1956,7 +1780,7 @@
       const n = Math.max(1, Math.min(5, Number(r || 5)));
       const on = "★".repeat(n);
       const off = "★".repeat(5 - n);
-      return `<span style="color:#facc15;font-weight:900;letter-spacing:1px">${on}</span><span style="color:rgba(249,250,251,.22);font-weight:900;letter-spacing:1px">${off}</span>`;
+      return `<span style="color:#111827;font-weight:900;letter-spacing:1px">${on}</span><span style="color:rgba(17,24,39,.35);font-weight:900;letter-spacing:1px">${off}</span>`;
     }
 
     function fmt(ts){
@@ -1971,13 +1795,39 @@
       return `${y}-${m}-${day} • ${hh}:${mm} ${ampm}`;
     }
 
-    function canDeleteOpinion(v){
-      if (isAdmin()) return true;
-      const uid = (v.uid || "").trim();
-      const cid = (v.clientId || "").trim();
-      if (currentUser && uid && currentUser.uid === uid) return true;
-      if (cid && cid === clientId) return true;
-      return false;
+    // ✅ Emoji avatar (system chooses)
+    const AVATAR_EMOJIS = ["😎","🔥","💛","✨","💥","👑","🧠","🎮","🦁","🐺","🦅","⚡","🫡","🥷","🤖","👾","🧡","💚","💙","🟣"];
+    function pickEmoji(){
+      return AVATAR_EMOJIS[Math.floor(Math.random() * AVATAR_EMOJIS.length)];
+    }
+
+    // ✅ Forbidden words filter (basic)
+    const FORBIDDEN = [
+      "كس","كسم","شرموطة","زب","طيز","خرا","منيك","قحبة",
+      "fuck","shit","bitch","asshole","dick","pussy"
+    ];
+    function hasForbidden(s){
+      const t = String(s || "").toLowerCase();
+      return FORBIDDEN.some(w => t.includes(w));
+    }
+
+    function showVersePopup(){
+      const wrap = document.createElement("div");
+      wrap.className = "mlo5-verse";
+      wrap.innerHTML = `
+        <div class="mlo5-verse-card" role="dialog" aria-live="polite">
+          <div class="mlo5-verse-text">( مَا يَلْفِظُ مِنْ قَوْلٍ إِلا لَدَيْهِ رَقِيبٌ عَتِيدٌ )</div>
+        </div>
+      `;
+      document.body.appendChild(wrap);
+
+      const close = () => {
+        if (!wrap.parentNode) return;
+        wrap.style.opacity = "0";
+        setTimeout(() => wrap.remove(), 160);
+      };
+      setTimeout(close, 1600);
+      wrap.addEventListener("click", close);
     }
 
     const opinionsQ = query(collection(db, "opinions"), orderBy("ts", "desc"), limit(5));
@@ -1988,26 +1838,20 @@
       if (snap.empty) {
         opList.innerHTML = `
           <div class="op-item">
-            <div class="op-text" style="color:rgba(20,20,20,.78)">لا يوجد آراء بعد… كن أول واحد 👀</div>
+            <div class="op-text" style="color:rgba(249,250,251,.95)">لا يوجد آراء بعد… كن أول واحد 👀</div>
           </div>
         `;
         return;
       }
 
-      const lang = localStorage.getItem("mlo5-lang") || "ar";
-      const delLabel = (lang === "en") ? "Delete" : "حذف";
-
       opList.innerHTML = snap.docs.map(d => {
         const v = d.data();
         const nameRaw = (v.name || "Visitor").slice(0, 30);
         const name = escapeHtml(nameRaw);
-        const emoji = escapeHtml(v.emoji || "😎");
+        const emoji = escapeHtml(v.avatar || "😎");
         const text = escapeHtml((v.text || "").slice(0, 240));
         const rating = Number(v.rating || 5);
         const time = fmt(v.ts);
-
-        const allowDel = canDeleteOpinion(v);
-        const delBtn = allowDel ? `<button class="op-del" type="button" data-id="${escapeHtml(d.id)}">${delLabel}</button>` : "";
 
         return `
           <div class="op-item">
@@ -2016,12 +1860,9 @@
                 <div class="op-avatar">${emoji}</div>
                 <div class="op-name">${name}</div>
               </div>
-              <div style="display:flex;align-items:center;gap:10px;">
-                ${delBtn}
-                <div class="op-time">${escapeHtml(time)}</div>
-              </div>
+              <div class="op-time">${escapeHtml(time)}</div>
             </div>
-            <div style="margin:6px 0 8px; position:relative; z-index:1;">${renderStars(rating)}</div>
+            <div style="margin:6px 0 8px">${renderStars(rating)}</div>
             <div class="op-text">${text}</div>
           </div>
         `;
@@ -2073,9 +1914,9 @@
         if (name.length < 3) return showErr("الاسم لازم يكون 3 أحرف على الأقل.");
         if (text.length < 5) return showErr("الرأي لازم يكون 5 أحرف على الأقل.");
 
-        // ✅ banned words check + ayah popup
-        if (containsBannedWord(text)){
-          if (ayahPopup) ayahPopup.style.display = "flex";
+        // ✅ forbidden words
+        if (hasForbidden(name) || hasForbidden(text)){
+          showVersePopup();
           return;
         }
 
@@ -2084,10 +1925,10 @@
             name,
             text,
             rating: selectedRating,
-            ts: new Date(),
+            avatar: pickEmoji(),
+            ts: serverTimestamp(),              // ✅ FIX (rules/order)
             uid: currentUser ? currentUser.uid : null,
-            clientId: clientId,
-            emoji: randomEmoji()
+            clientId: clientId
           });
 
           if (opText) opText.value = "";
@@ -2102,33 +1943,8 @@
       });
     }
 
-    if (opClear) {
-      opClear.addEventListener("click", () => {
-        hideErr();
-        if (opName) opName.value = "";
-        if (opText) opText.value = "";
-        setRating(5);
-      });
-    }
-
-    // delete (admin or owner)
-    if (opList){
-      opList.addEventListener("click", async (e) => {
-        const btn = e.target && e.target.closest ? e.target.closest(".op-del") : null;
-        if (!btn) return;
-        const id = btn.getAttribute("data-id");
-        if (!id) return;
-
-        try{
-          await deleteDoc(doc(db, "opinions", id));
-        }catch(err){
-          console.error("Delete opinion error:", err);
-        }
-      });
-    }
-
     // =========================
-    // ✅ 3) SIDE AD SLIDESHOW (no dots, no swipe)
+    // ✅ 3) LEFT SIDE AD SLIDESHOW
     // =========================
     const sideImg = document.getElementById("side-ad-img");
     const sideLink = document.getElementById("side-ad-link");
