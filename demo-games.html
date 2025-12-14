@@ -455,6 +455,10 @@
       direction:ltr;
     }
 
+    /* ✅ Entry modal (login/guest) - نفس ستايل المودالات */
+    .entry-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .entry-actions .btn{ flex:1; min-width: 160px; }
+
     @media (max-width: 900px){
       .section{ grid-template-columns: 1fr; }
       .top-bar-right{ width: 100%; justify-content: flex-start; margin-left: 0; }
@@ -464,6 +468,21 @@
 
 <body>
   <div class="bg-grid"></div>
+
+  <!-- ✅ Entry modal: Login / Guest (مثل فكرة المنتدى) -->
+  <div id="entry-backdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3 id="eTitle">الدخول للألعاب</h3>
+      <p id="eDesc">اختار طريقة الدخول:</p>
+
+      <div class="entry-actions">
+        <button id="eLogin" class="btn btnGhost" type="button">🔐 تسجيل دخول</button>
+        <button id="eGuest" class="btn" type="button">👤 الدخول كضيف</button>
+      </div>
+
+      <div id="eErr" class="err"></div>
+    </div>
+  </div>
 
   <!-- Nickname modal -->
   <div id="modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true">
@@ -507,9 +526,7 @@
         </div>
       </div>
 
-      <!-- =========================
-           GAME 1: Click Rush + LB
-           ========================= -->
+      <!-- GAME 1 -->
       <div class="section">
         <div class="card">
           <h2>
@@ -540,9 +557,7 @@
         </div>
       </div>
 
-      <!-- =========================
-           GAME 2: Guess Number + LB
-           ========================= -->
+      <!-- GAME 2 -->
       <div class="section">
         <div class="card">
           <h2>
@@ -578,9 +593,7 @@
         </div>
       </div>
 
-      <!-- =========================
-           GAME 3: Simon + LB
-           ========================= -->
+      <!-- GAME 3 -->
       <div class="section">
         <div class="card">
           <h2>
@@ -625,9 +638,6 @@
   </main>
 
   <script type="module">
-    // =========================
-    // ✅ Firebase Config (from you)
-    // =========================
     const firebaseConfig = {
       apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
       authDomain: "mlo5-users.firebaseapp.com",
@@ -643,13 +653,9 @@
       collection, query, orderBy, limit, onSnapshot
     } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-    // =========================
-    // Helpers
-    // =========================
     const $ = (id) => document.getElementById(id);
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-    // Year
     $("year-span").textContent = new Date().getFullYear();
 
     // BG grid move
@@ -662,16 +668,47 @@
       root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
     });
 
-    // =========================
-    // Firebase init
-    // =========================
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
     // =========================
+    // ✅ Entry gate (Login / Guest)
+    // =========================
+    const entryBackdrop = $("entry-backdrop");
+    const eErr = $("eErr");
+    const eLogin = $("eLogin");
+    const eGuest = $("eGuest");
+
+    function showEntry(msg=""){
+      eErr.textContent = msg || "";
+      entryBackdrop.style.display = "flex";
+    }
+    function hideEntry(){
+      entryBackdrop.style.display = "none";
+      eErr.textContent = "";
+    }
+
+    eLogin.addEventListener("click", () => {
+      // زي المنتدى
+      location.href = "login.html";
+    });
+
+    eGuest.addEventListener("click", async () => {
+      eErr.textContent = "";
+      try{
+        $("authState").textContent = "Signing in...";
+        await signInAnonymously(auth);
+        hideEntry();
+      }catch(e){
+        console.error(e);
+        eErr.textContent = "❌ فشل الدخول كضيف. جرّب مرة ثانية.";
+        $("authState").textContent = "Auth error ❌";
+      }
+    });
+
+    // =========================
     // Nickname (NO localStorage)
-    // Persisted by saving in your allowed docs (scores + leaderboards)
     // =========================
     let uid = null;
     let nickname = "Guest";
@@ -698,11 +735,9 @@
       $("playerName").textContent = nickname;
       closeModal();
 
-      // Touch docs so name persists online (without breaking rules)
       if(!uid) return;
       const games = ["clickrush","guess","simon"];
       for(const g of games){
-        // Ensure leaderboard doc exists or just merge name (score stays)
         const lbRef = doc(db, `leaderboards/${g}/top/${uid}`);
         const snap = await getDoc(lbRef);
         if(!snap.exists()){
@@ -717,7 +752,6 @@
 
     async function loadNameFromCloud(){
       if(!uid) return;
-      // Try read from any leaderboard doc (first existing)
       for(const g of ["clickrush","guess","simon"]){
         const ref = doc(db, `leaderboards/${g}/top/${uid}`);
         const snap = await getDoc(ref);
@@ -748,14 +782,12 @@
       const nameToUse = cleanName(nickname) ? nickname : "Guest";
       const scoreInt = Math.max(0, Math.floor(Number(score || 0)));
 
-      // 1) user best
       const userRef = doc(db, `users/${uid}/scores/${gameId}`);
       const prevBest = await getMyBest(gameId);
       if(scoreInt > prevBest){
         await setDoc(userRef, { best: scoreInt, name: nameToUse, updatedAt: serverTimestamp() }, { merge:true });
       }
 
-      // 2) leaderboard best
       const lbRef = doc(db, `leaderboards/${gameId}/top/${uid}`);
       const lbSnap = await getDoc(lbRef);
       const prevLB = lbSnap.exists() ? Number(lbSnap.data().score || 0) : 0;
@@ -854,8 +886,7 @@
     });
 
     // =========================
-    // Game 2: Guess Number (score = points)
-    // points = 1000 - tries*10 (>=0)
+    // Game 2: Guess Number
     // =========================
     let gnSecret = Math.floor(Math.random()*50) + 1;
     let gnTries = 0;
@@ -893,7 +924,6 @@
           const best = await getMyBest("guess");
           $("gnBest").textContent = String(best);
         }catch(e){ console.error(e); }
-
       } else if(v < gnSecret){
         $("gnMsg").textContent = "أعلى ⬆️";
       } else {
@@ -908,7 +938,7 @@
     $("gnInput").addEventListener("keydown", (e) => { if(e.key === "Enter") gnTry(); });
 
     // =========================
-    // Game 3: Simon (score = max level reached)
+    // Game 3: Simon
     // =========================
     const smButtons = Array.from(document.querySelectorAll(".sbtn"));
     let smSeq=[], smUser=[], smPlaying=false, smActive=false;
@@ -964,13 +994,11 @@
         smFlash(i);
         smUser.push(i);
 
-        // check
         for(let k=0;k<smUser.length;k++){
           if(smUser[k] !== smSeq[k]){
             $("smMsg").textContent = "غلط ❌ رجعنا للبداية";
             smActive = false;
 
-            // Save best level achieved before reset (level = smSeq.length - 1)
             const achieved = Math.max(0, smSeq.length - 1);
             try{
               await submitBest("simon", achieved);
@@ -988,7 +1016,6 @@
           $("smMsg").textContent = "صح ✅ مستوى جديد...";
           smActive = false;
 
-          // Save current completed level (smSeq.length)
           try{
             await submitBest("simon", smSeq.length);
             const best = await getMyBest("simon");
@@ -1002,7 +1029,7 @@
     });
 
     // =========================
-    // Boot: Auth + Load bests + start LBs
+    // Boot
     // =========================
     let unsubCR=null, unsubGN=null, unsubSM=null;
 
@@ -1019,51 +1046,45 @@
     $("gnReplay").addEventListener("click", startAllLeaderboards);
     $("smReplay").addEventListener("click", startAllLeaderboards);
 
+    // ✅ اهم تغيير: ما بنعمل signInAnonymously تلقائي
     onAuthStateChanged(auth, async (user) => {
       if(user){
         uid = user.uid;
         $("authState").textContent = "Online ✅";
+        hideEntry();
 
         await loadNameFromCloud();
 
-        // bests
         try{ $("crBest").textContent = String(await getMyBest("clickrush")); }catch{ $("crBest").textContent="—"; }
         try{ $("gnBest").textContent = String(await getMyBest("guess")); }catch{ $("gnBest").textContent="—"; }
         try{ $("smBest").textContent = String(await getMyBest("simon")); }catch{ $("smBest").textContent="—"; }
 
-        // leaderboards live
         startAllLeaderboards();
       } else {
-        $("authState").textContent = "Signing in...";
+        uid = null;
+        $("authState").textContent = "Offline";
+        $("playerName").textContent = "Guest";
+        // اعرض مودال اختيار الدخول
+        showEntry("");
       }
     });
-
-    try{
-      if(!auth.currentUser){
-        await signInAnonymously(auth);
-      }
-    }catch(e){
-      console.error(e);
-      $("authState").textContent = "Auth error ❌";
-    }
 
     // init UIs
     crSetUI();
     gnReset();
     smReset();
 
-    // (زر اللغة موجود بس حالياً تغيير الاتجاه فقط بشكل سريع)
+    // ✅ Language toggle text fix (EN = Play now)
     let lang = "ar";
     $("lang-toggle").addEventListener("click", () => {
       lang = (lang === "ar") ? "en" : "ar";
       document.documentElement.lang = lang;
       document.documentElement.dir  = (lang === "en") ? "ltr" : "rtl";
       $("hero-sub").textContent = (lang === "en")
-        ? "3 online games + 3 live leaderboards 🔴"
-        : "3 ألعاب أونلاين + 3 Leaderboards لايف 🔴";
+        ? "Play now"
+        : "العب وخلي الشباب تستفاد";
     });
 
   </script>
 </body>
 </html>
-
