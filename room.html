@@ -493,6 +493,11 @@
         min-height:0;
       }
       .badgeBtn{display:inline-flex;} /* ✅ زر المتواجدين */
+
+      /* ✅✅✅ موبايل فقط: إخفاء زر الإيموجي وزر الإرسال */
+      .emojiBtn, .sendBtn{ display:none !important; }
+      .composer{ gap:10px; }
+      #msgInput{ width:100%; }
     }
 
     #appModal{
@@ -911,6 +916,10 @@
   let user = null;
   let profile = null;
   let joinAtMs = null;
+
+  /* ✅✅✅ NEW: للموبايل فقط نستخدم joinAtServerTs للفلترة */
+  let joinAtServerTs = null;
+
   let initialLoaded = false;
   let lastSoundAt = 0;
 
@@ -1462,13 +1471,24 @@
 
   function startGlobalMessagesListener(){
     initialLoaded = false;
-    const q = query(
+
+    /* ✅✅✅ موبايل: فلترة على createdAt (serverTimestamp) */
+    const qMobile = query(
+      collection(db, "globalMessages"),
+      where("createdAt", ">=", joinAtServerTs),
+      orderBy("createdAt", "asc")
+    );
+
+    /* ✅ ديسكتوب: كما هو */
+    const qDesktop = query(
       collection(db, "globalMessages"),
       where("createdAtMs", ">=", joinAtMs),
       orderBy("createdAtMs", "asc")
     );
 
-    onSnapshot(q, (snap)=>{
+    const qUse = (__MOBILE_DEVICE ? qMobile : qDesktop);
+
+    onSnapshot(qUse, (snap)=>{
       messagesDiv.innerHTML = "";
       const isFirst = !initialLoaded;
       const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
@@ -1640,6 +1660,26 @@
     });
   });
 
+  /* ✅✅✅ موبايل فقط: إرسال بالـ Double Space (ضغطتين Space بسرعة) */
+  let __lastSpaceAt = 0;
+  msgInput.addEventListener("keydown", (e)=>{
+    if (!__MOBILE_DEVICE) return;
+    if (e.key !== " ") return;
+
+    const now = Date.now();
+    const dt = now - __lastSpaceAt;
+    __lastSpaceAt = now;
+
+    // إذا ضغطتين بسرعة: أرسل
+    if (dt > 0 && dt < 420){
+      e.preventDefault();
+      if (msgInput.disabled) return;
+      const t = collapseSpaces(msgInput.value);
+      if (!t) return;
+      chatForm.requestSubmit();
+    }
+  });
+
   function cleanupGuestLocal(){
     try{
       if (user?.isAnonymous){
@@ -1765,7 +1805,25 @@
     msgInput.disabled = false;
     sendBtn.disabled = false;
 
-    joinAtMs = nowMs(); /* ✅ (Mobile uses server time, desktop normal) */
+    joinAtMs = nowMs(); /* ✅ كما هو */
+
+    /* ✅✅✅ موبايل فقط: نجيب "لحظة الدخول" بوقت سيرفر Firestore (موحّد) */
+    if (__MOBILE_DEVICE){
+      joinAtServerTs = null;
+      const joinRef = doc(collection(db, "joinMarks"));
+      await setDoc(joinRef, { createdAt: serverTimestamp(), uid: user.uid });
+
+      await new Promise((resolve)=>{
+        const unsub = onSnapshot(joinRef, (s)=>{
+          const d = s.data();
+          if (d?.createdAt){
+            joinAtServerTs = d.createdAt;
+            unsub();
+            resolve();
+          }
+        });
+      });
+    }
 
     await updatePresenceStatus(statusVal, true);
     await writeJoinLeave("join");
