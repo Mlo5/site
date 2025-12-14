@@ -73,6 +73,7 @@
       gap: 10px;
       margin-bottom: 10px;
       direction: ltr;
+      flex-wrap: wrap;
     }
 
     .top-login-link {
@@ -88,6 +89,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
 
     .top-login-link:hover {
@@ -109,6 +111,7 @@
       font-size: 1rem;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(15, 23, 42, 0.9);
       transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
     }
 
     .lang-toggle:hover {
@@ -184,6 +187,7 @@
       user-select: none;
       text-decoration: none;
       transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
     }
 
     .top-nav-item:hover {
@@ -234,7 +238,131 @@
 
     .dropdown-item:hover { background: rgba(250, 204, 21, 0.12); color: var(--yellow); }
 
-    .video-section { margin-top: 10px; margin-bottom: 10px; }
+    /* ✅ Mobile hamburger */
+    .hamburger{
+      display:none;
+      width: 36px; height: 36px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: var(--yellow);
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size: 1.2rem;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition: transform .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease;
+    }
+    .hamburger:hover{
+      transform: translateY(-1px);
+      background: rgba(250,204,21,.12);
+      box-shadow: 0 14px 30px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.5);
+    }
+
+    /* ✅ Support + visitors near login (top-bar) */
+    .top-actions{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      direction:ltr;
+      white-space: nowrap;
+    }
+    .support-btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.9);
+      background: rgba(0, 0, 0, 0.86);
+      color: var(--yellow);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 14px 35px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,1);
+      transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+      white-space: nowrap;
+    }
+    .support-btn:hover{
+      transform: translateY(-1px);
+      background: rgba(250, 204, 21, 0.13);
+      box-shadow: 0 18px 40px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.85);
+    }
+    .visitors-pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      background: rgba(0, 0, 0, 0.72);
+      color: var(--white);
+      font-size: 0.82rem;
+      box-shadow: 0 14px 35px rgba(0,0,0,.92), 0 0 0 1px rgba(15, 23, 42, 0.9);
+      white-space: nowrap;
+    }
+    .visitors-pill b{
+      color: var(--yellow);
+      font-family: "Poppins", system-ui, sans-serif;
+      letter-spacing: .02em;
+    }
+
+    /* ✅ Slider + side ad aligned (left of slider, parallel, doesn't move navbar/content) */
+    .hero-row{
+      display:flex;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .side-ad{
+      flex: 0 0 240px;
+      max-width: 240px;
+    }
+    .side-ad-card{
+      border-radius: 18px;
+      border: 1px solid rgba(250,204,21,.55);
+      background: rgba(0,0,0,.55);
+      box-shadow: 0 18px 45px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,1);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      text-decoration: none;
+      display: block;
+      position: relative;
+      height: 100%;
+    }
+    .side-ad-card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(250,204,21,.9);
+      box-shadow: 0 22px 55px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.6);
+    }
+    .side-ad-img{
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+    .side-ad-badge{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(249,250,251,.9);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .video-section { margin-top: 10px; margin-bottom: 10px; flex: 1 1 auto; min-width: 0; }
 
     .video-wrapper {
       position: relative;
@@ -247,6 +375,7 @@
       z-index: 1;
       border: 2px solid #f9fafb;
       transition: box-shadow 0.25s ease, border-color 0.25s ease;
+      height: 100%;
     }
 
     .video-wrapper::before {
@@ -480,55 +609,6 @@
       flex-wrap: wrap;
     }
 
-    .social-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-
-    .social-link {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-full);
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: radial-gradient(circle at top, #111111, #020202);
-      color: var(--yellow);
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 700;
-      font-family: "Poppins", system-ui, sans-serif;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
-      overflow: hidden;
-    }
-
-    .social-link::after {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: radial-gradient(circle at top, rgba(250, 204, 21, 0.15), transparent 60%);
-      opacity: 0;
-      transform: translateX(-10px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      pointer-events: none;
-      mix-blend-mode: screen;
-    }
-
-    .social-link:hover {
-      transform: translateY(-2px) scale(1.07) rotate(-6deg);
-      border-color: rgba(250, 204, 21, 0.95);
-      background: radial-gradient(circle at top, #facc15, #fbbf24);
-      color: #000;
-      box-shadow: 0 18px 42px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.8);
-    }
-
-    .social-link:hover::after { opacity: 1; transform: translateX(6px); }
-
     .footer-bottom {
       text-align: center;
       font-size: 0.75rem;
@@ -538,11 +618,38 @@
 
     @media (max-width: 900px) { .sections-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+    @media (max-width: 720px){
+      .hamburger{ display:inline-flex; }
+      .top-nav{ display:none; }
+      .top-nav.mobile-open{
+        display:flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content:flex-start;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .top-nav.mobile-open .top-nav-item{
+        justify-content: center;
+        text-align: center;
+      }
+
+      .hero-row{
+        flex-direction: column;
+      }
+      .side-ad{
+        max-width: 100%;
+        width: 100%;
+      }
+      .side-ad-img{
+        min-height: 240px;
+      }
+    }
+
     @media (max-width: 640px) {
       .hero-title h1 { letter-spacing: 0.28em; }
       .sections-grid { grid-template-columns: 1fr; }
       .footer-top { flex-direction: column; align-items: flex-start; }
-      .social-links { justify-content: flex-start; }
     }
 
     #preloader {
@@ -561,7 +668,7 @@
     .preloader-logo img { max-width: 200px; height: auto; animation: preloader-blink 0.35s infinite alternate; }
     @keyframes preloader-blink { 0% { opacity: 0.35; } 100% { opacity: 1; } }
 
-    /* ✅ تعديل: toast يمين بدل الشمال */
+    /* ✅ Toast: slide from bottom + fade */
     .subscribe-toast {
       position: fixed;
       right: 18px;
@@ -569,12 +676,11 @@
       bottom: 72px;
       z-index: 40;
       max-width: 320px;
-      transform: translateY(0);
-      opacity: 1;
       pointer-events: auto;
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.28s ease, transform 0.28s ease;
     }
-
     .subscribe-toast.subscribe-toast--visible {
       opacity: 1;
       transform: translateY(0);
@@ -610,8 +716,13 @@
       color: #111827;
       white-space: nowrap;
       margin-top: 4px;
+      animation: subPulse 2s infinite;
     }
-
+    @keyframes subPulse{
+      0%{ box-shadow: 0 0 0 rgba(250,204,21,0); }
+      50%{ box-shadow: 0 0 18px rgba(250,204,21,.6); }
+      100%{ box-shadow: 0 0 0 rgba(250,204,21,0); }
+    }
     .subscribe-toast-btn:hover { filter: brightness(1.05); }
 
     .subscribe-toast-close {
@@ -657,9 +768,7 @@
       box-shadow: 0 14px 32px rgba(0, 0, 0, 1), 0 0 0 1px rgba(250, 204, 21, 0.9);
     }
 
-    /* =========================================================
-       ✅ ADDED (1): Custom Scrollbar (same vibe, not browser default)
-    ========================================================= */
+    /* ✅ Custom Scrollbar */
     html { scrollbar-width: thin; scrollbar-color: rgba(250,204,21,.75) rgba(0,0,0,.55); }
     body::-webkit-scrollbar { width: 10px; height: 10px; }
     body::-webkit-scrollbar-track { background: rgba(0,0,0,.6); }
@@ -671,122 +780,7 @@
     body::-webkit-scrollbar-thumb:hover { filter: brightness(1.05); }
 
     /* =========================================================
-       ✅ ADDED (2): Support + Visitors widget (fixed top-right always)
-    ========================================================= */
-    .support-widget{
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      z-index: 80;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      direction: ltr;
-    }
-    .support-btn{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(250, 204, 21, 0.9);
-      background: rgba(0, 0, 0, 0.86);
-      color: var(--yellow);
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 0.9rem;
-      box-shadow: 0 14px 35px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,1);
-      transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
-      white-space: nowrap;
-    }
-    .support-btn:hover{
-      transform: translateY(-1px);
-      background: rgba(250, 204, 21, 0.13);
-      box-shadow: 0 18px 40px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.85);
-    }
-    .visitors-pill{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.65);
-      background: rgba(0, 0, 0, 0.72);
-      color: var(--white);
-      font-size: 0.82rem;
-      box-shadow: 0 14px 35px rgba(0,0,0,.92), 0 0 0 1px rgba(15, 23, 42, 0.9);
-      white-space: nowrap;
-    }
-    .visitors-pill b{
-      color: var(--yellow);
-      font-family: "Poppins", system-ui, sans-serif;
-      letter-spacing: .02em;
-    }
-    @media (max-width: 520px){
-      .support-widget{ top: 12px; right: 12px; gap: 8px; }
-      .support-btn{ padding: 7px 12px; font-size: .86rem; }
-      .visitors-pill{ padding: 7px 10px; font-size: .78rem; }
-    }
-
-    /* =========================================================
-       ✅ ADDED (3): Left vertical ad rail (moves with page, no fixed)
-    ========================================================= */
-    .left-ad-rail{
-      position: absolute;
-      left: -285px;
-      top: 260px;
-      width: 240px;
-      z-index: 35;
-    }
-    .left-ad-card{
-      border-radius: 18px;
-      border: 1px solid rgba(250,204,21,.55);
-      background: rgba(0,0,0,.55);
-      box-shadow: 0 18px 45px rgba(0,0,0,.95), 0 0 0 1px rgba(0,0,0,1);
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-      text-decoration: none;
-      display: block;
-      position: relative;
-    }
-    .left-ad-card:hover{
-      transform: translateY(-2px);
-      border-color: rgba(250,204,21,.9);
-      box-shadow: 0 22px 55px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.6);
-    }
-    .left-ad-img{
-      width: 100%;
-      height: 420px;
-      object-fit: cover;
-      display: block;
-      background: #000;
-    }
-    .left-ad-badge{
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: .72rem;
-      font-weight: 900;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: rgba(249,250,251,.9);
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(8px);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    @media (max-width: 1200px){
-      .left-ad-rail{ display: none; }
-    }
-
-    /* =========================================================
-       ✅ ADDED (4): Opinions section + 5 stars + list styling
+       ✅ Opinions section + Grid + Yellow card
     ========================================================= */
     .opinions{
       margin-top: 14px;
@@ -871,17 +865,32 @@
       color: #fca5a5;
     }
 
+    /* ✅ Grid */
     .op-list{
       display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 10px;
       margin-top: 8px;
     }
+
+    /* ✅ Yellow accent card */
     .op-item{
       border-radius: 16px;
-      border: 1px solid rgba(148,163,184,.18);
-      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(250,204,21,.55);
+      background: linear-gradient(145deg, rgba(250,204,21,.24), rgba(0,0,0,.38));
       padding: 12px;
       box-shadow: 0 12px 26px rgba(0,0,0,.75);
+      position: relative;
+      overflow: hidden;
+    }
+    .op-item::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: radial-gradient(circle at top, rgba(250,204,21,.22), transparent 60%);
+      opacity:.9;
+      pointer-events:none;
+      mix-blend-mode: screen;
     }
     .op-top{
       display:flex;
@@ -890,14 +899,17 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
     }
 
-    /* ✅ avatar حرف أول */
     .op-user{
       display:flex;
       align-items:center;
       gap: 10px;
       min-width: 0;
+      position: relative;
+      z-index: 1;
     }
     .op-avatar{
       width: 32px;
@@ -909,40 +921,46 @@
       font-weight: 900;
       font-family: "Poppins", system-ui, sans-serif;
       color: rgba(249,250,251,.95);
-      background: rgba(250,204,21,.18);
-      border: 1px solid rgba(250,204,21,.35);
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(250,204,21,.55);
       box-shadow: 0 10px 20px rgba(0,0,0,.75);
       flex: 0 0 auto;
       user-select:none;
     }
     .op-name{
       font-weight: 900;
-      color: rgba(249,250,251,.92);
+      color: rgba(20,20,20,.98);
       font-size: .92rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-
-      /* ✅ وميض خفيف جدًا */
       text-shadow: 0 0 8px rgba(250,204,21,.12);
       animation: opNameGlow 3.2s ease-in-out infinite;
+      background: rgba(250,204,21,.55);
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.25);
     }
     @keyframes opNameGlow{
-      0%,100%{ text-shadow: 0 0 8px rgba(250,204,21,.10); }
-      50%{ text-shadow: 0 0 10px rgba(250,204,21,.18); }
+      0%,100%{ box-shadow: 0 0 10px rgba(250,204,21,.12); }
+      50%{ box-shadow: 0 0 14px rgba(250,204,21,.22); }
     }
 
     .op-time{
       font-size: .75rem;
-      color: rgba(156,163,175,.85);
+      color: rgba(249,250,251,.85);
       direction:ltr;
+      position: relative;
+      z-index: 1;
     }
     .op-text{
       font-size: .85rem;
-      color: rgba(156,163,175,.95);
+      color: rgba(20,20,20,.92);
       line-height: 1.6;
       white-space: pre-wrap;
       word-break: break-word;
+      position: relative;
+      z-index: 1;
     }
 
     .op-rating{
@@ -964,11 +982,10 @@
     .op-star:hover{ transform: translateY(-1px) scale(1.05); }
     .op-star.is-on{ color: #facc15; }
 
-    /* ✅ زر حذف */
     .op-del{
-      border: 1px solid rgba(252,165,165,.35);
-      background: rgba(0,0,0,.45);
-      color: rgba(252,165,165,.92);
+      border: 1px solid rgba(0,0,0,.25);
+      background: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.92);
       border-radius: 999px;
       padding: 6px 10px;
       font-weight: 900;
@@ -977,15 +994,17 @@
       box-shadow: 0 10px 22px rgba(0,0,0,.75);
       transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
       white-space: nowrap;
+      position: relative;
+      z-index: 1;
     }
     .op-del:hover{
       transform: translateY(-1px);
-      background: rgba(252,165,165,.10);
-      border-color: rgba(252,165,165,.55);
-      color: rgba(252,165,165,1);
+      background: rgba(0,0,0,.55);
+      border-color: rgba(0,0,0,.35);
+      color: rgba(255,255,255,1);
     }
 
-    /* ✅ Popup شكرًا يا وحش */
+    /* ✅ Popup "شكرًا يا وحش" (unchanged) */
     .mlo5-thanks{
       position: fixed;
       inset: 0;
@@ -1026,6 +1045,44 @@
       filter: drop-shadow(0 10px 18px rgba(0,0,0,.8));
       margin-top: 2px;
     }
+
+    /* ✅ Ayah popup (for banned words) */
+    #ayah-popup{
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(6px);
+    }
+    .ayah-card{
+      background: rgba(0,0,0,.9);
+      border: 1px solid rgba(250,204,21,.7);
+      border-radius: 18px;
+      padding: 18px;
+      max-width: 340px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,1);
+      animation: ayahPop .25s ease;
+    }
+    @keyframes ayahPop{ from{ transform: translateY(10px); opacity: 0; } to{ transform: translateY(0); opacity: 1; } }
+    .ayah-text{
+      color: #facc15;
+      font-size: .95rem;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    #ayah-close{
+      border: none;
+      border-radius: 999px;
+      padding: 7px 16px;
+      background: #facc15;
+      font-weight: 900;
+      cursor: pointer;
+      color: #111827;
+    }
   </style>
 </head>
 
@@ -1039,30 +1096,25 @@
 
   <div class="bg-grid"></div>
 
-  <!-- ✅ ADDED: Support + Visitors (fixed top-right) -->
-  <div class="support-widget" aria-label="Support and visitors">
-    <a id="support-btn" class="support-btn" href="support.html">ادعمني!</a>
-    <div class="visitors-pill" title="Visitors">
-      <span id="visitors-label">الزوار:</span>
-      <b id="visitor-count">—</b>
-    </div>
-  </div>
-
   <main class="page">
-
-    <!-- ✅ Left vertical ad rail (moves with page) -->
-    <div class="left-ad-rail" aria-label="Side Advertisement">
-      <a id="side-ad-link" class="left-ad-card" href="https://bhipshop.com/en/products" target="_blank" rel="noopener">
-        <div class="left-ad-badge">Ad</div>
-        <img id="side-ad-img" class="left-ad-img" src="leftad1.jpg" alt="Ad" loading="lazy">
-      </a>
-    </div>
 
     <div class="card-shell">
       <div class="card-shell-inner">
 
         <!-- ✅ TOP BAR -->
         <div class="top-bar">
+          <!-- ✅ Mobile hamburger -->
+          <button id="hamburger" class="hamburger" type="button" aria-label="Menu">☰</button>
+
+          <!-- ✅ Support + visitors moved near login -->
+          <div class="top-actions" aria-label="Support and visitors">
+            <a id="support-btn" class="support-btn" href="support.html">ادعمني!</a>
+            <div class="visitors-pill" title="Visitors">
+              <span id="visitors-label">الزوار:</span>
+              <b id="visitor-count">—</b>
+            </div>
+          </div>
+
           <a id="login-link" href="login.html" class="top-login-link">تسجيل دخول</a>
 
           <!-- ✅ يظهر فقط بعد تسجيل الدخول -->
@@ -1093,7 +1145,7 @@
           <div class="divider-glow"></div>
         </div>
 
-        <nav class="top-nav">
+        <nav class="top-nav" aria-label="Navigation">
           <a href="index.html" class="top-nav-item" id="menu1">قائمة 1</a>
           <a href="room.html" class="top-nav-item" id="menu2">قائمة 2</a>
 
@@ -1109,55 +1161,63 @@
           <a href="privacy.html" class="top-nav-item" id="menu4">سياسة الخصوصية</a>
           <a href="terms.html" class="top-nav-item" id="menu6">الشروط والأحكام</a>
           <a href="contact.html" class="top-nav-item" id="menu5">قائمة 5</a>
-
         </nav>
 
-        <!-- ✅ السلايدر -->
-        <section class="video-section">
-          <div class="video-wrapper">
-            <div class="video-inner">
-              <div id="hero-slider" class="hero-slider">
-                <div class="hero-slider-track">
-                  <div class="hero-slide is-active" data-link="https://www.youtube.com/@mlo5ya">
-                    <img src="slide1.jpg" alt="صورة 1" loading="eager">
-                  </div>
-                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=F4ReNHSz6o4">
-                    <img src="slide2.jpg" alt="صورة 2" loading="lazy">
-                  </div>
-                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=iR3z-bOzi2I">
-                    <img src="slide3.jpg" alt="صورة 3" loading="lazy">
-                  </div>
-                  <div class="hero-slide" data-link="#">
-                    <img src="slide4.jpg" alt="صورة 4" loading="lazy">
-                  </div>
-                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=fWQk1OFeVe8&pp=2AYB">
-                    <img src="slide5.jpg" alt="صورة 5" loading="lazy">
-                  </div>
-                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=JXwNda1vWOk">
-                    <img src="slide6.jpg" alt="صورة 6" loading="lazy">
-                  </div>
-                  <div class="hero-slide" data-link="https://www.youtube.com/watch?v=aMxFIGrSrWk&pp=2AYB">
-                    <img src="slide7.jpg" alt="صورة 7" loading="lazy">
-                  </div>
-                  <div class="hero-slide" data-link="#">
-                    <img src="slide8.jpg" alt="صورة 8" loading="lazy">
-                  </div>
-                </div>
+        <!-- ✅ السلايدر + الإعلان العامودي بمحاذاة السلايدر وعلى يساره -->
+        <div class="hero-row">
+          <div class="side-ad" aria-label="Side Advertisement">
+            <a id="side-ad-link" class="side-ad-card" href="https://bhipshop.com/en/products" target="_blank" rel="noopener">
+              <div class="side-ad-badge">Ad</div>
+              <img id="side-ad-img" class="side-ad-img" src="leftad1.jpg" alt="Ad" loading="lazy">
+            </a>
+          </div>
 
-                <div class="hero-slider-dots">
-                  <button class="hero-slider-dot is-active" data-index="0" type="button"></button>
-                  <button class="hero-slider-dot" data-index="1" type="button"></button>
-                  <button class="hero-slider-dot" data-index="2" type="button"></button>
-                  <button class="hero-slider-dot" data-index="3" type="button"></button>
-                  <button class="hero-slider-dot" data-index="4" type="button"></button>
-                  <button class="hero-slider-dot" data-index="5" type="button"></button>
-                  <button class="hero-slider-dot" data-index="6" type="button"></button>
-                  <button class="hero-slider-dot" data-index="7" type="button"></button>
+          <section class="video-section">
+            <div class="video-wrapper">
+              <div class="video-inner">
+                <div id="hero-slider" class="hero-slider">
+                  <div class="hero-slider-track">
+                    <div class="hero-slide is-active" data-link="https://www.youtube.com/@mlo5ya">
+                      <img src="slide1.jpg" alt="صورة 1" loading="eager">
+                    </div>
+                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=F4ReNHSz6o4">
+                      <img src="slide2.jpg" alt="صورة 2" loading="lazy">
+                    </div>
+                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=iR3z-bOzi2I">
+                      <img src="slide3.jpg" alt="صورة 3" loading="lazy">
+                    </div>
+                    <div class="hero-slide" data-link="#">
+                      <img src="slide4.jpg" alt="صورة 4" loading="lazy">
+                    </div>
+                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=fWQk1OFeVe8&pp=2AYB">
+                      <img src="slide5.jpg" alt="صورة 5" loading="lazy">
+                    </div>
+                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=JXwNda1vWOk">
+                      <img src="slide6.jpg" alt="صورة 6" loading="lazy">
+                    </div>
+                    <div class="hero-slide" data-link="https://www.youtube.com/watch?v=aMxFIGrSrWk&pp=2AYB">
+                      <img src="slide7.jpg" alt="صورة 7" loading="lazy">
+                    </div>
+                    <div class="hero-slide" data-link="#">
+                      <img src="slide8.jpg" alt="صورة 8" loading="lazy">
+                    </div>
+                  </div>
+
+                  <div class="hero-slider-dots">
+                    <button class="hero-slider-dot is-active" data-index="0" type="button"></button>
+                    <button class="hero-slider-dot" data-index="1" type="button"></button>
+                    <button class="hero-slider-dot" data-index="2" type="button"></button>
+                    <button class="hero-slider-dot" data-index="3" type="button"></button>
+                    <button class="hero-slider-dot" data-index="4" type="button"></button>
+                    <button class="hero-slider-dot" data-index="5" type="button"></button>
+                    <button class="hero-slider-dot" data-index="6" type="button"></button>
+                    <button class="hero-slider-dot" data-index="7" type="button"></button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         <!-- ✅ إعلان (صورة + زر تفاصيل + زر إعلان) -->
         <section class="ad-slot ad-rich">
@@ -1237,7 +1297,7 @@
           </div>
         </section>
 
-        <!-- ✅ Opinions moved تحت نبذة عني + تعديلات -->
+        <!-- ✅ Opinions -->
         <section class="opinions" aria-label="Opinions">
           <div class="op-head">
             <div id="opinions-title" class="op-title">💬 الآراء</div>
@@ -1269,15 +1329,13 @@
 
           <div id="op-list" class="op-list">
             <div class="op-item">
-              <div class="op-text" style="color:rgba(249,250,251,.65)">لا يوجد آراء بعد… كن أول واحد 👀</div>
+              <div class="op-text" style="color:rgba(20,20,20,.78)">لا يوجد آراء بعد… كن أول واحد 👀</div>
             </div>
           </div>
         </section>
 
         <footer class="footer">
-          <div class="footer-top">
-
-          </div>
+          <div class="footer-top"></div>
 
           <div class="footer-bottom">
             © <span id="year-span">2025</span> · صنع بحب 💛.
@@ -1288,7 +1346,16 @@
     </div>
   </main>
 
-  <div id="subscribe-toast" class="subscribe-toast subscribe-toast--visible" aria-live="polite">
+  <!-- ✅ Ayah popup -->
+  <div id="ayah-popup" aria-live="polite" role="dialog">
+    <div class="ayah-card">
+      <div class="ayah-text">( مَا يَلْفِظُ مِنْ قَوْلٍ إِلا لَدَيْهِ رَقِيبٌ عَتِيدٌ )</div>
+      <button id="ayah-close" type="button">حسنًا</button>
+    </div>
+  </div>
+
+  <!-- ✅ Toast (start hidden, then animate in) -->
+  <div id="subscribe-toast" class="subscribe-toast" aria-live="polite">
     <div class="subscribe-toast-inner">
       <button class="subscribe-toast-close" aria-label="إغلاق التنبيه">×</button>
       <div class="subscribe-toast-text">
@@ -1329,7 +1396,20 @@
         if (preloader) preloader.classList.add("preloader-hidden");
         if (heroLogo) heroLogo.classList.add("hero-logo-animate");
       }, 700);
+
+      // ✅ Toast animate in
+      const toast = document.getElementById("subscribe-toast");
+      if (toast) requestAnimationFrame(() => toast.classList.add("subscribe-toast--visible"));
     });
+
+    // ✅ Mobile hamburger toggle
+    const burger = document.getElementById("hamburger");
+    const nav = document.querySelector(".top-nav");
+    if (burger && nav){
+      burger.addEventListener("click", () => {
+        nav.classList.toggle("mobile-open");
+      });
+    }
 
     // ✅ اختيار اللغة
     const langToggle = document.getElementById("lang-toggle");
@@ -1376,11 +1456,11 @@
         adLabel: "",
         adSell: "أعلن عندنا 📢",
 
-        // ✅ ADDED: Support + Visitors
+        // ✅ Support + Visitors
         supportBtn: "ادعمني!",
         visitorsLabel: "الزوار:",
 
-        // ✅ ADDED: Opinions
+        // ✅ Opinions
         opinionsTitle: "💬 الآراء",
         opinionsCountLabel: "العدد:",
         opNamePh: "اسمك",
@@ -1429,11 +1509,11 @@
         adLabel: "",
         adSell: "Advertise with us 📢",
 
-        // ✅ ADDED: Support + Visitors
+        // ✅ Support + Visitors
         supportBtn: "Support Me!",
         visitorsLabel: "Visitors:",
 
-        // ✅ ADDED: Opinions
+        // ✅ Opinions
         opinionsTitle: "💬 Opinions",
         opinionsCountLabel: "Count:",
         opNamePh: "Your name",
@@ -1533,13 +1613,13 @@
       if (adLabel) adLabel.textContent = strings.adLabel;
       if (adSell) adSell.textContent = strings.adSell;
 
-      // ✅ ADDED: Support + Visitors localization
+      // ✅ Support + Visitors localization
       const supportBtn = document.getElementById("support-btn");
       const visitorsLabel = document.getElementById("visitors-label");
       if (supportBtn) supportBtn.textContent = strings.supportBtn;
       if (visitorsLabel) visitorsLabel.textContent = strings.visitorsLabel;
 
-      // ✅ ADDED: Opinions localization
+      // ✅ Opinions localization
       const opTitle = document.getElementById("opinions-title");
       const opCountLabel = document.getElementById("opinions-count-label");
       const opName = document.getElementById("op-name");
@@ -1566,13 +1646,13 @@
       });
     }
 
-    // ✅ Toast
+    // ✅ Toast close
     const toast = document.getElementById("subscribe-toast");
     const toastClose = toast ? toast.querySelector(".subscribe-toast-close") : null;
-
     if (toastClose) {
       toastClose.addEventListener("click", () => {
-        toast.style.display = "none";
+        toast.classList.remove("subscribe-toast--visible");
+        setTimeout(() => { toast.style.display = "none"; }, 220);
       });
     }
 
@@ -1724,7 +1804,7 @@
     }
   </script>
 
-  <!-- ✅ ADDED: Firestore (real visitors + online opinions + stars) + side ad slideshow -->
+  <!-- ✅ Firestore (visitors + opinions + stars) + side ad slideshow -->
   <script type="module">
     import { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
@@ -1759,12 +1839,42 @@
       localStorage.setItem(CLIENT_ID_KEY, clientId);
     }
 
-    // admin uid (you said already linked before)
+    // admin uid
     const ADMIN_UID_KEY = "mlo5-admin-uid";
     function isAdmin(){
       const adminUid = (localStorage.getItem(ADMIN_UID_KEY) || "").trim();
       return !!(currentUser && adminUid && currentUser.uid === adminUid);
     }
+
+    // =========================
+    // ✅ Emoji list (auto, code chooses)
+    // =========================
+    const OP_EMOJIS = ["😎","🔥","👑","🦁","🐺","🐉","💎","⚡","🧠","🎮","👾","🛡️","🧿","🦂","✨","🎯"];
+    function randomEmoji(){
+      return OP_EMOJIS[Math.floor(Math.random() * OP_EMOJIS.length)];
+    }
+
+    // =========================
+    // ✅ Banned words + Ayah popup
+    // =========================
+    const BANNED_WORDS = [
+      "كلمة_ممنوعة1",
+      "كلمة_ممنوعة2",
+      "سب",
+      "شتيمة"
+    ];
+    function containsBannedWord(text){
+      const t = String(text || "").toLowerCase();
+      return BANNED_WORDS.some(w => t.includes(String(w).toLowerCase()));
+    }
+    const ayahPopup = document.getElementById("ayah-popup");
+    const ayahClose = document.getElementById("ayah-close");
+    ayahClose?.addEventListener("click", () => {
+      if (ayahPopup) ayahPopup.style.display = "none";
+    });
+    ayahPopup?.addEventListener("click", (e) => {
+      if (e.target === ayahPopup) ayahPopup.style.display = "none";
+    });
 
     // =========================
     // ✅ 1) REAL VISITOR COUNTER (+1 per visit)
@@ -1861,14 +1971,6 @@
       return `${y}-${m}-${day} • ${hh}:${mm} ${ampm}`;
     }
 
-    function getFirstChar(name){
-      const t = (name || "").trim();
-      if (!t) return "?";
-      const c = t.charAt(0);
-      // Uppercase only affects latin, arabic stays as-is
-      return c.toUpperCase();
-    }
-
     function canDeleteOpinion(v){
       if (isAdmin()) return true;
       const uid = (v.uid || "").trim();
@@ -1886,7 +1988,7 @@
       if (snap.empty) {
         opList.innerHTML = `
           <div class="op-item">
-            <div class="op-text" style="color:rgba(249,250,251,.65)">لا يوجد آراء بعد… كن أول واحد 👀</div>
+            <div class="op-text" style="color:rgba(20,20,20,.78)">لا يوجد آراء بعد… كن أول واحد 👀</div>
           </div>
         `;
         return;
@@ -1899,7 +2001,7 @@
         const v = d.data();
         const nameRaw = (v.name || "Visitor").slice(0, 30);
         const name = escapeHtml(nameRaw);
-        const first = escapeHtml(getFirstChar(nameRaw));
+        const emoji = escapeHtml(v.emoji || "😎");
         const text = escapeHtml((v.text || "").slice(0, 240));
         const rating = Number(v.rating || 5);
         const time = fmt(v.ts);
@@ -1911,7 +2013,7 @@
           <div class="op-item">
             <div class="op-top">
               <div class="op-user">
-                <div class="op-avatar">${first}</div>
+                <div class="op-avatar">${emoji}</div>
                 <div class="op-name">${name}</div>
               </div>
               <div style="display:flex;align-items:center;gap:10px;">
@@ -1919,7 +2021,7 @@
                 <div class="op-time">${escapeHtml(time)}</div>
               </div>
             </div>
-            <div style="margin:6px 0 8px">${renderStars(rating)}</div>
+            <div style="margin:6px 0 8px; position:relative; z-index:1;">${renderStars(rating)}</div>
             <div class="op-text">${text}</div>
           </div>
         `;
@@ -1971,6 +2073,12 @@
         if (name.length < 3) return showErr("الاسم لازم يكون 3 أحرف على الأقل.");
         if (text.length < 5) return showErr("الرأي لازم يكون 5 أحرف على الأقل.");
 
+        // ✅ banned words check + ayah popup
+        if (containsBannedWord(text)){
+          if (ayahPopup) ayahPopup.style.display = "flex";
+          return;
+        }
+
         try{
           await addDoc(collection(db, "opinions"), {
             name,
@@ -1978,7 +2086,8 @@
             rating: selectedRating,
             ts: new Date(),
             uid: currentUser ? currentUser.uid : null,
-            clientId: clientId
+            clientId: clientId,
+            emoji: randomEmoji()
           });
 
           if (opText) opText.value = "";
@@ -2011,9 +2120,6 @@
         if (!id) return;
 
         try{
-          // fetch doc to validate permission
-          const snap = await getDocs(query(collection(db, "opinions"), orderBy("ts","desc"), limit(10)));
-          // permission check will be re-evaluated by Firestore rules anyway.
           await deleteDoc(doc(db, "opinions", id));
         }catch(err){
           console.error("Delete opinion error:", err);
@@ -2022,7 +2128,7 @@
     }
 
     // =========================
-    // ✅ 3) LEFT SIDE AD SLIDESHOW (no dots, no swipe)
+    // ✅ 3) SIDE AD SLIDESHOW (no dots, no swipe)
     // =========================
     const sideImg = document.getElementById("side-ad-img");
     const sideLink = document.getElementById("side-ad-link");
