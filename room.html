@@ -493,34 +493,6 @@
         min-height:0;
       }
       .badgeBtn{display:inline-flex;} /* ✅ زر المتواجدين */
-
-      /* ✅ بابل الرسالة مثل واتساب: على قد الرسالة */
-      .msg{
-        max-width:86%;
-        padding:10px 12px 10px; /* كان كبير بسبب زر الرد */
-        border-radius:18px;
-      }
-
-      /* ✅ نخفي الرد على الهاتف بالكامل */
-      .replyBtn{ display:none !important; }
-      .replyPreview{ display:none !important; }
-
-      /* ✅ نخفي زر الإرسال + زر الإيموجي بالموبايل فقط */
-      .sendBtn{ display:none !important; }
-      .emojiBtn{ display:none !important; }
-
-      /* ✅ نخلي حقل الكتابة ياخذ العرض كله */
-      .composer{ gap:0; }
-      #msgInput{
-        width:100%;
-      }
-
-      /* ✅ وقت الرسالة أصغر ومرتب */
-      .msgTimeUnder{
-        margin-top:4px;
-        font-size:.72rem;
-        opacity:.9;
-      }
     }
 
     #appModal{
@@ -853,6 +825,21 @@
   const db = getFirestore(app);
   const rtdb = getDatabase(app);
 
+  /* ✅✅✅ FIX (Mobile-only): Server Time Offset + nowMs() (Desktop unaffected) */
+  const __MOBILE_DEVICE =
+    window.matchMedia("(pointer: coarse)").matches ||
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  let serverOffsetMs = 0;
+  onValue(ref(rtdb, ".info/serverTimeOffset"), (snap)=>{
+    serverOffsetMs = Number(snap.val() || 0);
+  });
+  function nowMs(){
+    // بالموبايل فقط: وقت السيرفر، بالديسكتوب: Date.now() كما هو
+    return Date.now() + (__MOBILE_DEVICE ? serverOffsetMs : 0);
+  }
+  /* ✅✅✅ END FIX */
+
   const connDot = document.getElementById("connDot");
   const connText = document.getElementById("connText");
   const exitBtn = document.getElementById("exitBtn");
@@ -1104,20 +1091,6 @@
 
   emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
 
-  /* ✅ إرسال من كيبورد الموبايل فقط (بدون زر إرسال) */
-  try{
-    if (IS_MOBILE_DEVICE){
-      msgInput.setAttribute("enterkeyhint", "send");
-      msgInput.addEventListener("keydown", (e)=>{
-        if (e.key === "Enter"){
-          e.preventDefault();
-          if (chatForm?.requestSubmit) chatForm.requestSubmit();
-          else chatForm.dispatchEvent(new Event("submit", { cancelable:true, bubbles:true }));
-        }
-      });
-    }
-  }catch{}
-
   function loadIgnoreWindows(){
     try{ ignoreWindows = JSON.parse(localStorage.getItem(ignoreKey(user.uid)) || "{}"); }
     catch{ ignoreWindows = {}; }
@@ -1153,7 +1126,7 @@
     ignoreWindows[uid] = ignoreWindows[uid] || [];
     const arr = ignoreWindows[uid];
     const activeIdx = arr.findIndex(w => w.end == null);
-    const now = Date.now();
+    const now = nowMs(); /* ✅ (Mobile only offset, desktop = Date.now) */
     if (activeIdx >= 0) arr[activeIdx].end = now;
     else arr.push({start: now, end: null});
     saveIgnoreWindows();
@@ -1182,29 +1155,29 @@
       system:true, type,
       text,
       createdAt: serverTimestamp(),
-      createdAtMs: Date.now()
+      createdAtMs: nowMs() /* ✅ */
     });
   }
 
   async function adminKick(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { kickedAt: Date.now(), reason:"kick", by:user.uid });
+    await update(ref(rtdb, `moderation/${targetUid}`), { kickedAt: nowMs(), reason:"kick", by:user.uid });
     await writeSystemText(`🚪 تم طرد ${targetName} بواسطة الأدمن`, "kick");
   }
   async function adminBan(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { banned:true, bannedAt: Date.now(), reason:"ban", by:user.uid });
+    await update(ref(rtdb, `moderation/${targetUid}`), { banned:true, bannedAt: nowMs(), reason:"ban", by:user.uid });
     await writeSystemText(`⛔ تم حظر ${targetName} بواسطة الأدمن`, "ban");
   }
   async function adminUnban(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: Date.now(), reason:"unban", by:user.uid });
+    await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: nowMs(), reason:"unban", by:user.uid });
     await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة الأدمن`, "unban");
   }
   async function adminMute(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, mutedAt: Date.now() });
+    await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, mutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:true });
     await writeSystemText(`🔇 تم كتم ${targetName} بواسطة الأدمن`, "mute");
   }
   async function adminUnmute(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { muted:false, mutedUntil:0, reason:"unmute", by:user.uid, unmutedAt: Date.now() });
+    await update(ref(rtdb, `moderation/${targetUid}`), { muted:false, mutedUntil:0, reason:"unmute", by:user.uid, unmutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:false });
     await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة الأدمن`, "unmute");
   }
@@ -1225,7 +1198,7 @@
   async function adminClearForAll(){
     if (!isAdmin) return;
     await hardDeleteAllGlobalMessages();
-    const clearedAtMs = Date.now();
+    const clearedAtMs = nowMs(); /* ✅ */
     await setDoc(doc(db, "globalMeta", "clear"), {
       clearedAtMs, byUid:user.uid, byName: profile?.name || "Admin", createdAt: serverTimestamp()
     }, { merge:true });
@@ -1260,7 +1233,7 @@
     return addDoc(collection(db, "globalMessages"), {
       system:true, type, text,
       actorUid:user.uid, actorName:profile.name,
-      createdAt: serverTimestamp(), createdAtMs: Date.now()
+      createdAt: serverTimestamp(), createdAtMs: nowMs() /* ✅ */
     });
   }
 
@@ -1290,7 +1263,7 @@
         });
         return;
       }
-      if (m.kickedAt && Date.now() - m.kickedAt < 15000){
+      if (m.kickedAt && nowMs() - m.kickedAt < 15000){
         showAppModal({
           title:"🚪 تم طردك",
           text:"تم طردك من الشات.",
@@ -1304,7 +1277,7 @@
       }
 
       const until = m.mutedUntil || 0;
-      const muted = (m.muted === true) || (Date.now() < until);
+      const muted = (m.muted === true) || (nowMs() < until);
 
       if (!isAdmin && roomLocked){
         msgInput.disabled = true;
@@ -1527,7 +1500,7 @@
           messagesDiv.appendChild(div);
 
           if (!isFirst && (m.type==="join" || m.type==="leave") && m.actorUid && m.actorUid !== user.uid){
-            const now = Date.now();
+            const now = nowMs();
             if (now - lastSoundAt > 800){
               lastSoundAt = now;
               toastSound.currentTime = 0;
@@ -1663,7 +1636,7 @@
       replyTo,
       device: myDevice, /* ✅ */
       createdAt: serverTimestamp(),
-      createdAtMs: Date.now()
+      createdAtMs: nowMs() /* ✅ */
     });
   });
 
@@ -1792,7 +1765,7 @@
     msgInput.disabled = false;
     sendBtn.disabled = false;
 
-    joinAtMs = Date.now();
+    joinAtMs = nowMs(); /* ✅ (Mobile uses server time, desktop normal) */
 
     await updatePresenceStatus(statusVal, true);
     await writeJoinLeave("join");
