@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Games - M L O 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ✅ Favicon -->
+  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="32x32" />
+  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="16x16" />
+  <link rel="apple-touch-icon" href="./favicon.png?v=2" />
+  <meta name="theme-color" content="#020202" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg-dark:#020202;
+      --yellow:#facc15;
+      --white:#f9fafb;
+      --muted:#9ca3af;
+      --border-subtle: rgba(156,163,175,.35);
+      --radius-lg:20px;
+      --radius-full:999px;
+      --grid-x: 0px;
+      --grid-y: 0px;
+    }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+
+    body{
+      font-family:"Tajawal", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-dark);
+      color: var(--white);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+      position:relative;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><polygon points='2,2 2,22 8,16 14,26 18,24 12,14 20,14' fill='%23facc15' stroke='%23000000' stroke-width='1.5'/></svg>") 0 0, auto;
+    }
+
+    .bg-grid{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      background-image: radial-gradient(circle, rgba(249,250,251,.55) 1px, transparent 1px);
+      background-size: 30px 30px;
+      background-position: calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
+      opacity:.25;
+      mix-blend-mode: screen;
+    }
+
+    .page{
+      width:100%;
+      max-width:1100px;
+      padding:32px 16px 40px;
+      margin:auto;
+      position:relative;
+      z-index:1;
+    }
+
+    /* ✅ TOP BAR */
+    .top-bar{
+      display:flex;
+      justify-content:flex-start;
+      align-items:center;
+      gap:10px;
+      margin-bottom: 10px;
+      direction:ltr;
+      flex-wrap:wrap;
+    }
+    .top-bar-right{
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      direction:ltr;
+      flex-wrap:wrap;
+    }
+
+    .icon-btn{
+      width: 40px; height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,.6);
+      background: rgba(0,0,0,.7);
+      color: var(--yellow);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      box-shadow: 0 10px 24px rgba(0,0,0,.9), 0 0 0 1px rgba(15,23,42,.9);
+      transition: transform .15s ease, background .15s ease, box-shadow .15s ease, color .15s ease;
+      flex: 0 0 auto;
+      font-size: 1.1rem;
+      user-select:none;
+    }
+    .icon-btn:hover{
+      transform: translateY(-1px);
+      background: rgba(250,204,21,.14);
+      box-shadow: 0 14px 30px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.75);
+    }
+
+    .lang-toggle{
+      width: 40px; height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,.7);
+      background: radial-gradient(circle at top, #111111, #020202);
+      color: var(--yellow);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size: 1.05rem;
+      box-shadow: 0 10px 24px rgba(0,0,0,.9), 0 0 0 1px rgba(15,23,42,.9);
+      transition: background .15s ease, transform .15s ease, box-shadow .15s ease;
+      flex: 0 0 auto;
+    }
+    .lang-toggle:hover{
+      transform: translateY(-1px);
+      background: radial-gradient(circle at top, #facc15, #fbbf24);
+      color:#000;
+      box-shadow: 0 14px 30px rgba(0,0,0,1), 0 0 0 1px rgba(250,204,21,.8);
+    }
+
+    /* Header */
+    .hero-title{ text-align:center; margin-top: 6px; margin-bottom: 10px; }
+    .hero-title h1{
+      font-family:"Poppins", system-ui, sans-serif;
+      font-weight:800;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--white);
+      white-space: nowrap;
+      direction:ltr;
+      unicode-bidi:bidi-override;
+    }
+    .hero-sub{
+      text-align:center;
+      font-size: .92rem;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .divider{ width:100%; margin: 18px auto; position:relative; height:1px; }
+    .divider-line{ height:1px; width:100%; background: linear-gradient(90deg, transparent, rgba(156,163,175,.4), transparent); }
+    .divider-glow{
+      position:absolute; inset:0; margin:auto;
+      height:12px; width:40%;
+      background: radial-gradient(circle, rgba(250,204,21,.5), transparent 70%);
+      opacity:.7; filter: blur(3px); pointer-events:none;
+    }
+
+    .wrap{
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,.22);
+      background: linear-gradient(145deg, rgba(2,2,2,.9), rgba(5,5,5,.9));
+      box-shadow: 0 12px 30px rgba(0,0,0,.85), 0 0 0 1px rgba(55,65,81,.55);
+      padding: 14px;
+    }
+
+    .head-row{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .title{
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--yellow);
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      color: rgba(156,163,175,.9);
+      font-size: .85rem;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(156,163,175,.22);
+      background: rgba(0,0,0,.25);
+    }
+
+    .section{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 12px;
+    }
+
+    .card{
+      background: linear-gradient(145deg, #020202, #050505);
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 10px 28px rgba(0,0,0,.7), 0 0 0 1px rgba(55,65,81,.5);
+      position: relative;
+      overflow:hidden;
+      min-height: 160px;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: radial-gradient(circle at top, rgba(250,204,21,.14), transparent 55%);
+      opacity:0;
+      transition: opacity .2s ease;
+      pointer-events:none;
+    }
+    .card:hover{
+      border-color: rgba(250,204,21,.85);
+      box-shadow: 0 16px 40px rgba(0,0,0,.9), 0 0 0 1px rgba(250,204,21,.5);
+    }
+    .card:hover::before{ opacity:1; }
+
+    .card h2{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      margin:0 0 8px;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--yellow);
+    }
+    .desc{
+      color: rgba(249,250,251,.78);
+      line-height: 1.7;
+      font-size: .9rem;
+      margin-bottom: 12px;
+    }
+
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+    .btn{
+      cursor:pointer;
+      border:none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      background: var(--yellow);
+      color:#111827;
+      box-shadow: 0 14px 30px rgba(250,204,21,.18);
+      transition: transform .15s ease;
+      user-select:none;
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .btnGhost{
+      background: transparent;
+      color: rgba(249,250,251,.9);
+      border: 1px solid rgba(156,163,175,.25);
+      box-shadow:none;
+    }
+
+    .stat{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+      color: rgba(249,250,251,.85);
+      font-weight:800;
+      font-size:.85rem;
+    }
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(156,163,175,.22);
+      background: rgba(0,0,0,.25);
+      white-space: nowrap;
+    }
+
+    /* ClickRush tap */
+    .bigTap{
+      margin-top:12px;
+      border-radius: 18px;
+      border:1px dashed rgba(250,204,21,.35);
+      background: rgba(250,204,21,.06);
+      min-height:150px;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center;
+      font-weight:900;
+      user-select:none;
+      cursor:pointer;
+      padding: 10px;
+    }
+
+    /* Simon grid */
+    .simon{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .sbtn{
+      height:90px;
+      border-radius:18px;
+      border:1px solid rgba(156,163,175,.18);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+    }
+    .sbtn::after{
+      content:"";
+      position:absolute; inset:0;
+      background: rgba(250,204,21,.22);
+      opacity:0;
+      transition: opacity .15s ease;
+    }
+    .sbtn.flash::after{ opacity:1; }
+
+    /* Leaderboard */
+    .lb-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 6px;
+    }
+    .lb-title{
+      font-weight: 900;
+      color: var(--yellow);
+      font-size: 1rem;
+    }
+    .lb-note{
+      color: rgba(156,163,175,.9);
+      font-size: .8rem;
+    }
+    .lb-list{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top: 6px;
+    }
+    .lb-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(156,163,175,.22);
+      background: rgba(0,0,0,.25);
+    }
+    .lb-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+    .lb-rank{
+      width:30px;
+      height:30px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:"Poppins",system-ui,sans-serif;
+      font-weight:900;
+      font-size:.85rem;
+      border: 1px solid rgba(250,204,21,.35);
+      background: rgba(250,204,21,.08);
+      color: var(--yellow);
+      flex: 0 0 auto;
+    }
+    .lb-name{
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 900;
+      color: rgba(249,250,251,.92);
+    }
+    .lb-score{
+      font-family:"Poppins",system-ui,sans-serif;
+      font-weight: 900;
+      color: var(--yellow);
+      flex: 0 0 auto;
+    }
+
+    /* Modal */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 10;
+      padding: 16px;
+    }
+    .modal{
+      width:100%;
+      max-width: 420px;
+      border-radius: 18px;
+      border: 1px solid rgba(148,163,184,.22);
+      background: linear-gradient(145deg, rgba(2,2,2,.95), rgba(5,5,5,.95));
+      box-shadow: 0 18px 45px rgba(0,0,0,.95);
+      padding: 14px;
+    }
+    .modal h3{
+      margin: 0 0 8px;
+      color: var(--yellow);
+      font-weight: 900;
+    }
+    .modal p{
+      color: rgba(249,250,251,.78);
+      line-height: 1.7;
+      font-size: .9rem;
+      margin-bottom: 10px;
+    }
+    .inp{
+      width:100%;
+      background: rgba(0,0,0,.35);
+      border:1px solid rgba(156,163,175,.25);
+      color: var(--white);
+      border-radius: 14px;
+      padding: 12px 12px;
+      outline:none;
+      font-family:inherit;
+      font-weight: 800;
+    }
+    .err{
+      margin-top: 8px;
+      color: rgba(248,113,113,.95);
+      font-size: .85rem;
+      min-height: 18px;
+    }
+
+    .footer{
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(31,41,55,.9);
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .footer-bottom{
+      text-align:center;
+      font-size:.75rem;
+      color: rgba(107,114,128,.9);
+    }
+    .footer-rights{
+      text-align:center;
+      font-size:.72rem;
+      color: rgba(107,114,128,.9);
+      margin-top: -6px;
+      direction:ltr;
+    }
+
+    @media (max-width: 900px){
+      .section{ grid-template-columns: 1fr; }
+      .top-bar-right{ width: 100%; justify-content: flex-start; margin-left: 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+
+  <!-- Nickname modal -->
+  <div id="modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3 id="mTitle">اسمك بالليدر بورد</h3>
+      <p id="mDesc">اكتب اسم (3-20 حرف/رقم) عشان يظهر بالترتيب 🔥</p>
+      <input id="nick" class="inp" type="text" placeholder="مثال: Mlo5" maxlength="20" />
+      <div class="row" style="margin-top:10px">
+        <button id="saveNick" class="btn">حفظ</button>
+        <button id="skipNick" class="btn btnGhost">تخطي</button>
+      </div>
+      <div id="mErr" class="err"></div>
+    </div>
+  </div>
+
+  <main class="page">
+    <div class="top-bar">
+      <a class="icon-btn" href="index.html" aria-label="Back to Home" title="Home">🏠</a>
+      <div class="top-bar-right">
+        <button id="lang-toggle" class="lang-toggle" title="Toggle">🌐</button>
+      </div>
+    </div>
+
+    <header class="hero-title">
+      <h1 aria-label="M L O 5">MLO5</h1>
+      <p id="hero-sub" class="hero-sub">3 ألعاب أونلاين + 3 Leaderboards لايف 🔴</p>
+    </header>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-glow"></div>
+    </div>
+
+    <section class="wrap" aria-label="Games">
+      <div class="head-row">
+        <div class="title">🎮 Mini Games (Online)</div>
+        <div class="pill">
+          <span id="authState">Connecting...</span>
+          <span style="opacity:.65">•</span>
+          <span id="playerName">Guest</span>
+        </div>
+      </div>
+
+      <!-- =========================
+           GAME 1: Click Rush + LB
+           ========================= -->
+      <div class="section">
+        <div class="card">
+          <h2>
+            <span>⚡ Click Rush</span>
+            <span class="chip">🏆 Best: <span id="crBest">—</span></span>
+          </h2>
+          <p class="desc">اضغط بأسرع ما يمكن خلال 5 ثواني. أفضل نتيجة بتنحفظ أونلاين وتطلع بالليدر بورد.</p>
+
+          <div class="row">
+            <button class="btn" id="crStart">ابدأ</button>
+            <button class="btn btnGhost" id="crReplay">تحديث الترتيب</button>
+          </div>
+
+          <div class="bigTap" id="crTap">اضغط "ابدأ" أولاً</div>
+
+          <div class="stat">
+            <div class="chip">⏱️ الوقت: <span id="crTime">5</span>s</div>
+            <div class="chip">🖱️ النقرات: <span id="crClicks">0</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="lb-head">
+            <div class="lb-title">🏆 Click Rush Leaderboard</div>
+            <div class="lb-note">Top 10 (Live)</div>
+          </div>
+          <div id="lb-cr" class="lb-list"></div>
+        </div>
+      </div>
+
+      <!-- =========================
+           GAME 2: Guess Number + LB
+           ========================= -->
+      <div class="section">
+        <div class="card">
+          <h2>
+            <span>🎯 خمن الرقم</span>
+            <span class="chip">🏆 Best: <span id="gnBest">—</span></span>
+          </h2>
+          <p class="desc">أنا مختار رقم بين 1 و 50. كل ما قلّت محاولاتك، نقاطك بتكون أعلى.</p>
+
+          <div class="row">
+            <input id="gnInput" class="inp" style="max-width:260px" type="number" min="1" max="50" placeholder="اكتب رقم 1-50" />
+            <button class="btn" id="gnTry">جرّب</button>
+            <button class="btn btnGhost" id="gnNew">رقم جديد</button>
+            <button class="btn btnGhost" id="gnReplay">تحديث الترتيب</button>
+          </div>
+
+          <div class="stat">
+            <div class="chip">🔁 المحاولات: <span id="gnTries">0</span></div>
+            <div class="chip">💬 الحالة: <span id="gnMsg">جاهز</span></div>
+            <div class="chip">⭐ نقاط الجولة: <span id="gnPoints">0</span></div>
+          </div>
+
+          <p class="desc" style="margin-top:10px; color: rgba(156,163,175,.9); font-size:.85rem;">
+            النقاط = 1000 - (المحاولات × 10). (كل ما أسرع أفضل)
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="lb-head">
+            <div class="lb-title">🏆 Guess Leaderboard</div>
+            <div class="lb-note">Top 10 (Live)</div>
+          </div>
+          <div id="lb-gn" class="lb-list"></div>
+        </div>
+      </div>
+
+      <!-- =========================
+           GAME 3: Simon + LB
+           ========================= -->
+      <div class="section">
+        <div class="card">
+          <h2>
+            <span>🧠 ذاكرة الألوان (Simon)</span>
+            <span class="chip">🏆 Best: <span id="smBest">—</span></span>
+          </h2>
+          <p class="desc">تابع التسلسل وكرّره. كل مرة بيزيد مستوى. إذا غلطت بنرجع.</p>
+
+          <div class="row">
+            <button class="btn" id="smStart">ابدأ</button>
+            <button class="btn btnGhost" id="smReset">إعادة</button>
+            <button class="btn btnGhost" id="smReplay">تحديث الترتيب</button>
+          </div>
+
+          <div class="simon" id="simonGrid">
+            <button class="sbtn" data-i="0" aria-label="simon 0"></button>
+            <button class="sbtn" data-i="1" aria-label="simon 1"></button>
+            <button class="sbtn" data-i="2" aria-label="simon 2"></button>
+            <button class="sbtn" data-i="3" aria-label="simon 3"></button>
+          </div>
+
+          <div class="stat">
+            <div class="chip">📈 المستوى: <span id="smLevel">0</span></div>
+            <div class="chip">💬 الحالة: <span id="smMsg">اضغط ابدأ</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="lb-head">
+            <div class="lb-title">🏆 Simon Leaderboard</div>
+            <div class="lb-note">Top 10 (Live)</div>
+          </div>
+          <div id="lb-sm" class="lb-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-bottom">© <span id="year-span">2025</span> · صنع بحب 💛.</div>
+      <div class="footer-rights">All rights reserved MLO5 ©</div>
+    </footer>
+  </main>
+
+  <script type="module">
+    // =========================
+    // ✅ Firebase Config (from you)
+    // =========================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+      authDomain: "mlo5-users.firebaseapp.com",
+      databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
+      projectId: "mlo5-users",
+      appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+    };
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, setDoc, serverTimestamp,
+      collection, query, orderBy, limit, onSnapshot
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    // =========================
+    // Helpers
+    // =========================
+    const $ = (id) => document.getElementById(id);
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    // Year
+    $("year-span").textContent = new Date().getFullYear();
+
+    // BG grid move
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e) => {
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+    });
+
+    // =========================
+    // Firebase init
+    // =========================
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // =========================
+    // Nickname (NO localStorage)
+    // Persisted by saving in your allowed docs (scores + leaderboards)
+    // =========================
+    let uid = null;
+    let nickname = "Guest";
+
+    function cleanName(s){
+      const v = (s || "").trim().replace(/\s+/g, " ");
+      if(v.length < 3 || v.length > 20) return null;
+      if(!/^[\p{L}\p{N}_ ]+$/u.test(v)) return null;
+      return v;
+    }
+
+    function openModal(){
+      $("modal-backdrop").style.display = "flex";
+      $("mErr").textContent = "";
+      $("nick").value = cleanName(nickname) ? nickname : "";
+      $("nick").focus();
+    }
+    function closeModal(){ $("modal-backdrop").style.display = "none"; }
+
+    $("saveNick").addEventListener("click", async () => {
+      const v = cleanName($("nick").value);
+      if(!v){ $("mErr").textContent = "الاسم لازم 3-20 (حروف/أرقام فقط)."; return; }
+      nickname = v;
+      $("playerName").textContent = nickname;
+      closeModal();
+
+      // Touch docs so name persists online (without breaking rules)
+      if(!uid) return;
+      const games = ["clickrush","guess","simon"];
+      for(const g of games){
+        // Ensure leaderboard doc exists or just merge name (score stays)
+        const lbRef = doc(db, `leaderboards/${g}/top/${uid}`);
+        const snap = await getDoc(lbRef);
+        if(!snap.exists()){
+          await setDoc(lbRef, { score: 0, name: nickname, updatedAt: serverTimestamp() });
+        } else {
+          await setDoc(lbRef, { name: nickname, updatedAt: serverTimestamp() }, { merge: true });
+        }
+      }
+    });
+
+    $("skipNick").addEventListener("click", closeModal);
+
+    async function loadNameFromCloud(){
+      if(!uid) return;
+      // Try read from any leaderboard doc (first existing)
+      for(const g of ["clickrush","guess","simon"]){
+        const ref = doc(db, `leaderboards/${g}/top/${uid}`);
+        const snap = await getDoc(ref);
+        if(snap.exists() && snap.data()?.name){
+          nickname = String(snap.data().name);
+          $("playerName").textContent = nickname;
+          return;
+        }
+      }
+      openModal();
+    }
+
+    // =========================
+    // Common score functions
+    // =========================
+    const TOP_N = 10;
+
+    async function getMyBest(gameId){
+      if(!uid) return 0;
+      const ref = doc(db, `users/${uid}/scores/${gameId}`);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) return 0;
+      return Number(snap.data().best || 0);
+    }
+
+    async function submitBest(gameId, score){
+      if(!uid) return;
+      const nameToUse = cleanName(nickname) ? nickname : "Guest";
+      const scoreInt = Math.max(0, Math.floor(Number(score || 0)));
+
+      // 1) user best
+      const userRef = doc(db, `users/${uid}/scores/${gameId}`);
+      const prevBest = await getMyBest(gameId);
+      if(scoreInt > prevBest){
+        await setDoc(userRef, { best: scoreInt, name: nameToUse, updatedAt: serverTimestamp() }, { merge:true });
+      }
+
+      // 2) leaderboard best
+      const lbRef = doc(db, `leaderboards/${gameId}/top/${uid}`);
+      const lbSnap = await getDoc(lbRef);
+      const prevLB = lbSnap.exists() ? Number(lbSnap.data().score || 0) : 0;
+
+      if(scoreInt > prevLB){
+        await setDoc(lbRef, { score: scoreInt, name: nameToUse, updatedAt: serverTimestamp() }, { merge:true });
+      } else if(lbSnap.exists() && lbSnap.data().name !== nameToUse && cleanName(nameToUse)) {
+        await setDoc(lbRef, { name: nameToUse, updatedAt: serverTimestamp() }, { merge:true });
+      }
+    }
+
+    function startLeaderboard(gameId, mountElId){
+      const mount = $(mountElId);
+      const q = query(
+        collection(db, `leaderboards/${gameId}/top`),
+        orderBy("score", "desc"),
+        limit(TOP_N)
+      );
+
+      const render = (rows) => {
+        mount.innerHTML = "";
+        if(!rows.length){
+          mount.innerHTML = `
+            <div class="lb-row">
+              <div class="lb-left">
+                <div class="lb-rank">—</div>
+                <div class="lb-name">لا يوجد نتائج بعد</div>
+              </div>
+              <div class="lb-score">0</div>
+            </div>`;
+          return;
+        }
+        rows.forEach((r, idx) => {
+          const nm = (r.name || "Guest").toString();
+          const sc = Number(r.score || 0);
+          mount.insertAdjacentHTML("beforeend", `
+            <div class="lb-row">
+              <div class="lb-left">
+                <div class="lb-rank">${idx+1}</div>
+                <div class="lb-name" title="${nm}">${nm}</div>
+              </div>
+              <div class="lb-score">${sc}</div>
+            </div>
+          `);
+        });
+      };
+
+      return onSnapshot(q, (snap) => {
+        const rows = [];
+        snap.forEach(d => rows.push(d.data()));
+        render(rows);
+      }, (err) => {
+        console.error("LB error", gameId, err);
+        render([]);
+      });
+    }
+
+    // =========================
+    // Game 1: Click Rush
+    // =========================
+    let crRunning=false, crClicks=0, crLeft=5, crTimer=null;
+
+    function crSetUI(){
+      $("crClicks").textContent = crClicks;
+      $("crTime").textContent = crLeft;
+      $("crTap").textContent = crRunning ? "اضغط هنا بسرعة!" : "اضغط \"ابدأ\" أولاً";
+    }
+
+    $("crStart").addEventListener("click", () => {
+      if(crRunning) return;
+      crRunning = true;
+      crClicks = 0;
+      crLeft = 5;
+      crSetUI();
+
+      crTimer = setInterval(async () => {
+        crLeft -= 1;
+        crSetUI();
+        if(crLeft <= 0){
+          clearInterval(crTimer);
+          crRunning = false;
+          $("crTap").textContent = `انتهى الوقت! نتيجتك: ${crClicks}`;
+          try{
+            await submitBest("clickrush", crClicks);
+            const best = await getMyBest("clickrush");
+            $("crBest").textContent = String(best);
+          }catch(e){ console.error(e); }
+        }
+      }, 1000);
+    });
+
+    $("crTap").addEventListener("click", () => {
+      if(!crRunning) return;
+      crClicks += 1;
+      crSetUI();
+    });
+
+    // =========================
+    // Game 2: Guess Number (score = points)
+    // points = 1000 - tries*10 (>=0)
+    // =========================
+    let gnSecret = Math.floor(Math.random()*50) + 1;
+    let gnTries = 0;
+
+    function gnReset(){
+      gnSecret = Math.floor(Math.random()*50) + 1;
+      gnTries = 0;
+      $("gnTries").textContent = "0";
+      $("gnMsg").textContent = "جاهز";
+      $("gnPoints").textContent = "0";
+      $("gnInput").value = "";
+    }
+
+    function gnPoints(){
+      return Math.max(0, 1000 - (gnTries * 10));
+    }
+
+    async function gnTry(){
+      const v = Number($("gnInput").value);
+      if(!v || v < 1 || v > 50){
+        $("gnMsg").textContent = "اكتب رقم صحيح (1-50)";
+        return;
+      }
+
+      gnTries += 1;
+      $("gnTries").textContent = String(gnTries);
+
+      if(v === gnSecret){
+        $("gnMsg").textContent = `صح! 🎉 الرقم هو ${gnSecret}`;
+        const pts = gnPoints();
+        $("gnPoints").textContent = String(pts);
+
+        try{
+          await submitBest("guess", pts);
+          const best = await getMyBest("guess");
+          $("gnBest").textContent = String(best);
+        }catch(e){ console.error(e); }
+
+      } else if(v < gnSecret){
+        $("gnMsg").textContent = "أعلى ⬆️";
+      } else {
+        $("gnMsg").textContent = "أقل ⬇️";
+      }
+
+      $("gnPoints").textContent = String(gnPoints());
+    }
+
+    $("gnTry").addEventListener("click", gnTry);
+    $("gnNew").addEventListener("click", gnReset);
+    $("gnInput").addEventListener("keydown", (e) => { if(e.key === "Enter") gnTry(); });
+
+    // =========================
+    // Game 3: Simon (score = max level reached)
+    // =========================
+    const smButtons = Array.from(document.querySelectorAll(".sbtn"));
+    let smSeq=[], smUser=[], smPlaying=false, smActive=false;
+
+    function smFlash(i){
+      const b = smButtons[i];
+      b.classList.add("flash");
+      setTimeout(() => b.classList.remove("flash"), 180);
+    }
+
+    async function smShowSeq(){
+      smPlaying = true;
+      smActive = false;
+      $("smMsg").textContent = "شاهد التسلسل...";
+      await sleep(250);
+      for(const i of smSeq){
+        smFlash(i);
+        await sleep(330);
+      }
+      smPlaying = false;
+      smActive = true;
+      $("smMsg").textContent = "دورك الآن";
+    }
+
+    function smReset(){
+      smSeq = [];
+      smUser = [];
+      smPlaying = false;
+      smActive = false;
+      $("smLevel").textContent = "0";
+      $("smMsg").textContent = "اضغط ابدأ";
+    }
+
+    async function smNext(){
+      smUser = [];
+      smSeq.push(Math.floor(Math.random()*4));
+      $("smLevel").textContent = String(smSeq.length);
+      await smShowSeq();
+    }
+
+    $("smStart").addEventListener("click", async () => {
+      if(smPlaying) return;
+      if(smSeq.length === 0) await smNext();
+      else await smShowSeq();
+    });
+
+    $("smReset").addEventListener("click", smReset);
+
+    smButtons.forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if(!smActive || smPlaying) return;
+        const i = Number(btn.dataset.i);
+        smFlash(i);
+        smUser.push(i);
+
+        // check
+        for(let k=0;k<smUser.length;k++){
+          if(smUser[k] !== smSeq[k]){
+            $("smMsg").textContent = "غلط ❌ رجعنا للبداية";
+            smActive = false;
+
+            // Save best level achieved before reset (level = smSeq.length - 1)
+            const achieved = Math.max(0, smSeq.length - 1);
+            try{
+              await submitBest("simon", achieved);
+              const best = await getMyBest("simon");
+              $("smBest").textContent = String(best);
+            }catch(e){ console.error(e); }
+
+            await sleep(550);
+            smReset();
+            return;
+          }
+        }
+
+        if(smUser.length === smSeq.length){
+          $("smMsg").textContent = "صح ✅ مستوى جديد...";
+          smActive = false;
+
+          // Save current completed level (smSeq.length)
+          try{
+            await submitBest("simon", smSeq.length);
+            const best = await getMyBest("simon");
+            $("smBest").textContent = String(best);
+          }catch(e){ console.error(e); }
+
+          await sleep(450);
+          smNext();
+        }
+      });
+    });
+
+    // =========================
+    // Boot: Auth + Load bests + start LBs
+    // =========================
+    let unsubCR=null, unsubGN=null, unsubSM=null;
+
+    function startAllLeaderboards(){
+      if(unsubCR) unsubCR();
+      if(unsubGN) unsubGN();
+      if(unsubSM) unsubSM();
+      unsubCR = startLeaderboard("clickrush", "lb-cr");
+      unsubGN = startLeaderboard("guess", "lb-gn");
+      unsubSM = startLeaderboard("simon", "lb-sm");
+    }
+
+    $("crReplay").addEventListener("click", startAllLeaderboards);
+    $("gnReplay").addEventListener("click", startAllLeaderboards);
+    $("smReplay").addEventListener("click", startAllLeaderboards);
+
+    onAuthStateChanged(auth, async (user) => {
+      if(user){
+        uid = user.uid;
+        $("authState").textContent = "Online ✅";
+
+        await loadNameFromCloud();
+
+        // bests
+        try{ $("crBest").textContent = String(await getMyBest("clickrush")); }catch{ $("crBest").textContent="—"; }
+        try{ $("gnBest").textContent = String(await getMyBest("guess")); }catch{ $("gnBest").textContent="—"; }
+        try{ $("smBest").textContent = String(await getMyBest("simon")); }catch{ $("smBest").textContent="—"; }
+
+        // leaderboards live
+        startAllLeaderboards();
+      } else {
+        $("authState").textContent = "Signing in...";
+      }
+    });
+
+    try{
+      if(!auth.currentUser){
+        await signInAnonymously(auth);
+      }
+    }catch(e){
+      console.error(e);
+      $("authState").textContent = "Auth error ❌";
+    }
+
+    // init UIs
+    crSetUI();
+    gnReset();
+    smReset();
+
+    // (زر اللغة موجود بس حالياً تغيير الاتجاه فقط بشكل سريع)
+    let lang = "ar";
+    $("lang-toggle").addEventListener("click", () => {
+      lang = (lang === "ar") ? "en" : "ar";
+      document.documentElement.lang = lang;
+      document.documentElement.dir  = (lang === "en") ? "ltr" : "rtl";
+      $("hero-sub").textContent = (lang === "en")
+        ? "3 online games + 3 live leaderboards 🔴"
+        : "3 ألعاب أونلاين + 3 Leaderboards لايف 🔴";
+    });
+
+  </script>
+</body>
+</html>
