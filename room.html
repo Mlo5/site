@@ -17,9 +17,10 @@
       --vh: 1vh;
 
       /* ✅ Colors for ranks */
-      --legend:#39ff14; /* فسفوري */
+      --legend:#ef4444; /* ✅ Legendary أحمر */
       --vip:#2563eb;    /* أزرق */
       --root:#f97316;   /* برتقالي */
+      --girl:#ec4899;   /* ✅ جيرل زهري */
     }
 
     *{box-sizing:border-box;margin:0;padding:0}
@@ -158,23 +159,26 @@
       color:var(--yellow);white-space:nowrap;
     }
 
-    /* ✅ Rank badge next to name */
-    .rankPill{
-      border-radius:999px;
-      padding:3px 8px;
-      font-size:.75rem;
-      border:1px solid rgba(0,0,0,.35);
+    /* ✅ Rank icon next to name (ICON only) */
+    .rankIcon{
       display:inline-flex;
       align-items:center;
-      gap:6px;
-      white-space:nowrap;
-      font-weight:900;
+      justify-content:center;
+      width:28px;height:28px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.35);
+      background:rgba(0,0,0,.35);
+      font-size:1rem;
+      animation: rankBlink 1.2s infinite;
+      flex:0 0 auto;
     }
-    .rankLegend{ background:var(--legend); color:#000; }
-    .rankVip{ background:var(--vip); color:#fff; }
-    .rankRoot{ background:var(--root); color:#fff; }
+    @keyframes rankBlink{
+      0%{opacity:1}
+      50%{opacity:.25}
+      100%{opacity:1}
+    }
 
-    /* ✅ Rank name background (wrap around name) */
+    /* ✅ Rank name background (ONLY in online list) */
     .rankNameWrap{
       display:inline-flex;
       align-items:center;
@@ -187,18 +191,20 @@
     .rankNameLegend{ background:var(--legend); color:#000 !important; }
     .rankNameVip{ background:var(--vip); color:#fff !important; }
     .rankNameRoot{ background:var(--root); color:#fff !important; }
+    .rankNameGirl{ background:#fff; color:var(--girl) !important; border-color:rgba(236,72,153,.55); }
 
+    /* ✅⬇️ صغّر شوية اشارة التجاهل + الثلاث نقاط */
     .ignoreBtn, .moreBtn{
       border:1px solid rgba(250,204,21,.55);
       background:rgba(0,0,0,.45);
       color:var(--yellow);
       border-radius:999px;
-      padding:6px 10px;
+      padding:5px 9px;
       cursor:pointer;
-      font-size:.95rem;
+      font-size:.85rem;
       user-select:none;
-      min-width:42px;
-      height:36px;
+      min-width:38px;
+      height:32px;
       display:inline-flex;align-items:center;justify-content:center;
     }
     .ignoreBtn.ignored{border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)}
@@ -261,6 +267,7 @@
 
     .msgHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;color:var(--muted);font-size:.85rem}
     .nameTag{font-weight:900;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+    .nameTag.rankBig{font-size:1.05rem}
     .msgTimeUnder{margin-top:6px;font-size:.78rem;color:rgba(156,163,175,.92);text-align:left;direction:ltr}
 
     .system{
@@ -573,6 +580,7 @@
       text-align:center;
       line-height:1.8;
       margin-bottom:12px;
+      white-space:pre-wrap;
     }
     .appModalActions{
       display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
@@ -636,12 +644,12 @@
       background:rgba(0,0,0,.45);
       color:var(--yellow);
       border-radius:999px;
-      padding:6px 10px;
+      padding:5px 9px;
       cursor:pointer;
-      font-size:.95rem;
+      font-size:.85rem;
       user-select:none;
-      height:36px;
-      min-width:42px;
+      height:32px;
+      min-width:38px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
@@ -667,16 +675,12 @@
       #onlineOverlay.show{ display:block; }
     }
 
-    .deviceIco{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:26px; height:26px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.45);
-      background:rgba(0,0,0,.35);
-      font-size:.9rem;
-      flex:0 0 auto;
+    /* ✅ emoji images in chat */
+    .chatEmojiImg{
+      width:26px;height:26px;
+      vertical-align:middle;
+      border-radius:8px;
+      box-shadow:0 10px 22px rgba(0,0,0,.35);
     }
   </style>
 </head>
@@ -694,7 +698,11 @@
 
       <div class="title">M L O 5 <small>• Global Chat</small></div>
 
-      <button class="top-chip" id="exitBtn" type="button" title="خروج من الشات">↩ خروج</button>
+      <!-- ✅ زر السجل يظهر للأدمن فقط -->
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="top-chip" id="logBtn" type="button" title="سجل الإدارة" style="display:none;">📜 سجل</button>
+        <button class="top-chip" id="exitBtn" type="button" title="خروج من الشات">↩ خروج</button>
+      </div>
     </div>
 
     <div class="wrap">
@@ -747,7 +755,7 @@
 
             <form id="chatForm" class="composer">
               <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
-              <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع (Admin)">🧹</button>
+              <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
               <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
               <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
             </form>
@@ -839,17 +847,22 @@
   </div>
 
   <div class="menu" id="ctxMenu">
-    <div id="adminActions" style="display:none;">
+    <!-- ✅ موديريشن للرتب (وتظهر حسب الصلاحيات) -->
+    <div id="modActions" style="display:none;">
       <button id="ctxKickBtn">🚪 طرد</button>
       <button id="ctxMuteBtn">🔇 كتم</button>
       <button id="ctxUnmuteBtn">🔊 إلغاء الكتم</button>
       <button id="ctxBanBtn">⛔ حظر</button>
       <button id="ctxUnbanBtn">✅ إلغاء الحظر</button>
-
       <div class="sep"></div>
-      <button id="ctxRankLegend">💚⚡ Legendary</button>
+    </div>
+
+    <!-- ✅ الرتب للأدمن فقط -->
+    <div id="rankActions" style="display:none;">
+      <button id="ctxRankLegend">⚡ Legendary</button>
       <button id="ctxRankVip">💎 VIP</button>
       <button id="ctxRankRoot">🛡️ ROOT</button>
+      <button id="ctxRankGirl">🎀 GIRL</button>
       <button id="ctxRankNone">🧽 إزالة الرتبة</button>
     </div>
   </div>
@@ -867,7 +880,7 @@
     query, where, orderBy, onSnapshot, doc, setDoc,
     getDocs, writeBatch, limit, limitToLast
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-  import { getDatabase, ref, set, onDisconnect, onValue, remove, update, get, child } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+  import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
@@ -903,6 +916,8 @@
   const connDot = document.getElementById("connDot");
   const connText = document.getElementById("connText");
   const exitBtn = document.getElementById("exitBtn");
+  const logBtn = document.getElementById("logBtn");
+
   const onlineList = document.getElementById("onlineList");
   const onlineCount = document.getElementById("onlineCount");
   const meBadge = document.getElementById("meBadge");
@@ -946,7 +961,9 @@
   const adminErr = document.getElementById("adminErr");
 
   const ctxMenu = document.getElementById("ctxMenu");
-  const adminActions = document.getElementById("adminActions");
+  const modActions = document.getElementById("modActions");
+  const rankActions = document.getElementById("rankActions");
+
   const ctxKickBtn = document.getElementById("ctxKickBtn");
   const ctxMuteBtn = document.getElementById("ctxMuteBtn");
   const ctxUnmuteBtn = document.getElementById("ctxUnmuteBtn");
@@ -956,6 +973,7 @@
   const ctxRankLegend = document.getElementById("ctxRankLegend");
   const ctxRankVip    = document.getElementById("ctxRankVip");
   const ctxRankRoot   = document.getElementById("ctxRankRoot");
+  const ctxRankGirl   = document.getElementById("ctxRankGirl");
   const ctxRankNone   = document.getElementById("ctxRankNone");
 
   const roomMenu = document.getElementById("roomMenu");
@@ -995,32 +1013,53 @@
 
   /* ✅ RANKS */
   const RANKS = {
-    none:  { label:"بدون", emoji:"",   pillClass:"",         nameClass:"" },
-    legend:{ label:"Legendary", emoji:"💚⚡", pillClass:"rankLegend", nameClass:"rankNameLegend" },
-    vip:   { label:"VIP",       emoji:"💎",  pillClass:"rankVip",    nameClass:"rankNameVip" },
-    root:  { label:"ROOT",      emoji:"🛡️",  pillClass:"rankRoot",   nameClass:"rankNameRoot" }
+    none:  { label:"بدون",     emoji:"",   nameClass:"" },
+    legend:{ label:"Legendary",emoji:"⚡",  nameClass:"rankNameLegend" },
+    vip:   { label:"VIP",      emoji:"💎",  nameClass:"rankNameVip" },
+    root:  { label:"ROOT",     emoji:"🛡️",  nameClass:"rankNameRoot" },
+    girl:  { label:"GIRL",     emoji:"🎀",  nameClass:"rankNameGirl" }
   };
-  let ranksMap = {}; // uid -> "legend" | "vip" | "root" | "none"
+  let ranksMap = {}; // uid -> rank
 
   function rankOf(uid){ return ranksMap?.[uid] || "none"; }
   function rankEmoji(r){ return (RANKS[r] || RANKS.none).emoji || ""; }
-  function rankLabel(r){ return (RANKS[r] || RANKS.none).label || "بدون"; }
-  function rankPillHtml(r){
-    if (!r || r === "none") return "";
-    const rc = (RANKS[r]?.pillClass) || "";
-    const em = rankEmoji(r);
-    const lb = rankLabel(r);
-    return `<span class="rankPill ${rc}">${em} ${lb}</span>`;
+
+  // ✅ صلاحيات الرتب
+  function myRank(){ return rankOf(user?.uid); }
+  function hasAnyRank(uid){ return rankOf(uid) && rankOf(uid) !== "none"; }
+  function canWriteWhenLocked(){
+    return isAdmin || hasAnyRank(user?.uid);
+  }
+  function canClear(){
+    const r = myRank();
+    return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
+  }
+  function canKick(){
+    const r = myRank();
+    return isAdmin || r === "root" || r === "vip" || r === "girl";
+  }
+  function canMute(){
+    const r = myRank();
+    return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
+  }
+  function canBan(){
+    const r = myRank();
+    return isAdmin || r === "root";
   }
 
-  function rankNameHtml(name, r){
+  function rankIconHtml(r){
+    if (!r || r === "none") return "";
+    return `<span class="rankIcon" title="${escapeHtml(RANKS[r]?.label||"")}">${escapeHtml(rankEmoji(r))}</span>`;
+  }
+
+  function rankNameHtmlOnline(name, r, nameColorFallback){
     const cleanName = escapeHtml(name || "مستخدم");
     if (!r || r === "none"){
-      return `<span style="color:${escapeHtml((profile?.nameColor)||"#facc15")};font-weight:900">${cleanName}</span>`;
+      return `<span style="color:${escapeHtml(nameColorFallback||"#facc15")};font-weight:900">${cleanName}</span>`;
     }
     const cls = RANKS[r]?.nameClass || "";
     const em = rankEmoji(r);
-    return `<span class="rankNameWrap ${cls}">${em} <span style="font-weight:900">${cleanName}</span></span>`;
+    return `<span class="rankNameWrap ${cls}"><span class="rankIcon" style="width:26px;height:26px;border-color:rgba(0,0,0,.25);background:rgba(0,0,0,.25)">${escapeHtml(em)}</span><span style="font-weight:900">${cleanName}</span></span>`;
   }
 
   /* ✅ إصلاح vh بالموبايل */
@@ -1055,16 +1094,6 @@
   }
   if (onlineOverlay){
     onlineOverlay.addEventListener("click", closeOnlineDrawer);
-  }
-
-  /* ✅ أيقونة الجهاز */
-  const IS_MOBILE_DEVICE =
-    window.matchMedia("(pointer: coarse)").matches ||
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-  const myDevice = IS_MOBILE_DEVICE ? "mobile" : "desktop";
-  function deviceIconHtml(dev){
-    return `<span class="deviceIco" title="${dev === "mobile" ? "Mobile" : "Desktop"}">${dev === "mobile" ? "📱" : "💻"}</span>`;
   }
 
   const root = document.documentElement;
@@ -1139,6 +1168,7 @@
   function hideAppModal(){ appModal.style.display = "none"; }
   appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
 
+  /* ✅ Emoji picker */
   let activeEmojiTarget = null;
   function buildEmojiGrid(){
     emojiGrid.innerHTML = "";
@@ -1182,6 +1212,7 @@
 
   emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
 
+  /* ✅ Ignore */
   function loadIgnoreWindows(){
     try{ ignoreWindows = JSON.parse(localStorage.getItem(ignoreKey(user.uid)) || "{}"); }
     catch{ ignoreWindows = {}; }
@@ -1223,6 +1254,7 @@
     saveIgnoreWindows();
   }
 
+  /* ✅ Context menu */
   let ctxUser = null;
   function showCtxMenu(x,y){
     ctxMenu.style.left = x + "px";
@@ -1241,10 +1273,11 @@
   }
   function hideRoomMenu(){ roomMenu.style.display = "none"; }
 
-  async function writeSystemText(text, type="system"){
-    return addDoc(collection(db, "globalMessages"), {
-      system:true, type,
-      text,
+  async function writeSystemText(text, type="system", actor={}){
+    await addDoc(collection(db, "globalMessages"), {
+      system:true, type, text,
+      actorUid: actor.uid || null,
+      actorName: actor.name || null,
       createdAt: serverTimestamp(),
       createdAtMs: nowMs()
     });
@@ -1252,7 +1285,7 @@
 
   /* ✅ Private system message (only admin + target) */
   async function writePrivateSystem(text, toUids=[], type="private"){
-    return addDoc(collection(db, "globalMessages"), {
+    await addDoc(collection(db, "globalMessages"), {
       system:true, type,
       text,
       private:true,
@@ -1262,27 +1295,75 @@
     });
   }
 
+  /* ✅ Admin/Mod log (visible by button for admin) */
+  async function writeActionLog(action, details=""){
+    try{
+      await addDoc(collection(db, "globalLogs"), {
+        action,
+        details,
+        byUid: user?.uid || null,
+        byName: profile?.name || "—",
+        byRank: isAdmin ? "admin" : (myRank() || "none"),
+        atMs: nowMs(),
+        createdAt: serverTimestamp()
+      });
+    }catch{}
+  }
+
+  function showLogsModal(lines){
+    showAppModal({
+      title:"📜 سجل",
+      text: lines.join("\n") || "لا يوجد سجل حالياً.",
+      actions:[{label:"إغلاق", onClick:()=>hideAppModal()}]
+    });
+  }
+
+  logBtn.addEventListener("click", async ()=>{
+    if (!isAdmin) return;
+    try{
+      const q = query(collection(db, "globalLogs"), orderBy("atMs","desc"), limit(60));
+      const snap = await getDocs(q);
+      const lines = [];
+      snap.forEach(d=>{
+        const x = d.data()||{};
+        const t = formatTime(Number(x.atMs||0));
+        const who = x.byName || "—";
+        const rk = x.byRank || "—";
+        lines.push(`${t} • ${who} (${rk}) • ${x.action}${x.details ? " — " + x.details : ""}`);
+      });
+      showLogsModal(lines.reverse());
+    }catch{
+      showLogsModal(["تعذر تحميل السجل."]);
+    }
+  });
+
+  /* ✅ Moderation */
   async function adminKick(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { kickedAt: nowMs(), reason:"kick", by:user.uid });
-    await writeSystemText(`🚪 تم طرد ${targetName} بواسطة الأدمن`, "kick");
+    await writeSystemText(`🚪 تم طرد ${targetName} بواسطة ${profile?.name||"—"}`, "kick", {uid:user.uid,name:profile?.name});
+    await writeActionLog("kick", targetName);
   }
   async function adminBan(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { banned:true, bannedAt: nowMs(), reason:"ban", by:user.uid });
-    await writeSystemText(`⛔ تم حظر ${targetName} بواسطة الأدمن`, "ban");
+    await writeSystemText(`⛔ تم حظر ${targetName} بواسطة ${profile?.name||"—"}`, "ban", {uid:user.uid,name:profile?.name});
+    await writeActionLog("ban", targetName);
   }
   async function adminUnban(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: nowMs(), reason:"unban", by:user.uid });
-    await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة الأدمن`, "unban");
+    await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة ${profile?.name||"—"}`, "unban", {uid:user.uid,name:profile?.name});
+    await writeActionLog("unban", targetName);
   }
   async function adminMute(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, mutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:true });
-    await writeSystemText(`🔇 تم كتم ${targetName} بواسطة الأدمن`, "mute");
+    await writeSystemText(`🔇 تم كتم ${targetName} بواسطة ${profile?.name||"—"}`, "mute", {uid:user.uid,name:profile?.name});
+    await writeActionLog("mute", targetName);
   }
   async function adminUnmute(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { muted:false, mutedUntil:0, reason:"unmute", by:user.uid, unmutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:false });
-    await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة الأدمن`, "unmute");
+    await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة ${profile?.name||"—"}`, "unmute", {uid:user.uid,name:profile?.name});
+    await writeActionLog("unmute", targetName);
   }
 
   /* ✅ Rank assign/remove */
@@ -1298,17 +1379,15 @@
       at: nowMs()
     });
 
-    // Update onlineUsers live if exists
     try{ await update(ref(rtdb, `onlineUsers/${targetUid}`), { rank: r }); }catch{}
 
-    // Private message only for admin + target
     const msg = (r === "none")
       ? `🧽 تم إزالة الرتبة عن ${targetName}`
-      : `🏷️ تم إعطاء ${targetName} رتبة ${rankEmoji(r)} ${rankLabel(r)}`;
+      : `🏷️ تم إعطاء ${targetName} رتبة ${rankEmoji(r)}`;
 
     await writePrivateSystem(msg, [user.uid, targetUid], "rank");
+    await writeActionLog("rank", `${targetName} -> ${r}`);
 
-    // refresh local map immediately
     ranksMap[targetUid] = r;
   }
 
@@ -1326,13 +1405,14 @@
   }
 
   async function adminClearForAll(){
-    if (!isAdmin) return;
+    if (!canClear()) return;
     await hardDeleteAllGlobalMessages();
     const clearedAtMs = nowMs();
     await setDoc(doc(db, "globalMeta", "clear"), {
-      clearedAtMs, byUid:user.uid, byName: profile?.name || "Admin", createdAt: serverTimestamp()
+      clearedAtMs, byUid:user.uid, byName: profile?.name || "—", createdAt: serverTimestamp()
     }, { merge:true });
-    await writeSystemText("🧹 الأدمن مسح الشات", "clear");
+    await writeSystemText(`🧹 ${profile?.name||"—"} مسح الشات`, "clear", {uid:user.uid,name:profile?.name});
+    await writeActionLog("clear", "");
   }
   adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
 
@@ -1350,8 +1430,7 @@
       isAdmin,
       isGuest,
       muted:false,
-      device: myDevice,
-      rank: rankOf(user.uid) // ✅ include rank
+      rank: rankOf(user.uid)
     };
     await set(onlineRef, payload);
     if (first) onDisconnect(onlineRef).remove();
@@ -1382,35 +1461,33 @@
       const m = snap.val();
       if (!m) return;
 
+      // ✅ Ban
       if (m.banned === true){
         showAppModal({
           title:"⛔ تم حظرك",
-          text:"تم حظرك من الشات.",
-          actions:[{label:"رجوع للهوم", onClick:()=>{
-            hideAppModal();
-            try{ remove(ref(rtdb, "onlineUsers/" + user.uid)); }catch{}
-            location.href = "index.html";
-          }}]
+          text:"تم حظرك من الشات.\nسيتم إخراجك الآن.",
+          actions:[{label:"رجوع للهوم", onClick:()=>forceExitToHome()}]
         });
+        setTimeout(forceExitToHome, 1200);
         return;
       }
+
+      // ✅ Kick
       if (m.kickedAt && nowMs() - m.kickedAt < 15000){
         showAppModal({
           title:"🚪 تم طردك",
-          text:"تم طردك من الشات.",
-          actions:[{label:"رجوع للهوم", onClick:()=>{
-            hideAppModal();
-            try{ remove(ref(rtdb, "onlineUsers/" + user.uid)); }catch{}
-            location.href = "index.html";
-          }}]
+          text:"تم طردك من الشات.\nسيتم إخراجك الآن.",
+          actions:[{label:"رجوع للهوم", onClick:()=>forceExitToHome()}]
         });
+        setTimeout(forceExitToHome, 1200);
         return;
       }
 
       const until = m.mutedUntil || 0;
       const muted = (m.muted === true) || (nowMs() < until);
 
-      if (!isAdmin && roomLocked){
+      // ✅ قفل الروم: الرتب يقدروا يكتبوا
+      if (roomLocked && !canWriteWhenLocked()){
         msgInput.disabled = true;
         sendBtn.disabled = true;
         msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
@@ -1422,6 +1499,11 @@
 
       try{ await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted: !!muted }); }catch{}
     });
+  }
+
+  function forceExitToHome(){
+    try{ remove(ref(rtdb, "onlineUsers/" + user.uid)); }catch{}
+    location.href = "index.html";
   }
 
   let globalClearedAtMs = 0;
@@ -1437,23 +1519,17 @@
     onValue(ref(rtdb, "roomState/locked"), (snap)=>{
       roomLocked = snap.val() === true;
 
-      if (roomLocked){
-        chatHint.innerHTML = "🚫 الروم مقفل";
-      } else {
-        chatHint.innerHTML = 'دردش وخلي الشباب <span style="color:#facc15">تستفاد</span>';
-      }
+      chatHint.innerHTML = roomLocked ? "🚫 الروم مقفل" : 'دردش وخلي الشباب <span style="color:#facc15">تستفاد</span>';
 
-      if (!isAdmin){
-        if (roomLocked){
-          msgInput.disabled = true;
-          sendBtn.disabled = true;
-          msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
-        } else {
-          if (msgInput.placeholder === "🚫 الروم مقفل بواسطة الأدمن"){
-            msgInput.disabled = false;
-            sendBtn.disabled = false;
-            msgInput.placeholder = "اكتب رسالتك...";
-          }
+      if (roomLocked && !canWriteWhenLocked()){
+        msgInput.disabled = true;
+        sendBtn.disabled = true;
+        msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
+      } else {
+        if (msgInput.placeholder === "🚫 الروم مقفل بواسطة الأدمن"){
+          msgInput.disabled = false;
+          sendBtn.disabled = false;
+          msgInput.placeholder = "اكتب رسالتك...";
         }
       }
     });
@@ -1462,7 +1538,8 @@
   async function setRoomLocked(next){
     if (!isAdmin) return;
     await set(ref(rtdb, "roomState/locked"), !!next);
-    await writeSystemText(next ? "🔒 الأدمن قفل الروم" : "🔓 الأدمن فتح الروم", next ? "lock" : "unlock");
+    await writeSystemText(next ? `🔒 ${profile?.name||"—"} قفل الروم` : `🔓 ${profile?.name||"—"} فتح الروم`, next ? "lock" : "unlock", {uid:user.uid,name:profile?.name});
+    await writeActionLog(next ? "lock" : "unlock", "");
   }
 
   roomLockBtn.addEventListener("click", async ()=>{
@@ -1485,10 +1562,12 @@
       });
       ranksMap = map;
 
-      // update my presence rank if already in chat
       if (user && profile){
         try{ update(ref(rtdb, `onlineUsers/${user.uid}`), { rank: rankOf(user.uid) }); }catch{}
       }
+
+      // ✅ زر المسح يظهر حسب الصلاحية
+      adminClearBtn.style.display = canClear() ? "inline-flex" : "none";
     });
   }
 
@@ -1515,14 +1594,13 @@
 
         const gHtml = genderSymbolHtml(u.gender);
         const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-        const devHtml = deviceIconHtml(u.device === "mobile" ? "mobile" : "desktop");
 
+        // ✅ مكتوم: ايموجي فقط
         const mutedBadge = (u.muted === true)
-          ? `<span class="miniPill" style="border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)">🔇 مكتوم</span>`
+          ? `<span class="miniPill" title="مكتوم" style="border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)">🔇</span>`
           : "";
 
         const r = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
-        const rankPill = isRowAdmin ? "" : rankPillHtml(r);
 
         const nameHtml = isRowAdmin
           ? `
@@ -1531,14 +1609,11 @@
               <span class="adminTag" title="Tag">🏷️</span>
               <span class="adminSkull">💀</span>
             </span>
-            ${devHtml}
             ${guestHtml}
           `
           : `
-            ${rankNameHtml(u.name || "مستخدم", r)}
-            ${devHtml}
+            ${rankNameHtmlOnline(u.name || "مستخدم", r, u.nameColor || "#facc15")}
             ${guestHtml}
-            ${rankPill}
           `;
 
         left.innerHTML = `
@@ -1592,18 +1667,37 @@
 
           actions.appendChild(btn);
 
-          if (isAdmin){
+          // ✅ ثلاث نقاط للرتب + الأدمن (حسب الصلاحيات) - ولا تعمل على الأدمن
+          const canSeeDots = isAdmin || canMute() || canKick() || canBan();
+          if (canSeeDots){
             const more = document.createElement("button");
             more.type = "button";
             more.className = "moreBtn";
             more.textContent = "⋮";
-            more.title = "خيارات / رتب";
+            more.title = "خيارات";
 
             more.addEventListener("click",(e)=>{
               e.stopPropagation();
               ctxUser = { uid: u.uid, name: u.name, isAdmin: isRowAdmin, isGuest: u.isGuest === true };
-              const showAdmin = isAdmin && !ctxUser.isAdmin && ctxUser.uid !== user.uid;
-              adminActions.style.display = showAdmin ? "block" : "none";
+
+              const targetIsAdmin2 = ctxUser.isAdmin === true;
+              const showMod = !targetIsAdmin2 && ctxUser.uid !== user.uid;
+
+              // ✅ صلاحيات حسب الرتبة
+              const allowKick = showMod && canKick();
+              const allowMute = showMod && canMute();
+              const allowBan  = showMod && canBan();
+
+              modActions.style.display = (showMod && (allowKick || allowMute || allowBan)) ? "block" : "none";
+              ctxKickBtn.style.display = allowKick ? "block" : "none";
+              ctxMuteBtn.style.display = allowMute ? "block" : "none";
+              ctxUnmuteBtn.style.display = allowMute ? "block" : "none";
+              ctxBanBtn.style.display = allowBan ? "block" : "none";
+              ctxUnbanBtn.style.display = allowBan ? "block" : "none";
+
+              // ✅ الرتب للأدمن فقط
+              rankActions.style.display = (isAdmin && showMod) ? "block" : "none";
+
               showCtxMenu(e.clientX, e.clientY);
             });
 
@@ -1615,6 +1709,28 @@
         onlineList.appendChild(row);
       });
     });
+  }
+
+  /* ✅ Emoji shortcuts (:!! .. :!!10) */
+  function renderMsgTextToHtml(text){
+    let esc = escapeHtml(text || "");
+
+    // replace :!! , :!!2 ... :!!10 with emoji1.gif ... emoji10.gif
+    esc = esc.replace(/:!!10/g, '__EMOJI10__');
+    esc = esc.replace(/:!!9/g,  '__EMOJI9__');
+    esc = esc.replace(/:!!8/g,  '__EMOJI8__');
+    esc = esc.replace(/:!!7/g,  '__EMOJI7__');
+    esc = esc.replace(/:!!6/g,  '__EMOJI6__');
+    esc = esc.replace(/:!!5/g,  '__EMOJI5__');
+    esc = esc.replace(/:!!4/g,  '__EMOJI4__');
+    esc = esc.replace(/:!!3/g,  '__EMOJI3__');
+    esc = esc.replace(/:!!2/g,  '__EMOJI2__');
+    esc = esc.replace(/:!!/g,   '__EMOJI1__');
+
+    for (let i=1;i<=10;i++){
+      esc = esc.replaceAll(`__EMOJI${i}__`, `<img class="chatEmojiImg" src="emoji${i}.gif" alt="emoji${i}">`);
+    }
+    return esc;
   }
 
   function startGlobalMessagesListener(){
@@ -1652,6 +1768,15 @@
         if (m.system && m.private === true){
           const to = Array.isArray(m.to) ? m.to : [];
           if (!user || !to.includes(user.uid)) continue;
+
+          // ✅ Popup عند الترقية (للشخص فقط)
+          if (m.type === "rank" && !isAdmin){
+            showAppModal({
+              title:"🏷️ ترقية",
+              text: m.text || "تم تحديث رتبتك.",
+              actions:[{label:"حسناً", onClick:()=>hideAppModal()}]
+            });
+          }
         }
 
         if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) continue;
@@ -1680,19 +1805,18 @@
 
           const gHtml = genderSymbolHtml(m.gender);
           const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-          const devHtml = deviceIconHtml(m.device === "mobile" ? "mobile" : "desktop");
 
+          // ✅ في مربع الشات: لا تُظهر خلفية الرتبة (فقط الايموجي)
           const r = (m.rank && RANKS[m.rank]) ? m.rank : rankOf(m.uid);
-          const rankPill = (r && r !== "none") ? rankPillHtml(r) : "";
+          const rankIcon = (r && r !== "none") ? rankIconHtml(r) : "";
+          const nameSizeClass = (r && r !== "none") ? "rankBig" : "";
 
           const nameHtml =
-            `<span class="${(r && r!=="none") ? ("rankNameWrap " + (RANKS[r]?.nameClass||"")) : ""}">
-              ${r && r!=="none" ? (rankEmoji(r) + " ") : ""}
-              <span style="color:${r==="legend" ? "#000" : (r && r!=="none" ? "#fff" : escapeHtml(m.nameColor || "#facc15"))};font-weight:900">
-                ${escapeHtml(m.name||"مستخدم")}
-              </span>
-            </span>
-            ${devHtml} ${guestHtml} ${rankPill}`;
+            `${rankIcon}
+             <span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">
+               ${escapeHtml(m.name||"مستخدم")}
+             </span>
+             ${guestHtml}`;
 
           const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
             ? `
@@ -1703,9 +1827,9 @@
             ` : "";
 
           div.innerHTML = `
-            <div class="msgHead"><div class="nameTag">${gHtml} ${nameHtml}</div></div>
+            <div class="msgHead"><div class="nameTag ${nameSizeClass}">${gHtml} ${nameHtml}</div></div>
             ${replyBlock}
-            <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${escapeHtml(m.text||"")}</div>
+            <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${renderMsgTextToHtml(m.text||"")}</div>
             <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
             <button class="replyBtn" type="button" title="رد">↩ رد</button>
           `;
@@ -1738,33 +1862,39 @@
     replyPreview.style.display = "none";
   });
 
+  // ✅ تنفيذ خيارات الموديريشن حسب الصلاحية + منع على الأدمن
   ctxKickBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    if (!ctxUser || ctxUser.isAdmin) return;
+    if (!canKick()) return;
     await adminKick(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
   ctxMuteBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    if (!ctxUser || ctxUser.isAdmin) return;
+    if (!canMute()) return;
     await adminMute(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
   ctxUnmuteBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    if (!ctxUser || ctxUser.isAdmin) return;
+    if (!canMute()) return;
     await adminUnmute(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
   ctxBanBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    if (!ctxUser || ctxUser.isAdmin) return;
+    if (!canBan()) return;
     await adminBan(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
   ctxUnbanBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    if (!ctxUser || ctxUser.isAdmin) return;
+    if (!canBan()) return;
     await adminUnban(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
 
-  /* ✅ Rank buttons */
+  /* ✅ Rank buttons (Admin only) */
   ctxRankLegend.addEventListener("click", async ()=>{
     if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
     await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "legend");
@@ -1778,6 +1908,11 @@
   ctxRankRoot.addEventListener("click", async ()=>{
     if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
     await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "root");
+    hideCtxMenu();
+  });
+  ctxRankGirl.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "girl");
     hideCtxMenu();
   });
   ctxRankNone.addEventListener("click", async ()=>{
@@ -1813,10 +1948,12 @@
   chatForm.addEventListener("submit", async (e)=>{
     e.preventDefault();
     if (!user || !profile) return;
+
     const text = collapseSpaces(msgInput.value);
     if (!text) return;
 
-    if (roomLocked && !isAdmin){
+    // ✅ قفل الروم: الرتب يقدروا يكتبوا
+    if (roomLocked && !canWriteWhenLocked()){
       showAppModal({
         title:"🚫 الروم مقفل",
         text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.",
@@ -1852,8 +1989,7 @@
       textColor:profile.textColor,
       isAdmin, isGuest,
       replyTo,
-      device: myDevice,
-      rank: rankOf(user.uid), // ✅ store rank on message
+      rank: rankOf(user.uid),
       createdAt: serverTimestamp(),
       createdAtMs: nowMs()
     });
@@ -1905,7 +2041,8 @@
     localStorage.setItem(adminSessionKey(user.uid), "1");
     setErr(adminErr, "✅ تم تفعيل الأدمن.");
     isAdmin = true;
-    adminClearBtn.style.display = "inline-flex";
+    logBtn.style.display = "inline-flex";
+    adminClearBtn.style.display = canClear() ? "inline-flex" : "none";
   });
 
   function showForm(){ formBox.style.display = "block"; }
@@ -1984,7 +2121,10 @@
   async function enterChat(statusVal){
     isGuest = !!user?.isAnonymous;
     isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
-    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+
+    // ✅ أزرار حسب الدور
+    logBtn.style.display = isAdmin ? "inline-flex" : "none";
+    adminClearBtn.style.display = canClear() ? "inline-flex" : "none";
 
     msgInput.disabled = false;
     sendBtn.disabled = false;
@@ -2004,7 +2144,7 @@
     startGlobalMessagesListener();
     startModerationListener();
 
-    if (roomLocked && !isAdmin){
+    if (roomLocked && !canWriteWhenLocked()){
       msgInput.disabled = true;
       sendBtn.disabled = true;
       msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
