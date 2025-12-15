@@ -596,6 +596,60 @@
       100%{opacity:1}
     }
 
+    .adminBadgeSmall{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.72rem;
+      font-weight:900;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.75);
+      background:rgba(0,0,0,.75);
+      color:var(--yellow);
+      line-height:1;
+      white-space:nowrap;
+    }
+    /* ✅ توهج خفيف فقط بالرسائل (للأدمن) */
+    .adminMsgGlow{
+      animation: adminGlow 1.8s infinite;
+    }
+    @keyframes adminGlow{
+      0%{ box-shadow:0 0 0 1px rgba(250,204,21,.25), 0 0 14px rgba(250,204,21,.12); transform:translateY(0); }
+      50%{ box-shadow:0 0 0 1px rgba(250,204,21,.45), 0 0 22px rgba(250,204,21,.22); transform:translateY(-0.5px); }
+      100%{ box-shadow:0 0 0 1px rgba(250,204,21,.25), 0 0 14px rgba(250,204,21,.12); transform:translateY(0); }
+    }
+
+    /* ✅ رتب (اسم على شكل كبسولة مثل الأدمن) */
+    .rankNameWrap{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:4px 10px;
+      border-radius:999px;
+      font-weight:900;
+      border:1px solid rgba(0,0,0,.85);
+      box-shadow:0 10px 22px rgba(0,0,0,.55);
+    }
+    .rankNameText{ color:#fff; font-weight:900; white-space:nowrap; }
+    .rankBadge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:.72rem;
+      font-weight:900;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.55);
+      background:rgba(0,0,0,.35);
+      color:#fff;
+      line-height:1;
+      white-space:nowrap;
+    }
+    .rank-vip{ background:rgba(59,130,246,.92); }
+    .rank-legendary{ background:rgba(34,197,94,.92); }
+    .rank-root{ background:rgba(249,115,22,.92); }
+
     .adminRoomDots{
       border:1px solid rgba(250,204,21,.55);
       background:rgba(0,0,0,.45);
@@ -713,7 +767,7 @@
 
             <form id="chatForm" class="composer">
               <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
-              <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع (Admin)">🧹</button>
+              <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
               <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
               <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
             </form>
@@ -804,6 +858,7 @@
     </div>
   </div>
 
+  <!-- ✅ قائمة الخيارات (تحديث: رتب + صلاحيات) -->
   <div class="menu" id="ctxMenu">
     <div class="sep" id="adminSep" style="display:none;"></div>
     <div id="adminActions" style="display:none;">
@@ -812,6 +867,14 @@
       <button id="ctxUnmuteBtn">🔊 إلغاء الكتم</button>
       <button id="ctxBanBtn">⛔ حظر</button>
       <button id="ctxUnbanBtn">✅ إلغاء الحظر</button>
+    </div>
+
+    <div class="sep" id="roleSep" style="display:none;"></div>
+    <div id="roleActions" style="display:none;">
+      <button id="ctxRoleVip">⭐ إعطاء VIP</button>
+      <button id="ctxRoleLegendary">🔥 إعطاء LEGENDARY</button>
+      <button id="ctxRoleRoot">🧡 إعطاء ROOT</button>
+      <button id="ctxRoleRemove">🗑️ إزالة الرتبة</button>
     </div>
   </div>
 
@@ -826,7 +889,7 @@
   import {
     getFirestore, collection, addDoc, serverTimestamp,
     query, where, orderBy, onSnapshot, doc, setDoc,
-    getDocs, writeBatch, limit, limitToLast
+    getDocs, getDoc, writeBatch, limit, limitToLast
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
@@ -916,6 +979,13 @@
   const ctxBanBtn = document.getElementById("ctxBanBtn");
   const ctxUnbanBtn = document.getElementById("ctxUnbanBtn");
 
+  const roleSep = document.getElementById("roleSep");
+  const roleActions = document.getElementById("roleActions");
+  const ctxRoleVip = document.getElementById("ctxRoleVip");
+  const ctxRoleLegendary = document.getElementById("ctxRoleLegendary");
+  const ctxRoleRoot = document.getElementById("ctxRoleRoot");
+  const ctxRoleRemove = document.getElementById("ctxRoleRemove");
+
   const roomMenu = document.getElementById("roomMenu");
   const roomLockBtn = document.getElementById("roomLockBtn");
   const roomUnlockBtn = document.getElementById("roomUnlockBtn");
@@ -950,6 +1020,116 @@
 
   const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
   const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎💓🙏🔥💛⭐💛🎮💀".split("");
+
+  /* ✅✅✅ نظام الرتب */
+  const ROLES = {
+    NONE: "none",
+    VIP: "vip",
+    LEGENDARY: "legendary",
+    ROOT: "root",
+    ADMIN: "admin"
+  };
+  const ROLE_LABEL = {
+    admin: "ADMIN",
+    root: "ROOT",
+    legendary: "LEGENDARY",
+    vip: "VIP",
+    none: ""
+  };
+  const ROLE_PRIORITY = { admin: 4, root: 3, legendary: 2, vip: 1, none: 0 };
+
+  let myRole = ROLES.NONE;        // stored from Firestore (doc chatRoles/{uid})
+  let inChat = false;
+  let roleUnsub = null;
+
+  function normRole(r){
+    r = String(r||"none").toLowerCase();
+    return (r === "vip" || r === "legendary" || r === "root") ? r : "none";
+  }
+  function effectiveRole(){
+    if (isAdmin) return "admin";
+    if (isGuest) return "none";
+    return normRole(myRole);
+  }
+  function canKick(){ return (effectiveRole() === "admin" || effectiveRole() === "legendary"); }
+  function canMute(){ return (effectiveRole() === "admin" || effectiveRole() === "legendary" || effectiveRole() === "root"); }
+  function canBan(){ return (effectiveRole() === "admin"); }
+  function canClear(){ return (effectiveRole() === "admin" || effectiveRole() === "legendary" || effectiveRole() === "root" || effectiveRole() === "vip"); }
+  function canAssignRole(){ return (effectiveRole() === "admin"); }
+  function myActorLabel(){
+    const r = effectiveRole();
+    if (r === "admin") return "الأدمن";
+    if (r === "root") return "ROOT";
+    if (r === "legendary") return "LEGENDARY";
+    if (r === "vip") return "VIP";
+    return "مستخدم";
+  }
+
+  async function loadMyRoleOnce(){
+    myRole = ROLES.NONE;
+    if (!user || isGuest || isAdmin) return;
+    try{
+      const s = await getDoc(doc(db, "chatRoles", user.uid));
+      if (s.exists()){
+        myRole = normRole((s.data()||{}).role);
+      }
+    }catch{}
+  }
+  function watchMyRole(){
+    try{ if (roleUnsub) roleUnsub(); }catch{}
+    roleUnsub = null;
+    if (!user || isGuest || isAdmin) return;
+
+    roleUnsub = onSnapshot(doc(db, "chatRoles", user.uid), async (snap)=>{
+      const prev = myRole;
+      if (snap.exists()){
+        myRole = normRole((snap.data()||{}).role);
+      } else {
+        myRole = ROLES.NONE;
+      }
+      // إذا تغيرت الرتبة وهو داخل الشات: حدث presence + زر المسح
+      if (inChat && prev !== myRole){
+        try{
+          await update(ref(rtdb, "onlineUsers/" + user.uid), { role: effectiveRole() });
+        }catch{}
+        adminClearBtn.style.display = canClear() ? "inline-flex" : "none";
+      }
+    });
+  }
+
+  function rolePriority(r){ return ROLE_PRIORITY[String(r||"none").toLowerCase()] ?? 0; }
+
+  function roleBadgeHtml(r){
+    r = String(r||"none").toLowerCase();
+    if (r === "admin") return `<span class="adminBadgeSmall">[ADMIN]</span>`;
+    if (r === "vip") return `<span class="rankBadge">VIP</span>`;
+    if (r === "legendary") return `<span class="rankBadge">LEGENDARY</span>`;
+    if (r === "root") return `<span class="rankBadge">ROOT</span>`;
+    return "";
+  }
+
+  function nameWrapHtml({name, nameColor, role, isAdminRow=false, addGlow=false}){
+    const r = String(role||"none").toLowerCase();
+    if (isAdminRow || r === "admin"){
+      return `
+        <span class="adminNameWrap ${addGlow ? "adminMsgGlow" : ""}">
+          <span class="adminNameText">𝕄𝕃𝕆𝟝 ヅ</span>
+          ${roleBadgeHtml("admin")}
+          <span class="adminSkull">💀</span>
+        </span>
+      `;
+    }
+    if (r === "vip" || r === "legendary" || r === "root"){
+      const cls = r === "vip" ? "rank-vip" : (r === "legendary" ? "rank-legendary" : "rank-root");
+      return `
+        <span class="rankNameWrap ${cls}">
+          <span class="rankNameText">${escapeHtml(name || "مستخدم")}</span>
+          ${roleBadgeHtml(r)}
+        </span>
+      `;
+    }
+    return `<span style="color:${escapeHtml(nameColor || "#facc15")};font-weight:900">${escapeHtml(name||"مستخدم")}</span>`;
+  }
 
   /* ✅ إصلاح vh بالموبايل */
   function setVh(){
@@ -1181,27 +1361,32 @@
     });
   }
 
-  async function adminKick(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { kickedAt: nowMs(), reason:"kick", by:user.uid });
-    await writeSystemText(`🚪 تم طرد ${targetName} بواسطة الأدمن`, "kick");
+  async function modKick(targetUid, targetName){
+    if (!canKick()) return;
+    await update(ref(rtdb, `moderation/${targetUid}`), { kickedAt: nowMs(), reason:"kick", by:user.uid, byRole: effectiveRole() });
+    await writeSystemText(`🚪 تم طرد ${targetName} بواسطة ${myActorLabel()}`, "kick");
   }
-  async function adminBan(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { banned:true, bannedAt: nowMs(), reason:"ban", by:user.uid });
-    await writeSystemText(`⛔ تم حظر ${targetName} بواسطة الأدمن`, "ban");
+  async function modBan(targetUid, targetName){
+    if (!canBan()) return;
+    await update(ref(rtdb, `moderation/${targetUid}`), { banned:true, bannedAt: nowMs(), reason:"ban", by:user.uid, byRole: effectiveRole() });
+    await writeSystemText(`⛔ تم حظر ${targetName} بواسطة ${myActorLabel()}`, "ban");
   }
-  async function adminUnban(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: nowMs(), reason:"unban", by:user.uid });
-    await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة الأدمن`, "unban");
+  async function modUnban(targetUid, targetName){
+    if (!canBan()) return;
+    await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: nowMs(), reason:"unban", by:user.uid, byRole: effectiveRole() });
+    await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة ${myActorLabel()}`, "unban");
   }
-  async function adminMute(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, mutedAt: nowMs() });
+  async function modMute(targetUid, targetName){
+    if (!canMute()) return;
+    await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, byRole: effectiveRole(), mutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:true });
-    await writeSystemText(`🔇 تم كتم ${targetName} بواسطة الأدمن`, "mute");
+    await writeSystemText(`🔇 تم كتم ${targetName} بواسطة ${myActorLabel()}`, "mute");
   }
-  async function adminUnmute(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { muted:false, mutedUntil:0, reason:"unmute", by:user.uid, unmutedAt: nowMs() });
+  async function modUnmute(targetUid, targetName){
+    if (!canMute()) return;
+    await update(ref(rtdb, `moderation/${targetUid}`), { muted:false, mutedUntil:0, reason:"unmute", by:user.uid, byRole: effectiveRole(), unmutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:false });
-    await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة الأدمن`, "unmute");
+    await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة ${myActorLabel()}`, "unmute");
   }
 
   async function hardDeleteAllGlobalMessages(){
@@ -1217,16 +1402,20 @@
     }
   }
 
-  async function adminClearForAll(){
-    if (!isAdmin) return;
+  async function clearForAll(){
+    if (!canClear()) return;
     await hardDeleteAllGlobalMessages();
     const clearedAtMs = nowMs();
     await setDoc(doc(db, "globalMeta", "clear"), {
-      clearedAtMs, byUid:user.uid, byName: profile?.name || "Admin", createdAt: serverTimestamp()
+      clearedAtMs,
+      byUid:user.uid,
+      byName: profile?.name || "—",
+      byRole: effectiveRole(),
+      createdAt: serverTimestamp()
     }, { merge:true });
-    await writeSystemText("🧹 الأدمن مسح الشات", "clear");
+    await writeSystemText(`🧹 تم مسح الشات بواسطة ${myActorLabel()}`, "clear");
   }
-  adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
+  adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); clearForAll(); });
 
   async function updatePresenceStatus(statusVal, first=false){
     const onlineRef = ref(rtdb, "onlineUsers/" + user.uid);
@@ -1242,7 +1431,8 @@
       isAdmin,
       isGuest,
       muted:false,
-      device: myDevice
+      device: myDevice,
+      role: effectiveRole()
     };
     await set(onlineRef, payload);
     if (first) onDisconnect(onlineRef).remove();
@@ -1374,12 +1564,19 @@
       onlineList.innerHTML = "";
 
       arr.sort((a,b)=>{
-        const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-        const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid);
+        const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid) || a.role === "admin";
+        const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid) || b.role === "admin";
         if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
+
+        const ar = aAdmin ? "admin" : String(a.role||"none").toLowerCase();
+        const br = bAdmin ? "admin" : String(b.role||"none").toLowerCase();
+        if (rolePriority(ar) !== rolePriority(br)) return rolePriority(br) - rolePriority(ar);
+
         return (a.name||"").localeCompare(b.name||"");
       }).forEach((u)=>{
-        const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
+        const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid) || (String(u.role||"").toLowerCase() === "admin");
+        const rowRole = isRowAdmin ? "admin" : String(u.role||"none").toLowerCase();
+
         const row = document.createElement("div");
         row.className = "userRow" + (isRowAdmin ? " admin" : "");
 
@@ -1394,19 +1591,16 @@
           ? `<span class="miniPill" style="border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)">🔇 مكتوم</span>`
           : "";
 
-        const nameHtml = isRowAdmin
-          ? `
-            <span class="adminNameWrap">
-              <span class="adminNameText">𝕄𝕃𝕆𝟝 ヅ</span>
-              <span class="adminSkull">💀</span>
-            </span>
-            ${devHtml}
-            ${guestHtml}
-          `
-          : `<span style="color:${escapeHtml(u.nameColor || "#facc15")};font-weight:900">${escapeHtml(u.name||"مستخدم")}</span> ${devHtml} ${guestHtml}`;
+        const nm = nameWrapHtml({
+          name: u.name || "مستخدم",
+          nameColor: u.nameColor || "#facc15",
+          role: rowRole,
+          isAdminRow: isRowAdmin,
+          addGlow: false
+        });
 
         left.innerHTML = `
-          <b>${gHtml} ${nameHtml} ${mutedBadge}</b>
+          <b>${gHtml} ${nm} ${devHtml} ${guestHtml} ${mutedBadge}</b>
           <span>
             <span class="miniPill">${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
             ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile?.nameColor||"#facc15")};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
@@ -1456,7 +1650,8 @@
 
           actions.appendChild(btn);
 
-          if (isAdmin){
+          const showAnyMenu = (canKick() || canMute() || canBan() || canAssignRole());
+          if (showAnyMenu){
             const more = document.createElement("button");
             more.type = "button";
             more.className = "moreBtn";
@@ -1465,10 +1660,36 @@
 
             more.addEventListener("click",(e)=>{
               e.stopPropagation();
-              ctxUser = { uid: u.uid, name: u.name, isAdmin: isRowAdmin, isGuest: u.isGuest === true };
-              const showAdmin = isAdmin && !ctxUser.isAdmin && ctxUser.uid !== user.uid;
-              adminSep.style.display = showAdmin ? "block" : "none";
-              adminActions.style.display = showAdmin ? "block" : "none";
+              ctxUser = {
+                uid: u.uid,
+                name: u.name,
+                isAdmin: isRowAdmin,
+                isGuest: u.isGuest === true,
+                role: rowRole
+              };
+
+              const targetIsProtected = ctxUser.isAdmin || ctxUser.uid === user.uid;
+
+              // Admin Actions visibility
+              const canShowKick = canKick() && !targetIsProtected;
+              const canShowMute = canMute() && !targetIsProtected;
+              const canShowBan  = canBan()  && !targetIsProtected;
+
+              ctxKickBtn.style.display = canShowKick ? "block" : "none";
+              ctxMuteBtn.style.display = canShowMute ? "block" : "none";
+              ctxUnmuteBtn.style.display = canShowMute ? "block" : "none";
+              ctxBanBtn.style.display = canShowBan ? "block" : "none";
+              ctxUnbanBtn.style.display = canShowBan ? "block" : "none";
+
+              const showAdminBlock = (canShowKick || canShowMute || canShowBan);
+              adminSep.style.display = showAdminBlock ? "block" : "none";
+              adminActions.style.display = showAdminBlock ? "block" : "none";
+
+              // Role Actions (Admin only)
+              const showRoleBlock = canAssignRole() && !ctxUser.isAdmin;
+              roleSep.style.display = showRoleBlock ? "block" : "none";
+              roleActions.style.display = showRoleBlock ? "block" : "none";
+
               showCtxMenu(e.clientX, e.clientY);
             });
 
@@ -1486,8 +1707,6 @@
     initialLoaded = false;
 
     // ✅✅✅ (Mobile-only) إصلاح ظهور الرسائل: لا نستخدم where(createdAtMs>=joinAtMs) بالموبايل
-    // لأن اختلاف createdAtMs بين الأجهزة ممكن يخفي رسائل الناس.
-    // الديسكتوب يبقى كما هو بدون أي تغيير.
     const q = __MOBILE_DEVICE
       ? query(
           collection(db, "globalMessages"),
@@ -1522,9 +1741,7 @@
         const m = it.m;
         const t = it.t;
 
-        // ✅ فلترة "من بعد الدخول" للجميع، وعلى الموبايل ما بنظهر أي قديم
         if (t < cutoff) continue;
-
         if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) continue;
 
         if (m.system){
@@ -1553,8 +1770,16 @@
           const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
           const devHtml = deviceIconHtml(m.device === "mobile" ? "mobile" : "desktop");
 
-          const nameHtml =
-            `<span style="color:${escapeHtml(m.nameColor || "#facc15")}">${escapeHtml(m.name||"مستخدم")}</span> ${devHtml} ${guestHtml}`;
+          const msgRole = String(m.role || (m.isAdmin ? "admin" : "none")).toLowerCase();
+          const isMsgAdmin = (m.isAdmin === true) || ADMIN_UIDS.includes(m.uid) || msgRole === "admin";
+
+          const nm = nameWrapHtml({
+            name: m.name || "مستخدم",
+            nameColor: m.nameColor || "#facc15",
+            role: isMsgAdmin ? "admin" : msgRole,
+            isAdminRow: isMsgAdmin,
+            addGlow: isMsgAdmin // ✅ توهج فقط بالرسائل للأدمن
+          });
 
           const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
             ? `
@@ -1565,7 +1790,9 @@
             ` : "";
 
           div.innerHTML = `
-            <div class="msgHead"><div class="nameTag">${gHtml} ${nameHtml}</div></div>
+            <div class="msgHead">
+              <div class="nameTag">${gHtml} ${nm} ${devHtml} ${guestHtml}</div>
+            </div>
             ${replyBlock}
             <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${escapeHtml(m.text||"")}</div>
             <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
@@ -1601,28 +1828,60 @@
   });
 
   ctxKickBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
-    await adminKick(ctxUser.uid, ctxUser.name || "مستخدم");
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await modKick(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
   ctxMuteBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
-    await adminMute(ctxUser.uid, ctxUser.name || "مستخدم");
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await modMute(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
   ctxUnmuteBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
-    await adminUnmute(ctxUser.uid, ctxUser.name || "مستخدم");
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await modUnmute(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
   ctxBanBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
-    await adminBan(ctxUser.uid, ctxUser.name || "مستخدم");
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await modBan(ctxUser.uid, ctxUser.name || "مستخدم");
     hideCtxMenu();
   });
   ctxUnbanBtn.addEventListener("click", async ()=>{
-    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
-    await adminUnban(ctxUser.uid, ctxUser.name || "مستخدم");
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await modUnban(ctxUser.uid, ctxUser.name || "مستخدم");
+    hideCtxMenu();
+  });
+
+  async function setRoleForUid(uid, role){
+    if (!canAssignRole()) return;
+    if (!uid) return;
+    const r = normRole(role);
+    await setDoc(doc(db, "chatRoles", uid), {
+      role: r,
+      updatedAt: serverTimestamp(),
+      byUid: user.uid,
+      byName: profile?.name || "Admin"
+    }, { merge:true });
+  }
+  ctxRoleVip.addEventListener("click", async ()=>{
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await setRoleForUid(ctxUser.uid, "vip");
+    hideCtxMenu();
+  });
+  ctxRoleLegendary.addEventListener("click", async ()=>{
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await setRoleForUid(ctxUser.uid, "legendary");
+    hideCtxMenu();
+  });
+  ctxRoleRoot.addEventListener("click", async ()=>{
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await setRoleForUid(ctxUser.uid, "root");
+    hideCtxMenu();
+  });
+  ctxRoleRemove.addEventListener("click", async ()=>{
+    if (!ctxUser || ctxUser.isAdmin) return;
+    await setRoleForUid(ctxUser.uid, "none");
     hideCtxMenu();
   });
 
@@ -1643,7 +1902,7 @@
       const fast = (now - __lastSpaceSendAt) < 320;
       __lastSpaceSendAt = now;
 
-      // دبل سبيس سريع => إرسال (بدون ما نخرب النص)
+      // دبل سبيس سريع => إرسال
       if (fast && collapseSpaces(v).length > 0){
         e.preventDefault();
         if (!msgInput.disabled) chatForm.requestSubmit();
@@ -1692,6 +1951,7 @@
       nameColor:profile.nameColor,
       textColor:profile.textColor,
       isAdmin, isGuest,
+      role: effectiveRole(),
       replyTo,
       device: myDevice,
       createdAt: serverTimestamp(),
@@ -1745,7 +2005,7 @@
     localStorage.setItem(adminSessionKey(user.uid), "1");
     setErr(adminErr, "✅ تم تفعيل الأدمن.");
     isAdmin = true;
-    adminClearBtn.style.display = "inline-flex";
+    // زر المسح يظهر حسب الصلاحية داخل enterChat (حتى لا نكسر أي شيء)
   });
 
   function showForm(){ formBox.style.display = "block"; }
@@ -1824,7 +2084,13 @@
   async function enterChat(statusVal){
     isGuest = !!user?.isAnonymous;
     isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
-    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+
+    // ✅ اقرأ الرتبة من Firestore (لغير الضيف وغير الأدمن)
+    await loadMyRoleOnce();
+    watchMyRole();
+
+    // زر المسح حسب الصلاحية (VIP/ROOT/LEGENDARY/ADMIN)
+    adminClearBtn.style.display = canClear() ? "inline-flex" : "none";
 
     msgInput.disabled = false;
     sendBtn.disabled = false;
@@ -1835,6 +2101,8 @@
     await writeJoinLeave("join");
 
     modal.style.display = "none";
+
+    inChat = true;
 
     loadIgnoreWindows();
     startClearMetaListener();
@@ -1895,4 +2163,3 @@
 </script>
 </body>
 </html>
-
