@@ -145,6 +145,7 @@ let profile = null;
 let joinAtMs = null;
 let initialLoaded = false;
 let lastSoundAt = 0;
+let __lastMessagesSnap = null;
 
 const adminSessionKey = (uid) => `adminSession_${uid}`;
 let isAdmin = false;
@@ -1095,10 +1096,11 @@ function startGlobalMessagesListener(){
     : query(collection(db, "globalMessages"), where("createdAtMs", ">=", joinAtMs), orderBy("createdAtMs", "asc"));
 
   onSnapshot(q, (snap)=>{
-    __lastMessagesSnap = snap;   // ✅ نخزن آخر snapshot
-    renderMessagesFromSnap(snap);
+    __lastMessagesSnap = snap;            // ✅ نخزن آخر snapshot
+    renderMessagesFromSnap(snap);         // ✅ ارسم الرسائل
   });
 }
+
 
 replyCancelBtn.addEventListener("click", ()=>{
   replyTarget = null;
@@ -1446,4 +1448,5 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
 
