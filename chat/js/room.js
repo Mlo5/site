@@ -1,1369 +1,1403 @@
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-  import {
-    getFirestore, collection, addDoc, serverTimestamp,
-    query, where, orderBy, onSnapshot, doc, setDoc,
-    getDocs, limit, limitToLast
-  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-  import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, serverTimestamp,
+  query, where, orderBy, onSnapshot, doc, setDoc,
+  getDocs, limit, limitToLast
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
-    authDomain: "mlo5-users.firebaseapp.com",
-    databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
-    projectId: "mlo5-users",
-    appId: "1:142086858806:web:64c50f3a8d6250a2049097"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+  authDomain: "mlo5-users.firebaseapp.com",
+  databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
+  projectId: "mlo5-users",
+  appId: "1:142086858806:web:64c50f3a8d6250a2049097"
+};
 
-  const ADMIN_UIDS = ["VFjSs6kH2jcFJnddE7SXIpipzDi2"];
-  const ADMIN_USERNAME = "MLO5";
-  const ADMIN_PASSWORD = "APRIL3049";
+const ADMIN_UIDS = ["VFjSs6kH2jcFJnddE7SXIpipzDi2"];
+const ADMIN_USERNAME = "MLO5";
+const ADMIN_PASSWORD = "APRIL3049";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const rtdb = getDatabase(app);
+/* ✅✅✅ ADMIN DISPLAY (NEW) */
+const ADMIN_DISPLAY_NAME = "𝕄𝕃𝕆𝟝 ヅ";
+const ADMIN_ICONS_HTML = `
+  <span class="adminIcons" aria-hidden="true">
+    <span class="adminIcon blink" title="تاج">👑</span>
+    <span class="adminIcon blink" title="جمجمة">💀</span>
+  </span>
+`;
+/* ✅✅✅ END */
 
-  /* ✅✅✅ FIX (Mobile-only): Server Time Offset + nowMs() (Desktop unaffected) */
-  const __MOBILE_DEVICE =
-    window.matchMedia("(pointer: coarse)").matches ||
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const rtdb = getDatabase(app);
 
-  let serverOffsetMs = 0;
-  onValue(ref(rtdb, ".info/serverTimeOffset"), (snap)=>{
-    serverOffsetMs = Number(snap.val() || 0);
+/* ✅✅✅ FIX (Mobile-only): Server Time Offset + nowMs() (Desktop unaffected) */
+const __MOBILE_DEVICE =
+  window.matchMedia("(pointer: coarse)").matches ||
+  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+let serverOffsetMs = 0;
+onValue(ref(rtdb, ".info/serverTimeOffset"), (snap)=>{
+  serverOffsetMs = Number(snap.val() || 0);
+});
+function nowMs(){
+  return Date.now() + (__MOBILE_DEVICE ? serverOffsetMs : 0);
+}
+/* ✅✅✅ END FIX */
+
+const connDot = document.getElementById("connDot");
+const connText = document.getElementById("connText");
+const exitBtn = document.getElementById("exitBtn");
+const logBtn = document.getElementById("logBtn");
+const bgBtn  = document.getElementById("bgBtn");
+const colorBtn = document.getElementById("colorBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+
+const onlineList = document.getElementById("onlineList");
+const onlineCount = document.getElementById("onlineCount");
+const meBadge = document.getElementById("meBadge");
+const statusSelect = document.getElementById("statusSelect");
+const ignoreCount = document.getElementById("ignoreCount");
+
+const messagesDiv = document.getElementById("messages");
+const chatForm = document.getElementById("chatForm");
+const msgInput = document.getElementById("msgInput");
+const sendBtn = document.getElementById("sendBtn");
+const adminClearBtn = document.getElementById("adminClearBtn");
+const emojiBtn = document.getElementById("emojiBtn");
+
+const replyPreview = document.getElementById("replyPreview");
+const replyPreviewName = document.getElementById("replyPreviewName");
+const replyPreviewText = document.getElementById("replyPreviewText");
+const replyCancelBtn = document.getElementById("replyCancelBtn");
+
+const emojiPicker = document.getElementById("emojiPicker");
+const emojiGrid = document.getElementById("emojiGrid");
+
+const modal = document.getElementById("modal");
+const modalErr = document.getElementById("modalErr");
+const formBox = document.getElementById("formBox");
+const chooseLogin = document.getElementById("chooseLogin");
+const chooseGuest = document.getElementById("chooseGuest");
+
+const homeBtn = document.getElementById("homeBtn");
+const backListBtn = document.getElementById("backListBtn");
+
+const nameInput = document.getElementById("nameInput");
+const genderInput = document.getElementById("genderInput");
+const ageInput = document.getElementById("ageInput");
+const countryInput = document.getElementById("countryInput");
+const nameColorInput = document.getElementById("nameColor");
+const textColorInput = document.getElementById("textColor");
+const enterBtn = document.getElementById("enterBtn");
+
+const adminUser = document.getElementById("adminUser");
+const adminPass = document.getElementById("adminPass");
+const adminLoginBtn = document.getElementById("adminLoginBtn");
+const adminErr = document.getElementById("adminErr");
+
+const ctxMenu = document.getElementById("ctxMenu");
+const modActions = document.getElementById("modActions");
+const rankActions = document.getElementById("rankActions");
+
+const ctxKickBtn = document.getElementById("ctxKickBtn");
+const ctxMuteBtn = document.getElementById("ctxMuteBtn");
+const ctxUnmuteBtn = document.getElementById("ctxUnmuteBtn");
+const ctxBanBtn = document.getElementById("ctxBanBtn");
+const ctxUnbanBtn = document.getElementById("ctxUnbanBtn");
+
+const ctxRankLegend = document.getElementById("ctxRankLegend");
+const ctxRankVip    = document.getElementById("ctxRankVip");
+const ctxRankRoot   = document.getElementById("ctxRankRoot");
+const ctxRankGirl   = document.getElementById("ctxRankGirl");
+const ctxRankNone   = document.getElementById("ctxRankNone");
+
+const roomMenu = document.getElementById("roomMenu");
+const roomLockBtn = document.getElementById("roomLockBtn");
+const roomUnlockBtn = document.getElementById("roomUnlockBtn");
+
+const selfMuteBtn = document.getElementById("selfMuteBtn");
+const selfUnmuteBtn = document.getElementById("selfUnmuteBtn");
+
+const bg1Btn = document.getElementById("bg1Btn");
+const bg2Btn = document.getElementById("bg2Btn");
+const bg3Btn = document.getElementById("bg3Btn");
+const bg0Btn = document.getElementById("bg0Btn");
+
+const siteBgLayer = document.getElementById("siteBgLayer");
+const chatHint = document.getElementById("chatHint");
+
+const appModal = document.getElementById("appModal");
+const appModalTitle = document.getElementById("appModalTitle");
+const appModalText = document.getElementById("appModalText");
+const appModalActions = document.getElementById("appModalActions");
+
+const toastSound = new Audio("./chat/media/sounds/toast.mp3");
+toastSound.preload = "auto";
+toastSound.volume = 1.0;
+
+let user = null;
+let profile = null;
+let joinAtMs = null;
+let initialLoaded = false;
+let lastSoundAt = 0;
+
+const adminSessionKey = (uid) => `adminSession_${uid}`;
+let isAdmin = false;
+let isGuest = false;
+
+const ignoreKey = (uid) => `chatIgnoreWindows_${uid}`;
+const profKey   = (uid) => `chatProfile_${uid}`;
+const statusKey = (uid) => `chatStatus_${uid}`;
+
+let ignoreWindows = {};
+let replyTarget = null;
+let roomLocked = false;
+
+const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
+const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎💓🙏🔥💛⭐💛🎮💀".split("");
+
+/* ✅ RANKS */
+const RANKS = {
+  none:  { label:"بدون",     emoji:"",   rowClass:"" },
+  legend:{ label:"Legendary",emoji:"⚡",  rowClass:"rank-legend" },
+  vip:   { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
+  root:  { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
+  girl:  { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" }
+};
+let ranksMap = {}; // uid -> rank
+
+function rankOf(uid){ return ranksMap?.[uid] || "none"; }
+function rankEmoji(r){ return (RANKS[r] || RANKS.none).emoji || ""; }
+
+// ✅ صلاحيات الرتب (تم تعديل المسح: للأدمن فقط)
+function myRank(){ return rankOf(user?.uid); }
+function hasAnyRank(uid){ return rankOf(uid) && rankOf(uid) !== "none"; }
+function canWriteWhenLocked(){ return isAdmin || hasAnyRank(user?.uid); }
+function canClear(){ return isAdmin; } // ✅ مسح الشات للأدمن فقط
+function canKick(){
+  const r = myRank();
+  return isAdmin || r === "root" || r === "vip" || r === "girl";
+}
+function canMute(){
+  const r = myRank();
+  return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
+}
+function canBan(){
+  const r = myRank();
+  return isAdmin || r === "root";
+}
+
+function rankIconHtml(r){
+  if (!r || r === "none") return "";
+  return `<span class="rankIcon" title="${escapeHtml(RANKS[r]?.label||"")}">${escapeHtml(rankEmoji(r))}</span>`;
+}
+
+/* ✅ Country code -> flag emoji */
+function countryCodeToFlagEmoji(cc){
+  const c = String(cc||"").toUpperCase();
+  if (c.length !== 2) return "🏳️";
+  return String.fromCodePoint(...[...c].map(ch => 127397 + ch.charCodeAt()));
+}
+
+/* ✅ إصلاح vh بالموبايل */
+function setVh(){
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+setVh();
+window.addEventListener("resize", setVh);
+window.addEventListener("orientationchange", setVh);
+
+/* ✅ Drawer المتواجدين (موبايل فقط) */
+const onlineCard = document.getElementById("onlineCard");
+const openOnlineBtn = document.getElementById("openOnlineBtn");
+const onlineOverlay = document.getElementById("onlineOverlay");
+
+function isMobileView(){ return window.matchMedia("(max-width: 900px)").matches; }
+function openOnlineDrawer(){
+  if (!isMobileView()) return;
+  onlineCard.classList.add("drawer-open");
+  onlineOverlay.classList.add("show");
+}
+function closeOnlineDrawer(){
+  onlineCard.classList.remove("drawer-open");
+  onlineOverlay.classList.remove("show");
+}
+if (openOnlineBtn){
+  openOnlineBtn.addEventListener("click", ()=>{
+    if (onlineCard.classList.contains("drawer-open")) closeOnlineDrawer();
+    else openOnlineDrawer();
   });
-  function nowMs(){
-    return Date.now() + (__MOBILE_DEVICE ? serverOffsetMs : 0);
+}
+if (onlineOverlay){
+  onlineOverlay.addEventListener("click", closeOnlineDrawer);
+}
+
+const root = document.documentElement;
+document.addEventListener("mousemove", (e)=>{
+  const xRatio = e.clientX / window.innerWidth - 0.5;
+  const yRatio = e.clientY / window.innerHeight - 0.5;
+  const maxShift = 40;
+  root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+  root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+});
+
+function setErr(el, msg){
+  el.style.display = msg ? "block" : "none";
+  el.textContent = msg || "";
+}
+function collapseSpaces(s){ return String(s||"").replace(/\s+/g," ").trim(); }
+function escapeHtml(s=""){
+  return String(s).replace(/[&<>"']/g, (m)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[m]));
+}
+function formatTime(tsMs){
+  if (!tsMs || Number.isNaN(tsMs)) return "";
+  const d = new Date(tsMs);
+  let h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2,"0");
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12; if (h === 0) h = 12;
+  return `${h}:${m} ${ampm}`;
+}
+function statusLabel(s){
+  switch(s){
+    case "online": return "🟢 متصل";
+    case "busy": return "⛔ مشغول";
+    case "work": return "💼 بالعمل";
+    case "car": return "🚗 بالسيارة";
+    case "food": return "🍔 طعام";
+    case "out": return "🌙 بالخارج";
+    default: return "🟢 متصل";
   }
-  /* ✅✅✅ END FIX */
+}
+function isProfane(text){
+  const t = String(text||"").toLowerCase();
+  return BAD_WORDS.some(w => t.includes(w));
+}
+function randHexColor(){
+  const n = Math.floor(Math.random()*0xFFFFFF);
+  return "#" + n.toString(16).padStart(6,"0");
+}
 
-  const connDot = document.getElementById("connDot");
-  const connText = document.getElementById("connText");
-  const exitBtn = document.getElementById("exitBtn");
-  const logBtn = document.getElementById("logBtn");
-  const bgBtn  = document.getElementById("bgBtn");
-  const colorBtn = document.getElementById("colorBtn");
-  const downloadBtn = document.getElementById("downloadBtn");
-
-  const onlineList = document.getElementById("onlineList");
-  const onlineCount = document.getElementById("onlineCount");
-  const meBadge = document.getElementById("meBadge");
-  const statusSelect = document.getElementById("statusSelect");
-  const ignoreCount = document.getElementById("ignoreCount");
-
-  const messagesDiv = document.getElementById("messages");
-  const chatForm = document.getElementById("chatForm");
-  const msgInput = document.getElementById("msgInput");
-  const sendBtn = document.getElementById("sendBtn");
-  const adminClearBtn = document.getElementById("adminClearBtn");
-  const emojiBtn = document.getElementById("emojiBtn");
-
-  const replyPreview = document.getElementById("replyPreview");
-  const replyPreviewName = document.getElementById("replyPreviewName");
-  const replyPreviewText = document.getElementById("replyPreviewText");
-  const replyCancelBtn = document.getElementById("replyCancelBtn");
-
-  const emojiPicker = document.getElementById("emojiPicker");
-  const emojiGrid = document.getElementById("emojiGrid");
-
-  const modal = document.getElementById("modal");
-  const modalErr = document.getElementById("modalErr");
-  const formBox = document.getElementById("formBox");
-  const chooseLogin = document.getElementById("chooseLogin");
-  const chooseGuest = document.getElementById("chooseGuest");
-
-  const homeBtn = document.getElementById("homeBtn");
-  const backListBtn = document.getElementById("backListBtn");
-
-  const nameInput = document.getElementById("nameInput");
-  const genderInput = document.getElementById("genderInput");
-  const ageInput = document.getElementById("ageInput");
-  const countryInput = document.getElementById("countryInput");
-  const nameColorInput = document.getElementById("nameColor");
-  const textColorInput = document.getElementById("textColor");
-  const enterBtn = document.getElementById("enterBtn");
-
-  const adminUser = document.getElementById("adminUser");
-  const adminPass = document.getElementById("adminPass");
-  const adminLoginBtn = document.getElementById("adminLoginBtn");
-  const adminErr = document.getElementById("adminErr");
-
-  const ctxMenu = document.getElementById("ctxMenu");
-  const modActions = document.getElementById("modActions");
-  const rankActions = document.getElementById("rankActions");
-
-  const ctxKickBtn = document.getElementById("ctxKickBtn");
-  const ctxMuteBtn = document.getElementById("ctxMuteBtn");
-  const ctxUnmuteBtn = document.getElementById("ctxUnmuteBtn");
-  const ctxBanBtn = document.getElementById("ctxBanBtn");
-  const ctxUnbanBtn = document.getElementById("ctxUnbanBtn");
-
-  const ctxRankLegend = document.getElementById("ctxRankLegend");
-  const ctxRankVip    = document.getElementById("ctxRankVip");
-  const ctxRankRoot   = document.getElementById("ctxRankRoot");
-  const ctxRankGirl   = document.getElementById("ctxRankGirl");
-  const ctxRankNone   = document.getElementById("ctxRankNone");
-
-  const roomMenu = document.getElementById("roomMenu");
-  const roomLockBtn = document.getElementById("roomLockBtn");
-  const roomUnlockBtn = document.getElementById("roomUnlockBtn");
-
-  const selfMuteBtn = document.getElementById("selfMuteBtn");
-  const selfUnmuteBtn = document.getElementById("selfUnmuteBtn");
-
-  const bg1Btn = document.getElementById("bg1Btn");
-  const bg2Btn = document.getElementById("bg2Btn");
-  const bg3Btn = document.getElementById("bg3Btn");
-  const bg0Btn = document.getElementById("bg0Btn");
-
-  const siteBgLayer = document.getElementById("siteBgLayer");
-  const chatHint = document.getElementById("chatHint");
-
-  const appModal = document.getElementById("appModal");
-  const appModalTitle = document.getElementById("appModalTitle");
-  const appModalText = document.getElementById("appModalText");
-  const appModalActions = document.getElementById("appModalActions");
-
-  const toastSound = new Audio("./chat/media/sounds/toast.mp3");
-  toastSound.preload = "auto";
-  toastSound.volume = 1.0;
-
-  let user = null;
-  let profile = null;
-  let joinAtMs = null;
-  let initialLoaded = false;
-  let lastSoundAt = 0;
-
-  const adminSessionKey = (uid) => `adminSession_${uid}`;
-  let isAdmin = false;
-  let isGuest = false;
-
-  const ignoreKey = (uid) => `chatIgnoreWindows_${uid}`;
-  const profKey   = (uid) => `chatProfile_${uid}`;
-  const statusKey = (uid) => `chatStatus_${uid}`;
-
-  let ignoreWindows = {};
-  let replyTarget = null;
-  let roomLocked = false;
-
-  const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
-  const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎💓🙏🔥💛⭐💛🎮💀".split("");
-
-  /* ✅ RANKS */
-  const RANKS = {
-    none:  { label:"بدون",     emoji:"",   rowClass:"" },
-    legend:{ label:"Legendary",emoji:"⚡",  rowClass:"rank-legend" },
-    vip:   { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
-    root:  { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
-    girl:  { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" }
-  };
-  let ranksMap = {}; // uid -> rank
-
-  function rankOf(uid){ return ranksMap?.[uid] || "none"; }
-  function rankEmoji(r){ return (RANKS[r] || RANKS.none).emoji || ""; }
-
-  // ✅ صلاحيات الرتب (تم تعديل المسح: للأدمن فقط)
-  function myRank(){ return rankOf(user?.uid); }
-  function hasAnyRank(uid){ return rankOf(uid) && rankOf(uid) !== "none"; }
-  function canWriteWhenLocked(){ return isAdmin || hasAnyRank(user?.uid); }
-  function canClear(){ return isAdmin; } // ✅ مسح الشات للأدمن فقط
-  function canKick(){
-    const r = myRank();
-    return isAdmin || r === "root" || r === "vip" || r === "girl";
-  }
-  function canMute(){
-    const r = myRank();
-    return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
-  }
-  function canBan(){
-    const r = myRank();
-    return isAdmin || r === "root";
-  }
-
-  function rankIconHtml(r){
-    if (!r || r === "none") return "";
-    return `<span class="rankIcon" title="${escapeHtml(RANKS[r]?.label||"")}">${escapeHtml(rankEmoji(r))}</span>`;
-  }
-
-  /* ✅ Country code -> flag emoji */
-  function countryCodeToFlagEmoji(cc){
-    const c = String(cc||"").toUpperCase();
-    if (c.length !== 2) return "🏳️";
-    return String.fromCodePoint(...[...c].map(ch => 127397 + ch.charCodeAt()));
-  }
-
-  /* ✅ إصلاح vh بالموبايل */
-  function setVh(){
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
-  }
-  setVh();
-  window.addEventListener("resize", setVh);
-  window.addEventListener("orientationchange", setVh);
-
-  /* ✅ Drawer المتواجدين (موبايل فقط) */
-  const onlineCard = document.getElementById("onlineCard");
-  const openOnlineBtn = document.getElementById("openOnlineBtn");
-  const onlineOverlay = document.getElementById("onlineOverlay");
-
-  function isMobileView(){ return window.matchMedia("(max-width: 900px)").matches; }
-  function openOnlineDrawer(){
-    if (!isMobileView()) return;
-    onlineCard.classList.add("drawer-open");
-    onlineOverlay.classList.add("show");
-  }
-  function closeOnlineDrawer(){
-    onlineCard.classList.remove("drawer-open");
-    onlineOverlay.classList.remove("show");
-  }
-  if (openOnlineBtn){
-    openOnlineBtn.addEventListener("click", ()=>{
-      if (onlineCard.classList.contains("drawer-open")) closeOnlineDrawer();
-      else openOnlineDrawer();
+function showAppModal({title="تنبيه", text="—", actions=[{label:"حسناً", onClick:()=>hideAppModal()}]}={}){
+  appModalTitle.textContent = title;
+  appModalText.textContent = text;
+  appModalActions.innerHTML = "";
+  actions.forEach(a=>{
+    const b = document.createElement("button");
+    b.className = "modalBtn";
+    b.type = "button";
+    b.textContent = a.label || "حسناً";
+    b.addEventListener("click", ()=>{
+      try{ a.onClick && a.onClick(); }catch{}
     });
-  }
-  if (onlineOverlay){
-    onlineOverlay.addEventListener("click", closeOnlineDrawer);
-  }
-
-  const root = document.documentElement;
-  document.addEventListener("mousemove", (e)=>{
-    const xRatio = e.clientX / window.innerWidth - 0.5;
-    const yRatio = e.clientY / window.innerHeight - 0.5;
-    const maxShift = 40;
-    root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
-    root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+    appModalActions.appendChild(b);
   });
+  appModal.style.display = "flex";
+}
+function hideAppModal(){ appModal.style.display = "none"; }
+appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
 
-  function setErr(el, msg){
-    el.style.display = msg ? "block" : "none";
-    el.textContent = msg || "";
-  }
-  function collapseSpaces(s){ return String(s||"").replace(/\s+/g," ").trim(); }
-  function escapeHtml(s=""){
-    return String(s).replace(/[&<>"']/g, (m)=>({
-      "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
-    }[m]));
-  }
-  function formatTime(tsMs){
-    if (!tsMs || Number.isNaN(tsMs)) return "";
-    const d = new Date(tsMs);
-    let h = d.getHours();
-    const m = String(d.getMinutes()).padStart(2,"0");
-    const ampm = h >= 12 ? "PM" : "AM";
-    h = h % 12; if (h === 0) h = 12;
-    return `${h}:${m} ${ampm}`;
-  }
-  function statusLabel(s){
-    switch(s){
-      case "online": return "🟢 متصل";
-      case "busy": return "⛔ مشغول";
-      case "work": return "💼 بالعمل";
-      case "car": return "🚗 بالسيارة";
-      case "food": return "🍔 طعام";
-      case "out": return "🌙 بالخارج";
-      default: return "🟢 متصل";
-    }
-  }
-  function isProfane(text){
-    const t = String(text||"").toLowerCase();
-    return BAD_WORDS.some(w => t.includes(w));
-  }
-  function randHexColor(){
-    const n = Math.floor(Math.random()*0xFFFFFF);
-    return "#" + n.toString(16).padStart(6,"0");
-  }
+/* ✅ color + download open new tabs */
+colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
+downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
 
-  function showAppModal({title="تنبيه", text="—", actions=[{label:"حسناً", onClick:()=>hideAppModal()}]}={}){
-    appModalTitle.textContent = title;
-    appModalText.textContent = text;
-    appModalActions.innerHTML = "";
-    actions.forEach(a=>{
-      const b = document.createElement("button");
-      b.className = "modalBtn";
-      b.type = "button";
-      b.textContent = a.label || "حسناً";
-      b.addEventListener("click", ()=>{
-        try{ a.onClick && a.onClick(); }catch{}
-      });
-      appModalActions.appendChild(b);
+/* ✅ Emoji picker */
+let activeEmojiTarget = null;
+function buildEmojiGrid(){
+  emojiGrid.innerHTML = "";
+  EMOJIS.forEach(em=>{
+    const b = document.createElement("div");
+    b.className = "emojiItem";
+    b.textContent = em;
+    b.addEventListener("click", ()=>{
+      if (activeEmojiTarget) insertAtCursor(activeEmojiTarget, em);
+      hideEmoji();
     });
-    appModal.style.display = "flex";
-  }
-  function hideAppModal(){ appModal.style.display = "none"; }
-  appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
-
-  /* ✅ color + download open new tabs */
-  colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
-  downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
-
-  /* ✅ Emoji picker */
-  let activeEmojiTarget = null;
-  function buildEmojiGrid(){
-    emojiGrid.innerHTML = "";
-    EMOJIS.forEach(em=>{
-      const b = document.createElement("div");
-      b.className = "emojiItem";
-      b.textContent = em;
-      b.addEventListener("click", ()=>{
-        if (activeEmojiTarget) insertAtCursor(activeEmojiTarget, em);
-        hideEmoji();
-      });
-      emojiGrid.appendChild(b);
-    });
-  }
-  buildEmojiGrid();
-
-  function showEmojiFor(inputEl){
-    activeEmojiTarget = inputEl;
-    emojiPicker.style.display = "block";
-    emojiPicker.setAttribute("aria-hidden","false");
-  }
-  function hideEmoji(){
-    emojiPicker.style.display = "none";
-    emojiPicker.setAttribute("aria-hidden","true");
-    activeEmojiTarget = null;
-  }
-  function insertAtCursor(input, text){
-    const start = input.selectionStart ?? input.value.length;
-    const end   = input.selectionEnd ?? input.value.length;
-    input.value = input.value.slice(0,start) + text + input.value.slice(end);
-    const pos = start + text.length;
-    input.setSelectionRange(pos,pos);
-    input.focus();
-  }
-
-  document.addEventListener("click",(e)=>{
-    if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) hideEmoji();
-    if (!ctxMenu.contains(e.target)) hideCtxMenu();
-    if (!roomMenu.contains(e.target) && e.target !== bgBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
+    emojiGrid.appendChild(b);
   });
+}
+buildEmojiGrid();
 
-  emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+function showEmojiFor(inputEl){
+  activeEmojiTarget = inputEl;
+  emojiPicker.style.display = "block";
+  emojiPicker.setAttribute("aria-hidden","false");
+}
+function hideEmoji(){
+  emojiPicker.style.display = "none";
+  emojiPicker.setAttribute("aria-hidden","true");
+  activeEmojiTarget = null;
+}
+function insertAtCursor(input, text){
+  const start = input.selectionStart ?? input.value.length;
+  const end   = input.selectionEnd ?? input.value.length;
+  input.value = input.value.slice(0,start) + text + input.value.slice(end);
+  const pos = start + text.length;
+  input.setSelectionRange(pos,pos);
+  input.focus();
+}
 
-  /* ✅ Ignore */
-  function loadIgnoreWindows(){
-    try{ ignoreWindows = JSON.parse(localStorage.getItem(ignoreKey(user.uid)) || "{}"); }
-    catch{ ignoreWindows = {}; }
-    refreshIgnoreCount();
-  }
-  function saveIgnoreWindows(){
-    localStorage.setItem(ignoreKey(user.uid), JSON.stringify(ignoreWindows));
-    refreshIgnoreCount();
-  }
-  function refreshIgnoreCount(){
-    let count=0;
-    for (const k in ignoreWindows){
-      const arr = ignoreWindows[k] || [];
-      if (arr.some(w => w.end == null)) count++;
-    }
-    ignoreCount.textContent = `تجاهل: ${count}`;
-  }
-  function isCurrentlyIgnored(uid){
-    const arr = ignoreWindows[uid] || [];
-    return arr.some(w => w.end == null);
-  }
-  function isInIgnoreWindow(uid, t){
-    const arr = ignoreWindows[uid] || [];
-    for (const w of arr){
-      const start = w.start ?? 0;
-      const end = (w.end == null) ? Infinity : w.end;
-      if (t >= start && t <= end) return true;
-    }
-    return false;
-  }
-  function toggleIgnore(uid){
-    if (ADMIN_UIDS.includes(uid)) return;
-    ignoreWindows[uid] = ignoreWindows[uid] || [];
-    const arr = ignoreWindows[uid];
-    const activeIdx = arr.findIndex(w => w.end == null);
-    const now = nowMs();
-    if (activeIdx >= 0) arr[activeIdx].end = now;
-    else arr.push({start: now, end: null});
-    saveIgnoreWindows();
-  }
+document.addEventListener("click",(e)=>{
+  if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) hideEmoji();
+  if (!ctxMenu.contains(e.target)) hideCtxMenu();
+  if (!roomMenu.contains(e.target) && e.target !== bgBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
+});
 
-  /* ✅ Context menu */
-  let ctxUser = null;
-  function showCtxMenu(x,y){
-    ctxMenu.style.left = x + "px";
-    ctxMenu.style.top  = y + "px";
-    ctxMenu.style.display = "block";
-  }
-  function hideCtxMenu(){
-    ctxMenu.style.display = "none";
-    ctxUser = null;
-  }
+emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
 
-  function showRoomMenu(x,y){
-    roomMenu.style.left = x + "px";
-    roomMenu.style.top  = y + "px";
-    roomMenu.style.display = "block";
-
-    const showAdmin = !!isAdmin;
-    selfMuteBtn.style.display   = showAdmin ? "block" : "none";
-    selfUnmuteBtn.style.display = showAdmin ? "block" : "none";
-    bg1Btn.style.display = showAdmin ? "block" : "none";
-    bg2Btn.style.display = showAdmin ? "block" : "none";
-    bg3Btn.style.display = showAdmin ? "block" : "none";
-    bg0Btn.style.display = showAdmin ? "block" : "none";
+/* ✅ Ignore */
+function loadIgnoreWindows(){
+  try{ ignoreWindows = JSON.parse(localStorage.getItem(ignoreKey(user.uid)) || "{}"); }
+  catch{ ignoreWindows = {}; }
+  refreshIgnoreCount();
+}
+function saveIgnoreWindows(){
+  localStorage.setItem(ignoreKey(user.uid), JSON.stringify(ignoreWindows));
+  refreshIgnoreCount();
+}
+function refreshIgnoreCount(){
+  let count=0;
+  for (const k in ignoreWindows){
+    const arr = ignoreWindows[k] || [];
+    if (arr.some(w => w.end == null)) count++;
   }
-  function hideRoomMenu(){ roomMenu.style.display = "none"; }
+  ignoreCount.textContent = `تجاهل: ${count}`;
+}
+function isCurrentlyIgnored(uid){
+  const arr = ignoreWindows[uid] || [];
+  return arr.some(w => w.end == null);
+}
+function isInIgnoreWindow(uid, t){
+  const arr = ignoreWindows[uid] || [];
+  for (const w of arr){
+    const start = w.start ?? 0;
+    const end = (w.end == null) ? Infinity : w.end;
+    if (t >= start && t <= end) return true;
+  }
+  return false;
+}
+function toggleIgnore(uid){
+  if (ADMIN_UIDS.includes(uid)) return;
+  ignoreWindows[uid] = ignoreWindows[uid] || [];
+  const arr = ignoreWindows[uid];
+  const activeIdx = arr.findIndex(w => w.end == null);
+  const now = nowMs();
+  if (activeIdx >= 0) arr[activeIdx].end = now;
+  else arr.push({start: now, end: null});
+  saveIgnoreWindows();
+}
 
-  bgBtn.addEventListener("click",(e)=>{
-    e.preventDefault();
-    if (!isAdmin) return;
-    const r = bgBtn.getBoundingClientRect();
-    showRoomMenu(Math.round(r.left), Math.round(r.bottom + 8));
+/* ✅ Context menu */
+let ctxUser = null;
+function showCtxMenu(x,y){
+  ctxMenu.style.left = x + "px";
+  ctxMenu.style.top  = y + "px";
+  ctxMenu.style.display = "block";
+}
+function hideCtxMenu(){
+  ctxMenu.style.display = "none";
+  ctxUser = null;
+}
+
+function showRoomMenu(x,y){
+  roomMenu.style.left = x + "px";
+  roomMenu.style.top  = y + "px";
+  roomMenu.style.display = "block";
+
+  const showAdmin = !!isAdmin;
+  selfMuteBtn.style.display   = showAdmin ? "block" : "none";
+  selfUnmuteBtn.style.display = showAdmin ? "block" : "none";
+  bg1Btn.style.display = showAdmin ? "block" : "none";
+  bg2Btn.style.display = showAdmin ? "block" : "none";
+  bg3Btn.style.display = showAdmin ? "block" : "none";
+  bg0Btn.style.display = showAdmin ? "block" : "none";
+}
+function hideRoomMenu(){ roomMenu.style.display = "none"; }
+
+bgBtn.addEventListener("click",(e)=>{
+  e.preventDefault();
+  if (!isAdmin) return;
+  const r = bgBtn.getBoundingClientRect();
+  showRoomMenu(Math.round(r.left), Math.round(r.bottom + 8));
+});
+
+async function writeSystemText(text, type="system", actor={}){
+  await addDoc(collection(db, "globalMessages"), {
+    system:true, type, text,
+    actorUid: actor.uid || null,
+    actorName: actor.name || null,
+    createdAt: serverTimestamp(),
+    createdAtMs: nowMs()
   });
+}
 
-  async function writeSystemText(text, type="system", actor={}){
-    await addDoc(collection(db, "globalMessages"), {
-      system:true, type, text,
-      actorUid: actor.uid || null,
-      actorName: actor.name || null,
-      createdAt: serverTimestamp(),
-      createdAtMs: nowMs()
-    });
-  }
-
-  async function writePrivateSystem(text, toUids=[], type="private"){
-    await addDoc(collection(db, "globalMessages"), {
-      system:true, type,
-      text,
-      private:true,
-      to: Array.from(new Set(toUids)).filter(Boolean),
-      createdAt: serverTimestamp(),
-      createdAtMs: nowMs()
-    });
-  }
-
-  async function writeActionLog(action, details=""){
-    try{
-      await addDoc(collection(db, "globalLogs"), {
-        action,
-        details,
-        byUid: user?.uid || null,
-        byName: profile?.name || "—",
-        byRank: isAdmin ? "admin" : (myRank() || "none"),
-        atMs: nowMs(),
-        createdAt: serverTimestamp()
-      });
-    }catch{}
-  }
-
-  function showLogsModal(lines){
-    showAppModal({
-      title:"📜 سجل",
-      text: lines.join("\n") || "لا يوجد سجل حالياً.",
-      actions:[{label:"إغلاق", onClick:()=>hideAppModal()}]
-    });
-  }
-
-  logBtn.addEventListener("click", async ()=>{
-    if (!isAdmin) return;
-    try{
-      const ql = query(collection(db, "globalLogs"), orderBy("atMs","desc"), limit(80));
-      const snap = await getDocs(ql);
-      const lines = [];
-      snap.forEach(d=>{
-        const x = d.data()||{};
-        const t = formatTime(Number(x.atMs||0));
-        const who = x.byName || "—";
-        const rk = x.byRank || "—";
-        lines.push(`${t} • ${who} (${rk}) • ${x.action}${x.details ? " — " + x.details : ""}`);
-      });
-      showLogsModal(lines.reverse());
-    }catch(err){
-      showLogsModal(["تعذر تحميل السجل (تحقق من صلاحيات Firestore Rules لمجموعة globalLogs)."]);
-    }
+async function writePrivateSystem(text, toUids=[], type="private"){
+  await addDoc(collection(db, "globalMessages"), {
+    system:true, type,
+    text,
+    private:true,
+    to: Array.from(new Set(toUids)).filter(Boolean),
+    createdAt: serverTimestamp(),
+    createdAtMs: nowMs()
   });
+}
 
-  /* ✅ Moderation */
-  async function adminKick(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { kickedAt: nowMs(), reason:"kick", by:user.uid });
-    await writeSystemText(`🚪 تم طرد ${targetName} بواسطة ${profile?.name||"—"}`, "kick", {uid:user.uid,name:profile?.name});
-    await writeActionLog("kick", targetName);
-  }
-  async function adminBan(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { banned:true, bannedAt: nowMs(), reason:"ban", by:user.uid });
-    await writeSystemText(`⛔ تم حظر ${targetName} بواسطة ${profile?.name||"—"}`, "ban", {uid:user.uid,name:profile?.name});
-    await writeActionLog("ban", targetName);
-  }
-  async function adminUnban(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: nowMs(), reason:"unban", by:user.uid });
-    await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة ${profile?.name||"—"}`, "unban", {uid:user.uid,name:profile?.name});
-    await writeActionLog("unban", targetName);
-  }
-  async function adminMute(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, mutedAt: nowMs() });
-    await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:true });
-    await writeSystemText(`🔇 تم كتم ${targetName} بواسطة ${profile?.name||"—"}`, "mute", {uid:user.uid,name:profile?.name});
-    await writeActionLog("mute", targetName);
-  }
-  async function adminUnmute(targetUid, targetName){
-    await update(ref(rtdb, `moderation/${targetUid}`), { muted:false, mutedUntil:0, reason:"unmute", by:user.uid, unmutedAt: nowMs() });
-    await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:false });
-    await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة ${profile?.name||"—"}`, "unmute", {uid:user.uid,name:profile?.name});
-    await writeActionLog("unmute", targetName);
-  }
-
-  async function setRank(targetUid, targetName, rank){
-    if (!isAdmin) return;
-    if (!targetUid || targetUid === user.uid) return;
-
-    const r = (rank && RANKS[rank]) ? rank : "none";
-    await set(ref(rtdb, `ranks/${targetUid}`), {
-      rank: r,
-      by: user.uid,
-      byName: profile?.name || "Admin",
-      at: nowMs()
-    });
-
-    try{ await update(ref(rtdb, `onlineUsers/${targetUid}`), { rank: r }); }catch{}
-
-    const msg = (r === "none")
-      ? `🧽 تم إزالة الرتبة عن ${targetName}`
-      : `🏷️ تم إعطاء ${targetName} رتبة ${rankEmoji(r)}`;
-
-    await writePrivateSystem(msg, [user.uid, targetUid], "rank");
-    await writeActionLog("rank", `${targetName} -> ${r}`);
-
-    ranksMap[targetUid] = r;
-  }
-
-  /* ✅ Clear for ALL including admin (cutoff for everyone) */
-  async function adminClearForAll(){
-    if (!isAdmin) return;
-
-    const clearedAtMs = nowMs();
-    await setDoc(doc(db, "globalMeta", "clear"), {
-      clearedAtMs,
-      byUid:user.uid,
-      byName: profile?.name || "—",
+async function writeActionLog(action, details=""){
+  try{
+    await addDoc(collection(db, "globalLogs"), {
+      action,
+      details,
+      byUid: user?.uid || null,
+      byName: (isAdmin ? ADMIN_DISPLAY_NAME : (profile?.name || "—")),
+      byRank: isAdmin ? "admin" : (myRank() || "none"),
+      atMs: nowMs(),
       createdAt: serverTimestamp()
-    }, { merge:true });
-
-    await writeSystemText(`🧹 تم مسح النص بواسطة الأدمن`, "clear", {uid:user.uid,name:profile?.name});
-    await writeActionLog("clear", "");
-  }
-  adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
-
-  async function updatePresenceStatus(statusVal, first=false){
-    const onlineRef = ref(rtdb, "onlineUsers/" + user.uid);
-    const device = window.matchMedia("(pointer: coarse)").matches ? "mobile" : "pc";
-
-    const payload = {
-      uid: user.uid,
-      name: profile.name,
-      gender: profile.gender, // kept, but not shown in online list
-      age: profile.age,
-      country: profile.country || "",
-      nameColor: profile.nameColor,
-      textColor: profile.textColor,
-      status: statusVal || "online",
-      statusText: statusLabel(statusVal || "online"),
-      device,
-      isAdmin,
-      isGuest,
-      muted:false,
-      rank: rankOf(user.uid)
-    };
-    await set(onlineRef, payload);
-    if (first) onDisconnect(onlineRef).remove();
-  }
-
-  async function writeJoinLeave(type){
-    const text =
-      type === "join" ? `${profile.name} دخل الشات` :
-      type === "leave" ? `${profile.name} خرج من الشات` : "";
-    return addDoc(collection(db, "globalMessages"), {
-      system:true, type, text,
-      actorUid:user.uid, actorName:profile.name,
-      createdAt: serverTimestamp(), createdAtMs: nowMs()
     });
-  }
+  }catch{}
+}
 
-  function watchConnection(){
-    const connRef = ref(rtdb, ".info/connected");
-    onValue(connRef, (snap)=>{
-      const connected = snap.val() === true;
-      connDot.classList.toggle("on", connected);
-      connText.textContent = connected ? "متصل" : "غير متصل";
-    });
-  }
-
-  function startModerationListener(){
-    onValue(ref(rtdb, `moderation/${user.uid}`), async (snap)=>{
-      const m = snap.val();
-      if (!m) return;
-
-      if (m.banned === true){
-        showAppModal({
-          title:"⛔ تم حظرك",
-          text:"تم حظرك من الشات.\nسيتم إخراجك الآن.",
-          actions:[{label:"رجوع للهوم", onClick:()=>forceExitToHome()}]
-        });
-        setTimeout(forceExitToHome, 1200);
-        return;
-      }
-
-      if (m.kickedAt && nowMs() - m.kickedAt < 15000){
-        showAppModal({
-          title:"🚪 تم طردك",
-          text:"تم طردك من الشات.\nسيتم إخراجك الآن.",
-          actions:[{label:"رجوع للهوم", onClick:()=>forceExitToHome()}]
-        });
-        setTimeout(forceExitToHome, 1200);
-        return;
-      }
-
-      const until = m.mutedUntil || 0;
-      const muted = (m.muted === true) || (nowMs() < until);
-
-      if (roomLocked && !canWriteWhenLocked()){
-        msgInput.disabled = true;
-        sendBtn.disabled = true;
-        msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
-      } else {
-        if (isAdmin){
-          msgInput.disabled = false;
-          sendBtn.disabled = false;
-          msgInput.placeholder = "اكتب رسالتك...";
-        } else {
-          msgInput.disabled = muted;
-          sendBtn.disabled = muted;
-          msgInput.placeholder = muted ? "تم كتمك" : "اكتب رسالتك...";
-        }
-      }
-
-      try{ await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted: !!muted }); }catch{}
-    });
-  }
-
-  function forceExitToHome(){
-    try{ remove(ref(rtdb, "onlineUsers/" + user.uid)); }catch{}
-    location.href = "index.html";
-  }
-
-  let globalClearedAtMs = 0;
-  function startClearMetaListener(){
-    onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
-      if (!snap.exists()) return;
-      const d = snap.data() || {};
-      globalClearedAtMs = Number(d.clearedAtMs || 0);
-    });
-  }
-
-  function startRoomLockListener(){
-    onValue(ref(rtdb, "roomState/locked"), (snap)=>{
-      roomLocked = snap.val() === true;
-      chatHint.innerHTML = roomLocked ? "🚫 الروم مقفل" : 'دردش وخلي الشباب <span style="color:#facc15">تستفاد</span>';
-
-      if (roomLocked && !canWriteWhenLocked()){
-        msgInput.disabled = true;
-        sendBtn.disabled = true;
-        msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
-      } else {
-        if (msgInput.placeholder === "🚫 الروم مقفل بواسطة الأدمن"){
-          msgInput.disabled = false;
-          sendBtn.disabled = false;
-          msgInput.placeholder = "اكتب رسالتك...";
-        }
-      }
-    });
-  }
-
-  async function setRoomLocked(next){
-    if (!isAdmin) return;
-    await set(ref(rtdb, "roomState/locked"), !!next);
-    await writeSystemText(next ? `🔒 ${profile?.name||"—"} قفل الروم` : `🔓 ${profile?.name||"—"} فتح الروم`, next ? "lock" : "unlock", {uid:user.uid,name:profile?.name});
-    await writeActionLog(next ? "lock" : "unlock", "");
-  }
-
-  roomLockBtn.addEventListener("click", async ()=>{
-    hideRoomMenu();
-    await setRoomLocked(true);
+function showLogsModal(lines){
+  showAppModal({
+    title:"📜 سجل",
+    text: lines.join("\n") || "لا يوجد سجل حالياً.",
+    actions:[{label:"إغلاق", onClick:()=>hideAppModal()}]
   });
-  roomUnlockBtn.addEventListener("click", async ()=>{
-    hideRoomMenu();
-    await setRoomLocked(false);
+}
+
+logBtn.addEventListener("click", async ()=>{
+  if (!isAdmin) return;
+  try{
+    const ql = query(collection(db, "globalLogs"), orderBy("atMs","desc"), limit(80));
+    const snap = await getDocs(ql);
+    const lines = [];
+    snap.forEach(d=>{
+      const x = d.data()||{};
+      const t = formatTime(Number(x.atMs||0));
+      const who = x.byName || "—";
+      const rk = x.byRank || "—";
+      lines.push(`${t} • ${who} (${rk}) • ${x.action}${x.details ? " — " + x.details : ""}`);
+    });
+    showLogsModal(lines.reverse());
+  }catch(err){
+    showLogsModal(["تعذر تحميل السجل (تحقق من صلاحيات Firestore Rules لمجموعة globalLogs)."]);
+  }
+});
+
+/* ✅ Moderation */
+async function adminKick(targetUid, targetName){
+  await update(ref(rtdb, `moderation/${targetUid}`), { kickedAt: nowMs(), reason:"kick", by:user.uid });
+  await writeSystemText(`🚪 تم طرد ${targetName} بواسطة ${ADMIN_DISPLAY_NAME}`, "kick", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("kick", targetName);
+}
+async function adminBan(targetUid, targetName){
+  await update(ref(rtdb, `moderation/${targetUid}`), { banned:true, bannedAt: nowMs(), reason:"ban", by:user.uid });
+  await writeSystemText(`⛔ تم حظر ${targetName} بواسطة ${ADMIN_DISPLAY_NAME}`, "ban", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("ban", targetName);
+}
+async function adminUnban(targetUid, targetName){
+  await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: nowMs(), reason:"unban", by:user.uid });
+  await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة ${ADMIN_DISPLAY_NAME}`, "unban", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("unban", targetName);
+}
+async function adminMute(targetUid, targetName){
+  await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, mutedAt: nowMs() });
+  await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:true });
+  await writeSystemText(`🔇 تم كتم ${targetName} بواسطة ${ADMIN_DISPLAY_NAME}`, "mute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("mute", targetName);
+}
+async function adminUnmute(targetUid, targetName){
+  await update(ref(rtdb, `moderation/${targetUid}`), { muted:false, mutedUntil:0, reason:"unmute", by:user.uid, unmutedAt: nowMs() });
+  await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:false });
+  await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة ${ADMIN_DISPLAY_NAME}`, "unmute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("unmute", targetName);
+}
+
+async function setRank(targetUid, targetName, rank){
+  if (!isAdmin) return;
+  if (!targetUid || targetUid === user.uid) return;
+
+  const r = (rank && RANKS[rank]) ? rank : "none";
+  await set(ref(rtdb, `ranks/${targetUid}`), {
+    rank: r,
+    by: user.uid,
+    byName: ADMIN_DISPLAY_NAME,
+    at: nowMs()
   });
 
-  selfMuteBtn.addEventListener("click", async ()=>{
-    hideRoomMenu();
-    if (!isAdmin || !user) return;
-    await update(ref(rtdb, `moderation/${user.uid}`), { muted:true, mutedUntil:0, reason:"selfMute", by:user.uid, mutedAt: nowMs() });
-    await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:true });
-    await writeSystemText(`🔇 الأدمن كتم نفسه`, "selfMute", {uid:user.uid,name:profile?.name});
-    await writeActionLog("selfMute", "");
-  });
-  selfUnmuteBtn.addEventListener("click", async ()=>{
-    hideRoomMenu();
-    if (!isAdmin || !user) return;
-    await update(ref(rtdb, `moderation/${user.uid}`), { muted:false, mutedUntil:0, reason:"selfUnmute", by:user.uid, unmutedAt: nowMs() });
-    await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:false });
-    await writeSystemText(`🔊 الأدمن فك كتم نفسه`, "selfUnmute", {uid:user.uid,name:profile?.name});
-    await writeActionLog("selfUnmute", "");
-  });
+  try{ await update(ref(rtdb, `onlineUsers/${targetUid}`), { rank: r }); }catch{}
 
-  /* ✅ Global background (admin sets; all users see) */
-  const BG_DOC = doc(db, "globalSettings", "ui");
-  function bgUrlFromChoice(n){
-    const nn = Number(n||0);
-    if (nn === 1) return 'url("back1.gif")';
-    if (nn === 2) return 'url("back2.gif")';
-    if (nn === 3) return 'url("back3.gif")';
-    return "none";
-  }
-  function applySiteBg(choice){
-    const css = bgUrlFromChoice(choice);
-    siteBgLayer.style.backgroundImage = css === "none" ? "" : css;
-    siteBgLayer.style.display = css === "none" ? "none" : "block";
-  }
-  function startGlobalBgListener(){
-    onSnapshot(BG_DOC, (snap)=>{
-      if (!snap.exists()) { applySiteBg(0); return; }
-      const d = snap.data() || {};
-      applySiteBg(Number(d.bgChoice || 0));
-    }, ()=>{ /* ignore */ });
-  }
-  async function setGlobalBg(choice){
-    if (!isAdmin) return;
-    await setDoc(BG_DOC, {
-      bgChoice: Number(choice||0),
-      updatedAt: serverTimestamp(),
-      updatedBy: user?.uid || null
-    }, { merge:true });
-    await writeActionLog("bg", `bgChoice=${Number(choice||0)}`);
-  }
-  bg1Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(1); });
-  bg2Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(2); });
-  bg3Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(3); });
-  bg0Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(0); });
+  const msg = (r === "none")
+    ? `🧽 تم إزالة الرتبة عن ${targetName}`
+    : `🏷️ تم إعطاء ${targetName} رتبة ${rankEmoji(r)}`;
 
-  /* ✅ Watch ranks in RTDB */
-  function startRanksListener(){
-    onValue(ref(rtdb, "ranks"), (snap)=>{
-      const v = snap.val() || {};
-      const map = {};
-      Object.keys(v).forEach(uid=>{
-        const r = v[uid]?.rank || "none";
-        map[uid] = (RANKS[r] ? r : "none");
+  await writePrivateSystem(msg, [user.uid, targetUid], "rank");
+  await writeActionLog("rank", `${targetName} -> ${r}`);
+
+  ranksMap[targetUid] = r;
+}
+
+/* ✅ Clear for ALL including admin (cutoff for everyone) */
+async function adminClearForAll(){
+  if (!isAdmin) return;
+
+  const clearedAtMs = nowMs();
+  await setDoc(doc(db, "globalMeta", "clear"), {
+    clearedAtMs,
+    byUid:user.uid,
+    byName: ADMIN_DISPLAY_NAME,
+    createdAt: serverTimestamp()
+  }, { merge:true });
+
+  await writeSystemText(`🧹 تم مسح النص بواسطة الأدمن`, "clear", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("clear", "");
+}
+adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
+
+async function updatePresenceStatus(statusVal, first=false){
+  const onlineRef = ref(rtdb, "onlineUsers/" + user.uid);
+  const device = window.matchMedia("(pointer: coarse)").matches ? "mobile" : "pc";
+
+  const displayName = (isAdmin ? ADMIN_DISPLAY_NAME : profile.name);
+
+  const payload = {
+    uid: user.uid,
+    name: displayName,
+    gender: profile.gender, // kept, but not shown in online list
+    age: profile.age,
+    country: profile.country || "",
+    nameColor: profile.nameColor,
+    textColor: profile.textColor,
+    status: statusVal || "online",
+    statusText: statusLabel(statusVal || "online"),
+    device,
+    isAdmin,
+    isGuest,
+    muted:false,
+    rank: rankOf(user.uid)
+  };
+  await set(onlineRef, payload);
+  if (first) onDisconnect(onlineRef).remove();
+}
+
+async function writeJoinLeave(type){
+  const who = isAdmin ? ADMIN_DISPLAY_NAME : (profile?.name || "—");
+  const text =
+    type === "join" ? `${who} دخل الشات` :
+    type === "leave" ? `${who} خرج من الشات` : "";
+  return addDoc(collection(db, "globalMessages"), {
+    system:true, type, text,
+    actorUid:user.uid, actorName:who,
+    createdAt: serverTimestamp(), createdAtMs: nowMs()
+  });
+}
+
+function watchConnection(){
+  const connRef = ref(rtdb, ".info/connected");
+  onValue(connRef, (snap)=>{
+    const connected = snap.val() === true;
+    connDot.classList.toggle("on", connected);
+    connText.textContent = connected ? "متصل" : "غير متصل";
+  });
+}
+
+function startModerationListener(){
+  onValue(ref(rtdb, `moderation/${user.uid}`), async (snap)=>{
+    const m = snap.val();
+    if (!m) return;
+
+    if (m.banned === true){
+      showAppModal({
+        title:"⛔ تم حظرك",
+        text:"تم حظرك من الشات.\nسيتم إخراجك الآن.",
+        actions:[{label:"رجوع للهوم", onClick:()=>forceExitToHome()}]
       });
-      ranksMap = map;
+      setTimeout(forceExitToHome, 1200);
+      return;
+    }
 
-      if (user && profile){
-        try{ update(ref(rtdb, `onlineUsers/${user.uid}`), { rank: rankOf(user.uid) }); }catch{}
-      }
-
-      adminClearBtn.style.display = isAdmin ? "inline-flex" : "none"; // ✅ admin only
-    });
-  }
-
-  function startOnlineListener(){
-    onValue(ref(rtdb, "onlineUsers"), (snap)=>{
-      const users = snap.val() || {};
-      const arr = Object.values(users);
-
-      onlineCount.textContent = String(arr.length);
-      onlineList.innerHTML = "";
-
-      arr.sort((a,b)=>{
-        const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-        const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid);
-        if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
-        return (a.name||"").localeCompare(b.name||"");
-      }).forEach((u)=>{
-        const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
-        const row = document.createElement("div");
-
-        // ✅ apply rank row class (whole row bg)
-        const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
-        const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
-        row.className = "userRow" + (isRowAdmin ? " admin" : "") + (rankRowClass ? (" " + rankRowClass) : "");
-
-        const left = document.createElement("div");
-        left.className = "userMeta";
-
-        const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-
-        // ✅ mute indicator emoji only
-        const mutedBadge = (u.muted === true) ? `<span class="mutedEmoji" title="مكتوم">🔇</span>` : "";
-
-        // ✅ country flag (replaces gender icon in online list)
-        const flag = countryCodeToFlagEmoji(u.country || "");
-
-        const nameHtml = `
-          ${(!isRowAdmin && ru && ru !== "none") ? rankIconHtml(ru) : ""}
-          <span style="color:${escapeHtml(u.nameColor||"#facc15")};font-weight:900">${escapeHtml(u.name || "مستخدم")}</span>
-          ${guestHtml}
-        `;
-
-        const devIcon = (u.device === "mobile") ? "📱" : "🖥️";
-
-        left.innerHTML = `
-          <b><span title="الدولة">${flag}</span> ${nameHtml} ${mutedBadge}</b>
-          <span>
-            <span class="miniPill">
-              <span class="devIcon" title="الجهاز">${devIcon}</span>
-              <span>${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
-            </span>
-            ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile?.nameColor||"#facc15")};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
-          </span>
-        `;
-        row.appendChild(left);
-
-        const actions = document.createElement("div");
-        actions.className = "actionsRow";
-
-        // ✅ admin dots still for lock/selfmute menu (NOT backgrounds anymore)
-        if (isRowAdmin && isAdmin){
-          const dots = document.createElement("button");
-          dots.type = "button";
-          dots.className = "adminRoomDots";
-          dots.textContent = "⋮";
-          dots.title = "قائمة الأدمن";
-          dots.addEventListener("click",(e)=>{
-            e.stopPropagation();
-            roomLockBtn.style.display = roomLocked ? "none" : "block";
-            roomUnlockBtn.style.display = roomLocked ? "block" : "none";
-            // background options will be shown only when triggered via top bg button, but keeping menu safe
-            showRoomMenu(e.clientX, e.clientY);
-          });
-          actions.appendChild(dots);
-        }
-
-        if (u.uid !== user.uid){
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "ignoreBtn";
-
-          const targetIsAdmin = isRowAdmin;
-          const ignored = isCurrentlyIgnored(u.uid);
-
-          btn.textContent = ignored ? "🚫" : "⛔";
-          btn.classList.toggle("ignored", ignored);
-          btn.disabled = targetIsAdmin;
-          btn.title = targetIsAdmin ? "لا يمكن تجاهل الأدمن" : (ignored ? "إلغاء التجاهل" : "تجاهل");
-
-          btn.addEventListener("click",(e)=>{
-            e.stopPropagation();
-            if (targetIsAdmin) return;
-            toggleIgnore(u.uid);
-            const nowIgnored = isCurrentlyIgnored(u.uid);
-            btn.textContent = nowIgnored ? "🚫" : "⛔";
-            btn.classList.toggle("ignored", nowIgnored);
-          });
-
-          actions.appendChild(btn);
-
-          const canSeeDots = isAdmin || canMute() || canKick() || canBan();
-          if (canSeeDots){
-            const more = document.createElement("button");
-            more.type = "button";
-            more.className = "moreBtn";
-            more.textContent = "⋮";
-            more.title = "خيارات";
-
-            more.addEventListener("click",(e)=>{
-              e.stopPropagation();
-              ctxUser = { uid: u.uid, name: u.name, isAdmin: isRowAdmin, isGuest: u.isGuest === true };
-
-              const targetIsAdmin2 = ctxUser.isAdmin === true;
-              const showMod = !targetIsAdmin2 && ctxUser.uid !== user.uid;
-
-              const allowKick = showMod && canKick();
-              const allowMute = showMod && canMute();
-              const allowBan  = showMod && canBan();
-
-              modActions.style.display = (showMod && (allowKick || allowMute || allowBan)) ? "block" : "none";
-              ctxKickBtn.style.display = allowKick ? "block" : "none";
-              ctxMuteBtn.style.display = allowMute ? "block" : "none";
-              ctxUnmuteBtn.style.display = allowMute ? "block" : "none";
-              ctxBanBtn.style.display = allowBan ? "block" : "none";
-              ctxUnbanBtn.style.display = allowBan ? "block" : "none";
-
-              rankActions.style.display = (isAdmin && showMod) ? "block" : "none";
-              showCtxMenu(e.clientX, e.clientY);
-            });
-
-            actions.appendChild(more);
-          }
-        }
-
-        row.appendChild(actions);
-        onlineList.appendChild(row);
+    if (m.kickedAt && nowMs() - m.kickedAt < 15000){
+      showAppModal({
+        title:"🚪 تم طردك",
+        text:"تم طردك من الشات.\nسيتم إخراجك الآن.",
+        actions:[{label:"رجوع للهوم", onClick:()=>forceExitToHome()}]
       });
-    });
-  }
-
-  function renderMsgTextToHtml(text){
-    let esc = escapeHtml(text || "");
-    esc = esc.replace(/:!!10/g, '__EMOJI10__');
-    esc = esc.replace(/:!!9/g,  '__EMOJI9__');
-    esc = esc.replace(/:!!8/g,  '__EMOJI8__');
-    esc = esc.replace(/:!!7/g,  '__EMOJI7__');
-    esc = esc.replace(/:!!6/g,  '__EMOJI6__');
-    esc = esc.replace(/:!!5/g,  '__EMOJI5__');
-    esc = esc.replace(/:!!4/g,  '__EMOJI4__');
-    esc = esc.replace(/:!!3/g,  '__EMOJI3__');
-    esc = esc.replace(/:!!2/g,  '__EMOJI2__');
-    esc = esc.replace(/:!!/g,   '__EMOJI1__');
-
-    for (let i=1;i<=10;i++){
-      esc = esc.replaceAll(`__EMOJI${i}__`, `<img class="chatEmojiImg" src="emoji${i}.gif" alt="emoji${i}">`);
-    }
-    return esc;
-  }
-
-  function startGlobalMessagesListener(){
-    initialLoaded = false;
-
-    const q = __MOBILE_DEVICE
-      ? query(collection(db, "globalMessages"), orderBy("createdAt", "asc"), limitToLast(600))
-      : query(collection(db, "globalMessages"), where("createdAtMs", ">=", joinAtMs), orderBy("createdAtMs", "asc"));
-
-    onSnapshot(q, (snap)=>{
-      messagesDiv.innerHTML = "";
-      const isFirst = !initialLoaded;
-
-      // ✅ clear cutoff applies to EVERYONE (including admin now)
-      const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
-
-      const items = [];
-      snap.forEach((docx)=>{
-        const m = docx.data();
-        const tServer = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
-        const t = Number(tServer || m.createdAtMs || 0);
-        items.push({ id: docx.id, m, t });
-      });
-
-      items.sort((a,b)=>{
-        if (a.t !== b.t) return a.t - b.t;
-        return a.id.localeCompare(b.id);
-      });
-
-      for (const it of items){
-        const m = it.m;
-        const t = it.t;
-
-        if (t < cutoff) continue;
-
-        if (m.system && m.private === true){
-          const to = Array.isArray(m.to) ? m.to : [];
-          if (!user || !to.includes(user.uid)) continue;
-        }
-
-        if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) continue;
-
-        if (m.system){
-          const div = document.createElement("div");
-          const isBigBoss = (m.type === "bigBoss");
-          div.className = "system" + (isBigBoss ? " systemBigBoss" : "");
-          div.textContent = m.text || "";
-          messagesDiv.appendChild(div);
-
-          if (!isFirst && (m.type==="join" || m.type==="leave") && m.actorUid && m.actorUid !== user.uid){
-            const now = nowMs();
-            if (now - lastSoundAt > 800){
-              lastSoundAt = now;
-              toastSound.currentTime = 0;
-              toastSound.play().catch(()=>{});
-            }
-          }
-        } else {
-          const row = document.createElement("div");
-          row.className = "msgRow" + (m.uid === user.uid ? " me" : "");
-
-          const div = document.createElement("div");
-          div.className = "msg" + (m.uid === user.uid ? " me" : "");
-          div.dataset.mid = it.id;
-
-          const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-
-          const isMsgAdmin = (m.isAdmin === true) || (m.uid && ADMIN_UIDS.includes(m.uid));
-          const r = (m.rank && RANKS[m.rank]) ? m.rank : rankOf(m.uid);
-          const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
-          const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
-
-          const nameHtml = isMsgAdmin
-            ? `<span style="color:#facc15;font-weight:900">𝕄𝕃𝕆𝟝 ヅ</span> ${guestHtml}`
-            : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
-
-          const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
-            ? `<div class="replyQuote"><b>رد على: ${escapeHtml(m.replyTo.name)}</b><div>${escapeHtml(m.replyTo.text)}</div></div>`
-            : "";
-
-          div.innerHTML = `
-            <div class="msgHead"><div class="nameTag ${nameSizeClass}">${nameHtml}</div></div>
-            ${replyBlock}
-            <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${renderMsgTextToHtml(m.text||"")}</div>
-            <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
-            <button class="replyBtn" type="button" title="رد">↩ رد</button>
-          `;
-
-          div.querySelector(".replyBtn").addEventListener("click", ()=>{
-            replyTarget = {
-              id: it.id,
-              uid: m.uid,
-              name: m.name || "مستخدم",
-              text: String(m.text||"").slice(0,160)
-            };
-            replyPreviewName.textContent = `رد على: ${replyTarget.name}`;
-            replyPreviewText.textContent = replyTarget.text;
-            replyPreview.style.display = "flex";
-            msgInput.focus();
-          });
-
-          row.appendChild(div);
-          messagesDiv.appendChild(row);
-        }
-      }
-
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      initialLoaded = true;
-    });
-  }
-
-  replyCancelBtn.addEventListener("click", ()=>{
-    replyTarget = null;
-    replyPreview.style.display = "none";
-  });
-
-  ctxKickBtn.addEventListener("click", async ()=>{
-    if (!ctxUser || ctxUser.isAdmin) return;
-    if (!canKick()) return;
-    await adminKick(ctxUser.uid, ctxUser.name || "مستخدم");
-    hideCtxMenu();
-  });
-  ctxMuteBtn.addEventListener("click", async ()=>{
-    if (!ctxUser || ctxUser.isAdmin) return;
-    if (!canMute()) return;
-    await adminMute(ctxUser.uid, ctxUser.name || "مستخدم");
-    hideCtxMenu();
-  });
-  ctxUnmuteBtn.addEventListener("click", async ()=>{
-    if (!ctxUser || ctxUser.isAdmin) return;
-    if (!canMute()) return;
-    await adminUnmute(ctxUser.uid, ctxUser.name || "مستخدم");
-    hideCtxMenu();
-  });
-  ctxBanBtn.addEventListener("click", async ()=>{
-    if (!ctxUser || ctxUser.isAdmin) return;
-    if (!canBan()) return;
-    await adminBan(ctxUser.uid, ctxUser.name || "مستخدم");
-    hideCtxMenu();
-  });
-  ctxUnbanBtn.addEventListener("click", async ()=>{
-    if (!ctxUser || ctxUser.isAdmin) return;
-    if (!canBan()) return;
-    await adminUnban(ctxUser.uid, ctxUser.name || "مستخدم");
-    hideCtxMenu();
-  });
-
-  ctxRankLegend.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "legend"); hideCtxMenu(); });
-  ctxRankVip.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "vip"); hideCtxMenu(); });
-  ctxRankRoot.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "root"); hideCtxMenu(); });
-  ctxRankGirl.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "girl"); hideCtxMenu(); });
-  ctxRankNone.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "none"); hideCtxMenu(); });
-
-  // ✅✅✅ (Mobile-only) إرسال من الكيبورد بدون زر (Enter + دبل-سبيس)
-  let __lastSpaceSendAt = 0;
-  msgInput.addEventListener("keydown",(e)=>{
-    if (!__MOBILE_DEVICE) return;
-
-    if (e.key === "Enter"){
-      e.preventDefault();
-      if (!msgInput.disabled) chatForm.requestSubmit();
+      setTimeout(forceExitToHome, 1200);
       return;
     }
 
-    if (e.key === " "){
-      const v = msgInput.value || "";
-      const now = Date.now();
-      const fast = (now - __lastSpaceSendAt) < 320;
-      __lastSpaceSendAt = now;
-
-      if (fast && collapseSpaces(v).length > 0){
-        e.preventDefault();
-        if (!msgInput.disabled) chatForm.requestSubmit();
-      }
-    }
-  });
-
-  chatForm.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    if (!user || !profile) return;
-
-    const text = collapseSpaces(msgInput.value);
-    if (!text) return;
-
-    if (roomLocked && !canWriteWhenLocked()){
-      showAppModal({ title:"🚫 الروم مقفل", text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
-      return;
-    }
-
-    if (msgInput.disabled) return;
-
-    if (!isAdmin && isProfane(text)){
-      showAppModal({ title:"❌ رسالة مرفوضة", text:"الرسالة مرفوضة (كلام غير لائق).", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
-      return;
-    }
-
-    const replyTo = replyTarget ? { uid: replyTarget.uid, name: replyTarget.name, text: replyTarget.text, id: replyTarget.id } : null;
-
-    msgInput.value = "";
-    replyTarget = null;
-    replyPreview.style.display = "none";
-
-    await addDoc(collection(db, "globalMessages"), {
-      system:false, text,
-      uid:user.uid,
-      name:profile.name,
-      gender:profile.gender,
-      age:profile.age,
-      country: profile.country || "",
-      nameColor:profile.nameColor,
-      textColor:profile.textColor,
-      isAdmin, isGuest,
-      replyTo,
-      rank: rankOf(user.uid),
-      createdAt: serverTimestamp(),
-      createdAtMs: nowMs()
-    });
-  });
-
-  function cleanupGuestLocal(){
-    try{
-      if (user?.isAnonymous){
-        localStorage.removeItem(profKey(user.uid));
-        localStorage.removeItem(statusKey(user.uid));
-        localStorage.removeItem(ignoreKey(user.uid));
-        localStorage.removeItem(adminSessionKey(user.uid));
-      }
-    }catch{}
-  }
-
-  exitBtn.addEventListener("click", async ()=>{
-    try{
-      if (user && profile){
-        await writeJoinLeave("leave");
-        await remove(ref(rtdb, "onlineUsers/" + user.uid));
-      }
-    }catch{}
-    cleanupGuestLocal();
-    location.href = "index.html";
-  });
-
-  statusSelect.addEventListener("change", async ()=>{
-    if (!user || !profile) return;
-    const s = statusSelect.value || "online";
-    localStorage.setItem(statusKey(user.uid), s);
-    await updatePresenceStatus(s);
-  });
-
-  adminLoginBtn.addEventListener("click", ()=>{
-    setErr(adminErr, "");
-    if (!user) return;
-    const uidAllowed = ADMIN_UIDS.includes(user.uid);
-    if (!uidAllowed){
-      setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
-      return;
-    }
-    const u = (adminUser.value || "").trim();
-    const p = (adminPass.value || "").trim();
-    if (u !== ADMIN_USERNAME || p !== ADMIN_PASSWORD){
-      setErr(adminErr, "بيانات ADMIN غير صحيحة.");
-      return;
-    }
-    localStorage.setItem(adminSessionKey(user.uid), "1");
-    setErr(adminErr, "✅ تم تفعيل الأدمن.");
-    isAdmin = true;
-
-    logBtn.style.display = "inline-flex";
-    bgBtn.style.display  = "inline-flex";
-    adminClearBtn.style.display = "inline-flex";
-
-    // ✅ big boss message
-    try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:profile?.name}); }catch{}
-  });
-
-  function showForm(){ formBox.style.display = "block"; }
-
-  homeBtn.addEventListener("click", ()=>{
-    cleanupGuestLocal();
-    location.href = "index.html";
-  });
-
-  backListBtn.addEventListener("click", ()=>{
-    setErr(modalErr,"");
-    formBox.style.display = "none";
-  });
-
-  chooseLogin.addEventListener("click", ()=>{
-    setErr(modalErr,"");
-    if (!user){ location.href = "login.html"; return; }
-    if (user.isAnonymous){ location.href = "login.html"; return; }
-    isGuest = false;
-    showForm();
-  });
-
-  chooseGuest.addEventListener("click", async ()=>{
-    setErr(modalErr,"");
-    if (user && !user.isAnonymous){
-      setErr(modalErr, "أنت مسجل دخول بالفعل—استخدم خيار تسجيل دخول.");
-      return;
-    }
-    try{
-      if (!user){
-        await signInAnonymously(auth);
-      }
-      isGuest = true;
-      showForm();
-    }catch(err){
-      setErr(modalErr, "❌ فشل الدخول كضيف. جرّب مرة ثانية.");
-      console.error(err);
-    }
-  });
-
-  enterBtn.addEventListener("click", async ()=>{
-    setErr(modalErr, "");
-
-    const rawName = collapseSpaces(nameInput.value);
-    const g = genderInput.value;
-    const age = Number(ageInput.value);
-    const country = (countryInput.value || "").trim().toUpperCase();
-
-    if (!rawName || rawName.length < 3){ setErr(modalErr, "الاسم لازم يكون 3 أحرف على الأقل."); return; }
-    if (!g){ setErr(modalErr, "اختار الجنس."); return; }
-    if (!Number.isFinite(age) || age < 10){ setErr(modalErr, "العمر لازم يكون 10 أو أكثر."); return; }
-    if (!country || country.length !== 2){ setErr(modalErr, "اختار الدولة."); return; }
-    if (!user){ setErr(modalErr, "اختر طريقة الدخول أولاً."); return; }
-
-    profile = {
-      name: rawName,
-      gender: g,
-      age,
-      country,
-      nameColor: nameColorInput.value || "#facc15",
-      textColor: textColorInput.value || "#f9fafb"
-    };
-
-    if (!user.isAnonymous){
-      localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
-    }
-
-    const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
-    statusSelect.value = savedStatus;
-
-    try{
-      await enterChat(savedStatus);
-    }catch(err){
-      console.error(err);
-      setErr(modalErr, "❌ صار خطأ بالدخول للشات. جرّب مرة ثانية.");
-    }
-  });
-
-  async function enterChat(statusVal){
-    isGuest = !!user?.isAnonymous;
-    isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
-
-    logBtn.style.display = isAdmin ? "inline-flex" : "none";
-    bgBtn.style.display  = isAdmin ? "inline-flex" : "none";
-    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
-
-    msgInput.disabled = false;
-    sendBtn.disabled = false;
-
-    joinAtMs = nowMs();
-
-    await updatePresenceStatus(statusVal, true);
-    await writeJoinLeave("join");
-
-    modal.style.display = "none";
-
-    loadIgnoreWindows();
-    startGlobalBgListener();        // ✅ background visible for all
-    startRanksListener();
-    startClearMetaListener();
-    startRoomLockListener();
-    startOnlineListener();
-    startGlobalMessagesListener();
-    startModerationListener();
+    const until = m.mutedUntil || 0;
+    const muted = (m.muted === true) || (nowMs() < until);
 
     if (roomLocked && !canWriteWhenLocked()){
       msgInput.disabled = true;
       sendBtn.disabled = true;
       msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
-    }
-
-    startDhikrLoop();
-    closeOnlineDrawer();
-  }
-
-  onAuthStateChanged(auth, async (u)=>{
-    user = u || null;
-    meBadge.textContent = "أنت";
-    watchConnection();
-
-    let loadedSaved = false;
-    if (user && !user.isAnonymous){
-      const savedProfile = localStorage.getItem(profKey(user.uid));
-      if (savedProfile){
-        try{
-          const p = JSON.parse(savedProfile);
-          nameInput.value = p.name || "";
-          genderInput.value = p.gender || "";
-          ageInput.value = p.age || "";
-          countryInput.value = p.country || "JO";
-          nameColorInput.value = p.nameColor || randHexColor();
-          textColorInput.value = p.textColor || randHexColor();
-          loadedSaved = true;
-        }catch{}
+    } else {
+      if (isAdmin){
+        msgInput.disabled = false;
+        sendBtn.disabled = false;
+        msgInput.placeholder = "اكتب رسالتك...";
+      } else {
+        msgInput.disabled = muted;
+        sendBtn.disabled = muted;
+        msgInput.placeholder = muted ? "تم كتمك" : "اكتب رسالتك...";
       }
     }
-    if (!loadedSaved){
-      nameColorInput.value = randHexColor();
-      textColorInput.value = randHexColor();
-      countryInput.value = "JO";
+
+    try{ await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted: !!muted }); }catch{}
+  });
+}
+
+function forceExitToHome(){
+  try{ remove(ref(rtdb, "onlineUsers/" + user.uid)); }catch{}
+  location.href = "index.html";
+}
+
+let globalClearedAtMs = 0;
+function startClearMetaListener(){
+  onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
+    if (!snap.exists()) return;
+    const d = snap.data() || {};
+    globalClearedAtMs = Number(d.clearedAtMs || 0);
+  });
+}
+
+function startRoomLockListener(){
+  onValue(ref(rtdb, "roomState/locked"), (snap)=>{
+    roomLocked = snap.val() === true;
+    chatHint.innerHTML = roomLocked ? "🚫 الروم مقفل" : 'دردش وخلي الشباب <span style="color:#facc15">تستفاد</span>';
+
+    if (roomLocked && !canWriteWhenLocked()){
+      msgInput.disabled = true;
+      sendBtn.disabled = true;
+      msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
+    } else {
+      if (msgInput.placeholder === "🚫 الروم مقفل بواسطة الأدمن"){
+        msgInput.disabled = false;
+        sendBtn.disabled = false;
+        msgInput.placeholder = "اكتب رسالتك...";
+      }
+    }
+  });
+}
+
+async function setRoomLocked(next){
+  if (!isAdmin) return;
+  await set(ref(rtdb, "roomState/locked"), !!next);
+  await writeSystemText(next ? `🔒 ${ADMIN_DISPLAY_NAME} قفل الروم` : `🔓 ${ADMIN_DISPLAY_NAME} فتح الروم`, next ? "lock" : "unlock", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog(next ? "lock" : "unlock", "");
+}
+
+roomLockBtn.addEventListener("click", async ()=>{
+  hideRoomMenu();
+  await setRoomLocked(true);
+});
+roomUnlockBtn.addEventListener("click", async ()=>{
+  hideRoomMenu();
+  await setRoomLocked(false);
+});
+
+selfMuteBtn.addEventListener("click", async ()=>{
+  hideRoomMenu();
+  if (!isAdmin || !user) return;
+  await update(ref(rtdb, `moderation/${user.uid}`), { muted:true, mutedUntil:0, reason:"selfMute", by:user.uid, mutedAt: nowMs() });
+  await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:true });
+  await writeSystemText(`🔇 الأدمن كتم نفسه`, "selfMute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("selfMute", "");
+});
+selfUnmuteBtn.addEventListener("click", async ()=>{
+  hideRoomMenu();
+  if (!isAdmin || !user) return;
+  await update(ref(rtdb, `moderation/${user.uid}`), { muted:false, mutedUntil:0, reason:"selfUnmute", by:user.uid, unmutedAt: nowMs() });
+  await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:false });
+  await writeSystemText(`🔊 الأدمن فك كتم نفسه`, "selfUnmute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("selfUnmute", "");
+});
+
+/* ✅ Global background (admin sets; all users see) */
+const BG_DOC = doc(db, "globalSettings", "ui");
+function bgUrlFromChoice(n){
+  const nn = Number(n||0);
+  if (nn === 1) return 'url("back1.gif")';
+  if (nn === 2) return 'url("back2.gif")';
+  if (nn === 3) return 'url("back3.gif")';
+  return "none";
+}
+function applySiteBg(choice){
+  const css = bgUrlFromChoice(choice);
+  siteBgLayer.style.backgroundImage = css === "none" ? "" : css;
+  siteBgLayer.style.display = css === "none" ? "none" : "block";
+}
+function startGlobalBgListener(){
+  onSnapshot(BG_DOC, (snap)=>{
+    if (!snap.exists()) { applySiteBg(0); return; }
+    const d = snap.data() || {};
+    applySiteBg(Number(d.bgChoice || 0));
+  }, ()=>{ /* ignore */ });
+}
+async function setGlobalBg(choice){
+  if (!isAdmin) return;
+  await setDoc(BG_DOC, {
+    bgChoice: Number(choice||0),
+    updatedAt: serverTimestamp(),
+    updatedBy: user?.uid || null
+  }, { merge:true });
+  await writeActionLog("bg", `bgChoice=${Number(choice||0)}`);
+}
+bg1Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(1); });
+bg2Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(2); });
+bg3Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(3); });
+bg0Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(0); });
+
+/* ✅ Watch ranks in RTDB */
+function startRanksListener(){
+  onValue(ref(rtdb, "ranks"), (snap)=>{
+    const v = snap.val() || {};
+    const map = {};
+    Object.keys(v).forEach(uid=>{
+      const r = v[uid]?.rank || "none";
+      map[uid] = (RANKS[r] ? r : "none");
+    });
+    ranksMap = map;
+
+    if (user && profile){
+      try{ update(ref(rtdb, `onlineUsers/${user.uid}`), { rank: rankOf(user.uid) }); }catch{}
     }
 
-    formBox.style.display = "none";
-    setErr(modalErr, "");
-    setErr(adminErr, "");
-    modal.style.display = "flex";
+    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none"; // ✅ admin only
   });
+}
 
-  window.addEventListener("beforeunload", ()=>{
-    try{
-      if (user && profile){
-        writeJoinLeave("leave");
-        remove(ref(rtdb, "onlineUsers/" + user.uid));
+function startOnlineListener(){
+  onValue(ref(rtdb, "onlineUsers"), (snap)=>{
+    const users = snap.val() || {};
+    const arr = Object.values(users);
+
+    onlineCount.textContent = String(arr.length);
+    onlineList.innerHTML = "";
+
+    arr.sort((a,b)=>{
+      const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid);
+      if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
+      return (a.name||"").localeCompare(b.name||"");
+    }).forEach((u)=>{
+      const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
+      const row = document.createElement("div");
+
+      // ✅ apply rank row class (whole row bg)
+      const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
+      const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
+
+      // ✅ NEW: add "adminCapsule" class for admin background gif via CSS
+      row.className = "userRow" + (isRowAdmin ? " admin adminCapsule" : "") + (rankRowClass ? (" " + rankRowClass) : "");
+
+      const left = document.createElement("div");
+      left.className = "userMeta";
+
+      const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
+
+      // ✅ mute indicator emoji only
+      const mutedBadge = (u.muted === true) ? `<span class="mutedEmoji" title="مكتوم">🔇</span>` : "";
+
+      // ✅ country flag (replaces gender icon in online list)
+      const flag = countryCodeToFlagEmoji(u.country || "");
+
+      // ✅ NEW: admin name + icons + bigger size (CSS will handle too)
+      const nameHtml = isRowAdmin
+        ? `<span class="adminNameBig" style="color:#fff;font-weight:900">${escapeHtml(ADMIN_DISPLAY_NAME)}</span>${ADMIN_ICONS_HTML} ${guestHtml}`
+        : `
+          ${(!isRowAdmin && ru && ru !== "none") ? rankIconHtml(ru) : ""}
+          <span style="color:${escapeHtml(u.nameColor||"#facc15")};font-weight:900">${escapeHtml(u.name || "مستخدم")}</span>
+          ${guestHtml}
+        `;
+
+      const devIcon = (u.device === "mobile") ? "📱" : "🖥️";
+
+      left.innerHTML = `
+        <b><span title="الدولة">${flag}</span> ${nameHtml} ${mutedBadge}</b>
+        <span>
+          <span class="miniPill">
+            <span class="devIcon" title="الجهاز">${devIcon}</span>
+            <span>${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
+          </span>
+          ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile?.nameColor||"#facc15")};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
+        </span>
+      `;
+      row.appendChild(left);
+
+      const actions = document.createElement("div");
+      actions.className = "actionsRow";
+
+      // ✅ admin dots still for lock/selfmute menu (NOT backgrounds anymore)
+      if (isRowAdmin && isAdmin){
+        const dots = document.createElement("button");
+        dots.type = "button";
+        dots.className = "adminRoomDots";
+        dots.textContent = "⋮";
+        dots.title = "قائمة الأدمن";
+        dots.addEventListener("click",(e)=>{
+          e.stopPropagation();
+          roomLockBtn.style.display = roomLocked ? "none" : "block";
+          roomUnlockBtn.style.display = roomLocked ? "block" : "none";
+          showRoomMenu(e.clientX, e.clientY);
+        });
+        actions.appendChild(dots);
       }
-    }catch{}
-    cleanupGuestLocal();
-  });
 
-  /* ✅ Dhikr notifications */
-  const DHIKR = ["صلي على النبي", "سبحان الله", "الحمد لله", "لا اله الا الله", "الله اكبر"];
-  let __dhikrStarted = false;
-  function showDhikr(){
-    const txt = DHIKR[Math.floor(Math.random()*DHIKR.length)];
-    const side = Math.random() < .5 ? "left" : "right";
-    const top = Math.floor(90 + Math.random() * (window.innerHeight - 200));
-    const el = document.createElement("div");
-    el.className = "dhikrToast";
-    el.textContent = txt;
-    el.style.top = top + "px";
-    el.style[side] = "14px";
-    document.body.appendChild(el);
-    setTimeout(()=>{ try{ el.remove(); }catch{} }, 5200);
+      if (u.uid !== user.uid){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ignoreBtn";
+
+        const targetIsAdmin = isRowAdmin;
+        const ignored = isCurrentlyIgnored(u.uid);
+
+        btn.textContent = ignored ? "🚫" : "⛔";
+        btn.classList.toggle("ignored", ignored);
+        btn.disabled = targetIsAdmin;
+        btn.title = targetIsAdmin ? "لا يمكن تجاهل الأدمن" : (ignored ? "إلغاء التجاهل" : "تجاهل");
+
+        btn.addEventListener("click",(e)=>{
+          e.stopPropagation();
+          if (targetIsAdmin) return;
+          toggleIgnore(u.uid);
+          const nowIgnored = isCurrentlyIgnored(u.uid);
+          btn.textContent = nowIgnored ? "🚫" : "⛔";
+          btn.classList.toggle("ignored", nowIgnored);
+        });
+
+        actions.appendChild(btn);
+
+        const canSeeDots = isAdmin || canMute() || canKick() || canBan();
+        if (canSeeDots){
+          const more = document.createElement("button");
+          more.type = "button";
+          more.className = "moreBtn";
+          more.textContent = "⋮";
+          more.title = "خيارات";
+
+          more.addEventListener("click",(e)=>{
+            e.stopPropagation();
+            ctxUser = { uid: u.uid, name: u.name, isAdmin: isRowAdmin, isGuest: u.isGuest === true };
+
+            const targetIsAdmin2 = ctxUser.isAdmin === true;
+            const showMod = !targetIsAdmin2 && ctxUser.uid !== user.uid;
+
+            const allowKick = showMod && canKick();
+            const allowMute = showMod && canMute();
+            const allowBan  = showMod && canBan();
+
+            modActions.style.display = (showMod && (allowKick || allowMute || allowBan)) ? "block" : "none";
+            ctxKickBtn.style.display = allowKick ? "block" : "none";
+            ctxMuteBtn.style.display = allowMute ? "block" : "none";
+            ctxUnmuteBtn.style.display = allowMute ? "block" : "none";
+            ctxBanBtn.style.display = allowBan ? "block" : "none";
+            ctxUnbanBtn.style.display = allowBan ? "block" : "none";
+
+            rankActions.style.display = (isAdmin && showMod) ? "block" : "none";
+            showCtxMenu(e.clientX, e.clientY);
+          });
+
+          actions.appendChild(more);
+        }
+      }
+
+      row.appendChild(actions);
+      onlineList.appendChild(row);
+    });
+  });
+}
+
+function renderMsgTextToHtml(text){
+  let esc = escapeHtml(text || "");
+  esc = esc.replace(/:!!10/g, '__EMOJI10__');
+  esc = esc.replace(/:!!9/g,  '__EMOJI9__');
+  esc = esc.replace(/:!!8/g,  '__EMOJI8__');
+  esc = esc.replace(/:!!7/g,  '__EMOJI7__');
+  esc = esc.replace(/:!!6/g,  '__EMOJI6__');
+  esc = esc.replace(/:!!5/g,  '__EMOJI5__');
+  esc = esc.replace(/:!!4/g,  '__EMOJI4__');
+  esc = esc.replace(/:!!3/g,  '__EMOJI3__');
+  esc = esc.replace(/:!!2/g,  '__EMOJI2__');
+  esc = esc.replace(/:!!/g,   '__EMOJI1__');
+
+  for (let i=1;i<=10;i++){
+    esc = esc.replaceAll(`__EMOJI${i}__`, `<img class="chatEmojiImg" src="emoji${i}.gif" alt="emoji${i}">`);
   }
-  function startDhikrLoop(){
-    if (__dhikrStarted) return;
-    __dhikrStarted = true;
-    setTimeout(showDhikr, 1500);
-    setInterval(showDhikr, 30000);
+  return esc;
+}
+
+function startGlobalMessagesListener(){
+  initialLoaded = false;
+
+  const q = __MOBILE_DEVICE
+    ? query(collection(db, "globalMessages"), orderBy("createdAt", "asc"), limitToLast(600))
+    : query(collection(db, "globalMessages"), where("createdAtMs", ">=", joinAtMs), orderBy("createdAtMs", "asc"));
+
+  onSnapshot(q, (snap)=>{
+    messagesDiv.innerHTML = "";
+    const isFirst = !initialLoaded;
+
+    // ✅ clear cutoff applies to EVERYONE (including admin now)
+    const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
+
+    const items = [];
+    snap.forEach((docx)=>{
+      const m = docx.data();
+      const tServer = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
+      const t = Number(tServer || m.createdAtMs || 0);
+      items.push({ id: docx.id, m, t });
+    });
+
+    items.sort((a,b)=>{
+      if (a.t !== b.t) return a.t - b.t;
+      return a.id.localeCompare(b.id);
+    });
+
+    for (const it of items){
+      const m = it.m;
+      const t = it.t;
+
+      if (t < cutoff) continue;
+
+      if (m.system && m.private === true){
+        const to = Array.isArray(m.to) ? m.to : [];
+        if (!user || !to.includes(user.uid)) continue;
+      }
+
+      if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) continue;
+
+      if (m.system){
+        const div = document.createElement("div");
+        const isBigBoss = (m.type === "bigBoss");
+        div.className = "system" + (isBigBoss ? " systemBigBoss" : "");
+        div.textContent = m.text || "";
+        messagesDiv.appendChild(div);
+
+        if (!isFirst && (m.type==="join" || m.type==="leave") && m.actorUid && m.actorUid !== user.uid){
+          const now = nowMs();
+          if (now - lastSoundAt > 800){
+            lastSoundAt = now;
+            toastSound.currentTime = 0;
+            toastSound.play().catch(()=>{});
+          }
+        }
+      } else {
+        const row = document.createElement("div");
+        row.className = "msgRow" + (m.uid === user.uid ? " me" : "");
+
+        const div = document.createElement("div");
+
+        const isMsgAdmin = (m.isAdmin === true) || (m.uid && ADMIN_UIDS.includes(m.uid));
+
+        // ✅ NEW: add adminMsg class so CSS can make bubble yellow etc.
+        div.className = "msg" + (m.uid === user.uid ? " me" : "") + (isMsgAdmin ? " adminMsg" : "");
+        div.dataset.mid = it.id;
+
+        const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
+
+        const r = (m.rank && RANKS[m.rank]) ? m.rank : rankOf(m.uid);
+        const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
+        const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
+
+        // ✅ Admin name + icons (icons blink)
+        const nameHtml = isMsgAdmin
+          ? `<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span>${ADMIN_ICONS_HTML} ${guestHtml}`
+          : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
+
+        const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
+          ? `<div class="replyQuote"><b>رد على: ${escapeHtml(m.replyTo.name)}</b><div>${escapeHtml(m.replyTo.text)}</div></div>`
+          : "";
+
+        div.innerHTML = `
+          <div class="msgHead">
+            <div class="nameTag ${nameSizeClass} ${isMsgAdmin ? "adminNameTag" : ""}">
+              ${nameHtml}
+            </div>
+          </div>
+          ${replyBlock}
+          <div class="msgText" style="color:${escapeHtml(m.textColor || "#f9fafb")}">${renderMsgTextToHtml(m.text||"")}</div>
+          <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
+          <button class="replyBtn" type="button" title="رد">↩ رد</button>
+        `;
+
+        div.querySelector(".replyBtn").addEventListener("click", ()=>{
+          replyTarget = {
+            id: it.id,
+            uid: m.uid,
+            name: m.name || "مستخدم",
+            text: String(m.text||"").slice(0,160)
+          };
+          replyPreviewName.textContent = `رد على: ${replyTarget.name}`;
+          replyPreviewText.textContent = replyTarget.text;
+          replyPreview.style.display = "flex";
+          msgInput.focus();
+        });
+
+        row.appendChild(div);
+        messagesDiv.appendChild(row);
+      }
+    }
+
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    initialLoaded = true;
+  });
+}
+
+replyCancelBtn.addEventListener("click", ()=>{
+  replyTarget = null;
+  replyPreview.style.display = "none";
+});
+
+ctxKickBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canKick()) return;
+  await adminKick(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+ctxMuteBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canMute()) return;
+  await adminMute(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+ctxUnmuteBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canMute()) return;
+  await adminUnmute(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+ctxBanBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canBan()) return;
+  await adminBan(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+ctxUnbanBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canBan()) return;
+  await adminUnban(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+
+ctxRankLegend.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "legend"); hideCtxMenu(); });
+ctxRankVip.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "vip"); hideCtxMenu(); });
+ctxRankRoot.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "root"); hideCtxMenu(); });
+ctxRankGirl.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "girl"); hideCtxMenu(); });
+ctxRankNone.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "none"); hideCtxMenu(); });
+
+// ✅✅✅ (Mobile-only) إرسال من الكيبورد بدون زر (Enter + دبل-سبيس)
+let __lastSpaceSendAt = 0;
+msgInput.addEventListener("keydown",(e)=>{
+  if (!__MOBILE_DEVICE) return;
+
+  if (e.key === "Enter"){
+    e.preventDefault();
+    if (!msgInput.disabled) chatForm.requestSubmit();
+    return;
   }
+
+  if (e.key === " "){
+    const v = msgInput.value || "";
+    const now = Date.now();
+    const fast = (now - __lastSpaceSendAt) < 320;
+    __lastSpaceSendAt = now;
+
+    if (fast && collapseSpaces(v).length > 0){
+      e.preventDefault();
+      if (!msgInput.disabled) chatForm.requestSubmit();
+    }
+  }
+});
+
+chatForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  if (!user || !profile) return;
+
+  const text = collapseSpaces(msgInput.value);
+  if (!text) return;
+
+  if (roomLocked && !canWriteWhenLocked()){
+    showAppModal({ title:"🚫 الروم مقفل", text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
+    return;
+  }
+
+  if (msgInput.disabled) return;
+
+  if (!isAdmin && isProfane(text)){
+    showAppModal({ title:"❌ رسالة مرفوضة", text:"الرسالة مرفوضة (كلام غير لائق).", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
+    return;
+  }
+
+  const replyTo = replyTarget ? { uid: replyTarget.uid, name: replyTarget.name, text: replyTarget.text, id: replyTarget.id } : null;
+
+  msgInput.value = "";
+  replyTarget = null;
+  replyPreview.style.display = "none";
+
+  const finalName = isAdmin ? ADMIN_DISPLAY_NAME : profile.name;
+
+  await addDoc(collection(db, "globalMessages"), {
+    system:false, text,
+    uid:user.uid,
+    name: finalName,
+    gender:profile.gender,
+    age:profile.age,
+    country: profile.country || "",
+    nameColor:profile.nameColor,
+    textColor:profile.textColor,
+    isAdmin, isGuest,
+    replyTo,
+    rank: rankOf(user.uid),
+    createdAt: serverTimestamp(),
+    createdAtMs: nowMs()
+  });
+});
+
+function cleanupGuestLocal(){
+  try{
+    if (user?.isAnonymous){
+      localStorage.removeItem(profKey(user.uid));
+      localStorage.removeItem(statusKey(user.uid));
+      localStorage.removeItem(ignoreKey(user.uid));
+      localStorage.removeItem(adminSessionKey(user.uid));
+    }
+  }catch{}
+}
+
+exitBtn.addEventListener("click", async ()=>{
+  try{
+    if (user && profile){
+      await writeJoinLeave("leave");
+      await remove(ref(rtdb, "onlineUsers/" + user.uid));
+    }
+  }catch{}
+  cleanupGuestLocal();
+  location.href = "index.html";
+});
+
+statusSelect.addEventListener("change", async ()=>{
+  if (!user || !profile) return;
+  const s = statusSelect.value || "online";
+  localStorage.setItem(statusKey(user.uid), s);
+  await updatePresenceStatus(s);
+});
+
+adminLoginBtn.addEventListener("click", ()=>{
+  setErr(adminErr, "");
+  if (!user) return;
+  const uidAllowed = ADMIN_UIDS.includes(user.uid);
+  if (!uidAllowed){
+    setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
+    return;
+  }
+  const u = (adminUser.value || "").trim();
+  const p = (adminPass.value || "").trim();
+  if (u !== ADMIN_USERNAME || p !== ADMIN_PASSWORD){
+    setErr(adminErr, "بيانات ADMIN غير صحيحة.");
+    return;
+  }
+  localStorage.setItem(adminSessionKey(user.uid), "1");
+  setErr(adminErr, "✅ تم تفعيل الأدمن.");
+  isAdmin = true;
+
+  logBtn.style.display = "inline-flex";
+  bgBtn.style.display  = "inline-flex";
+  adminClearBtn.style.display = "inline-flex";
+
+  // ✅ big boss message
+  try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
+});
+
+function showForm(){ formBox.style.display = "block"; }
+
+homeBtn.addEventListener("click", ()=>{
+  cleanupGuestLocal();
+  location.href = "index.html";
+});
+
+backListBtn.addEventListener("click", ()=>{
+  setErr(modalErr,"");
+  formBox.style.display = "none";
+});
+
+chooseLogin.addEventListener("click", ()=>{
+  setErr(modalErr,"");
+  if (!user){ location.href = "login.html"; return; }
+  if (user.isAnonymous){ location.href = "login.html"; return; }
+  isGuest = false;
+  showForm();
+});
+
+chooseGuest.addEventListener("click", async ()=>{
+  setErr(modalErr,"");
+  if (user && !user.isAnonymous){
+    setErr(modalErr, "أنت مسجل دخول بالفعل—استخدم خيار تسجيل دخول.");
+    return;
+  }
+  try{
+    if (!user){
+      await signInAnonymously(auth);
+    }
+    isGuest = true;
+    showForm();
+  }catch(err){
+    setErr(modalErr, "❌ فشل الدخول كضيف. جرّب مرة ثانية.");
+    console.error(err);
+  }
+});
+
+enterBtn.addEventListener("click", async ()=>{
+  setErr(modalErr, "");
+
+  const rawName = collapseSpaces(nameInput.value);
+  const g = genderInput.value;
+  const age = Number(ageInput.value);
+  const country = (countryInput.value || "").trim().toUpperCase();
+
+  if (!rawName || rawName.length < 3){ setErr(modalErr, "الاسم لازم يكون 3 أحرف على الأقل."); return; }
+  if (!g){ setErr(modalErr, "اختار الجنس."); return; }
+  if (!Number.isFinite(age) || age < 10){ setErr(modalErr, "العمر لازم يكون 10 أو أكثر."); return; }
+  if (!country || country.length !== 2){ setErr(modalErr, "اختار الدولة."); return; }
+  if (!user){ setErr(modalErr, "اختر طريقة الدخول أولاً."); return; }
+
+  profile = {
+    name: rawName,
+    gender: g,
+    age,
+    country,
+    nameColor: nameColorInput.value || "#facc15",
+    textColor: textColorInput.value || "#f9fafb"
+  };
+
+  if (!user.isAnonymous){
+    localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
+  }
+
+  const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
+  statusSelect.value = savedStatus;
+
+  try{
+    await enterChat(savedStatus);
+  }catch(err){
+    console.error(err);
+    setErr(modalErr, "❌ صار خطأ بالدخول للشات. جرّب مرة ثانية.");
+  }
+});
+
+async function enterChat(statusVal){
+  isGuest = !!user?.isAnonymous;
+
+  // ✅ compute isAdmin first (session + uid + not guest)
+  isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
+
+  // ✅ if admin, force display name
+  if (profile && isAdmin){
+    profile.name = ADMIN_DISPLAY_NAME;
+  }
+
+  logBtn.style.display = isAdmin ? "inline-flex" : "none";
+  bgBtn.style.display  = isAdmin ? "inline-flex" : "none";
+  adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+
+  msgInput.disabled = false;
+  sendBtn.disabled = false;
+
+  joinAtMs = nowMs();
+
+  await updatePresenceStatus(statusVal, true);
+  await writeJoinLeave("join");
+
+  modal.style.display = "none";
+
+  loadIgnoreWindows();
+  startGlobalBgListener();        // ✅ background visible for all
+  startRanksListener();
+  startClearMetaListener();
+  startRoomLockListener();
+  startOnlineListener();
+  startGlobalMessagesListener();
+  startModerationListener();
+
+  if (roomLocked && !canWriteWhenLocked()){
+    msgInput.disabled = true;
+    sendBtn.disabled = true;
+    msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
+  }
+
+  startDhikrLoop();
+  closeOnlineDrawer();
+}
+
+onAuthStateChanged(auth, async (u)=>{
+  user = u || null;
+  meBadge.textContent = "أنت";
+  watchConnection();
+
+  let loadedSaved = false;
+  if (user && !user.isAnonymous){
+    const savedProfile = localStorage.getItem(profKey(user.uid));
+    if (savedProfile){
+      try{
+        const p = JSON.parse(savedProfile);
+        nameInput.value = p.name || "";
+        genderInput.value = p.gender || "";
+        ageInput.value = p.age || "";
+        countryInput.value = p.country || "JO";
+        nameColorInput.value = p.nameColor || randHexColor();
+        textColorInput.value = p.textColor || randHexColor();
+        loadedSaved = true;
+      }catch{}
+    }
+  }
+  if (!loadedSaved){
+    nameColorInput.value = randHexColor();
+    textColorInput.value = randHexColor();
+    countryInput.value = "JO";
+  }
+
+  formBox.style.display = "none";
+  setErr(modalErr, "");
+  setErr(adminErr, "");
+  modal.style.display = "flex";
+});
+
+window.addEventListener("beforeunload", ()=>{
+  try{
+    if (user && profile){
+      writeJoinLeave("leave");
+      remove(ref(rtdb, "onlineUsers/" + user.uid));
+    }
+  }catch{}
+  cleanupGuestLocal();
+});
+
+/* ✅ Dhikr notifications */
+const DHIKR = ["صلي على النبي", "سبحان الله", "الحمد لله", "لا اله الا الله", "الله اكبر"];
+let __dhikrStarted = false;
+function showDhikr(){
+  const txt = DHIKR[Math.floor(Math.random()*DHIKR.length)];
+  const side = Math.random() < .5 ? "left" : "right";
+  const top = Math.floor(90 + Math.random() * (window.innerHeight - 200));
+  const el = document.createElement("div");
+  el.className = "dhikrToast";
+  el.textContent = txt;
+  el.style.top = top + "px";
+  el.style[side] = "14px";
+  document.body.appendChild(el);
+  setTimeout(()=>{ try{ el.remove(); }catch{} }, 5200);
+}
+function startDhikrLoop(){
+  if (__dhikrStarted) return;
+  __dhikrStarted = true;
+  setTimeout(showDhikr, 1500);
+  setInterval(showDhikr, 30000);
+}
