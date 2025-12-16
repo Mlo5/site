@@ -5,14 +5,15 @@
   <title>الدردشة العامة - M L O 5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
+
   <!-- ✅ Favicon -->
   <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="32x32" />
   <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="16x16" />
   <link rel="apple-touch-icon" href="./favicon.png?v=2" />
   <meta name="theme-color" content="#020202" />
- <!-- Chat CSS -->
+
+  <!-- Chat CSS -->
   <link rel="stylesheet" href="./chat/css/room.css">
-  
 </head>
 
 <body>
@@ -86,8 +87,12 @@
 
         <div class="chatSplit" id="chatSplit">
           <div class="chatCol">
-            <div id="messages"></div>
+            <!-- ✅ Telegram-like scroll area -->
+            <div class="chatScroll" id="chatScroll">
+              <div id="messages"></div>
+            </div>
 
+            <!-- ✅ reply preview sits above composer (Telegram style) -->
             <div class="replyPreview" id="replyPreview">
               <div style="min-width:0">
                 <b id="replyPreviewName">رد على:</b>
@@ -96,12 +101,15 @@
               <button class="replyCancel" id="replyCancelBtn" type="button" title="إلغاء">✕</button>
             </div>
 
-            <form id="chatForm" class="composer">
-              <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
-              <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
-              <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
-              <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
-            </form>
+            <!-- ✅ composer wrapper (for soft top-divider / blur in CSS) -->
+            <div class="composerWrap" id="composerWrap">
+              <form id="chatForm" class="composer">
+                <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
+                <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
+                <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
+                <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
+              </form>
+            </div>
           </div>
         </div>
 
@@ -254,7 +262,7 @@
     <button id="bg3Btn">🖼️ خلفية 3</button>
     <button id="bg0Btn">🧽 إزالة الخلفية</button>
   </div>
-<script type="module" src="./chat/js/room.js"></script>
+
+  <script type="module" src="./chat/js/room.js"></script>
 </body>
 </html>
-
