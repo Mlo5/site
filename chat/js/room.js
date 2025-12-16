@@ -2,9 +2,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebas
 import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 import { deleteDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import {
-  getFirestore, collection, addDoc, serverTimestamp,
+    getFirestore, collection, addDoc, serverTimestamp,
   query, where, orderBy, onSnapshot, doc, setDoc,
-  getDocs, limit, limitToLast
+  getDocs, limit, limitToLast, writeBatch
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
@@ -593,6 +593,7 @@ async function adminClearForAll(){
   }catch(err){
     console.error("HARD CLEAR ERROR:", err);
   }
+    await writeSystemText(`🧹 ${ADMIN_DISPLAY_NAME} مسح الدردشة`, "clear", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
 }
 
 adminClearBtn.addEventListener("click",(e)=>{
@@ -1446,6 +1447,7 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
 
 
 
