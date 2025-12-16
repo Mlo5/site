@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
 import {
-    getFirestore, collection, addDoc, serverTimestamp,
+  getFirestore, collection, addDoc, serverTimestamp,
   query, where, orderBy, onSnapshot, doc, setDoc,
   getDocs, limit, limitToLast, writeBatch
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
@@ -44,6 +44,7 @@ function nowMs(){
 }
 /* ✅✅✅ END FIX */
 
+const __MOBILE_DEVICE = window.matchMedia("(pointer: coarse)").matches;
 
 const connDot = document.getElementById("connDot");
 const connText = document.getElementById("connText");
@@ -52,6 +53,11 @@ const logBtn = document.getElementById("logBtn");
 const bgBtn  = document.getElementById("bgBtn");
 const colorBtn = document.getElementById("colorBtn");
 const downloadBtn = document.getElementById("downloadBtn");
+
+/* ✅ THEMES UI */
+const themeBtn  = document.getElementById("themeBtn");
+const themeMenu = document.getElementById("themeMenu");
+/* ✅ END */
 
 const onlineList = document.getElementById("onlineList");
 const onlineCount = document.getElementById("onlineCount");
@@ -157,6 +163,43 @@ let roomLocked = false;
 
 const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
 const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎💓🙏🔥💛⭐💛🎮💀".split("");
+
+/* ✅ RANKS */
+const RANKS = {
+  none:  { label:"بدون",     emoji:"",   rowClass:"" },
+  legend:{ label:"Legendary",emoji:"⚡",  rowClass:"rank-legend" },
+  vip:   { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
+  root:  { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
+  girl:  { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" }
+};
+let ranksMap = {}; // uid -> rank
+
+function rankOf(uid){ return ranksMap?.[uid] || "none"; }
+function rankEmoji(r){ return (RANKS[r] || RANKS.none).emoji || ""; }
+
+// ✅ صلاحيات الرتب (تم تعديل المسح: للأدمن فقط)
+function myRank(){ return rankOf(user?.uid); }
+function hasAnyRank(uid){ return rankOf(uid) && rankOf(uid) !== "none"; }
+function canWriteWhenLocked(){ return isAdmin || hasAnyRank(user?.uid); }
+function canClear(){ return isAdmin; } // ✅ مسح الشات للأدمن فقط
+function canKick(){
+  const r = myRank();
+  return isAdmin || r === "root" || r === "vip" || r === "girl";
+}
+function canMute(){
+  const r = myRank();
+  return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
+}
+function canBan(){
+  const r = myRank();
+  return isAdmin || r === "root";
+}
+
+function rankIconHtml(r){
+  if (!r || r === "none") return "";
+  return `<span class="rankIcon" title="${escapeHtml(RANKS[r]?.label||"")}">${escapeHtml(rankEmoji(r))}</span>`;
+}
+
 /* =========================
    ✅ THEMES (Local per user + gated)
    - All themes visible to everyone
@@ -167,19 +210,16 @@ const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎💓
 
 const THEME_KEY = (uid)=> `chatTheme_${uid || "anon"}`;
 const THEME_GRAD_KEY = (uid)=> `chatThemeGradient_${uid || "anon"}`;
+let __themeInitBound = false;
 
 function getUserTier(){
-  // admin
   if (isAdmin) return "admin";
-  // rank (any non-none rank)
   if (hasAnyRank(user?.uid)) return "rank";
-  // normal
   return "user";
 }
 
 function isThemeAllowedForTier(theme, tier){
-  // themes naming we will support:
-  // dark, white, blue, gradient, pink, anime, rank, adminGlobal
+  // supported: dark, white, blue, gradient, pink, anime, rank, adminGlobal
   if (tier === "admin") return true;
 
   const userAllowed = ["dark","white","blue","gradient"];
@@ -190,7 +230,6 @@ function isThemeAllowedForTier(theme, tier){
 }
 
 function pickRandomGradient(){
-  // nice random gradients
   const stops = [
     ["#0ea5e9","#22c55e"], ["#f97316","#facc15"], ["#a78bfa","#22d3ee"],
     ["#f43f5e","#60a5fa"], ["#10b981","#facc15"], ["#fb7185","#a78bfa"],
@@ -202,22 +241,17 @@ function pickRandomGradient(){
 }
 
 function applyTheme(theme, opts={}){
-  // mark theme on <html> + <body> so CSS can hook later (no breaking)
   const rootEl = document.documentElement;
   document.body?.setAttribute("data-theme", theme);
   rootEl.setAttribute("data-theme", theme);
 
-  // reset only theme-related custom vars (safe)
   rootEl.style.removeProperty("--mlo5-gradient");
   rootEl.style.removeProperty("--mlo5-bg");
   rootEl.style.removeProperty("--mlo5-card");
   rootEl.style.removeProperty("--mlo5-text");
   rootEl.style.removeProperty("--mlo5-accent");
 
-  // minimal inline theming (won't break your existing CSS)
-  // You can enhance later in room.css using [data-theme="..."] selectors.
   if (theme === "dark"){
-    // default: do nothing (keeps your current design)
     return;
   }
 
@@ -272,7 +306,6 @@ function applyTheme(theme, opts={}){
   if (theme === "gradient"){
     const g = opts.gradient || pickRandomGradient();
     rootEl.style.setProperty("--mlo5-gradient", `linear-gradient(${g.angle}deg, ${g.a}, ${g.b})`);
-    // keep readable
     rootEl.style.setProperty("--mlo5-card", "rgba(0,0,0,.55)");
     rootEl.style.setProperty("--mlo5-text", "#f9fafb");
     rootEl.style.setProperty("--mlo5-accent", "#facc15");
@@ -309,38 +342,65 @@ function loadSavedTheme(){
 }
 
 function redirectToBuy(){
-  // نفس صفحة الألوان/الشراء اللي حكيت عنها
   location.href = "color.html";
+}
+
+function ensureThemeStillAllowed(){
+  if (!user) return;
+  const tier = getUserTier();
+  const saved = loadSavedTheme();
+
+  if (!isThemeAllowedForTier(saved.theme, tier)){
+    applyTheme("dark");
+    saveThemeForUser("dark");
+    return;
+  }
+
+  if (saved.theme === "gradient"){
+    applyTheme("gradient", { gradient: saved.gradient || pickRandomGradient() });
+  } else {
+    applyTheme(saved.theme);
+  }
+}
+
+/* ✅ Theme menu open/close */
+function showThemeMenu(x,y){
+  if (!themeMenu) return;
+  themeMenu.style.left = x + "px";
+  themeMenu.style.top  = y + "px";
+  themeMenu.style.display = "block";
+  themeMenu.setAttribute("aria-hidden","false");
+}
+function hideThemeMenu(){
+  if (!themeMenu) return;
+  themeMenu.style.display = "none";
+  themeMenu.setAttribute("aria-hidden","true");
 }
 
 function initThemeSystem(){
   if (!user) return;
 
-  // 1) apply saved theme (if not allowed, fallback to dark)
-  const tier = getUserTier();
-  const saved = loadSavedTheme();
+  ensureThemeStillAllowed();
 
-  if (saved.theme === "gradient"){
-    // if user clicks/has gradient, it is allowed for user/rank/admin
-    if (isThemeAllowedForTier("gradient", tier)){
-      applyTheme("gradient", { gradient: saved.gradient || pickRandomGradient() });
-    } else {
-      applyTheme("dark");
-      saveThemeForUser("dark");
-    }
-  } else {
-    if (isThemeAllowedForTier(saved.theme, tier)){
-      applyTheme(saved.theme);
-    } else {
-      applyTheme("dark");
-      saveThemeForUser("dark");
-    }
+  if (__themeInitBound) return;
+  __themeInitBound = true;
+
+  // click on theme button
+  if (themeBtn){
+    themeBtn.addEventListener("click",(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      if (!themeMenu) return;
+      const r = themeBtn.getBoundingClientRect();
+      const open = themeMenu.style.display === "block";
+      if (open) hideThemeMenu();
+      else showThemeMenu(Math.round(r.left), Math.round(r.bottom + 8));
+    });
   }
 
-  // 2) bind clicks on ANY element having [data-theme]
-  // You can put these buttons anywhere in HTML.
+  // click on any [data-theme] inside themeMenu
   document.addEventListener("click", (e)=>{
-    const btn = e.target?.closest?.("[data-theme]");
+    const btn = e.target?.closest?.("#themeMenu [data-theme]");
     if (!btn) return;
 
     const theme = String(btn.getAttribute("data-theme") || "").trim();
@@ -350,12 +410,13 @@ function initThemeSystem(){
 
     if (!isThemeAllowedForTier(theme, tierNow)){
       e.preventDefault();
+      hideThemeMenu();
       redirectToBuy();
       return;
     }
 
-    // allowed
     e.preventDefault();
+    hideThemeMenu();
 
     if (theme === "gradient"){
       const g = pickRandomGradient();
@@ -366,43 +427,14 @@ function initThemeSystem(){
       saveThemeForUser(theme);
     }
   }, { passive:false });
-}
 
-
-/* ✅ RANKS */
-const RANKS = {
-  none:  { label:"بدون",     emoji:"",   rowClass:"" },
-  legend:{ label:"Legendary",emoji:"⚡",  rowClass:"rank-legend" },
-  vip:   { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
-  root:  { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
-  girl:  { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" }
-};
-let ranksMap = {}; // uid -> rank
-
-function rankOf(uid){ return ranksMap?.[uid] || "none"; }
-function rankEmoji(r){ return (RANKS[r] || RANKS.none).emoji || ""; }
-
-// ✅ صلاحيات الرتب (تم تعديل المسح: للأدمن فقط)
-function myRank(){ return rankOf(user?.uid); }
-function hasAnyRank(uid){ return rankOf(uid) && rankOf(uid) !== "none"; }
-function canWriteWhenLocked(){ return isAdmin || hasAnyRank(user?.uid); }
-function canClear(){ return isAdmin; } // ✅ مسح الشات للأدمن فقط
-function canKick(){
-  const r = myRank();
-  return isAdmin || r === "root" || r === "vip" || r === "girl";
-}
-function canMute(){
-  const r = myRank();
-  return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
-}
-function canBan(){
-  const r = myRank();
-  return isAdmin || r === "root";
-}
-
-function rankIconHtml(r){
-  if (!r || r === "none") return "";
-  return `<span class="rankIcon" title="${escapeHtml(RANKS[r]?.label||"")}">${escapeHtml(rankEmoji(r))}</span>`;
+  // close menu on outside click
+  document.addEventListener("click",(e)=>{
+    if (!themeMenu || themeMenu.style.display !== "block") return;
+    if (e.target === themeBtn || e.target?.closest?.("#themeBtn")) return;
+    if (e.target?.closest?.("#themeMenu")) return;
+    hideThemeMenu();
+  });
 }
 
 /* ✅ Country code -> flag emoji */
@@ -803,7 +835,7 @@ async function adminClearForAll(){
   }catch(err){
     console.error("HARD CLEAR ERROR:", err);
   }
-    await writeSystemText(`🧹 ${ADMIN_DISPLAY_NAME} مسح الدردشة`, "clear", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeSystemText(`🧹 ${ADMIN_DISPLAY_NAME} مسح الدردشة`, "clear", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
 }
 
 adminClearBtn.addEventListener("click",(e)=>{
@@ -827,7 +859,6 @@ function startClearMetaListener(){
     }
   });
 }
-
 
 /* =========================
    ✅ Presence + Join/Leave
@@ -1036,6 +1067,9 @@ function startRanksListener(){
     }
 
     adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+
+    // ✅ re-check theme when rank info arrives
+    try{ ensureThemeStillAllowed(); }catch{}
   });
 }
 
@@ -1049,7 +1083,7 @@ function startOnlineListener(){
 
     arr.sort((a,b)=>{
       const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid);
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
       if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
       return (a.name||"").localeCompare(b.name||"");
     }).forEach((u)=>{
@@ -1474,6 +1508,9 @@ adminLoginBtn.addEventListener("click", ()=>{
   bgBtn.style.display  = "inline-flex";
   adminClearBtn.style.display = "inline-flex";
 
+  // ✅ admin now can use all themes
+  try{ ensureThemeStillAllowed(); }catch{}
+
   try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
 });
 
@@ -1575,16 +1612,14 @@ async function enterChat(statusVal){
   await writeJoinLeave("join");
 
   modal.style.display = "none";
-     initThemeSystem();
 
-  loadIgnoreWindows();
-  startGlobalBgListener();
-  ...
+  // ✅ init themes now (menu + apply saved)
+  initThemeSystem();
 
   loadIgnoreWindows();
   startGlobalBgListener();
   startRanksListener();
-  startClearMetaListener();       // ✅ now triggers re-render immediately
+  startClearMetaListener();
   startRoomLockListener();
   startOnlineListener();
   startGlobalMessagesListener();
@@ -1664,10 +1699,3 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
-
-
-
-
-
-
-
