@@ -187,8 +187,7 @@ function canMute(){
   return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
 }
 function canBan(){
-  const r = myRank();
-  return isAdmin || r === "root";
+  return isAdmin || myRank() === "root";
 }
 
 function rankIconHtml(r){
@@ -543,11 +542,31 @@ async function setRank(targetUid, targetName, rank){
   ranksMap[targetUid] = r;
 }
 
+/* ✅✅✅ NEW: keep snapshot unsubscribers so we can refresh instantly */
+let unsubMessages = null;
+let unsubClearMeta = null;
+
+let globalClearedAtMs = 0;
+function refreshMessagesNow(){
+  if (!joinAtMs) return;
+  startGlobalMessagesListener(); // will unsubscribe old one first
+}
+/* ✅✅✅ END */
+
 /* ✅ Clear for ALL including admin (cutoff for everyone) */
 async function adminClearForAll(){
   if (!isAdmin) return;
 
   const clearedAtMs = nowMs();
+
+  // ✅✅✅ IMMEDIATE UI CLEAR (no waiting)
+  globalClearedAtMs = clearedAtMs;
+  try{
+    messagesDiv.innerHTML = "";
+    messagesDiv.scrollTop = 0;
+  }catch{}
+  // ✅✅✅ END
+
   await setDoc(doc(db, "globalMeta", "clear"), {
     clearedAtMs,
     byUid:user.uid,
@@ -557,6 +576,9 @@ async function adminClearForAll(){
 
   await writeSystemText(`🧹 تم مسح النص بواسطة الأدمن`, "clear", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
   await writeActionLog("clear", "");
+
+  // ✅✅✅ ensure message list reflects cutoff right away
+  refreshMessagesNow();
 }
 adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
 
@@ -660,12 +682,20 @@ function forceExitToHome(){
   location.href = "index.html";
 }
 
-let globalClearedAtMs = 0;
+/* ✅✅✅ UPDATED: clear listener triggers immediate refresh */
 function startClearMetaListener(){
-  onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
+  try{ if (unsubClearMeta) unsubClearMeta(); }catch{}
+  unsubClearMeta = onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
     if (!snap.exists()) return;
     const d = snap.data() || {};
-    globalClearedAtMs = Number(d.clearedAtMs || 0);
+    const next = Number(d.clearedAtMs || 0);
+    if (!next) return;
+
+    const changed = next !== globalClearedAtMs;
+    globalClearedAtMs = next;
+
+    // ✅ refresh immediately for everyone
+    if (changed) refreshMessagesNow();
   });
 }
 
@@ -792,25 +822,18 @@ function startOnlineListener(){
       const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
       const row = document.createElement("div");
 
-      // ✅ apply rank row class (whole row bg)
       const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
       const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
 
-      // ✅ NEW: add "adminCapsule" class for admin background gif via CSS
       row.className = "userRow" + (isRowAdmin ? " admin adminCapsule" : "") + (rankRowClass ? (" " + rankRowClass) : "");
 
       const left = document.createElement("div");
       left.className = "userMeta";
 
       const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-
-      // ✅ mute indicator emoji only
       const mutedBadge = (u.muted === true) ? `<span class="mutedEmoji" title="مكتوم">🔇</span>` : "";
-
-      // ✅ country flag (replaces gender icon in online list)
       const flag = countryCodeToFlagEmoji(u.country || "");
 
-      // ✅ NEW: admin name + icons + bigger size (CSS will handle too)
       const nameHtml = isRowAdmin
         ? `${ADMIN_ICONS_HTML}<span class="adminNameBig" style="color:#fff;font-weight:900">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
         : `
@@ -836,7 +859,6 @@ function startOnlineListener(){
       const actions = document.createElement("div");
       actions.className = "actionsRow";
 
-      // ✅ admin dots still for lock/selfmute menu (NOT backgrounds anymore)
       if (isRowAdmin && isAdmin){
         const dots = document.createElement("button");
         dots.type = "button";
@@ -935,18 +957,21 @@ function renderMsgTextToHtml(text){
   return esc;
 }
 
+/* ✅✅✅ UPDATED: keep unsubscribe and allow instant refresh */
 function startGlobalMessagesListener(){
   initialLoaded = false;
+
+  try{ if (unsubMessages) unsubMessages(); }catch{}
+  unsubMessages = null;
 
   const q = __MOBILE_DEVICE
     ? query(collection(db, "globalMessages"), orderBy("createdAt", "asc"), limitToLast(600))
     : query(collection(db, "globalMessages"), where("createdAtMs", ">=", joinAtMs), orderBy("createdAtMs", "asc"));
 
-  onSnapshot(q, (snap)=>{
+  unsubMessages = onSnapshot(q, (snap)=>{
     messagesDiv.innerHTML = "";
     const isFirst = !initialLoaded;
 
-    // ✅ clear cutoff applies to EVERYONE (including admin now)
     const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
 
     const items = [];
@@ -997,8 +1022,6 @@ function startGlobalMessagesListener(){
         const div = document.createElement("div");
 
         const isMsgAdmin = (m.isAdmin === true) || (m.uid && ADMIN_UIDS.includes(m.uid));
-
-        // ✅ NEW: add adminMsg class so CSS can make bubble yellow etc.
         div.className = "msg" + (m.uid === user.uid ? " me" : "") + (isMsgAdmin ? " adminMsg" : "");
         div.dataset.mid = it.id;
 
@@ -1008,7 +1031,6 @@ function startGlobalMessagesListener(){
         const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
         const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
 
-        // ✅ Admin name + icons (icons blink)
         const nameHtml = isMsgAdmin
           ? `${ADMIN_ICONS_HTML}<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
           : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
@@ -1213,7 +1235,6 @@ adminLoginBtn.addEventListener("click", ()=>{
   bgBtn.style.display  = "inline-flex";
   adminClearBtn.style.display = "inline-flex";
 
-  // ✅ big boss message
   try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
 });
 
@@ -1296,10 +1317,8 @@ enterBtn.addEventListener("click", async ()=>{
 async function enterChat(statusVal){
   isGuest = !!user?.isAnonymous;
 
-  // ✅ compute isAdmin first (session + uid + not guest)
   isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
 
-  // ✅ if admin, force display name
   if (profile && isAdmin){
     profile.name = ADMIN_DISPLAY_NAME;
   }
@@ -1319,12 +1338,12 @@ async function enterChat(statusVal){
   modal.style.display = "none";
 
   loadIgnoreWindows();
-  startGlobalBgListener();        // ✅ background visible for all
+  startGlobalBgListener();
   startRanksListener();
-  startClearMetaListener();
+  startClearMetaListener();     // ✅ updated
   startRoomLockListener();
   startOnlineListener();
-  startGlobalMessagesListener();
+  startGlobalMessagesListener(); // ✅ updated
   startModerationListener();
 
   if (roomLocked && !canWriteWhenLocked()){
@@ -1401,5 +1420,3 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
-
-
