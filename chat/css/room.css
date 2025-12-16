@@ -946,28 +946,5 @@
 .msg.adminMsg .msgTimeUnder{
   color: rgba(0,0,0,.75) !important;
 }
-.appModalText{
-  max-height: 320px;        /* ارتفاع ثابت */
-  overflow-y: auto;         /* سكرول عمودي */
-  overflow-x: hidden;
-  white-space: pre-wrap;    /* يحافظ على التنسيق */
-  line-height: 1.6;
-  padding: 10px 12px;
-  border: 1px solid rgba(250,204,21,.25);
-  border-radius: 12px;
-  background: rgba(0,0,0,.45);
-}
-
-/* سكرول ناعم بدون شريط */
-.appModalText::-webkit-scrollbar{
-  width: 6px;
-}
-.appModalText::-webkit-scrollbar-thumb{
-  background: rgba(250,204,21,.35);
-  border-radius: 999px;
-}
-.appModalText::-webkit-scrollbar-track{
-  background: transparent;
-}
 
 
