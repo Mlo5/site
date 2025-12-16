@@ -157,6 +157,217 @@ let roomLocked = false;
 
 const BAD_WORDS = ["fuck","shit","bitch","asshole","كس","زب","شرموط","قحبه","منيك","خول","طيز"];
 const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎💓🙏🔥💛⭐💛🎮💀".split("");
+/* =========================
+   ✅ THEMES (Local per user + gated)
+   - All themes visible to everyone
+   - If user clicks locked theme => redirect to color.html
+   - Saved in localStorage per uid
+   - Gradient generates random mix each time chosen
+   ========================= */
+
+const THEME_KEY = (uid)=> `chatTheme_${uid || "anon"}`;
+const THEME_GRAD_KEY = (uid)=> `chatThemeGradient_${uid || "anon"}`;
+
+function getUserTier(){
+  // admin
+  if (isAdmin) return "admin";
+  // rank (any non-none rank)
+  if (hasAnyRank(user?.uid)) return "rank";
+  // normal
+  return "user";
+}
+
+function isThemeAllowedForTier(theme, tier){
+  // themes naming we will support:
+  // dark, white, blue, gradient, pink, anime, rank, adminGlobal
+  if (tier === "admin") return true;
+
+  const userAllowed = ["dark","white","blue","gradient"];
+  const rankAllowed = ["dark","white","blue","gradient","pink","anime","rank","adminGlobal"];
+
+  if (tier === "rank") return rankAllowed.includes(theme);
+  return userAllowed.includes(theme);
+}
+
+function pickRandomGradient(){
+  // nice random gradients
+  const stops = [
+    ["#0ea5e9","#22c55e"], ["#f97316","#facc15"], ["#a78bfa","#22d3ee"],
+    ["#f43f5e","#60a5fa"], ["#10b981","#facc15"], ["#fb7185","#a78bfa"],
+    ["#38bdf8","#f472b6"], ["#84cc16","#06b6d4"]
+  ];
+  const pair = stops[Math.floor(Math.random()*stops.length)];
+  const angle = Math.floor(Math.random()*360);
+  return { a: pair[0], b: pair[1], angle };
+}
+
+function applyTheme(theme, opts={}){
+  // mark theme on <html> + <body> so CSS can hook later (no breaking)
+  const rootEl = document.documentElement;
+  document.body?.setAttribute("data-theme", theme);
+  rootEl.setAttribute("data-theme", theme);
+
+  // reset only theme-related custom vars (safe)
+  rootEl.style.removeProperty("--mlo5-gradient");
+  rootEl.style.removeProperty("--mlo5-bg");
+  rootEl.style.removeProperty("--mlo5-card");
+  rootEl.style.removeProperty("--mlo5-text");
+  rootEl.style.removeProperty("--mlo5-accent");
+
+  // minimal inline theming (won't break your existing CSS)
+  // You can enhance later in room.css using [data-theme="..."] selectors.
+  if (theme === "dark"){
+    // default: do nothing (keeps your current design)
+    return;
+  }
+
+  if (theme === "white"){
+    rootEl.style.setProperty("--mlo5-bg", "#f7f7f8");
+    rootEl.style.setProperty("--mlo5-card", "#ffffff");
+    rootEl.style.setProperty("--mlo5-text", "#111827");
+    rootEl.style.setProperty("--mlo5-accent", "#111827");
+    return;
+  }
+
+  if (theme === "blue"){
+    rootEl.style.setProperty("--mlo5-bg", "#06111f");
+    rootEl.style.setProperty("--mlo5-card", "rgba(9, 30, 66, .55)");
+    rootEl.style.setProperty("--mlo5-text", "#e5e7eb");
+    rootEl.style.setProperty("--mlo5-accent", "#60a5fa");
+    return;
+  }
+
+  if (theme === "pink"){
+    rootEl.style.setProperty("--mlo5-bg", "#1a0510");
+    rootEl.style.setProperty("--mlo5-card", "rgba(255, 105, 180, .10)");
+    rootEl.style.setProperty("--mlo5-text", "#ffe4f1");
+    rootEl.style.setProperty("--mlo5-accent", "#fb7185");
+    return;
+  }
+
+  if (theme === "anime"){
+    rootEl.style.setProperty("--mlo5-bg", "#090a16");
+    rootEl.style.setProperty("--mlo5-card", "rgba(124, 58, 237, .14)");
+    rootEl.style.setProperty("--mlo5-text", "#ede9fe");
+    rootEl.style.setProperty("--mlo5-accent", "#a78bfa");
+    return;
+  }
+
+  if (theme === "rank"){
+    rootEl.style.setProperty("--mlo5-bg", "#0b0b0b");
+    rootEl.style.setProperty("--mlo5-card", "rgba(250, 204, 21, .08)");
+    rootEl.style.setProperty("--mlo5-text", "#fff7d6");
+    rootEl.style.setProperty("--mlo5-accent", "#facc15");
+    return;
+  }
+
+  if (theme === "adminGlobal"){
+    rootEl.style.setProperty("--mlo5-bg", "#071a10");
+    rootEl.style.setProperty("--mlo5-card", "rgba(34, 197, 94, .12)");
+    rootEl.style.setProperty("--mlo5-text", "#dcfce7");
+    rootEl.style.setProperty("--mlo5-accent", "#22c55e");
+    return;
+  }
+
+  if (theme === "gradient"){
+    const g = opts.gradient || pickRandomGradient();
+    rootEl.style.setProperty("--mlo5-gradient", `linear-gradient(${g.angle}deg, ${g.a}, ${g.b})`);
+    // keep readable
+    rootEl.style.setProperty("--mlo5-card", "rgba(0,0,0,.55)");
+    rootEl.style.setProperty("--mlo5-text", "#f9fafb");
+    rootEl.style.setProperty("--mlo5-accent", "#facc15");
+    return;
+  }
+}
+
+function saveThemeForUser(theme, extra=null){
+  if (!user) return;
+  try{
+    localStorage.setItem(THEME_KEY(user.uid), theme);
+    if (theme === "gradient" && extra?.gradient){
+      localStorage.setItem(THEME_GRAD_KEY(user.uid), JSON.stringify(extra.gradient));
+    }
+  }catch{}
+}
+
+function loadSavedTheme(){
+  if (!user) return { theme:"dark", gradient:null };
+  let theme = "dark";
+  let gradient = null;
+
+  try{
+    const t = localStorage.getItem(THEME_KEY(user.uid));
+    if (t) theme = t;
+  }catch{}
+
+  try{
+    const g = localStorage.getItem(THEME_GRAD_KEY(user.uid));
+    if (g) gradient = JSON.parse(g);
+  }catch{}
+
+  return { theme, gradient };
+}
+
+function redirectToBuy(){
+  // نفس صفحة الألوان/الشراء اللي حكيت عنها
+  location.href = "color.html";
+}
+
+function initThemeSystem(){
+  if (!user) return;
+
+  // 1) apply saved theme (if not allowed, fallback to dark)
+  const tier = getUserTier();
+  const saved = loadSavedTheme();
+
+  if (saved.theme === "gradient"){
+    // if user clicks/has gradient, it is allowed for user/rank/admin
+    if (isThemeAllowedForTier("gradient", tier)){
+      applyTheme("gradient", { gradient: saved.gradient || pickRandomGradient() });
+    } else {
+      applyTheme("dark");
+      saveThemeForUser("dark");
+    }
+  } else {
+    if (isThemeAllowedForTier(saved.theme, tier)){
+      applyTheme(saved.theme);
+    } else {
+      applyTheme("dark");
+      saveThemeForUser("dark");
+    }
+  }
+
+  // 2) bind clicks on ANY element having [data-theme]
+  // You can put these buttons anywhere in HTML.
+  document.addEventListener("click", (e)=>{
+    const btn = e.target?.closest?.("[data-theme]");
+    if (!btn) return;
+
+    const theme = String(btn.getAttribute("data-theme") || "").trim();
+    if (!theme) return;
+
+    const tierNow = getUserTier();
+
+    if (!isThemeAllowedForTier(theme, tierNow)){
+      e.preventDefault();
+      redirectToBuy();
+      return;
+    }
+
+    // allowed
+    e.preventDefault();
+
+    if (theme === "gradient"){
+      const g = pickRandomGradient();
+      applyTheme("gradient", { gradient: g });
+      saveThemeForUser("gradient", { gradient: g });
+    } else {
+      applyTheme(theme);
+      saveThemeForUser(theme);
+    }
+  }, { passive:false });
+}
+
 
 /* ✅ RANKS */
 const RANKS = {
@@ -1364,6 +1575,11 @@ async function enterChat(statusVal){
   await writeJoinLeave("join");
 
   modal.style.display = "none";
+     initThemeSystem();
+
+  loadIgnoreWindows();
+  startGlobalBgListener();
+  ...
 
   loadIgnoreWindows();
   startGlobalBgListener();
@@ -1448,6 +1664,7 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
 
 
 
