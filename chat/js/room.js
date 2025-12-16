@@ -1367,5 +1367,3 @@
     setTimeout(showDhikr, 1500);
     setInterval(showDhikr, 30000);
   }
-
-
