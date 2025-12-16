@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>تحميل التطبيق - M L O 5</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg-dark:#020202;
+      --yellow:#facc15;
+      --white:#f9fafb;
+      --muted:#9ca3af;
+      --border-subtle:rgba(156,163,175,.35);
+      --radius-lg:20px;
+      --radius-full:999px;
+      --grid-x:0px; --grid-y:0px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Tajawal",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg-dark);
+      color:var(--white);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    .bg-grid{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:radial-gradient(circle, rgba(249,250,251,.55) 1px, transparent 1px);
+      background-size:30px 30px;
+      background-position:calc(50% + var(--grid-x)) calc(50% + var(--grid-y));
+      opacity:.22; mix-blend-mode:screen;
+    }
+    .bg-vignette{
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(900px 520px at 10% 0%, rgba(250,204,21,.08), transparent 60%),
+        radial-gradient(900px 520px at 85% 10%, rgba(250,204,21,.06), transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.78));
+    }
+
+    .page{
+      width:100%;
+      max-width:1100px;
+      padding:22px 14px 80px;
+      margin:auto;
+      position:relative;
+      z-index:1;
+    }
+
+    .top{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      position:sticky; top:0;
+      padding:12px 0;
+      background:linear-gradient(to bottom, rgba(2,2,2,.92), rgba(2,2,2,.62), transparent);
+      backdrop-filter: blur(8px);
+      z-index:2;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+      font-family:"Poppins",system-ui;
+      font-weight:800;letter-spacing:.6px
+    }
+    .brand .dot{
+      width:10px;height:10px;border-radius:999px;background:var(--yellow);
+      box-shadow:0 0 18px rgba(250,204,21,.6)
+    }
+    .back{
+      text-decoration:none;color:var(--white);opacity:.95;
+      padding:10px 12px;border:1px solid var(--border-subtle);
+      border-radius:var(--radius-full);
+      background:rgba(0,0,0,.35);
+      box-shadow:0 10px 22px rgba(0,0,0,.45);
+    }
+    .back:hover{border-color:rgba(250,204,21,.55); color:var(--yellow)}
+
+    .hero{
+      margin:12px 0 18px;
+      border:1px solid var(--border-subtle);
+      border-radius:var(--radius-lg);
+      background:linear-gradient(145deg,#020202,#050505);
+      box-shadow:0 18px 45px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.95);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:0;
+      background:linear-gradient(180deg, rgba(250,204,21,.06), transparent 45%, rgba(0,0,0,.60));
+      pointer-events:none;
+      opacity:.9;
+    }
+    .hero > *{position:relative; z-index:1}
+    .title{
+      font-family:"Poppins";
+      font-weight:800;
+      font-size:28px;
+      margin-bottom:6px;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      color:var(--muted);
+      line-height:1.8;
+      font-size:1rem;
+    }
+    .note{
+      margin-top:12px;
+      border:1px dashed rgba(250,204,21,.35);
+      background:rgba(250,204,21,.05);
+      border-radius:16px;
+      padding:12px 14px;
+      color:rgba(255,255,255,.92);
+      line-height:1.85;
+    }
+    .note b{color:var(--yellow)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .title{font-size:24px}
+    }
+
+    .card{
+      border:1px solid var(--border-subtle);
+      background:rgba(0,0,0,.55);
+      border-radius:var(--radius-lg);
+      box-shadow:0 18px 45px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.95);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+      min-height:0;
+    }
+    .cardHead{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      margin-bottom:10px;
+    }
+    .platform{
+      display:flex;align-items:center;gap:10px;
+      font-family:"Poppins";
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size:18px;
+    }
+    .icon{
+      width:42px;height:42px;border-radius:14px;
+      border:1px solid rgba(250,204,21,.25);
+      background:rgba(0,0,0,.45);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 10px 24px rgba(0,0,0,.45);
+      font-size:22px;
+    }
+
+    .meta{
+      display:flex;gap:8px;flex-wrap:wrap;
+      margin:8px 0 12px;
+    }
+    .chip{
+      border-radius:999px;
+      border:1px solid rgba(250,204,21,.25);
+      background:rgba(0,0,0,.35);
+      padding:6px 10px;
+      color:rgba(255,255,255,.9);
+      font-size:.85rem;
+      white-space:nowrap;
+    }
+
+    .desc{
+      color:var(--muted);
+      line-height:1.8;
+      margin-bottom:12px;
+    }
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      flex:1;
+      border-radius:14px;
+      border:1px solid rgba(250,204,21,.35);
+      background:rgba(250,204,21,.10);
+      color:var(--yellow);
+      padding:12px 12px;
+      font-weight:900;
+      cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btn:hover{border-color:rgba(250,204,21,.75); box-shadow:0 18px 45px rgba(0,0,0,.55)}
+    .btn.secondary{
+      border:1px solid var(--border-subtle);
+      background:rgba(0,0,0,.35);
+      color:var(--white);
+      opacity:.95;
+    }
+    .btn.secondary:hover{border-color:rgba(250,204,21,.55); color:var(--yellow)}
+
+    .footer{
+      margin-top:16px;
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.8;
+      opacity:.95;
+    }
+
+    /* ✅ modal بسيط */
+    .modal{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:9999;
+    }
+    .modalBox{
+      width:min(520px, 96vw);
+      border-radius:18px;
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.92);
+      box-shadow:0 18px 45px rgba(0,0,0,.95), 0 0 0 1px rgba(17,24,39,.9);
+      padding:14px;
+      backdrop-filter: blur(10px);
+    }
+    .modalTitle{color:var(--yellow);font-weight:900;text-align:center;margin-bottom:8px}
+    .modalText{color:var(--white);text-align:center;line-height:1.9;white-space:pre-wrap;margin-bottom:12px;opacity:.95}
+    .modalActions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-vignette"></div>
+
+  <div class="page">
+    <div class="top">
+      <div class="brand"><span class="dot"></span> M L O 5</div>
+      <a class="back" href="./index.html">⬅ الرجوع</a>
+    </div>
+
+    <div class="hero">
+      <div class="title">تحميل التطبيق</div>
+      <div class="subtitle">
+        هنا روابط تحميل تطبيقات <b style="color:#facc15">M L O 5</b>.
+        حاليًا الصفحات جاهزة للمستقبل—لما ننزل التطبيقات رسميًا بنحط الروابط هنا مباشرة.
+      </div>
+
+      <div class="note">
+        🟡 <b>ملاحظة:</b> عند توفر النسخة الرسمية، ستجد زر التحميل يعمل مباشرة.
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- PC -->
+      <div class="card">
+        <div class="cardHead">
+          <div class="platform">
+            <span class="icon">🖥️</span> تطبيق الكمبيوتر
+          </div>
+        </div>
+        <div class="meta">
+          <span class="chip">Windows</span>
+          <span class="chip">macOS</span>
+        </div>
+        <div class="desc">
+          نسخة سطح المكتب للسرعة والثبات، مع تجربة شات كاملة وأداء أفضل.
+        </div>
+        <div class="btnRow">
+          <button class="btn coming" type="button" data-platform="PC">⬇️ تحميل (قريبًا)</button>
+          <a class="btn secondary" href="./room.html">💬 افتح الشات</a>
+        </div>
+      </div>
+
+      <!-- iPhone -->
+      <div class="card">
+        <div class="cardHead">
+          <div class="platform">
+            <span class="icon">🍎</span> تطبيق iPhone
+          </div>
+        </div>
+        <div class="meta">
+          <span class="chip">iOS</span>
+          <span class="chip">App Store</span>
+        </div>
+        <div class="desc">
+          نسخة الآيفون بتصميم سريع وخفيف، تنبيهات، ودخول أسهل.
+        </div>
+        <div class="btnRow">
+          <button class="btn coming" type="button" data-platform="iPhone">⬇️ تحميل (قريبًا)</button>
+          <a class="btn secondary" href="./index.html">🏠 الرئيسية</a>
+        </div>
+      </div>
+
+      <!-- Android -->
+      <div class="card">
+        <div class="cardHead">
+          <div class="platform">
+            <span class="icon">🤖</span> تطبيق Android
+          </div>
+        </div>
+        <div class="meta">
+          <span class="chip">Android</span>
+          <span class="chip">Google Play</span>
+        </div>
+        <div class="desc">
+          نسخة أندرويد بواجهة مرتبة وسريعة، مع دعم كامل للموبايل.
+        </div>
+        <div class="btnRow">
+          <button class="btn coming" type="button" data-platform="Android">⬇️ تحميل (قريبًا)</button>
+          <a class="btn secondary" href="./index.html">🏠 الرئيسية</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      © M L O 5 — سيتم تحديث روابط التحميل عند إصدار التطبيقات.
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modalBox" role="dialog" aria-modal="true">
+      <div class="modalTitle" id="modalTitle">قريبًا</div>
+      <div class="modalText" id="modalText">سيتم إضافة رابط التحميل قريبًا.</div>
+      <div class="modalActions">
+        <button class="btn secondary" id="modalClose" type="button">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ✅ parallax grid
+    const root = document.documentElement;
+    document.addEventListener("mousemove", (e)=>{
+      const xRatio = e.clientX / window.innerWidth - 0.5;
+      const yRatio = e.clientY / window.innerHeight - 0.5;
+      const maxShift = 40;
+      root.style.setProperty("--grid-x", (xRatio * maxShift).toFixed(1) + "px");
+      root.style.setProperty("--grid-y", (yRatio * maxShift).toFixed(1) + "px");
+    });
+
+    // ✅ modal
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText  = document.getElementById("modalText");
+    const modalClose = document.getElementById("modalClose");
+
+    function openModal(title, text){
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modal.style.display = "flex";
+      modal.setAttribute("aria-hidden","false");
+    }
+    function closeModal(){
+      modal.style.display = "none";
+      modal.setAttribute("aria-hidden","true");
+    }
+    modalClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e)=>{ if (e.target === modal) closeModal(); });
+
+    document.querySelectorAll(".coming").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const p = btn.getAttribute("data-platform") || "التطبيق";
+        openModal("⏳ قريبًا", `نسخة ${p} قيد التجهيز.\nأول ما تصير جاهزة رح نحط رابط التحميل هون مباشرة.`);
+      });
+    });
+  </script>
+</body>
+</html>
