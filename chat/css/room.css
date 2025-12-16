@@ -186,7 +186,7 @@
     }
     .userRow.rank-girl{
       background:linear-gradient(135deg, rgba(236,72,153,.38), rgba(0,0,0,.75));
-      background-image: url("../media/ranks/girl.gif");
+      background-image: url("../media/ranks/girll.gif");
       background-size:cover;
       background-position:center;
       border-color:rgba(236,72,153,.38);
@@ -746,3 +746,4 @@
       70%{opacity:.65; transform:translateY(0) scale(1)}
       100%{opacity:0; transform:translateY(-6px) scale(.98)}
     }
+
