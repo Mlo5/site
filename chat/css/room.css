@@ -248,13 +248,14 @@
 
     /* ✅ Mute indicator: emoji ONLY (no border/circle) */
     .mutedEmoji{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      font-size:1rem;
-      animation: rankBlink 1.2s infinite;
-      filter: drop-shadow(0 0 12px rgba(239,68,68,.18));
-    }
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  animation: none;        /* ⛔ إيقاف الوميض */
+  opacity: .9;            /* ثابت وواضح */
+  filter: drop-shadow(0 0 6px rgba(239,68,68,.35));
+}
 
     /* ✅⬇️ صغّر شوية اشارة التجاهل + الثلاث نقاط */
     .ignoreBtn, .moreBtn{
@@ -945,3 +946,4 @@
 .msg.adminMsg .msgTimeUnder{
   color: rgba(0,0,0,.75) !important;
 }
+
