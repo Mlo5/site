@@ -35,19 +35,16 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const rtdb = getDatabase(app);
 
-/* ✅✅✅ FIX (Mobile-only): Server Time Offset + nowMs() (Desktop unaffected) */
-const __MOBILE_DEVICE =
-  window.matchMedia("(pointer: coarse)").matches ||
-  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
+/* ✅✅✅ FIX: Server Time Offset for ALL devices (prevents messages reappearing after clear) */
 let serverOffsetMs = 0;
 onValue(ref(rtdb, ".info/serverTimeOffset"), (snap)=>{
   serverOffsetMs = Number(snap.val() || 0);
 });
 function nowMs(){
-  return Date.now() + (__MOBILE_DEVICE ? serverOffsetMs : 0);
+  return Date.now() + serverOffsetMs;
 }
 /* ✅✅✅ END FIX */
+
 
 const connDot = document.getElementById("connDot");
 const connText = document.getElementById("connText");
@@ -1449,6 +1446,7 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
 
 
 
