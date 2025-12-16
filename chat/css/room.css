@@ -746,5 +746,177 @@
       70%{opacity:.65; transform:translateY(0) scale(1)}
       100%{opacity:0; transform:translateY(-6px) scale(.98)}
     }
+/* =========================
+   MLO5 Soft Telegram Patch
+   (ضعه آخر ملف الـCSS)
+========================= */
+
+/* Soft tokens */
+:root{
+  --soft-surface: rgba(10,10,10,.45);
+  --soft-surface-2: rgba(0,0,0,.35);
+  --soft-border: rgba(156,163,175,.18);
+  --soft-border-strong: rgba(250,204,21,.28);
+  --soft-shadow: 0 10px 26px rgba(0,0,0,.40);
+  --soft-shadow-2: 0 16px 36px rgba(0,0,0,.45);
+  --soft-blur: blur(10px);
+}
+
+/* Card/panels softer */
+.card{
+  background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.35));
+  border: 1px solid var(--soft-border);
+  box-shadow: var(--soft-shadow);
+  backdrop-filter: var(--soft-blur);
+}
+
+.userRow,
+.msg,
+.system,
+.replyPreview,
+.replyQuote,
+.menu,
+.emojiPicker{
+  border-color: var(--soft-border) !important;
+  box-shadow: none !important;
+}
+
+/* Online list rows softer */
+.userRow{
+  background: rgba(0,0,0,.35) !important;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+.userRow:hover{
+  transform: translateY(-1px);
+  border-color: rgba(250,204,21,.22) !important;
+  background: rgba(0,0,0,.42) !important;
+}
+
+/* Messages container: Telegram spacing */
+#messages{
+  gap: 8px !important;
+  padding-right: 2px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Message bubble: softer + less border */
+.msg{
+  background: var(--soft-surface) !important;
+  border: 1px solid var(--soft-border) !important;
+  border-radius: 18px !important;
+  padding: 10px 12px 38px !important;
+  box-shadow: var(--soft-shadow) !important;
+  backdrop-filter: var(--soft-blur);
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+}
+
+/* My bubble: subtle highlight like Telegram */
+.msg.me{
+  background: rgba(250,204,21,.10) !important;
+  border-color: var(--soft-border-strong) !important;
+  box-shadow: var(--soft-shadow-2) !important;
+}
+
+/* Add a small "tail" feel (no HTML change) */
+.msg{
+  position: relative;
+}
+.msgRow.me .msg::after,
+.msgRow:not(.me) .msg::after{
+  content:"";
+  position:absolute;
+  bottom:10px;
+  width:10px;height:10px;
+  background: inherit;
+  border: 1px solid var(--soft-border);
+  transform: rotate(45deg);
+  opacity:.55;
+}
+.msgRow.me .msg::after{
+  right: -5px;
+  border-left: none;
+  border-bottom: none;
+  border-color: var(--soft-border-strong);
+}
+.msgRow:not(.me) .msg::after{
+  left: -5px;
+  border-right: none;
+  border-top: none;
+}
+
+/* Header less loud */
+.msgHead{
+  margin-bottom: 5px !important;
+  color: rgba(156,163,175,.90) !important;
+  font-size: .82rem !important;
+}
+.nameTag{
+  font-weight: 900;
+  letter-spacing: .01em;
+}
+
+/* System msgs: lighter */
+.system{
+  background: rgba(0,0,0,.28) !important;
+  border: 1px dashed rgba(250,204,21,.25) !important;
+  padding: 6px 10px !important;
+}
+
+/* Composer: make input bar like Telegram */
+.composer{
+  gap: 8px !important;
+  margin-top: 10px !important;
+  padding-top: 10px;
+  border-top: 1px solid rgba(156,163,175,.12);
+}
+
+#msgInput{
+  background: rgba(0,0,0,.40) !important;
+  border: 1px solid rgba(156,163,175,.20) !important;
+  box-shadow: none !important;
+  height: 42px;
+  padding: 10px 14px;
+  transition: border-color .12s ease, box-shadow .12s ease, transform .12s ease;
+}
+#msgInput:focus{
+  border-color: rgba(250,204,21,.55) !important;
+  box-shadow: 0 0 0 3px rgba(250,204,21,.08) !important;
+}
+
+.sendBtn,.emojiBtn,.adminClearBtn{
+  background: rgba(0,0,0,.45) !important;
+  border: 1px solid rgba(250,204,21,.35) !important;
+  box-shadow: none !important;
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+}
+.sendBtn:hover,.emojiBtn:hover,.adminClearBtn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(250,204,21,.65) !important;
+  background: rgba(0,0,0,.55) !important;
+}
+
+/* Reply button less "buttony" */
+.replyBtn{
+  background: rgba(0,0,0,.35) !important;
+  border: 1px solid rgba(250,204,21,.22) !important;
+  box-shadow: none !important;
+}
+
+/* Menus/pickers softer */
+.menu, .emojiPicker{
+  background: rgba(0,0,0,.86) !important;
+  border-color: rgba(250,204,21,.28) !important;
+  box-shadow: var(--soft-shadow) !important;
+  backdrop-filter: var(--soft-blur);
+}
+
+/* Reduce harsh blinking a bit (still visible) */
+@keyframes rankBlink{
+  0%{opacity:1}
+  50%{opacity:.45}
+  100%{opacity:1}
+}
+
+
 
 
