@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>الاشتراكات - M L O 5</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg:#020202;
+      --card:rgba(255,255,255,.04);
+      --border:rgba(156,163,175,.22);
+      --yellow:#facc15;
+      --white:#f9fafb;
+      --muted:#9ca3af;
+      --shadow:0 18px 45px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.95);
+      --r:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Tajawal",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background: radial-gradient(1200px 600px at 80% 10%, rgba(250,204,21,.08), transparent 60%),
+                  radial-gradient(900px 500px at 10% 0%, rgba(250,204,21,.06), transparent 55%),
+                  var(--bg);
+      color:var(--white);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:22px 14px 80px}
+    .top{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      position:sticky;top:0;padding:12px 0;background:linear-gradient(to bottom, rgba(2,2,2,.95), rgba(2,2,2,.6), transparent);
+      backdrop-filter: blur(8px);
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+      font-family:"Poppins",system-ui;
+      font-weight:800;letter-spacing:.6px
+    }
+    .brand .dot{width:10px;height:10px;border-radius:999px;background:var(--yellow);box-shadow:0 0 18px rgba(250,204,21,.6)}
+    .back{
+      text-decoration:none;color:var(--white);opacity:.9;
+      padding:10px 12px;border:1px solid var(--border);border-radius:999px;background:rgba(0,0,0,.35)
+    }
+    .title{margin:14px 0 8px;font-family:"Poppins";font-weight:800;font-size:28px}
+    .subtitle{margin:0 0 18px;color:var(--muted);line-height:1.7}
+
+    .note{
+      border:1px dashed rgba(250,204,21,.35);
+      background:rgba(250,204,21,.05);
+      border-radius:var(--r);
+      padding:12px 14px;
+      color:rgba(255,255,255,.92);
+      margin:14px 0 18px;
+      line-height:1.8;
+    }
+    .note b{color:var(--yellow)}
+
+    .billing{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      margin:14px 0 18px;
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:8px;border:1px solid var(--border);border-radius:999px;background:rgba(0,0,0,.35);
+    }
+    .seg{
+      border:0;cursor:pointer;
+      padding:8px 12px;border-radius:999px;
+      color:var(--white);background:transparent;opacity:.75;
+      font-weight:700
+    }
+    .seg.active{
+      background:rgba(250,204,21,.12);
+      color:var(--yellow);
+      opacity:1;
+      box-shadow:0 0 0 1px rgba(250,204,21,.25) inset;
+    }
+    .discount{color:var(--yellow);font-weight:800}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .title{font-size:24px}
+    }
+    .card{
+      border:1px solid var(--border);
+      background:var(--card);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .badge{
+      position:absolute;top:12px;left:12px;
+      padding:6px 10px;border-radius:999px;
+      background:rgba(250,204,21,.14);
+      border:1px solid rgba(250,204,21,.35);
+      color:var(--yellow);font-weight:800;font-size:12px;
+    }
+    .rank{
+      font-family:"Poppins";
+      font-weight:800;
+      font-size:20px;
+      margin:2px 0 6px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .rank .icon{
+      width:28px;height:28px;border-radius:10px;
+      border:1px solid rgba(250,204,21,.22);
+      background:rgba(0,0,0,.35);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 0 18px rgba(0,0,0,.35);
+    }
+    .desc{color:var(--muted);margin:0 0 12px;line-height:1.7}
+    .priceRow{display:flex;align-items:baseline;gap:8px;margin:10px 0 12px}
+    .price{
+      font-family:"Poppins";font-weight:900;font-size:30px;color:var(--yellow);
+    }
+    .per{color:var(--muted)}
+    ul{margin:10px 0 14px;padding:0 18px 0 0;color:rgba(255,255,255,.9);line-height:1.9}
+    li{margin:4px 0}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      flex:1;
+      text-decoration:none;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:12px 12px;border-radius:14px;
+      border:1px solid rgba(250,204,21,.35);
+      background:rgba(250,204,21,.10);
+      color:var(--yellow);
+      font-weight:900;
+    }
+    .btn.secondary{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.35);
+      color:var(--white);
+      opacity:.9;
+    }
+    .footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.8;
+      text-align:center;
+      opacity:.9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand"><span class="dot"></span> M L O 5</div>
+      <a class="back" href="./index.html">⬅ الرجوع</a>
+    </div>
+
+    <h1 class="title">الاشتراكات والرتب</h1>
+    <p class="subtitle">
+      اختر الرتبة المناسبة لك. بعد الدفع يتم التفعيل <b>يدويًا</b> من الإدارة.
+    </p>
+
+    <div class="note">
+      🟡 مهم: عند الدفع اكتب في <b>Note / ملاحظة</b> هذا النص:
+      <br>
+      <b>إيميل حسابك بالموقع + اسم الرتبة</b>
+      <br>
+      مثال: <span dir="ltr">user@gmail.com - VIP (Monthly)</span>
+    </div>
+
+    <div class="billing">
+      <div class="pill" role="tablist" aria-label="Billing toggle">
+        <button id="btnMonthly" class="seg active" type="button">شهري</button>
+        <button id="btnYearly" class="seg" type="button">سنوي</button>
+      </div>
+      <span class="discount">خصم للسنوي (اختياري)</span>
+    </div>
+
+    <div class="grid">
+      <!-- PLAN 1 -->
+      <div class="card" data-plan="VIP">
+        <div class="badge">الأكثر طلبًا</div>
+        <div class="rank"><span class="icon">👑</span> VIP</div>
+        <p class="desc">تمييز الاسم + خلفيات كبسولة VIP + مزايا إضافية داخل الشات.</p>
+
+        <div class="priceRow">
+          <div class="price" data-month="3.99" data-year="34.99">$3.99</div>
+          <div class="per" data-per="month">/ شهري</div>
+        </div>
+
+        <ul>
+          <li>خلفيات كبسولة VIP</li>
+          <li>لون اسم مميز</li>
+          <li>شارة VIP في الشات</li>
+          <li>أولوية في العرض (اختياري)</li>
+        </ul>
+
+        <div class="btnRow">
+          <a class="btn" href="YOUR_PAYPAL_LINK_VIP" target="_blank" rel="noopener">💳 اشتري الآن</a>
+          <a class="btn secondary" href="./room.html">📌 رجوع للشات</a>
+        </div>
+      </div>
+
+      <!-- PLAN 2 -->
+      <div class="card" data-plan="ROOT">
+        <div class="rank"><span class="icon">💀</span> ROOT</div>
+        <p class="desc">مزايا أعلى + خلفيات كبسولة ROOT + تمييز أقوى.</p>
+
+        <div class="priceRow">
+          <div class="price" data-month="7.99" data-year="69.99">$7.99</div>
+          <div class="per" data-per="month">/ شهري</div>
+        </div>
+
+        <ul>
+          <li>خلفيات كبسولة ROOT (حصرية)</li>
+          <li>شارة ROOT مميزة</li>
+          <li>خيارات تخصيص أكثر</li>
+          <li>ميزات إضافية لاحقًا</li>
+        </ul>
+
+        <div class="btnRow">
+          <a class="btn" href="YOUR_PAYPAL_LINK_ROOT" target="_blank" rel="noopener">💳 اشتري الآن</a>
+          <a class="btn secondary" href="./room.html">📌 رجوع للشات</a>
+        </div>
+      </div>
+
+      <!-- PLAN 3 -->
+      <div class="card" data-plan="COLOR">
+        <div class="rank"><span class="icon">🎨</span> لون / شارة</div>
+        <p class="desc">خيار اقتصادي: لون اسم + شارة بسيطة (بدون رتبة كاملة).</p>
+
+        <div class="priceRow">
+          <div class="price" data-month="1.99" data-year="16.99">$1.99</div>
+          <div class="per" data-per="month">/ شهري</div>
+        </div>
+
+        <ul>
+          <li>لون اسم داخل الشات</li>
+          <li>شارة بسيطة (اختياري)</li>
+          <li>بدون صلاحيات رتبة</li>
+          <li>تفعيل يدوي من الإدارة</li>
+        </ul>
+
+        <div class="btnRow">
+          <a class="btn" href="YOUR_PAYPAL_LINK_COLOR" target="_blank" rel="noopener">💳 اشتري الآن</a>
+          <a class="btn secondary" href="./room.html">📌 رجوع للشات</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      ملاحظة: التفعيل يتم بعد التأكد من الدفع. إذا كتبت إيميل خاطئ في الملاحظة قد يتأخر التفعيل.
+    </div>
+  </div>
+
+  <script>
+    const btnMonthly = document.getElementById("btnMonthly");
+    const btnYearly = document.getElementById("btnYearly");
+    const prices = document.querySelectorAll(".price");
+    const perEls = document.querySelectorAll(".per");
+
+    let mode = "month";
+
+    function setMode(next){
+      mode = next;
+      btnMonthly.classList.toggle("active", mode === "month");
+      btnYearly.classList.toggle("active", mode === "year");
+
+      prices.forEach(p=>{
+        const v = mode === "month" ? p.dataset.month : p.dataset.year;
+        p.textContent = "$" + v;
+      });
+
+      perEls.forEach(el=>{
+        el.textContent = (mode === "month") ? "/ شهري" : "/ سنوي";
+      });
+    }
+
+    btnMonthly.addEventListener("click", ()=>setMode("month"));
+    btnYearly.addEventListener("click", ()=>setMode("year"));
+  </script>
+</body>
+</html>
