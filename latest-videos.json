@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2025-12-16T14:54:29Z",
+  "generatedAt": "2025-12-16T15:43:16Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بنيت موقع كامل بالذكاء الاصطناعي!",
+      "url": "https://www.youtube.com/watch?v=ALoi9t-OVN8",
+      "type": "long",
+      "duration": "",
+      "date": "2025-12-16",
+      "thumb": "https://i.ytimg.com/vi/ALoi9t-OVN8/hqdefault.jpg",
+      "videoId": "ALoi9t-OVN8"
+    },
     {
       "title": "Ronaldo 2D 😂",
       "url": "https://www.youtube.com/shorts/WpAADcCBQSc",
@@ -127,15 +136,6 @@
       "date": "2025-12-06",
       "thumb": "https://i.ytimg.com/vi/iz10e6Ed0nw/hqdefault.jpg",
       "videoId": "iz10e6Ed0nw"
-    },
-    {
-      "title": "بدك تدخن؟ | دبل فيس كام مع الأوس",
-      "url": "https://www.youtube.com/watch?v=KRYOjP6YdRo",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-05",
-      "thumb": "https://i.ytimg.com/vi/KRYOjP6YdRo/hqdefault.jpg",
-      "videoId": "KRYOjP6YdRo"
     }
   ]
 }
