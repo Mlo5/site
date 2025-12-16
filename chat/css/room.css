@@ -945,3 +945,48 @@
 .msg.adminMsg .msgTimeUnder{
   color: rgba(0,0,0,.75) !important;
 }
+/* =========================
+   ✅ Theme bridge (MUST be at the VERY END)
+   This makes your existing UI read the JS theme variables.
+========================= */
+
+:root{
+  /* defaults (dark) */
+  --mlo5-bg: var(--bg-dark);
+  --mlo5-card: linear-gradient(145deg,#020202,#050505);
+  --mlo5-text: var(--white);
+  --mlo5-accent: var(--yellow);
+}
+
+/* Page base */
+body{
+  background: var(--mlo5-gradient, var(--mlo5-bg, var(--bg-dark))) !important;
+  color: var(--mlo5-text, var(--white)) !important;
+}
+
+/* Cards */
+.card{
+  background: var(--mlo5-card, linear-gradient(145deg,#020202,#050505)) !important;
+}
+
+/* Headings accents */
+.panel-head .h b,
+.badgeBtn,
+.replyBtn,
+.sendBtn,.emojiBtn,.adminClearBtn{
+  color: var(--mlo5-accent, var(--yellow)) !important;
+}
+
+/* Inputs keep readable across themes */
+select,input{
+  color: var(--mlo5-text, var(--white)) !important;
+}
+
+/* Make chips match themes a bit */
+.top-chip,
+.badge,
+.miniPill,
+.menu{
+  color: var(--mlo5-text, var(--white)) !important;
+}
+
