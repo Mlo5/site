@@ -1368,4 +1368,4 @@
     setInterval(showDhikr, 30000);
   }
 
-</script>
+
