@@ -1010,7 +1010,7 @@ function startGlobalMessagesListener(){
 
         // ✅ Admin name + icons (icons blink)
         const nameHtml = isMsgAdmin
-          ? `<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span>${ADMIN_ICONS_HTML} ${guestHtml}`
+          ? `${ADMIN_ICONS_HTML}<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
           : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
 
         const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
@@ -1401,4 +1401,5 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
 
