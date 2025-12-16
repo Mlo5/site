@@ -314,7 +314,7 @@
 
     .msg{
       max-width:78%;
-      border-radius:18px;
+      border-radius:18px 18px 18px 6px;
       border:1px solid var(--border-subtle);
       background:rgba(0,0,0,.55);
       box-shadow:0 10px 22px rgba(0,0,0,.6);
@@ -945,6 +945,7 @@
 .msg.adminMsg .msgTimeUnder{
   color: rgba(0,0,0,.75) !important;
 }
+
 
 
 
