@@ -187,7 +187,8 @@ function canMute(){
   return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
 }
 function canBan(){
-  return isAdmin || myRank() === "root";
+  const r = myRank();
+  return isAdmin || r === "root";
 }
 
 function rankIconHtml(r){
@@ -542,30 +543,23 @@ async function setRank(targetUid, targetName, rank){
   ranksMap[targetUid] = r;
 }
 
-/* ✅✅✅ NEW: keep snapshot unsubscribers so we can refresh instantly */
-let unsubMessages = null;
-let unsubClearMeta = null;
+/* =========================
+   ✅✅✅ FIX: CLEAR IMMEDIATE
+   ========================= */
 
 let globalClearedAtMs = 0;
-function refreshMessagesNow(){
-  if (!joinAtMs) return;
-  startGlobalMessagesListener(); // will unsubscribe old one first
-}
-/* ✅✅✅ END */
+
+// ✅ نخزن آخر Snapshot للرسائل حتى نعمل re-render مباشرة عند تغيير clear
+let __lastMessagesSnap = null;
 
 /* ✅ Clear for ALL including admin (cutoff for everyone) */
 async function adminClearForAll(){
   if (!isAdmin) return;
 
+  // ✅ Optimistic: امسح فورًا عند الأدمن بدون انتظار الشبكة
   const clearedAtMs = nowMs();
-
-  // ✅✅✅ IMMEDIATE UI CLEAR (no waiting)
   globalClearedAtMs = clearedAtMs;
-  try{
-    messagesDiv.innerHTML = "";
-    messagesDiv.scrollTop = 0;
-  }catch{}
-  // ✅✅✅ END
+  try{ messagesDiv.innerHTML = ""; }catch{}
 
   await setDoc(doc(db, "globalMeta", "clear"), {
     clearedAtMs,
@@ -576,11 +570,37 @@ async function adminClearForAll(){
 
   await writeSystemText(`🧹 تم مسح النص بواسطة الأدمن`, "clear", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
   await writeActionLog("clear", "");
-
-  // ✅✅✅ ensure message list reflects cutoff right away
-  refreshMessagesNow();
 }
 adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
+
+function startClearMetaListener(){
+  let prev = 0;
+  onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
+    if (!snap.exists()) return;
+    const d = snap.data() || {};
+    const next = Number(d.clearedAtMs || 0);
+    if (!next) return;
+
+    globalClearedAtMs = next;
+
+    // ✅ لو تغيرت قيمة المسح: اعمل re-render فورًا بنفس Snapshot الرسائل الموجود
+    if (next !== prev){
+      prev = next;
+      if (__lastMessagesSnap){
+        try{
+          renderMessagesFromSnap(__lastMessagesSnap);
+        }catch{}
+      } else {
+        // fallback
+        try{ messagesDiv.innerHTML = ""; }catch{}
+      }
+    }
+  });
+}
+
+/* =========================
+   ✅ Presence + Join/Leave
+   ========================= */
 
 async function updatePresenceStatus(statusVal, first=false){
   const onlineRef = ref(rtdb, "onlineUsers/" + user.uid);
@@ -591,7 +611,7 @@ async function updatePresenceStatus(statusVal, first=false){
   const payload = {
     uid: user.uid,
     name: displayName,
-    gender: profile.gender, // kept, but not shown in online list
+    gender: profile.gender,
     age: profile.age,
     country: profile.country || "",
     nameColor: profile.nameColor,
@@ -682,23 +702,6 @@ function forceExitToHome(){
   location.href = "index.html";
 }
 
-/* ✅✅✅ UPDATED: clear listener triggers immediate refresh */
-function startClearMetaListener(){
-  try{ if (unsubClearMeta) unsubClearMeta(); }catch{}
-  unsubClearMeta = onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
-    if (!snap.exists()) return;
-    const d = snap.data() || {};
-    const next = Number(d.clearedAtMs || 0);
-    if (!next) return;
-
-    const changed = next !== globalClearedAtMs;
-    globalClearedAtMs = next;
-
-    // ✅ refresh immediately for everyone
-    if (changed) refreshMessagesNow();
-  });
-}
-
 function startRoomLockListener(){
   onValue(ref(rtdb, "roomState/locked"), (snap)=>{
     roomLocked = snap.val() === true;
@@ -770,7 +773,7 @@ function startGlobalBgListener(){
     if (!snap.exists()) { applySiteBg(0); return; }
     const d = snap.data() || {};
     applySiteBg(Number(d.bgChoice || 0));
-  }, ()=>{ /* ignore */ });
+  }, ()=>{});
 }
 async function setGlobalBg(choice){
   if (!isAdmin) return;
@@ -801,7 +804,7 @@ function startRanksListener(){
       try{ update(ref(rtdb, `onlineUsers/${user.uid}`), { rank: rankOf(user.uid) }); }catch{}
     }
 
-    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none"; // ✅ admin only
+    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
   });
 }
 
@@ -957,120 +960,121 @@ function renderMsgTextToHtml(text){
   return esc;
 }
 
-/* ✅✅✅ UPDATED: keep unsubscribe and allow instant refresh */
+// ✅ فصلنا الريندر لدالة حتى نقدر نستدعيها من clear listener
+function renderMessagesFromSnap(snap){
+  messagesDiv.innerHTML = "";
+  const isFirst = !initialLoaded;
+
+  const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
+
+  const items = [];
+  snap.forEach((docx)=>{
+    const m = docx.data();
+    const tServer = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
+    const t = Number(tServer || m.createdAtMs || 0);
+    items.push({ id: docx.id, m, t });
+  });
+
+  items.sort((a,b)=>{
+    if (a.t !== b.t) return a.t - b.t;
+    return a.id.localeCompare(b.id);
+  });
+
+  for (const it of items){
+    const m = it.m;
+    const t = it.t;
+
+    if (t < cutoff) continue;
+
+    if (m.system && m.private === true){
+      const to = Array.isArray(m.to) ? m.to : [];
+      if (!user || !to.includes(user.uid)) continue;
+    }
+
+    if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) continue;
+
+    if (m.system){
+      const div = document.createElement("div");
+      const isBigBoss = (m.type === "bigBoss");
+      div.className = "system" + (isBigBoss ? " systemBigBoss" : "");
+      div.textContent = m.text || "";
+      messagesDiv.appendChild(div);
+
+      if (!isFirst && (m.type==="join" || m.type==="leave") && m.actorUid && m.actorUid !== user.uid){
+        const now = nowMs();
+        if (now - lastSoundAt > 800){
+          lastSoundAt = now;
+          toastSound.currentTime = 0;
+          toastSound.play().catch(()=>{});
+        }
+      }
+    } else {
+      const row = document.createElement("div");
+      row.className = "msgRow" + (m.uid === user.uid ? " me" : "");
+
+      const div = document.createElement("div");
+      const isMsgAdmin = (m.isAdmin === true) || (m.uid && ADMIN_UIDS.includes(m.uid));
+      div.className = "msg" + (m.uid === user.uid ? " me" : "") + (isMsgAdmin ? " adminMsg" : "");
+      div.dataset.mid = it.id;
+
+      const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
+
+      const r = (m.rank && RANKS[m.rank]) ? m.rank : rankOf(m.uid);
+      const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
+      const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
+
+      const nameHtml = isMsgAdmin
+        ? `${ADMIN_ICONS_HTML}<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
+        : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
+
+      const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
+        ? `<div class="replyQuote"><b>رد على: ${escapeHtml(m.replyTo.name)}</b><div>${escapeHtml(m.replyTo.text)}</div></div>`
+        : "";
+
+      div.innerHTML = `
+        <div class="msgHead">
+          <div class="nameTag ${nameSizeClass} ${isMsgAdmin ? "adminNameTag" : ""}">
+            ${nameHtml}
+          </div>
+        </div>
+        ${replyBlock}
+        <div class="msgText" style="color:${escapeHtml(m.textColor || "#f9fafb")}">${renderMsgTextToHtml(m.text||"")}</div>
+        <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
+        <button class="replyBtn" type="button" title="رد">↩ رد</button>
+      `;
+
+      div.querySelector(".replyBtn").addEventListener("click", ()=>{
+        replyTarget = {
+          id: it.id,
+          uid: m.uid,
+          name: m.name || "مستخدم",
+          text: String(m.text||"").slice(0,160)
+        };
+        replyPreviewName.textContent = `رد على: ${replyTarget.name}`;
+        replyPreviewText.textContent = replyTarget.text;
+        replyPreview.style.display = "flex";
+        msgInput.focus();
+      });
+
+      row.appendChild(div);
+      messagesDiv.appendChild(row);
+    }
+  }
+
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  initialLoaded = true;
+}
+
 function startGlobalMessagesListener(){
   initialLoaded = false;
-
-  try{ if (unsubMessages) unsubMessages(); }catch{}
-  unsubMessages = null;
 
   const q = __MOBILE_DEVICE
     ? query(collection(db, "globalMessages"), orderBy("createdAt", "asc"), limitToLast(600))
     : query(collection(db, "globalMessages"), where("createdAtMs", ">=", joinAtMs), orderBy("createdAtMs", "asc"));
 
-  unsubMessages = onSnapshot(q, (snap)=>{
-    messagesDiv.innerHTML = "";
-    const isFirst = !initialLoaded;
-
-    const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
-
-    const items = [];
-    snap.forEach((docx)=>{
-      const m = docx.data();
-      const tServer = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
-      const t = Number(tServer || m.createdAtMs || 0);
-      items.push({ id: docx.id, m, t });
-    });
-
-    items.sort((a,b)=>{
-      if (a.t !== b.t) return a.t - b.t;
-      return a.id.localeCompare(b.id);
-    });
-
-    for (const it of items){
-      const m = it.m;
-      const t = it.t;
-
-      if (t < cutoff) continue;
-
-      if (m.system && m.private === true){
-        const to = Array.isArray(m.to) ? m.to : [];
-        if (!user || !to.includes(user.uid)) continue;
-      }
-
-      if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) continue;
-
-      if (m.system){
-        const div = document.createElement("div");
-        const isBigBoss = (m.type === "bigBoss");
-        div.className = "system" + (isBigBoss ? " systemBigBoss" : "");
-        div.textContent = m.text || "";
-        messagesDiv.appendChild(div);
-
-        if (!isFirst && (m.type==="join" || m.type==="leave") && m.actorUid && m.actorUid !== user.uid){
-          const now = nowMs();
-          if (now - lastSoundAt > 800){
-            lastSoundAt = now;
-            toastSound.currentTime = 0;
-            toastSound.play().catch(()=>{});
-          }
-        }
-      } else {
-        const row = document.createElement("div");
-        row.className = "msgRow" + (m.uid === user.uid ? " me" : "");
-
-        const div = document.createElement("div");
-
-        const isMsgAdmin = (m.isAdmin === true) || (m.uid && ADMIN_UIDS.includes(m.uid));
-        div.className = "msg" + (m.uid === user.uid ? " me" : "") + (isMsgAdmin ? " adminMsg" : "");
-        div.dataset.mid = it.id;
-
-        const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
-
-        const r = (m.rank && RANKS[m.rank]) ? m.rank : rankOf(m.uid);
-        const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
-        const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
-
-        const nameHtml = isMsgAdmin
-          ? `${ADMIN_ICONS_HTML}<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
-          : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
-
-        const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
-          ? `<div class="replyQuote"><b>رد على: ${escapeHtml(m.replyTo.name)}</b><div>${escapeHtml(m.replyTo.text)}</div></div>`
-          : "";
-
-        div.innerHTML = `
-          <div class="msgHead">
-            <div class="nameTag ${nameSizeClass} ${isMsgAdmin ? "adminNameTag" : ""}">
-              ${nameHtml}
-            </div>
-          </div>
-          ${replyBlock}
-          <div class="msgText" style="color:${escapeHtml(m.textColor || "#f9fafb")}">${renderMsgTextToHtml(m.text||"")}</div>
-          <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
-          <button class="replyBtn" type="button" title="رد">↩ رد</button>
-        `;
-
-        div.querySelector(".replyBtn").addEventListener("click", ()=>{
-          replyTarget = {
-            id: it.id,
-            uid: m.uid,
-            name: m.name || "مستخدم",
-            text: String(m.text||"").slice(0,160)
-          };
-          replyPreviewName.textContent = `رد على: ${replyTarget.name}`;
-          replyPreviewText.textContent = replyTarget.text;
-          replyPreview.style.display = "flex";
-          msgInput.focus();
-        });
-
-        row.appendChild(div);
-        messagesDiv.appendChild(row);
-      }
-    }
-
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    initialLoaded = true;
+  onSnapshot(q, (snap)=>{
+    __lastMessagesSnap = snap;   // ✅ نخزن آخر snapshot
+    renderMessagesFromSnap(snap);
   });
 }
 
@@ -1340,10 +1344,10 @@ async function enterChat(statusVal){
   loadIgnoreWindows();
   startGlobalBgListener();
   startRanksListener();
-  startClearMetaListener();     // ✅ updated
+  startClearMetaListener();       // ✅ now triggers re-render immediately
   startRoomLockListener();
   startOnlineListener();
-  startGlobalMessagesListener(); // ✅ updated
+  startGlobalMessagesListener();
   startModerationListener();
 
   if (roomLocked && !canWriteWhenLocked()){
