@@ -875,6 +875,77 @@
 .msg.admin .msgTimeUnder{
   color: rgba(0,0,0,.75) !important;
 }
+/* =========================
+   ADMIN SPECIAL STYLE (MLO5)
+========================= */
+
+/* 👑💀 blink */
+.adminIcon.blink{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  animation: rankBlink 1.2s infinite;
+  margin-right:6px;
+  filter: drop-shadow(0 0 12px rgba(250,204,21,.25));
+}
+
+/* bigger admin name in online list */
+.userRow.admin .adminNameBig{
+  font-size:1.22rem;
+  letter-spacing:.02em;
+}
+
+/* ✅ admin capsule animated background in online list */
+.userRow.admin.adminCapsule{
+  background-image: url("../media/ranks/mshkla.gif");
+  background-size: cover;
+  background-position: center;
+  border-color: rgba(250,204,21,.35);
+}
+.userRow.admin.adminCapsule::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.65));
+  pointer-events:none;
+}
+.userRow.admin.adminCapsule > *{ position:relative; z-index:1; }
+
+/* ✅ Admin message bubble yellow */
+.msg.adminMsg{
+  background: rgba(250,204,21,.92) !important;
+  border-color: rgba(250,204,21,.85) !important;
+  color:#000 !important;
+}
+
+/* name + icons in chat on black background */
+.msg.adminMsg .nameTag.adminNameTag{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background: rgba(0,0,0,.88);
+  color:#fff;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.55);
+}
+
+/* keep admin name visible */
+.msg.adminMsg .adminNameInChat{
+  color:#fff;
+  font-weight:900;
+}
+
+/* text inside admin bubble readable */
+.msg.adminMsg .msgText{
+  color:#000 !important;
+  font-weight:700;
+}
+
+/* time readable on yellow */
+.msg.adminMsg .msgTimeUnder{
+  color: rgba(0,0,0,.75) !important;
+}
+
 
 
 
