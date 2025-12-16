@@ -746,4 +746,31 @@
       70%{opacity:.65; transform:translateY(0) scale(1)}
       100%{opacity:0; transform:translateY(-6px) scale(.98)}
     }
+/* =========================
+   WhatsApp Bubble Patch (SAFE)
+   ضع هذا آخر room.css القديم
+========================= */
+
+/* فقاعة الرسالة: دائرية وناعمة */
+.msg{
+  border-radius: 18px !important;
+  padding-bottom: 44px !important; /* خليها مثل القديم عشان زر الرد ما يخرب */
+}
+
+/* شكل واتساب: زاوية صغيرة من جهة واحدة */
+.msgRow:not(.me) .msg{
+  border-bottom-left-radius: 6px !important;
+}
+.msgRow.me .msg{
+  border-bottom-right-radius: 6px !important;
+}
+
+/* ❌ لو عندك ذيل مربع من أي باتش سابق: نخفيه فقط */
+.msgRow.me .msg::after,
+.msgRow:not(.me) .msg::after{
+  content: none !important;
+  display:none !important;
+}
+
+
 
