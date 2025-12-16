@@ -812,7 +812,7 @@ function startOnlineListener(){
 
       // ✅ NEW: admin name + icons + bigger size (CSS will handle too)
       const nameHtml = isRowAdmin
-        ? `<span class="adminNameBig" style="color:#fff;font-weight:900">${escapeHtml(ADMIN_DISPLAY_NAME)}</span>${ADMIN_ICONS_HTML} ${guestHtml}`
+        ? `${ADMIN_ICONS_HTML}<span class="adminNameBig" style="color:#fff;font-weight:900">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
         : `
           ${(!isRowAdmin && ru && ru !== "none") ? rankIconHtml(ru) : ""}
           <span style="color:${escapeHtml(u.nameColor||"#facc15")};font-weight:900">${escapeHtml(u.name || "مستخدم")}</span>
@@ -1401,3 +1401,4 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
