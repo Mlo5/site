@@ -42,19 +42,19 @@
       overflow:hidden;
     }
 
-    /* ✅ Global background layer (shows for ALL users; admin can change it) */
-    #siteBgLayer{
+    /* ✅ global background layer (applies to ALL users when admin changes) */
+    #adminBgLayer{
       position:fixed; inset:0;
       z-index:0;
       pointer-events:none;
-      display:block;
+      display:none;
       background-size:cover;
       background-position:center;
       opacity:.55;
       filter:saturate(1.1) contrast(1.05);
       mix-blend-mode:screen;
     }
-    #siteBgLayer::after{
+    #adminBgLayer::after{
       content:"";
       position:absolute; inset:0;
       background:linear-gradient(180deg, rgba(0,0,0,.50), rgba(0,0,0,.70));
@@ -158,64 +158,17 @@
     }
     #onlineList::-webkit-scrollbar{ width:0; height:0; }
 
-    /* ✅ user row base */
     .userRow{
       display:flex;align-items:center;justify-content:space-between;gap:10px;
       padding:10px;border-radius:16px;border:1px solid var(--border-subtle);
-      background:rgba(0,0,0,.55);
-      box-shadow:0 10px 22px rgba(0,0,0,.6);
+      background:rgba(0,0,0,.55);box-shadow:0 10px 22px rgba(0,0,0,.6);
       cursor:pointer;
-      position:relative;
-      overflow:hidden;
     }
-
-    /* ✅ Admin in online list: BLACK background (as requested) */
     .userRow.admin{
-      background:rgba(0,0,0,.80);
-      border-color:rgba(250,204,21,.28);
-      box-shadow:0 0 0 1px rgba(0,0,0,.85), 0 10px 22px rgba(0,0,0,.6);
+      background:rgba(0,0,0,.65);
+      border-color:rgba(250,204,21,.35);
+      box-shadow:0 0 0 1px rgba(0,0,0,.8), 0 10px 22px rgba(0,0,0,.6);
     }
-
-    /* ✅ Rank backgrounds apply to the WHOLE ROW (not only name) */
-    .userRow.rank-legend{
-      background:linear-gradient(135deg, rgba(239,68,68,.38), rgba(0,0,0,.75));
-      background-image:url("legend.gif");
-      background-size:cover;
-      background-position:center;
-      border-color:rgba(239,68,68,.35);
-    }
-    .userRow.rank-vip{
-      background:linear-gradient(135deg, rgba(37,99,235,.38), rgba(0,0,0,.75));
-      background-image:url("vip.gif");
-      background-size:cover;
-      background-position:center;
-      border-color:rgba(37,99,235,.35);
-    }
-    .userRow.rank-root{
-      background:linear-gradient(135deg, rgba(249,115,22,.38), rgba(0,0,0,.75));
-      background-image:url("root.gif");
-      background-size:cover;
-      background-position:center;
-      border-color:rgba(249,115,22,.35);
-    }
-    .userRow.rank-girl{
-      background:linear-gradient(135deg, rgba(236,72,153,.38), rgba(0,0,0,.75));
-      background-image:url("girl.gif");
-      background-size:cover;
-      background-position:center;
-      border-color:rgba(236,72,153,.38);
-    }
-    /* subtle overlay to keep text readable on GIFs */
-    .userRow.rank-legend::after,
-    .userRow.rank-vip::after,
-    .userRow.rank-root::after,
-    .userRow.rank-girl::after{
-      content:"";
-      position:absolute; inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.65));
-      pointer-events:none;
-    }
-    .userRow > *{ position:relative; z-index:1; }
 
     .userMeta{display:flex;flex-direction:column;gap:3px;min-width:0}
     .userMeta b{
@@ -223,6 +176,7 @@
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:190px;
       display:flex; align-items:center; gap:8px;
     }
+    .userRow.admin .userMeta b{font-size:1.22rem;}
     .userMeta span{font-size:.8rem;color:var(--muted);display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 
     .miniPill{
@@ -231,28 +185,24 @@
       color:var(--yellow);white-space:nowrap;
       display:inline-flex; align-items:center; gap:6px;
     }
-
-    /* ✅ device icon small next to status (online list only) */
     .devIcon{
       font-size:.85rem;
       opacity:.9;
       filter: drop-shadow(0 2px 8px rgba(0,0,0,.25));
     }
 
-    /* ✅ Rank icon: emoji ONLY (no border/circle) */
+    /* ✅ Rank icon next to name (ICON only) */
     .rankIcon{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      width:auto;height:auto;
-      border:none;
+      width:28px;height:28px;
+      border-radius:999px;
+      border:0;
       background:transparent;
-      border-radius:0;
-      padding:0;
-      font-size:1.05rem;
+      font-size:1rem;
       animation: rankBlink 1.2s infinite;
       flex:0 0 auto;
-      filter: drop-shadow(0 0 10px rgba(250,204,21,.10));
     }
     @keyframes rankBlink{
       0%{opacity:1}
@@ -260,33 +210,42 @@
       100%{opacity:1}
     }
 
-    /* ✅ Mute indicator: emoji ONLY (no border/circle) */
-    .mutedEmoji{
+    /* ✅ Rank name background (ONLY in online list) */
+    .rankNameWrap{
       display:inline-flex;
       align-items:center;
-      justify-content:center;
-      font-size:1rem;
-      animation: rankBlink 1.2s infinite;
-      filter: drop-shadow(0 0 12px rgba(239,68,68,.18));
+      gap:8px;
+      padding:4px 10px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.35);
+      box-shadow:0 10px 22px rgba(0,0,0,.35);
+      color:#fff !important;
     }
+    .rankNameWrap *{ color:#fff !important; }
 
-    /* ✅⬇️ صغّر شوية اشارة التجاهل + الثلاث نقاط */
+    .rankNameLegend{ background:var(--legend); background-image:url("legend.gif"); background-size:cover; background-position:center; }
+    .rankNameVip{ background:var(--vip); background-image:url("vip.gif"); background-size:cover; background-position:center; }
+    .rankNameRoot{ background:var(--root); background-image:url("root.gif"); background-size:cover; background-position:center; }
+    .rankNameGirl{ background:var(--girl); background-image:url("girl.gif"); background-size:cover; background-position:center; border-color:rgba(236,72,153,.55); }
+
+    /* ✅ ignore + more (NO border) */
     .ignoreBtn, .moreBtn{
-      border:1px solid rgba(250,204,21,.55);
-      background:rgba(0,0,0,.45);
+      border:none;
+      background:transparent;
       color:var(--yellow);
       border-radius:999px;
       padding:5px 9px;
       cursor:pointer;
-      font-size:.85rem;
+      font-size:1rem;
       user-select:none;
-      min-width:38px;
+      min-width:34px;
       height:32px;
       display:inline-flex;align-items:center;justify-content:center;
+      opacity:.95;
     }
-    .ignoreBtn.ignored{border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)}
-    .ignoreBtn:disabled{opacity:.5;cursor:not-allowed}
-    .moreBtn{opacity:.95}
+    .ignoreBtn:hover, .moreBtn:hover{ background:rgba(250,204,21,.10); }
+    .ignoreBtn.ignored{color:rgba(239,68,68,.95)}
+    .ignoreBtn:disabled{opacity:.45;cursor:not-allowed}
 
     .actionsRow{display:flex;align-items:center;gap:8px}
 
@@ -302,12 +261,7 @@
     }
 
     .chatCard{display:flex;flex-direction:column;height:100%;min-height:0;position:relative}
-    .chatSplit{
-      flex:1; min-height:0;
-      display:grid;
-      grid-template-columns:1fr 0fr;
-      gap:12px;
-    }
+    .chatSplit{ flex:1; min-height:0; display:grid; grid-template-columns:1fr 0fr; gap:12px; }
     .chatCol{min-height:0;display:flex;flex-direction:column}
 
     #messages{
@@ -318,12 +272,7 @@
     }
     #messages::-webkit-scrollbar{ width:0; height:0; }
 
-    .msgRow{
-      width:100%;
-      display:flex;
-      direction:rtl;
-      justify-content:flex-start;
-    }
+    .msgRow{ width:100%; display:flex; direction:rtl; justify-content:flex-start; }
     .msgRow.me{ justify-content:flex-end; }
 
     .msg{
@@ -342,14 +291,8 @@
       box-shadow:0 14px 32px rgba(0,0,0,.75),0 0 0 1px rgba(250,204,21,.35);
     }
 
-    .msgHead{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      margin-bottom:6px;color:var(--muted);font-size:.85rem
-    }
-    .nameTag{
-      font-weight:900;display:inline-flex;align-items:center;gap:8px;
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px
-    }
+    .msgHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;color:var(--muted);font-size:.85rem}
+    .nameTag{font-weight:900;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
     .nameTag.rankBig{font-size:1.05rem}
     .msgTimeUnder{margin-top:6px;font-size:.78rem;color:rgba(156,163,175,.92);text-align:left;direction:ltr}
 
@@ -364,7 +307,6 @@
       max-width:100%;
       text-align:center;
     }
-    /* ✅ animated system message "دخل كبيرهم" */
     .systemBigBoss{
       animation: bigBossBlink 1.05s infinite;
       border-style:solid;
@@ -475,6 +417,9 @@
     .emojiGrid::-webkit-scrollbar{ width:0; height:0; }
     .emojiItem{border:1px solid rgba(148,163,184,.35);background:rgba(0,0,0,.55);border-radius:12px;padding:6px 0;text-align:center;cursor:pointer;user-select:none}
 
+    .gMale{color:#3b82f6;font-weight:900}
+    .gFemale{color:#ec4899;font-weight:900}
+
     .menu{
       position:fixed; z-index:9999;
       background:rgba(0,0,0,.92);
@@ -510,109 +455,91 @@
       white-space:nowrap;
     }
 
-    #modal{
-      position:fixed; inset:0; z-index:999;
-      background:rgba(0,0,0,.75);
-      display:none; align-items:center; justify-content:center;
-      padding:16px;
-    }
-    #modalBox{
-      width:min(860px,96vw);
-      border-radius:18px;
-      border:1px solid rgba(250,204,21,.55);
-      background:rgba(0,0,0,.92);
-      box-shadow:0 18px 45px rgba(0,0,0,.95),0 0 0 1px rgba(17,24,39,.9);
-      padding:14px;
-      backdrop-filter:blur(10px);
-      position:relative;
-    }
-    .modalGrid{
-      display:grid;
-      grid-template-columns: 1fr 340px;
-      gap:14px;
-      align-items:start;
-    }
-    @media (max-width: 900px){ .modalGrid{grid-template-columns:1fr} }
-
-    .modalCard{
-      border:1px solid rgba(250,204,21,.35);
+    /* ✅ Admin capsule in online list (mshkla.gif) */
+    .adminNameWrap{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 12px;
       border-radius:16px;
-      background:rgba(0,0,0,.45);
-      padding:12px;
+      background:#000;
+      background-image:url("mshkla.gif");
+      background-size:cover;
+      background-position:center;
+      border:1px solid rgba(250,204,21,.25);
+      box-shadow:0 10px 22px rgba(0,0,0,.55);
+      direction:rtl;
+      overflow:hidden;
       position:relative;
     }
-    .modalCard h3{margin-bottom:8px;color:var(--yellow);text-align:center;font-weight:900}
-    .modalCard p{color:var(--muted);text-align:center;font-size:.9rem;margin-bottom:12px;line-height:1.7}
-
-    .homeBackBtn{
-      position:absolute;
-      top:10px;
-      left:10px;
-      border-radius:999px;
-      border:1px solid rgba(250,204,21,.75);
-      background:rgba(0,0,0,.75);
-      color:var(--yellow);
-      width:40px;height:40px;
-      cursor:pointer;
-      display:inline-flex;align-items:center;justify-content:center;
-      user-select:none;
+    .adminNameWrap::after{
+      content:"";
+      position:absolute; inset:0;
+      background:rgba(0,0,0,.55); /* keeps black feel even with gif */
+      mix-blend-mode:multiply;
     }
-    .backListBtn{
-      position:absolute;
-      top:10px;
-      left:58px;
-      border-radius:999px;
-      border:1px solid rgba(250,204,21,.75);
-      background:rgba(0,0,0,.75);
-      color:var(--yellow);
-      width:40px;height:40px;
-      cursor:pointer;
-      display:inline-flex;align-items:center;justify-content:center;
-      user-select:none;
-    }
+    .adminNameWrap > *{ position:relative; z-index:1; }
 
-    .choiceRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
-    .choiceBtn{
-      border-radius:999px;
-      border:1px solid rgba(250,204,21,.75);
-      background:rgba(0,0,0,.75);
-      color:var(--yellow);
-      padding:10px 14px;
-      cursor:pointer;
+    .adminNameText{
+      color:#fff !important;
       font-weight:900;
-      flex:1;
-      min-width:180px;
+      font-size:1.22rem;
+      white-space:nowrap;
+      text-shadow:0 6px 20px rgba(0,0,0,.65);
+    }
+    .adminSkull, .adminCrown{
+      display:inline-block;
+      animation: skullBlink 1.2s infinite;
+      filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
+    }
+    @keyframes skullBlink{
+      0%{opacity:1}
+      50%{opacity:.2}
+      100%{opacity:1}
     }
 
-    .modalRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-    .modalRow.one{grid-template-columns:1fr}
-    .modalBtn{
-      width:100%;
+    /* ✅ Admin chip (chat) KEEP AS IS (you told me don't touch chat style) */
+    .adminChatChip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:4px 10px;
       border-radius:999px;
-      border:1px solid rgba(250,204,21,.75);
-      background:rgba(0,0,0,.75);
-      color:var(--yellow);
-      padding:10px 14px;
-      cursor:pointer;
+      background:linear-gradient(135deg, #facc15, #fde047);
+      border:1px solid rgba(0,0,0,.85);
+      box-shadow:0 10px 22px rgba(0,0,0,.35);
+      direction:rtl;
+    }
+    .adminChatChip .adminChatText{
+      color:#000 !important;
       font-weight:900;
+      font-size:1.15rem;
+      white-space:nowrap;
     }
-    .hintErr{margin-top:8px;color:rgba(239,68,68,.95);font-size:.85rem;text-align:center;display:none}
 
-    .nameWrap{display:flex;gap:10px;align-items:center}
-    .nameWrap input{flex:1}
-
-    .colorRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
-    .colorBox{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      border:1px solid rgba(250,204,21,.35);
+    .adminRoomDots{
+      border:none;
+      background:rgba(0,0,0,.35);
+      color:var(--yellow);
       border-radius:999px;
-      padding:6px 10px;
-      background:rgba(0,0,0,.45);
-      color:var(--white);
-      font-size:.85rem;
+      padding:5px 9px;
+      cursor:pointer;
+      font-size:.95rem;
+      user-select:none;
+      height:32px;
+      min-width:38px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
-    .colorBox input{width:44px;height:28px;padding:0;border-radius:10px;border:1px solid rgba(250,204,21,.55); background:#000}
+    .adminRoomDots:hover{ background:rgba(250,204,21,.12); }
 
+    #onlineOverlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.65);
+      z-index:1190;
+      display:none;
+    }
     @media (max-width:900px){
       body{overflow:hidden}
       .page{padding:16px 12px 18px}
@@ -622,6 +549,7 @@
         min-height:0;
       }
       .badgeBtn{display:inline-flex;}
+
       .msg{
         max-width:88%;
         padding:8px 10px 34px;
@@ -638,87 +566,6 @@
         right:8px;
       }
       .sendBtn,.emojiBtn{ display:none !important; }
-    }
-
-    #appModal{
-      position:fixed; inset:0; z-index:2000;
-      background:rgba(0,0,0,.75);
-      display:none; align-items:center; justify-content:center;
-      padding:16px;
-    }
-    #appModalBox{
-      width:min(520px,96vw);
-      border-radius:18px;
-      border:1px solid rgba(250,204,21,.55);
-      background:rgba(0,0,0,.92);
-      box-shadow:0 18px 45px rgba(0,0,0,.95),0 0 0 1px rgba(17,24,39,.9);
-      padding:14px;
-      backdrop-filter:blur(10px);
-    }
-    .appModalTitle{
-      color:var(--yellow);
-      font-weight:900;
-      text-align:center;
-      margin-bottom:8px;
-    }
-    .appModalText{
-      color:var(--white);
-      text-align:center;
-      line-height:1.8;
-      margin-bottom:12px;
-      white-space:pre-wrap;
-    }
-    .appModalActions{
-      display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
-    }
-
-    #modalBox .modalCard,
-    #modalBox .choiceBtn,
-    #modalBox .modalBtn,
-    #modalBox input,
-    #modalBox select,
-    #modalBox .colorBox{
-      transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
-    }
-    #modalBox .choiceBtn:hover,
-    #modalBox .modalBtn:hover,
-    #modalBox .colorBox:hover{
-      box-shadow: 0 0 0 1px rgba(250,204,21,.25), 0 0 22px rgba(250,204,21,.18), 0 16px 40px rgba(0,0,0,.85);
-      transform: translateY(-1px);
-      border-color: rgba(250,204,21,.85);
-    }
-    #modalBox input:hover,
-    #modalBox select:hover{
-      box-shadow: 0 0 0 1px rgba(250,204,21,.18), 0 0 18px rgba(250,204,21,.14);
-      border-color: rgba(250,204,21,.75);
-    }
-    #modalBox .modalCard:hover{
-      box-shadow: 0 0 0 1px rgba(250,204,21,.14), 0 0 26px rgba(250,204,21,.10), 0 18px 45px rgba(0,0,0,.95);
-    }
-
-    .adminRoomDots{
-      border:1px solid rgba(250,204,21,.55);
-      background:rgba(0,0,0,.45);
-      color:var(--yellow);
-      border-radius:999px;
-      padding:5px 9px;
-      cursor:pointer;
-      font-size:.85rem;
-      user-select:none;
-      height:32px;
-      min-width:38px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    #onlineOverlay{
-      position:fixed; inset:0;
-      background:rgba(0,0,0,.65);
-      z-index:1190;
-      display:none;
-    }
-    @media (max-width:900px){
       .onlineCard{
         position:fixed;
         top:74px;
@@ -732,6 +579,26 @@
       #onlineOverlay.show{ display:block; }
     }
 
+    #appModal{
+      position:fixed; inset:0; z-index:2000;
+      background:rgba(0,0,0,.75);
+      display:none; align-items:center; justify-content:center;
+      padding:16px;
+    }
+    #appModalBox{
+      width:min(620px,96vw);
+      border-radius:18px;
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.92);
+      box-shadow:0 18px 45px rgba(0,0,0,.95),0 0 0 1px rgba(17,24,39,.9);
+      padding:14px;
+      backdrop-filter:blur(10px);
+    }
+    .appModalTitle{ color:var(--yellow); font-weight:900; text-align:center; margin-bottom:8px; }
+    .appModalText{ color:var(--white); text-align:right; line-height:1.8; margin-bottom:12px; white-space:pre-wrap; direction:rtl; }
+    .appModalActions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+
+    /* ✅ emoji images in chat */
     .chatEmojiImg{
       width:26px;height:26px;
       vertical-align:middle;
@@ -764,9 +631,7 @@
 </head>
 
 <body>
-  <!-- ✅ global background layer -->
-  <div id="siteBgLayer"></div>
-
+  <div id="adminBgLayer"></div>
   <div class="bg-grid"></div>
   <div id="onlineOverlay"></div>
 
@@ -780,18 +645,9 @@
       <div class="title">M L O 5 <small>• Global Chat</small></div>
 
       <div style="display:flex;gap:10px;align-items:center">
-        <!-- ✅ زر السجل يظهر للأدمن فقط -->
         <button class="top-chip" id="logBtn" type="button" title="سجل الإدارة" style="display:none;">📜 سجل</button>
-
-        <!-- ✅ زر خلفية الموقع (للأدمن فقط) - بجانب السجل -->
-        <button class="top-chip" id="bgBtn" type="button" title="خلفية الموقع" style="display:none;">🖼️ خلفية</button>
-
-        <!-- ✅ زر الألوان مبين عند الكل -->
         <button class="top-chip" id="colorBtn" type="button" title="ألوان">🎨 ألوان</button>
-
-        <!-- ✅ زر تحميل جنب خروج (للجميع) -->
         <button class="top-chip" id="downloadBtn" type="button" title="تحميل للكمبيوتر">⬇️ تحميل</button>
-
         <button class="top-chip" id="exitBtn" type="button" title="خروج من الشات">↩ خروج</button>
       </div>
     </div>
@@ -885,41 +741,10 @@
             <div class="modalRow">
               <select id="genderInput">
                 <option value="">الجنس</option>
-                <option value="male">ذكر</option>
-                <option value="female">أنثى</option>
+                <option value="male">ذكر ♂️</option>
+                <option value="female">أنثى ♀️</option>
               </select>
               <input id="ageInput" type="number" min="10" max="99" placeholder="العمر (10+)" />
-            </div>
-
-            <!-- ✅ NEW: manual country select -->
-            <div class="modalRow one">
-              <select id="countryInput" title="الدولة">
-                <option value="">الدولة</option>
-                <option value="JO">🇯🇴 الأردن</option>
-                <option value="SA">🇸🇦 السعودية</option>
-                <option value="AE">🇦🇪 الإمارات</option>
-                <option value="KW">🇰🇼 الكويت</option>
-                <option value="QA">🇶🇦 قطر</option>
-                <option value="BH">🇧🇭 البحرين</option>
-                <option value="OM">🇴🇲 عُمان</option>
-                <option value="EG">🇪🇬 مصر</option>
-                <option value="IQ">🇮🇶 العراق</option>
-                <option value="PS">🇵🇸 فلسطين</option>
-                <option value="LB">🇱🇧 لبنان</option>
-                <option value="SY">🇸🇾 سوريا</option>
-                <option value="MA">🇲🇦 المغرب</option>
-                <option value="DZ">🇩🇿 الجزائر</option>
-                <option value="TN">🇹🇳 تونس</option>
-                <option value="LY">🇱🇾 ليبيا</option>
-                <option value="SD">🇸🇩 السودان</option>
-                <option value="YE">🇾🇪 اليمن</option>
-                <option value="TR">🇹🇷 تركيا</option>
-                <option value="US">🇺🇸 USA</option>
-                <option value="GB">🇬🇧 UK</option>
-                <option value="DE">🇩🇪 ألمانيا</option>
-                <option value="FR">🇫🇷 فرنسا</option>
-                <option value="CA">🇨🇦 كندا</option>
-              </select>
             </div>
 
             <div class="colorRow">
@@ -995,12 +820,10 @@
     <button id="selfMuteBtn">🔇 كتم نفسي</button>
     <button id="selfUnmuteBtn">🔊 فك كتم نفسي</button>
 
-    <!-- ✅ global backgrounds (admin only, triggered from top bg button) -->
     <div class="sep"></div>
     <button id="bg1Btn">🖼️ خلفية 1</button>
     <button id="bg2Btn">🖼️ خلفية 2</button>
     <button id="bg3Btn">🖼️ خلفية 3</button>
-    <button id="bg0Btn">🧽 إزالة الخلفية</button>
   </div>
 
 <script type="module">
@@ -1009,7 +832,7 @@
   import {
     getFirestore, collection, addDoc, serverTimestamp,
     query, where, orderBy, onSnapshot, doc, setDoc,
-    getDocs, limit, limitToLast
+    getDocs, writeBatch, limit, limitToLast
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
   import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
@@ -1048,7 +871,6 @@
   const connText = document.getElementById("connText");
   const exitBtn = document.getElementById("exitBtn");
   const logBtn = document.getElementById("logBtn");
-  const bgBtn  = document.getElementById("bgBtn");
   const colorBtn = document.getElementById("colorBtn");
   const downloadBtn = document.getElementById("downloadBtn");
 
@@ -1085,7 +907,6 @@
   const nameInput = document.getElementById("nameInput");
   const genderInput = document.getElementById("genderInput");
   const ageInput = document.getElementById("ageInput");
-  const countryInput = document.getElementById("countryInput");
   const nameColorInput = document.getElementById("nameColor");
   const textColorInput = document.getElementById("textColor");
   const enterBtn = document.getElementById("enterBtn");
@@ -1121,9 +942,8 @@
   const bg1Btn = document.getElementById("bg1Btn");
   const bg2Btn = document.getElementById("bg2Btn");
   const bg3Btn = document.getElementById("bg3Btn");
-  const bg0Btn = document.getElementById("bg0Btn");
 
-  const siteBgLayer = document.getElementById("siteBgLayer");
+  const adminBgLayer = document.getElementById("adminBgLayer");
   const chatHint = document.getElementById("chatHint");
 
   const appModal = document.getElementById("appModal");
@@ -1158,22 +978,23 @@
 
   /* ✅ RANKS */
   const RANKS = {
-    none:  { label:"بدون",     emoji:"",   rowClass:"" },
-    legend:{ label:"Legendary",emoji:"⚡",  rowClass:"rank-legend" },
-    vip:   { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
-    root:  { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
-    girl:  { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" }
+    none:  { label:"بدون",     emoji:"",   nameClass:"" },
+    legend:{ label:"Legendary",emoji:"⚡",  nameClass:"rankNameLegend" },
+    vip:   { label:"VIP",      emoji:"💎",  nameClass:"rankNameVip" },
+    root:  { label:"ROOT",     emoji:"🛡️",  nameClass:"rankNameRoot" },
+    girl:  { label:"GIRL",     emoji:"🎀",  nameClass:"rankNameGirl" }
   };
   let ranksMap = {}; // uid -> rank
-
   function rankOf(uid){ return ranksMap?.[uid] || "none"; }
   function rankEmoji(r){ return (RANKS[r] || RANKS.none).emoji || ""; }
-
-  // ✅ صلاحيات الرتب (تم تعديل المسح: للأدمن فقط)
   function myRank(){ return rankOf(user?.uid); }
   function hasAnyRank(uid){ return rankOf(uid) && rankOf(uid) !== "none"; }
+
   function canWriteWhenLocked(){ return isAdmin || hasAnyRank(user?.uid); }
-  function canClear(){ return isAdmin; } // ✅ مسح الشات للأدمن فقط
+
+  // ✅ IMPORTANT: clear is ADMIN ONLY
+  function canClear(){ return !!isAdmin; }
+
   function canKick(){
     const r = myRank();
     return isAdmin || r === "root" || r === "vip" || r === "girl";
@@ -1192,11 +1013,14 @@
     return `<span class="rankIcon" title="${escapeHtml(RANKS[r]?.label||"")}">${escapeHtml(rankEmoji(r))}</span>`;
   }
 
-  /* ✅ Country code -> flag emoji */
-  function countryCodeToFlagEmoji(cc){
-    const c = String(cc||"").toUpperCase();
-    if (c.length !== 2) return "🏳️";
-    return String.fromCodePoint(...[...c].map(ch => 127397 + ch.charCodeAt()));
+  function rankNameHtmlOnline(name, r, nameColorFallback){
+    const cleanName = escapeHtml(name || "مستخدم");
+    if (!r || r === "none"){
+      return `<span style="color:${escapeHtml(nameColorFallback||"#facc15")};font-weight:900">${cleanName}</span>`;
+    }
+    const cls = RANKS[r]?.nameClass || "";
+    const em = rankEmoji(r);
+    return `<span class="rankNameWrap ${cls}"><span class="rankIcon" style="width:26px;height:26px;background:transparent">${escapeHtml(em)}</span><span style="font-weight:900">${cleanName}</span></span>`;
   }
 
   /* ✅ إصلاح vh بالموبايل */
@@ -1261,6 +1085,14 @@
     h = h % 12; if (h === 0) h = 12;
     return `${h}:${m} ${ampm}`;
   }
+
+  // ✅ Gender only in CHAT (kept), NOT in online list
+  function genderSymbolHtml(g){
+    if (g === "male") return `<span class="gMale">♂️</span>`;
+    if (g === "female") return `<span class="gFemale">♀️</span>`;
+    return "";
+  }
+
   function statusLabel(s){
     switch(s){
       case "online": return "🟢 متصل";
@@ -1343,7 +1175,7 @@
   document.addEventListener("click",(e)=>{
     if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) hideEmoji();
     if (!ctxMenu.contains(e.target)) hideCtxMenu();
-    if (!roomMenu.contains(e.target) && e.target !== bgBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
+    if (!roomMenu.contains(e.target) && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
   });
 
   emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
@@ -1413,16 +1245,8 @@
     bg1Btn.style.display = showAdmin ? "block" : "none";
     bg2Btn.style.display = showAdmin ? "block" : "none";
     bg3Btn.style.display = showAdmin ? "block" : "none";
-    bg0Btn.style.display = showAdmin ? "block" : "none";
   }
   function hideRoomMenu(){ roomMenu.style.display = "none"; }
-
-  bgBtn.addEventListener("click",(e)=>{
-    e.preventDefault();
-    if (!isAdmin) return;
-    const r = bgBtn.getBoundingClientRect();
-    showRoomMenu(Math.round(r.left), Math.round(r.bottom + 8));
-  });
 
   async function writeSystemText(text, type="system", actor={}){
     await addDoc(collection(db, "globalMessages"), {
@@ -1445,9 +1269,11 @@
     });
   }
 
-  async function writeActionLog(action, details=""){
+  /* ✅ Logs (two types) */
+  async function writeActionLog(action, details="", category="chat"){
     try{
       await addDoc(collection(db, "globalLogs"), {
+        category, // "chat" | "presence"
         action,
         details,
         byUid: user?.uid || null,
@@ -1458,63 +1284,77 @@
       });
     }catch{}
   }
-
-  function showLogsModal(lines){
+  function showLogsModal(text, view="chat"){
     showAppModal({
-      title:"📜 سجل",
-      text: lines.join("\n") || "لا يوجد سجل حالياً.",
-      actions:[{label:"إغلاق", onClick:()=>hideAppModal()}]
+      title: view==="chat" ? "📜 سجل الشات" : "🚪 سجل الدخول والخروج",
+      text,
+      actions:[
+        {label:"سجل الشات", onClick:()=>{ hideAppModal(); openLogs("chat"); }},
+        {label:"سجل دخول/خروج", onClick:()=>{ hideAppModal(); openLogs("presence"); }},
+        {label:"إغلاق", onClick:()=>hideAppModal()}
+      ]
     });
   }
 
-  logBtn.addEventListener("click", async ()=>{
+  async function openLogs(view){
     if (!isAdmin) return;
     try{
-      const ql = query(collection(db, "globalLogs"), orderBy("atMs","desc"), limit(80));
+      const ql = query(collection(db, "globalLogs"), orderBy("atMs","desc"), limit(120));
       const snap = await getDocs(ql);
-      const lines = [];
+
+      const rows = [];
       snap.forEach(d=>{
         const x = d.data()||{};
+        const cat = x.category || "chat"; // backward compatibility
+        if (cat !== view) return;
         const t = formatTime(Number(x.atMs||0));
         const who = x.byName || "—";
         const rk = x.byRank || "—";
-        lines.push(`${t} • ${who} (${rk}) • ${x.action}${x.details ? " — " + x.details : ""}`);
+        rows.push(`${t} • ${who} (${rk}) • ${x.action}${x.details ? " — " + x.details : ""}`);
       });
-      showLogsModal(lines.reverse());
-    }catch(err){
-      showLogsModal(["تعذر تحميل السجل (تحقق من صلاحيات Firestore Rules لمجموعة globalLogs)."]);
+
+      if (!rows.length){
+        showLogsModal("لا يوجد سجل حالياً.", view);
+      } else {
+        showLogsModal(rows.reverse().join("\n"), view);
+      }
+    }catch{
+      showLogsModal("تعذر تحميل السجل (تحقق من صلاحيات Firestore Rules لمجموعة globalLogs).", view);
     }
-  });
+  }
+
+  logBtn.addEventListener("click", ()=> openLogs("chat"));
 
   /* ✅ Moderation */
   async function adminKick(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { kickedAt: nowMs(), reason:"kick", by:user.uid });
     await writeSystemText(`🚪 تم طرد ${targetName} بواسطة ${profile?.name||"—"}`, "kick", {uid:user.uid,name:profile?.name});
-    await writeActionLog("kick", targetName);
+    await writeActionLog("kick", targetName, "chat");
   }
   async function adminBan(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { banned:true, bannedAt: nowMs(), reason:"ban", by:user.uid });
     await writeSystemText(`⛔ تم حظر ${targetName} بواسطة ${profile?.name||"—"}`, "ban", {uid:user.uid,name:profile?.name});
-    await writeActionLog("ban", targetName);
+    await writeActionLog("ban", targetName, "chat");
   }
   async function adminUnban(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { banned:false, unbannedAt: nowMs(), reason:"unban", by:user.uid });
     await writeSystemText(`✅ تم إلغاء حظر ${targetName} بواسطة ${profile?.name||"—"}`, "unban", {uid:user.uid,name:profile?.name});
-    await writeActionLog("unban", targetName);
+    await writeActionLog("unban", targetName, "chat");
   }
   async function adminMute(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { muted:true, mutedUntil:0, reason:"mute", by:user.uid, mutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:true });
     await writeSystemText(`🔇 تم كتم ${targetName} بواسطة ${profile?.name||"—"}`, "mute", {uid:user.uid,name:profile?.name});
-    await writeActionLog("mute", targetName);
+    await writeActionLog("mute", targetName, "chat");
   }
   async function adminUnmute(targetUid, targetName){
     await update(ref(rtdb, `moderation/${targetUid}`), { muted:false, mutedUntil:0, reason:"unmute", by:user.uid, unmutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${targetUid}`), { muted:false });
     await writeSystemText(`🔊 تم إلغاء كتم ${targetName} بواسطة ${profile?.name||"—"}`, "unmute", {uid:user.uid,name:profile?.name});
-    await writeActionLog("unmute", targetName);
+    await writeActionLog("unmute", targetName, "chat");
   }
 
+  /* ✅ Rank assign/remove */
   async function setRank(targetUid, targetName, rank){
     if (!isAdmin) return;
     if (!targetUid || targetUid === user.uid) return;
@@ -1534,27 +1374,48 @@
       : `🏷️ تم إعطاء ${targetName} رتبة ${rankEmoji(r)}`;
 
     await writePrivateSystem(msg, [user.uid, targetUid], "rank");
-    await writeActionLog("rank", `${targetName} -> ${r}`);
+    await writeActionLog("rank", `${targetName} -> ${r}`, "chat");
 
     ranksMap[targetUid] = r;
   }
 
-  /* ✅ Clear for ALL including admin (cutoff for everyone) */
-  async function adminClearForAll(){
+  /* ✅ HARD CLEAR (delete messages for everyone incl admin) */
+  async function hardClearChat(){
     if (!isAdmin) return;
 
-    const clearedAtMs = nowMs();
-    await setDoc(doc(db, "globalMeta", "clear"), {
-      clearedAtMs,
-      byUid:user.uid,
-      byName: profile?.name || "—",
-      createdAt: serverTimestamp()
-    }, { merge:true });
+    showAppModal({
+      title:"🧹 مسح الشات",
+      text:"جارٍ مسح الرسائل للجميع...",
+      actions:[{label:"تم", onClick:()=>hideAppModal()}]
+    });
 
-    await writeSystemText(`🧹 تم مسح النص بواسطة الأدمن`, "clear", {uid:user.uid,name:profile?.name});
-    await writeActionLog("clear", "");
+    try{
+      // delete last ~450 messages (safe per batch)
+      const qDel = query(collection(db, "globalMessages"), orderBy("createdAtMs","desc"), limit(450));
+      const snap = await getDocs(qDel);
+      const batch = writeBatch(db);
+      let count = 0;
+      snap.forEach(d=>{
+        batch.delete(d.ref);
+        count++;
+      });
+      await batch.commit();
+
+      await writeSystemText(`🧹 ${profile?.name||"—"} مسح الشات`, "clear", {uid:user.uid,name:profile?.name});
+      await writeActionLog("clear", `deleted:${count}`, "chat");
+
+      hideAppModal();
+    }catch(err){
+      hideAppModal();
+      showAppModal({
+        title:"❌ فشل المسح",
+        text:"تأكد إن Firestore Rules تسمح للأدمن بحذف globalMessages.\n(allow delete: if isAdmin())",
+        actions:[{label:"حسناً", onClick:()=>hideAppModal()}]
+      });
+      console.error(err);
+    }
   }
-  adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
+  adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); hardClearChat(); });
 
   async function updatePresenceStatus(statusVal, first=false){
     const onlineRef = ref(rtdb, "onlineUsers/" + user.uid);
@@ -1563,9 +1424,8 @@
     const payload = {
       uid: user.uid,
       name: profile.name,
-      gender: profile.gender, // kept, but not shown in online list
+      gender: profile.gender,
       age: profile.age,
-      country: profile.country || "",
       nameColor: profile.nameColor,
       textColor: profile.textColor,
       status: statusVal || "online",
@@ -1574,21 +1434,33 @@
       isAdmin,
       isGuest,
       muted:false,
-      rank: rankOf(user.uid)
+      rank: rankOf(user.uid),
+
+      // ✅ country flag already working (DON'T TOUCH): keep field if you added it earlier
+      country: profile.country || null
     };
+
     await set(onlineRef, payload);
     if (first) onDisconnect(onlineRef).remove();
   }
 
-  async function writeJoinLeave(type){
+  async function writeJoinLeave(type, reason="button"){
     const text =
       type === "join" ? `${profile.name} دخل الشات` :
       type === "leave" ? `${profile.name} خرج من الشات` : "";
-    return addDoc(collection(db, "globalMessages"), {
-      system:true, type, text,
-      actorUid:user.uid, actorName:profile.name,
-      createdAt: serverTimestamp(), createdAtMs: nowMs()
-    });
+
+    try{
+      await addDoc(collection(db, "globalMessages"), {
+        system:true, type, text,
+        actorUid:user.uid, actorName:profile.name,
+        createdAt: serverTimestamp(), createdAtMs: nowMs()
+      });
+    }catch{}
+
+    // ✅ log presence separately
+    try{
+      await writeActionLog(type, `${profile.name} (${reason})`, "presence");
+    }catch{}
   }
 
   function watchConnection(){
@@ -1653,15 +1525,6 @@
     location.href = "index.html";
   }
 
-  let globalClearedAtMs = 0;
-  function startClearMetaListener(){
-    onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
-      if (!snap.exists()) return;
-      const d = snap.data() || {};
-      globalClearedAtMs = Number(d.clearedAtMs || 0);
-    });
-  }
-
   function startRoomLockListener(){
     onValue(ref(rtdb, "roomState/locked"), (snap)=>{
       roomLocked = snap.val() === true;
@@ -1685,7 +1548,7 @@
     if (!isAdmin) return;
     await set(ref(rtdb, "roomState/locked"), !!next);
     await writeSystemText(next ? `🔒 ${profile?.name||"—"} قفل الروم` : `🔓 ${profile?.name||"—"} فتح الروم`, next ? "lock" : "unlock", {uid:user.uid,name:profile?.name});
-    await writeActionLog(next ? "lock" : "unlock", "");
+    await writeActionLog(next ? "lock" : "unlock", "", "chat");
   }
 
   roomLockBtn.addEventListener("click", async ()=>{
@@ -1703,7 +1566,7 @@
     await update(ref(rtdb, `moderation/${user.uid}`), { muted:true, mutedUntil:0, reason:"selfMute", by:user.uid, mutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:true });
     await writeSystemText(`🔇 الأدمن كتم نفسه`, "selfMute", {uid:user.uid,name:profile?.name});
-    await writeActionLog("selfMute", "");
+    await writeActionLog("selfMute", "", "chat");
   });
   selfUnmuteBtn.addEventListener("click", async ()=>{
     hideRoomMenu();
@@ -1711,45 +1574,40 @@
     await update(ref(rtdb, `moderation/${user.uid}`), { muted:false, mutedUntil:0, reason:"selfUnmute", by:user.uid, unmutedAt: nowMs() });
     await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:false });
     await writeSystemText(`🔊 الأدمن فك كتم نفسه`, "selfUnmute", {uid:user.uid,name:profile?.name});
-    await writeActionLog("selfUnmute", "");
+    await writeActionLog("selfUnmute", "", "chat");
   });
 
-  /* ✅ Global background (admin sets; all users see) */
-  const BG_DOC = doc(db, "globalSettings", "ui");
-  function bgUrlFromChoice(n){
-    const nn = Number(n||0);
-    if (nn === 1) return 'url("back1.gif")';
-    if (nn === 2) return 'url("back2.gif")';
-    if (nn === 3) return 'url("back3.gif")';
-    return "none";
-  }
-  function applySiteBg(choice){
-    const css = bgUrlFromChoice(choice);
-    siteBgLayer.style.backgroundImage = css === "none" ? "" : css;
-    siteBgLayer.style.display = css === "none" ? "none" : "block";
-  }
-  function startGlobalBgListener(){
-    onSnapshot(BG_DOC, (snap)=>{
-      if (!snap.exists()) { applySiteBg(0); return; }
-      const d = snap.data() || {};
-      applySiteBg(Number(d.bgChoice || 0));
-    }, ()=>{ /* ignore */ });
-  }
-  async function setGlobalBg(choice){
+  /* ✅ global background shared for ALL users (admin changes only) */
+  const GLOBAL_BG_DOC = doc(db, "globalSettings", "ui");
+  async function setGlobalBg(n){
     if (!isAdmin) return;
-    await setDoc(BG_DOC, {
-      bgChoice: Number(choice||0),
-      updatedAt: serverTimestamp(),
-      updatedBy: user?.uid || null
+    await setDoc(GLOBAL_BG_DOC, {
+      bg: Number(n),
+      byUid: user.uid,
+      byName: profile?.name || "—",
+      atMs: nowMs(),
+      createdAt: serverTimestamp()
     }, { merge:true });
-    await writeActionLog("bg", `bgChoice=${Number(choice||0)}`);
+    await writeActionLog("bg", `back${n}.gif`, "chat");
   }
+  function applyBgFromValue(n){
+    if (!n) { adminBgLayer.style.display = "none"; return; }
+    adminBgLayer.style.backgroundImage = `url("back${Number(n)}.gif")`;
+    adminBgLayer.style.display = "block";
+  }
+
   bg1Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(1); });
   bg2Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(2); });
   bg3Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(3); });
-  bg0Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(0); });
 
-  /* ✅ Watch ranks in RTDB */
+  function startGlobalBgListener(){
+    onSnapshot(GLOBAL_BG_DOC, (snap)=>{
+      if (!snap.exists()) return;
+      const d = snap.data() || {};
+      applyBgFromValue(d.bg);
+    });
+  }
+
   function startRanksListener(){
     onValue(ref(rtdb, "ranks"), (snap)=>{
       const v = snap.val() || {};
@@ -1764,10 +1622,11 @@
         try{ update(ref(rtdb, `onlineUsers/${user.uid}`), { rank: rankOf(user.uid) }); }catch{}
       }
 
-      adminClearBtn.style.display = isAdmin ? "inline-flex" : "none"; // ✅ admin only
+      adminClearBtn.style.display = canClear() ? "inline-flex" : "none";
     });
   }
 
+  // ✅ NOTE: online list: gender removed here (flag stays untouched)
   function startOnlineListener(){
     onValue(ref(rtdb, "onlineUsers"), (snap)=>{
       const users = snap.val() || {};
@@ -1784,38 +1643,49 @@
       }).forEach((u)=>{
         const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
         const row = document.createElement("div");
-
-        // ✅ apply rank row class (whole row bg)
-        const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
-        const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
-        row.className = "userRow" + (isRowAdmin ? " admin" : "") + (rankRowClass ? (" " + rankRowClass) : "");
+        row.className = "userRow" + (isRowAdmin ? " admin" : "");
 
         const left = document.createElement("div");
         left.className = "userMeta";
 
         const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
 
-        // ✅ mute indicator emoji only
-        const mutedBadge = (u.muted === true) ? `<span class="mutedEmoji" title="مكتوم">🔇</span>` : "";
+        // ✅ مكتوم: ايموجي فقط
+        const mutedBadge = (u.muted === true)
+          ? `<span class="miniPill" title="مكتوم" style="border-color:rgba(239,68,68,.85);color:rgba(239,68,68,.95)">🔇</span>`
+          : "";
 
-        // ✅ country flag (replaces gender icon in online list)
-        const flag = countryCodeToFlagEmoji(u.country || "");
+        const r = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
 
-        const nameHtml = `
-          ${(!isRowAdmin && ru && ru !== "none") ? rankIconHtml(ru) : ""}
-          <span style="color:${escapeHtml(u.nameColor||"#facc15")};font-weight:900">${escapeHtml(u.name || "مستخدم")}</span>
+        const adminNameHtml = `
+          <span class="adminNameWrap">
+            <span class="adminSkull">💀</span>
+            <span class="adminCrown">👑</span>
+            <span class="adminNameText">𝕄𝕃𝕆𝟝 ヅ</span>
+          </span>
           ${guestHtml}
         `;
 
+        const nameHtml = isRowAdmin
+          ? adminNameHtml
+          : `
+            ${rankNameHtmlOnline(u.name || "مستخدم", r, u.nameColor || "#facc15")}
+            ${guestHtml}
+          `;
+
         const devIcon = (u.device === "mobile") ? "📱" : "🖥️";
 
+        // ✅ KEEP FLAG (already working for you) - we will just display it if present
+        const flagHtml = u.country ? `<span class="miniPill" title="الدولة">${escapeHtml(u.country)}</span>` : "";
+
         left.innerHTML = `
-          <b><span title="الدولة">${flag}</span> ${nameHtml} ${mutedBadge}</b>
+          <b>${nameHtml} ${mutedBadge}</b>
           <span>
             <span class="miniPill">
               <span class="devIcon" title="الجهاز">${devIcon}</span>
               <span>${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
             </span>
+            ${flagHtml}
             ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile?.nameColor||"#facc15")};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
           </span>
         `;
@@ -1824,7 +1694,6 @@
         const actions = document.createElement("div");
         actions.className = "actionsRow";
 
-        // ✅ admin dots still for lock/selfmute menu (NOT backgrounds anymore)
         if (isRowAdmin && isAdmin){
           const dots = document.createElement("button");
           dots.type = "button";
@@ -1835,7 +1704,6 @@
             e.stopPropagation();
             roomLockBtn.style.display = roomLocked ? "none" : "block";
             roomUnlockBtn.style.display = roomLocked ? "block" : "none";
-            // background options will be shown only when triggered via top bg button, but keeping menu safe
             showRoomMenu(e.clientX, e.clientY);
           });
           actions.appendChild(dots);
@@ -1935,9 +1803,6 @@
       messagesDiv.innerHTML = "";
       const isFirst = !initialLoaded;
 
-      // ✅ clear cutoff applies to EVERYONE (including admin now)
-      const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
-
       const items = [];
       snap.forEach((docx)=>{
         const m = docx.data();
@@ -1954,8 +1819,6 @@
       for (const it of items){
         const m = it.m;
         const t = it.t;
-
-        if (t < cutoff) continue;
 
         if (m.system && m.private === true){
           const to = Array.isArray(m.to) ? m.to : [];
@@ -1987,23 +1850,48 @@
           div.className = "msg" + (m.uid === user.uid ? " me" : "");
           div.dataset.mid = it.id;
 
+          // ✅ gender in CHAT (requested)
+          const gHtml = genderSymbolHtml(m.gender);
           const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
 
           const isMsgAdmin = (m.isAdmin === true) || (m.uid && ADMIN_UIDS.includes(m.uid));
+
           const r = (m.rank && RANKS[m.rank]) ? m.rank : rankOf(m.uid);
           const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
           const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
 
-          const nameHtml = isMsgAdmin
-            ? `<span style="color:#facc15;font-weight:900">𝕄𝕃𝕆𝟝 ヅ</span> ${guestHtml}`
-            : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
+          let nameHtml = "";
+          if (isMsgAdmin){
+            nameHtml = `
+              <span class="adminChatChip">
+                <span>💀</span>
+                <span>🏷️</span>
+                <span class="adminChatText">𝕄𝕃𝕆𝟝 ヅ</span>
+              </span>
+              ${guestHtml}
+            `;
+          } else {
+            nameHtml = `
+              ${rankIcon}
+              <span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">
+                ${escapeHtml(m.name||"مستخدم")}
+              </span>
+              ${guestHtml}
+            `;
+          }
 
           const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
-            ? `<div class="replyQuote"><b>رد على: ${escapeHtml(m.replyTo.name)}</b><div>${escapeHtml(m.replyTo.text)}</div></div>`
-            : "";
+            ? `
+              <div class="replyQuote">
+                <b>رد على: ${escapeHtml(m.replyTo.name)}</b>
+                <div>${escapeHtml(m.replyTo.text)}</div>
+              </div>
+            ` : "";
 
           div.innerHTML = `
-            <div class="msgHead"><div class="nameTag ${nameSizeClass}">${nameHtml}</div></div>
+            <div class="msgHead">
+              <div class="nameTag ${nameSizeClass}">${gHtml} ${nameHtml}</div>
+            </div>
             ${replyBlock}
             <div style="color:${escapeHtml(m.textColor || "#f9fafb")}">${renderMsgTextToHtml(m.text||"")}</div>
             <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
@@ -2069,11 +1957,31 @@
     hideCtxMenu();
   });
 
-  ctxRankLegend.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "legend"); hideCtxMenu(); });
-  ctxRankVip.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "vip"); hideCtxMenu(); });
-  ctxRankRoot.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "root"); hideCtxMenu(); });
-  ctxRankGirl.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "girl"); hideCtxMenu(); });
-  ctxRankNone.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "none"); hideCtxMenu(); });
+  ctxRankLegend.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "legend");
+    hideCtxMenu();
+  });
+  ctxRankVip.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "vip");
+    hideCtxMenu();
+  });
+  ctxRankRoot.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "root");
+    hideCtxMenu();
+  });
+  ctxRankGirl.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "girl");
+    hideCtxMenu();
+  });
+  ctxRankNone.addEventListener("click", async ()=>{
+    if (!isAdmin || !ctxUser || ctxUser.isAdmin) return;
+    await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "none");
+    hideCtxMenu();
+  });
 
   // ✅✅✅ (Mobile-only) إرسال من الكيبورد بدون زر (Enter + دبل-سبيس)
   let __lastSpaceSendAt = 0;
@@ -2107,14 +2015,22 @@
     if (!text) return;
 
     if (roomLocked && !canWriteWhenLocked()){
-      showAppModal({ title:"🚫 الروم مقفل", text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
+      showAppModal({
+        title:"🚫 الروم مقفل",
+        text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.",
+        actions:[{label:"حسناً", onClick:()=>hideAppModal()}]
+      });
       return;
     }
 
     if (msgInput.disabled) return;
 
     if (!isAdmin && isProfane(text)){
-      showAppModal({ title:"❌ رسالة مرفوضة", text:"الرسالة مرفوضة (كلام غير لائق).", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
+      showAppModal({
+        title:"❌ رسالة مرفوضة",
+        text:"الرسالة مرفوضة (كلام غير لائق).",
+        actions:[{label:"حسناً", onClick:()=>hideAppModal()}]
+      });
       return;
     }
 
@@ -2130,7 +2046,6 @@
       name:profile.name,
       gender:profile.gender,
       age:profile.age,
-      country: profile.country || "",
       nameColor:profile.nameColor,
       textColor:profile.textColor,
       isAdmin, isGuest,
@@ -2152,15 +2067,32 @@
     }catch{}
   }
 
-  exitBtn.addEventListener("click", async ()=>{
+  async function leaveChat(reason="button"){
     try{
       if (user && profile){
-        await writeJoinLeave("leave");
-        await remove(ref(rtdb, "onlineUsers/" + user.uid));
+        // message + presence log
+        await writeJoinLeave("leave", reason);
       }
     }catch{}
+    try{ remove(ref(rtdb, "onlineUsers/" + user.uid)); }catch{}
     cleanupGuestLocal();
+  }
+
+  exitBtn.addEventListener("click", async ()=>{
+    await leaveChat("button");
     location.href = "index.html";
+  });
+
+  // ✅ leaving on tab close / browser close (best effort)
+  let __leftOnce = false;
+  async function bestEffortLeave(reason){
+    if (__leftOnce) return;
+    __leftOnce = true;
+    try{ await leaveChat(reason); }catch{}
+  }
+  window.addEventListener("pagehide", ()=>{ bestEffortLeave("pagehide"); });
+  document.addEventListener("visibilitychange", ()=>{
+    if (document.hidden) bestEffortLeave("hidden");
   });
 
   statusSelect.addEventListener("change", async ()=>{
@@ -2189,11 +2121,12 @@
     isAdmin = true;
 
     logBtn.style.display = "inline-flex";
-    bgBtn.style.display  = "inline-flex";
-    adminClearBtn.style.display = "inline-flex";
+    adminClearBtn.style.display = canClear() ? "inline-flex" : "none";
 
-    // ✅ big boss message
-    try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:profile?.name}); }catch{}
+    try{
+      writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:profile?.name});
+      writeActionLog("bigBoss", "دخل كبيرهم", "chat");
+    }catch{}
   });
 
   function showForm(){ formBox.style.display = "block"; }
@@ -2240,21 +2173,21 @@
     const rawName = collapseSpaces(nameInput.value);
     const g = genderInput.value;
     const age = Number(ageInput.value);
-    const country = (countryInput.value || "").trim().toUpperCase();
 
     if (!rawName || rawName.length < 3){ setErr(modalErr, "الاسم لازم يكون 3 أحرف على الأقل."); return; }
     if (!g){ setErr(modalErr, "اختار الجنس."); return; }
     if (!Number.isFinite(age) || age < 10){ setErr(modalErr, "العمر لازم يكون 10 أو أكثر."); return; }
-    if (!country || country.length !== 2){ setErr(modalErr, "اختار الدولة."); return; }
     if (!user){ setErr(modalErr, "اختر طريقة الدخول أولاً."); return; }
 
     profile = {
       name: rawName,
       gender: g,
       age,
-      country,
       nameColor: nameColorInput.value || "#facc15",
-      textColor: textColorInput.value || "#f9fafb"
+      textColor: textColorInput.value || "#f9fafb",
+
+      // ✅ keep your country choice (already working) if you added it
+      country: profile?.country || null
     };
 
     if (!user.isAnonymous){
@@ -2277,8 +2210,7 @@
     isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
 
     logBtn.style.display = isAdmin ? "inline-flex" : "none";
-    bgBtn.style.display  = isAdmin ? "inline-flex" : "none";
-    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+    adminClearBtn.style.display = canClear() ? "inline-flex" : "none";
 
     msgInput.disabled = false;
     sendBtn.disabled = false;
@@ -2286,18 +2218,17 @@
     joinAtMs = nowMs();
 
     await updatePresenceStatus(statusVal, true);
-    await writeJoinLeave("join");
+    await writeJoinLeave("join", "enter");
 
     modal.style.display = "none";
 
     loadIgnoreWindows();
-    startGlobalBgListener();        // ✅ background visible for all
     startRanksListener();
-    startClearMetaListener();
     startRoomLockListener();
     startOnlineListener();
     startGlobalMessagesListener();
     startModerationListener();
+    startGlobalBgListener();
 
     if (roomLocked && !canWriteWhenLocked()){
       msgInput.disabled = true;
@@ -2323,9 +2254,13 @@
           nameInput.value = p.name || "";
           genderInput.value = p.gender || "";
           ageInput.value = p.age || "";
-          countryInput.value = p.country || "JO";
           nameColorInput.value = p.nameColor || randHexColor();
           textColorInput.value = p.textColor || randHexColor();
+
+          // keep country if saved
+          profile = profile || {};
+          profile.country = p.country || profile.country || null;
+
           loadedSaved = true;
         }catch{}
       }
@@ -2333,23 +2268,12 @@
     if (!loadedSaved){
       nameColorInput.value = randHexColor();
       textColorInput.value = randHexColor();
-      countryInput.value = "JO";
     }
 
     formBox.style.display = "none";
     setErr(modalErr, "");
     setErr(adminErr, "");
     modal.style.display = "flex";
-  });
-
-  window.addEventListener("beforeunload", ()=>{
-    try{
-      if (user && profile){
-        writeJoinLeave("leave");
-        remove(ref(rtdb, "onlineUsers/" + user.uid));
-      }
-    }catch{}
-    cleanupGuestLocal();
   });
 
   /* ✅ Dhikr notifications */
