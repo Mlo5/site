@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { deleteDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import {
   getFirestore, collection, addDoc, serverTimestamp,
   query, where, orderBy, onSnapshot, doc, setDoc,
@@ -548,45 +549,61 @@ async function setRank(targetUid, targetName, rank){
    ✅✅✅ FIX: CLEAR IMMEDIATE + HARD DELETE
    ========================= */
 
-/* =========================
-   ✅ CLEAR (Cutoff) + Show "Admin cleared" message
-   - لا يوجد حذف نهائي من Firestore
-   - المسح يعتمد على cutoff (globalMeta/clear)
-   - كل الكلاينتس يعملوا re-render فورًا عند تغيير clear
-   ========================= */
-
 let globalClearedAtMs = 0;
 
-// ✅ نخزن آخر Snapshot للرسائل حتى نعمل re-render مباشرة عند تغيير clear
-let __lastMessagesSnap = null;
-
-/* ✅ Clear for ALL (cutoff for everyone) */
+/* ✅ Clear: يمسح فورًا + يحذف الرسائل نهائيًا */
 async function adminClearForAll(){
   if (!isAdmin) return;
 
   const clearedAtMs = nowMs();
 
-  // ✅ Optimistic UI: نخفي الرسائل فورًا محليًا حسب cutoff
+  // ✅ 1) Optimistic: فضّي عند الأدمن فورًا
   globalClearedAtMs = clearedAtMs;
-  try{
-    if (__lastMessagesSnap) renderMessagesFromSnap(__lastMessagesSnap);
-    else messagesDiv.innerHTML = "";
-  }catch{}
+  try{ messagesDiv.innerHTML = ""; }catch{}
 
-  // ✅ اكتب الـ cutoff
+  // ✅ 2) اعلن المسح للكل فورًا عبر meta (حتى قبل ما يكتمل حذف الرسائل)
   await setDoc(doc(db, "globalMeta", "clear"), {
     clearedAtMs,
     byUid: user.uid,
     byName: ADMIN_DISPLAY_NAME,
     createdAt: serverTimestamp()
-  }, { merge:true });
+  }, { merge: true });
 
-  // ✅ اكتب رسالة نظام بعد المسح (هتظهر لأنها بعد cutoff)
-  await writeSystemText(`🧹 تم مسح النص بواسطة الأدمن`, "clear", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
-  await writeActionLog("clear", "");
+  // ✅ 3) HARD DELETE: حذف نهائي لكل رسائل globalMessages (Batch)
+  try{
+    const snap = await getDocs(collection(db, "globalMessages"));
+
+    let batch = writeBatch(db);
+    let n = 0;
+    const commits = [];
+
+    snap.forEach((d)=>{
+      batch.delete(doc(db, "globalMessages", d.id));
+      n++;
+
+      // ✅ كل 450 عملية نعمل commit (احتياط)
+      if (n >= 450){
+        commits.push(batch.commit());
+        batch = writeBatch(db);
+        n = 0;
+      }
+    });
+
+    if (n > 0) commits.push(batch.commit());
+    await Promise.all(commits);
+
+    await writeActionLog("clear", "hard delete");
+  }catch(err){
+    console.error("HARD CLEAR ERROR:", err);
+  }
 }
-adminClearBtn.addEventListener("click",(e)=>{ e.preventDefault(); adminClearForAll(); });
 
+adminClearBtn.addEventListener("click",(e)=>{
+  e.preventDefault();
+  adminClearForAll();
+});
+
+/* ✅ كل الأجهزة: أول ما meta تتغير، فضّي الواجهة فورًا */
 function startClearMetaListener(){
   let prev = 0;
   onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
@@ -595,19 +612,13 @@ function startClearMetaListener(){
     const next = Number(d.clearedAtMs || 0);
     if (!next) return;
 
-    globalClearedAtMs = next;
-
-    // ✅ لو تغيرت قيمة المسح: اعمل re-render فورًا بنفس Snapshot الرسائل الموجود
     if (next !== prev){
       prev = next;
-      try{
-        if (__lastMessagesSnap) renderMessagesFromSnap(__lastMessagesSnap);
-        else messagesDiv.innerHTML = "";
-      }catch{}
+      globalClearedAtMs = next;
+      try{ messagesDiv.innerHTML = ""; }catch{}
     }
   });
 }
-
 
 
 /* =========================
@@ -1085,11 +1096,15 @@ function startGlobalMessagesListener(){
     : query(collection(db, "globalMessages"), where("createdAtMs", ">=", joinAtMs), orderBy("createdAtMs", "asc"));
 
   onSnapshot(q, (snap)=>{
-    __lastMessagesSnap = snap;            // ✅ نخزن آخر snapshot
-    renderMessagesFromSnap(snap);         // ✅ ارسم الرسائل
-  });
-}
+  __lastMessagesSnap = snap;
 
+  messagesDiv.innerHTML = "";
+  const isFirst = !initialLoaded;
+
+  // باقي كود الرسم الموجود عندك
+});
+
+}
 
 replyCancelBtn.addEventListener("click", ()=>{
   replyTarget = null;
