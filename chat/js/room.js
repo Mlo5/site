@@ -1096,14 +1096,11 @@ function startGlobalMessagesListener(){
     : query(collection(db, "globalMessages"), where("createdAtMs", ">=", joinAtMs), orderBy("createdAtMs", "asc"));
 
   onSnapshot(q, (snap)=>{
-  __lastMessagesSnap = snap;
-
-  messagesDiv.innerHTML = "";
-  const isFirst = !initialLoaded;
-
-  // باقي كود الرسم الموجود عندك
-});
-
+    __lastMessagesSnap = snap;
+    renderMessagesFromSnap(snap); // ✅ هذا هو المهم
+  }, (err)=>{
+    console.error("messages listener error:", err);
+  });
 }
 
 replyCancelBtn.addEventListener("click", ()=>{
@@ -1452,5 +1449,6 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
 
 
