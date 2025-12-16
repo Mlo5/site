@@ -1,6 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { deleteDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import {
     getFirestore, collection, addDoc, serverTimestamp,
   query, where, orderBy, onSnapshot, doc, setDoc,
@@ -1089,13 +1088,15 @@ function renderMessagesFromSnap(snap){
 function startGlobalMessagesListener(){
   initialLoaded = false;
 
-  const q = __MOBILE_DEVICE
-    ? query(collection(db, "globalMessages"), orderBy("createdAt", "asc"), limitToLast(600))
-    : query(collection(db, "globalMessages"), where("createdAtMs", ">=", joinAtMs), orderBy("createdAtMs", "asc"));
+  const q = query(
+    collection(db, "globalMessages"),
+    orderBy("createdAtMs", "asc"),
+    limitToLast(600)
+  );
 
   onSnapshot(q, (snap)=>{
     __lastMessagesSnap = snap;
-    renderMessagesFromSnap(snap); // ✅ هذا هو المهم
+    renderMessagesFromSnap(snap);
   }, (err)=>{
     console.error("messages listener error:", err);
   });
@@ -1447,6 +1448,7 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
 
 
 
