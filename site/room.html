@@ -1,260 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <title>الدردشة العامة - M L O 5</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
-  <!-- ✅ Favicon -->
-  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="32x32" />
-  <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="16x16" />
-  <link rel="apple-touch-icon" href="./favicon.png?v=2" />
-  <meta name="theme-color" content="#020202" />
- <!-- Chat CSS -->
-  <link rel="stylesheet" href="./chat/css/room.css">
-  
-</head>
-
-<body>
-  <!-- ✅ global background layer -->
-  <div id="siteBgLayer"></div>
-
-  <div class="bg-grid"></div>
-  <div id="onlineOverlay"></div>
-
-  <main class="page">
-    <div class="top-bar">
-      <div class="top-chip" title="حالة الاتصال">
-        <span class="dot" id="connDot"></span>
-        <span id="connText">غير متصل</span>
-      </div>
-
-      <div class="title">M L O 5 <small>• Global Chat</small></div>
-
-      <div style="display:flex;gap:10px;align-items:center">
-        <!-- ✅ زر السجل يظهر للأدمن فقط -->
-        <button class="top-chip" id="logBtn" type="button" title="سجل الإدارة" style="display:none;">📜 سجل</button>
-
-        <!-- ✅ زر خلفية الموقع (للأدمن فقط) - بجانب السجل -->
-        <button class="top-chip" id="bgBtn" type="button" title="خلفية الموقع" style="display:none;">🖼️ خلفية</button>
-
-        <!-- ✅ زر الألوان مبين عند الكل -->
-        <button class="top-chip" id="colorBtn" type="button" title="ألوان">🎨 ألوان</button>
-
-        <!-- ✅ زر تحميل جنب خروج (للجميع) -->
-        <button class="top-chip" id="downloadBtn" type="button" title="تحميل للكمبيوتر">⬇️ تحميل</button>
-
-        <button class="top-chip" id="exitBtn" type="button" title="خروج من الشات">↩ خروج</button>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <section class="card onlineCard" id="onlineCard">
-        <div class="panel-head">
-          <div class="h">
-            <b>المتواجدين الآن</b>
-            <span>العدد: <b id="onlineCount">0</b></span>
-          </div>
-
-          <div class="statusWrap">
-            <span class="badge" id="meBadge">أنت</span>
-            <select id="statusSelect" title="غيّر حالتك">
-              <option value="online">🟢 متصل</option>
-              <option value="busy">⛔ مشغول</option>
-              <option value="work">💼 بالعمل</option>
-              <option value="car">🚗 بالسيارة</option>
-              <option value="food">🍔 طعام</option>
-              <option value="out">🌙 بالخارج</option>
-            </select>
-          </div>
-        </div>
-
-        <div id="onlineList"></div>
-      </section>
-
-      <section class="card chatCard">
-        <div class="panel-head">
-          <div class="h">
-            <b>الدردشة العامة</b>
-            <span id="chatHint">دردش وخلي الشباب <span style="color:#facc15">تستفاد</span></span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-            <button class="badgeBtn" id="openOnlineBtn" type="button" title="عرض المتواجدين">👥 المتواجدين</button>
-            <div class="badge" id="ignoreCount">تجاهل: 0</div>
-          </div>
-        </div>
-
-        <div class="chatSplit" id="chatSplit">
-          <div class="chatCol">
-            <div id="messages"></div>
-
-            <div class="replyPreview" id="replyPreview">
-              <div style="min-width:0">
-                <b id="replyPreviewName">رد على:</b>
-                <div><span id="replyPreviewText"></span></div>
-              </div>
-              <button class="replyCancel" id="replyCancelBtn" type="button" title="إلغاء">✕</button>
-            </div>
-
-            <form id="chatForm" class="composer">
-              <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
-              <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
-              <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
-              <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
-            </form>
-          </div>
-        </div>
-
-        <div class="emojiPicker" id="emojiPicker" aria-hidden="true">
-          <div class="emojiGrid" id="emojiGrid"></div>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <div id="modal">
-    <div id="modalBox">
-      <div class="modalGrid">
-        <div class="modalCard">
-          <button class="homeBackBtn" id="homeBtn" type="button" title="الرجوع للهوم">🏠</button>
-          <button class="backListBtn" id="backListBtn" type="button" title="رجوع">↩</button>
-
-          <h3>الدخول إلى الشات</h3>
-          <p>( مَا يَلْفِظُ مِنْ قَوْلٍ إِلا لَدَيْهِ رَقِيبٌ عَتِيدٌ )</p>
-
-          <div class="choiceRow">
-            <button class="choiceBtn" id="chooseLogin" type="button">🔐 تسجيل دخول</button>
-            <button class="choiceBtn" id="chooseGuest" type="button">👤 الدخول كضيف</button>
-          </div>
-
-          <div id="formBox" style="display:none;">
-            <div class="modalRow one">
-              <div class="nameWrap">
-                <input id="nameInput" placeholder="اسمك (3+)" />
-              </div>
-            </div>
-
-            <div class="modalRow">
-              <select id="genderInput">
-                <option value="">الجنس</option>
-                <option value="male">ذكر</option>
-                <option value="female">أنثى</option>
-              </select>
-              <input id="ageInput" type="number" min="10" max="99" placeholder="العمر (10+)" />
-            </div>
-
-            <!-- ✅ NEW: manual country select -->
-            <div class="modalRow one">
-              <select id="countryInput" title="الدولة">
-                <option value="">الدولة</option>
-                <option value="JO">🇯🇴 الأردن</option>
-                <option value="SA">🇸🇦 السعودية</option>
-                <option value="AE">🇦🇪 الإمارات</option>
-                <option value="KW">🇰🇼 الكويت</option>
-                <option value="QA">🇶🇦 قطر</option>
-                <option value="BH">🇧🇭 البحرين</option>
-                <option value="OM">🇴🇲 عُمان</option>
-                <option value="EG">🇪🇬 مصر</option>
-                <option value="IQ">🇮🇶 العراق</option>
-                <option value="PS">🇵🇸 فلسطين</option>
-                <option value="LB">🇱🇧 لبنان</option>
-                <option value="SY">🇸🇾 سوريا</option>
-                <option value="MA">🇲🇦 المغرب</option>
-                <option value="DZ">🇩🇿 الجزائر</option>
-                <option value="TN">🇹🇳 تونس</option>
-                <option value="LY">🇱🇾 ليبيا</option>
-                <option value="SD">🇸🇩 السودان</option>
-                <option value="YE">🇾🇪 اليمن</option>
-                <option value="TR">🇹🇷 تركيا</option>
-                <option value="US">🇺🇸 USA</option>
-                <option value="GB">🇬🇧 UK</option>
-                <option value="DE">🇩🇪 ألمانيا</option>
-                <option value="FR">🇫🇷 فرنسا</option>
-                <option value="CA">🇨🇦 كندا</option>
-              </select>
-            </div>
-
-            <div class="colorRow">
-              <div class="colorBox">
-                <span>لون الاسم</span>
-                <input id="nameColor" type="color" value="#facc15" />
-              </div>
-              <div class="colorBox">
-                <span>لون النص</span>
-                <input id="textColor" type="color" value="#f9fafb" />
-              </div>
-            </div>
-
-            <button id="enterBtn" class="modalBtn" type="button">دخول الشات</button>
-          </div>
-
-          <div class="hintErr" id="modalErr"></div>
-        </div>
-
-        <div class="modalCard">
-          <h3>ADMIN</h3>
-
-          <div class="modalRow one">
-            <input id="adminUser" placeholder="Username" autocomplete="off" />
-          </div>
-          <div class="modalRow one">
-            <input id="adminPass" placeholder="Password" type="password" autocomplete="off" />
-          </div>
-
-          <button id="adminLoginBtn" class="modalBtn" type="button">تفعيل الأدمن</button>
-          <div class="hintErr" id="adminErr"></div>
-
-          <div class="adminNote">
-            أشياء شوي خاصة حبوبي ✨🥱.<br>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="appModal">
-    <div id="appModalBox">
-      <div class="appModalTitle" id="appModalTitle">تنبيه</div>
-      <div class="appModalText" id="appModalText">—</div>
-      <div class="appModalActions" id="appModalActions"></div>
-    </div>
-  </div>
-
-  <div class="menu" id="ctxMenu">
-    <div id="modActions" style="display:none;">
-      <button id="ctxKickBtn">🚪 طرد</button>
-      <button id="ctxMuteBtn">🔇 كتم</button>
-      <button id="ctxUnmuteBtn">🔊 إلغاء الكتم</button>
-      <button id="ctxBanBtn">⛔ حظر</button>
-      <button id="ctxUnbanBtn">✅ إلغاء الحظر</button>
-      <div class="sep"></div>
-    </div>
-
-    <div id="rankActions" style="display:none;">
-      <button id="ctxRankLegend">⚡ Legendary</button>
-      <button id="ctxRankVip">💎 VIP</button>
-      <button id="ctxRankRoot">🛡️ ROOT</button>
-      <button id="ctxRankGirl">🎀 GIRL</button>
-      <button id="ctxRankNone">🧽 إزالة الرتبة</button>
-    </div>
-  </div>
-
-  <div class="menu" id="roomMenu">
-    <button id="roomLockBtn">🔒 قفل الروم</button>
-    <button id="roomUnlockBtn">🔓 فتح الروم</button>
-
-    <div class="sep"></div>
-    <button id="selfMuteBtn">🔇 كتم نفسي</button>
-    <button id="selfUnmuteBtn">🔊 فك كتم نفسي</button>
-
-    <!-- ✅ global backgrounds (admin only, triggered from top bg button) -->
-    <div class="sep"></div>
-    <button id="bg1Btn">🖼️ خلفية 1</button>
-    <button id="bg2Btn">🖼️ خلفية 2</button>
-    <button id="bg3Btn">🖼️ خلفية 3</button>
-    <button id="bg0Btn">🧽 إزالة الخلفية</button>
-  </div>
-<script type="module" src="./chat/js/room.js"></script>
-</body>
-</html>
-
