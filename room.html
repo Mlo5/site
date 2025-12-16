@@ -10,12 +10,11 @@
   <link rel="icon" href="./favicon.png?v=2" type="image/png" sizes="16x16" />
   <link rel="apple-touch-icon" href="./favicon.png?v=2" />
   <meta name="theme-color" content="#020202" />
- <!-- Chat CSS -->
+  <!-- Chat CSS -->
   <link rel="stylesheet" href="./chat/css/room.css">
-  
 </head>
 
-<body>
+<body data-theme="dark">
   <!-- ✅ global background layer -->
   <div id="siteBgLayer"></div>
 
@@ -37,6 +36,9 @@
 
         <!-- ✅ زر خلفية الموقع (للأدمن فقط) - بجانب السجل -->
         <button class="top-chip" id="bgBtn" type="button" title="خلفية الموقع" style="display:none;">🖼️ خلفية</button>
+
+        <!-- ✅ NEW: زر الثيمات (للجميع) -->
+        <button class="top-chip" id="themeBtn" type="button" title="ثيمات">🖌️ ثيمات</button>
 
         <!-- ✅ زر الألوان مبين عند الكل -->
         <button class="top-chip" id="colorBtn" type="button" title="ألوان">🎨 ألوان</button>
@@ -254,6 +256,21 @@
     <button id="bg3Btn">🖼️ خلفية 3</button>
     <button id="bg0Btn">🧽 إزالة الخلفية</button>
   </div>
-<script type="module" src="./chat/js/room.js"></script>
+
+  <!-- ✅ NEW: Themes Menu (UI only) -->
+  <div class="menu" id="themeMenu" aria-hidden="true">
+    <button class="themePick" data-theme="dark">🌑 Default (Dark)</button>
+    <button class="themePick" data-theme="white">⚪ White</button>
+    <button class="themePick" data-theme="pink">🌸 Pink</button>
+    <button class="themePick" data-theme="blue">🔵 Blue</button>
+    <button class="themePick" data-theme="anime">✨ Anime</button>
+    <button class="themePick" data-theme="gradient">🌈 Gradient</button>
+
+    <div class="sep"></div>
+    <button class="themePick" data-theme="rank" data-req="rank">🏷️ Rank Exclusive</button>
+    <button class="themePick" data-theme="adminGlobal" data-req="admin">🛡️ Admin Global</button>
+  </div>
+
+  <script type="module" src="./chat/js/room.js"></script>
 </body>
 </html>
