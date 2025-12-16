@@ -1,4 +1,3 @@
-<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
   import {
@@ -1368,4 +1367,5 @@
     setTimeout(showDhikr, 1500);
     setInterval(showDhikr, 30000);
   }
+
 </script>
