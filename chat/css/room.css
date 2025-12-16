@@ -247,14 +247,15 @@
     }
 
     /* ✅ Mute indicator: emoji ONLY (no border/circle) */
-    .mutedEmoji{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      font-size:1rem;
-      animation: rankBlink 1.2s infinite;
-      filter: drop-shadow(0 0 12px rgba(239,68,68,.18));
-    }
+    ..mutedEmoji{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  animation: none;        /* ⛔ إيقاف الوميض */
+  opacity: .9;            /* ثابت وواضح */
+  filter: drop-shadow(0 0 6px rgba(239,68,68,.35));
+}
 
     /* ✅⬇️ صغّر شوية اشارة التجاهل + الثلاث نقاط */
     .ignoreBtn, .moreBtn{
@@ -322,11 +323,11 @@
       line-height:1.5;
       word-break:break-word;
       position:relative;
-    }
     .msg.me{
-      border-color:rgba(250,204,21,.75);
-      box-shadow:0 14px 32px rgba(0,0,0,.75),0 0 0 1px rgba(250,204,21,.35);
-    }
+  border-color:rgba(250,204,21,.75);
+  box-shadow:0 14px 32px rgba(0,0,0,.75),0 0 0 1px rgba(250,204,21,.35);
+  border-radius:18px 18px 6px 18px; /* شكل واتساب – ذيل من اليمين */
+}
 
     .msgHead{
       display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -945,6 +946,7 @@
 .msg.adminMsg .msgTimeUnder{
   color: rgba(0,0,0,.75) !important;
 }
+
 
 
 
