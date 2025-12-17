@@ -9,17 +9,17 @@ import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "ht
 
 /* ⚠️ ضع قيمك الأصلية هنا كما هي */
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  databaseURL: "YOUR_DATABASE_URL",
-  projectId: "YOUR_PROJECT_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
+  authDomain: "mlo5-users.firebaseapp.com",
+  databaseURL: "Yhttps://mlo5-users-default-rtdb.firebaseio.com",
+  projectId: "mlo5-users",
+  appId: "1:142086858806:web:64c50f3a8d6250a2049097"
 };
 
 /* ⚠️ نفس القيم الأصلية عندك */
-const ADMIN_UIDS = ["YOUR_ADMIN_UID"];
+const ADMIN_UIDS = ["VFjSs6kH2jcFJnddE7SXIpipzDi2"];
 const ADMIN_USERNAME = "MLO5";
-const ADMIN_PASSWORD = "YOUR_ADMIN_PASSWORD";
+const ADMIN_PASSWORD = "APRIL3049";
 
 /* ✅✅✅ ADMIN DISPLAY (NEW) */
 const ADMIN_DISPLAY_NAME = "𝕄𝕃𝕆𝟝 ヅ";
@@ -1735,4 +1735,5 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
 
