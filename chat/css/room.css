@@ -965,8 +965,10 @@ select,input{
 .userRow.rank-vip    .userMeta b span{ color: var(--rank-name-vip) !important; }
 
 /* Chat name span (non-admin) */
-.msg .nameTag span{ color:#fff !important; } /* default white if anything slips */
-.msg .nameTag.rankBig span{ color:#fff !important; }
+
+.adminIcon.blink{ animation: adminChatBlink 1.1s infinite; }
+
 
 /* (JS will set proper colors per rank; CSS here is safety net)
    For MASTER we’ll color via JS when added; this CSS is reserved. */
+
