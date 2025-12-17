@@ -576,8 +576,8 @@ function hideAppModal(){ appModal.style.display = "none"; }
 appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
 
 /* ✅ color + download open new tabs */
-colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
-downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
+if (colorBtn) colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
+if (downloadBtn) downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
 
 /* ✅ Emoji picker */
 let activeEmojiTarget = null;
@@ -621,7 +621,7 @@ document.addEventListener("click",(e)=>{
   if (!roomMenu.contains(e.target) && e.target !== bgBtn && e.target !== adminMenuBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
 });
 
-emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+if (emojiBtn) emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
 
 /* ✅ Ignore */
 function loadIgnoreWindows(){
@@ -1251,3 +1251,4 @@ function startRanksListener(){
 }
 
 /* ... باقي الملف كما أرسلته أنت بدون أي تغيير ... */
+
