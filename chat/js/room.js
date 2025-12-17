@@ -122,6 +122,9 @@ const roomMenu = document.getElementById("roomMenu");
 const roomLockBtn = document.getElementById("roomLockBtn");
 const roomUnlockBtn = document.getElementById("roomUnlockBtn");
 
+const selfMuteBtn = document.getElementById("selfMuteBtn");
+const selfUnmuteBtn = document.getElementById("selfUnmuteBtn");
+
 const bg1Btn = document.getElementById("bg1Btn");
 const bg2Btn = document.getElementById("bg2Btn");
 const bg3Btn = document.getElementById("bg3Btn");
@@ -138,39 +141,6 @@ const appModalActions = document.getElementById("appModalActions");
 const toastSound = new Audio("./chat/media/sounds/toast.mp3");
 toastSound.preload = "auto";
 toastSound.volume = 1.0;
-
-/* ✅✅✅ RADIO (NEW) — المسار الجديد */
-const RADIO_TRACKS = 5; // عندك 5 ملفات radio1..radio5
-const RADIO_BASE = "./chat/media/radio/";
-const radio = new Audio();
-radio.preload = "auto";
-radio.volume = 0.55;
-radio.loop = false;
-
-let radioEnabled = true;
-
-function randRadioIndex(){
-  return 1 + Math.floor(Math.random() * Math.max(1, RADIO_TRACKS));
-}
-function playRadio(i){
-  if (!radioEnabled) return;
-  const idx = Math.max(1, Math.min(RADIO_TRACKS, Number(i || 1)));
-  radio.src = `${RADIO_BASE}radio${idx}.mp3`;
-  radio.currentTime = 0;
-  radio.play().catch(()=>{});
-}
-function startRadio(){
-  if (!radioEnabled || RADIO_TRACKS <= 0) return;
-  playRadio(randRadioIndex());
-}
-function stopRadio(){
-  try{ radio.pause(); }catch{}
-}
-radio.addEventListener("ended", ()=>{
-  if (!radioEnabled) return;
-  playRadio(randRadioIndex());
-});
-/* ✅✅✅ END RADIO */
 
 let user = null;
 let profile = null;
@@ -232,6 +202,10 @@ function rankIconHtml(r){
 
 /* =========================
    ✅ THEMES (Local per user + gated)
+   - All themes visible to everyone
+   - If user clicks locked theme => redirect to color.html
+   - Saved in localStorage per uid
+   - Gradient generates random mix each time chosen
    ========================= */
 
 const THEME_KEY = (uid)=> `chatTheme_${uid || "anon"}`;
@@ -679,6 +653,8 @@ function showRoomMenu(x,y){
   roomMenu.style.display = "block";
 
   const showAdmin = !!isAdmin;
+  selfMuteBtn.style.display   = showAdmin ? "block" : "none";
+  selfUnmuteBtn.style.display = showAdmin ? "block" : "none";
   bg1Btn.style.display = showAdmin ? "block" : "none";
   bg2Btn.style.display = showAdmin ? "block" : "none";
   bg3Btn.style.display = showAdmin ? "block" : "none";
@@ -1023,6 +999,22 @@ roomUnlockBtn.addEventListener("click", async ()=>{
   await setRoomLocked(false);
 });
 
+selfMuteBtn.addEventListener("click", async ()=>{
+  hideRoomMenu();
+  if (!isAdmin || !user) return;
+  await update(ref(rtdb, `moderation/${user.uid}`), { muted:true, mutedUntil:0, reason:"selfMute", by:user.uid, mutedAt: nowMs() });
+  await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:true });
+  await writeSystemText(`🔇 الأدمن كتم نفسه`, "selfMute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("selfMute", "");
+});
+selfUnmuteBtn.addEventListener("click", async ()=>{
+  hideRoomMenu();
+  if (!isAdmin || !user) return;
+  await update(ref(rtdb, `moderation/${user.uid}`), { muted:false, mutedUntil:0, reason:"selfUnmute", by:user.uid, unmutedAt: nowMs() });
+  await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:false });
+  await writeSystemText(`🔊 الأدمن فك كتم نفسه`, "selfUnmute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("selfUnmute", "");
+});
 
 /* ✅ Global background (admin sets; all users see) */
 const BG_DOC = doc(db, "globalSettings", "ui");
@@ -1091,7 +1083,7 @@ function startOnlineListener(){
 
     arr.sort((a,b)=>{
       const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid); // ✅ FIX
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
       if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
       return (a.name||"").localeCompare(b.name||"");
     }).forEach((u)=>{
@@ -1483,7 +1475,6 @@ exitBtn.addEventListener("click", async ()=>{
       await remove(ref(rtdb, "onlineUsers/" + user.uid));
     }
   }catch{}
-  stopRadio(); // ✅ NEW
   cleanupGuestLocal();
   location.href = "index.html";
 });
@@ -1622,9 +1613,6 @@ async function enterChat(statusVal){
 
   modal.style.display = "none";
 
-  // ✅ NEW: شغل الراديو بعد الدخول (فيه gesture من زر "دخول الشات")
-  startRadio();
-
   // ✅ init themes now (menu + apply saved)
   initThemeSystem();
 
@@ -1687,7 +1675,6 @@ window.addEventListener("beforeunload", ()=>{
       remove(ref(rtdb, "onlineUsers/" + user.uid));
     }
   }catch{}
-  stopRadio(); // ✅ NEW
   cleanupGuestLocal();
 });
 
@@ -1712,4 +1699,3 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
-
