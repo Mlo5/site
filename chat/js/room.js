@@ -51,7 +51,6 @@ const connText = document.getElementById("connText");
 const exitBtn = document.getElementById("exitBtn");
 const logBtn = document.getElementById("logBtn");
 const bgBtn  = document.getElementById("bgBtn");
-const adminMenuBtn = document.getElementById("adminMenuBtn");
 const colorBtn = document.getElementById("colorBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 
@@ -72,8 +71,6 @@ const msgInput = document.getElementById("msgInput");
 const sendBtn = document.getElementById("sendBtn");
 const adminClearBtn = document.getElementById("adminClearBtn");
 const emojiBtn = document.getElementById("emojiBtn");
-const micBtn = document.getElementById("micBtn");
-const camBtn = document.getElementById("camBtn");
 
 const replyPreview = document.getElementById("replyPreview");
 const replyPreviewName = document.getElementById("replyPreviewName");
@@ -119,22 +116,18 @@ const ctxRankLegend = document.getElementById("ctxRankLegend");
 const ctxRankVip    = document.getElementById("ctxRankVip");
 const ctxRankRoot   = document.getElementById("ctxRankRoot");
 const ctxRankGirl   = document.getElementById("ctxRankGirl");
-const ctxRankMaster = document.getElementById("ctxRankMaster");
 const ctxRankNone   = document.getElementById("ctxRankNone");
 
 const roomMenu = document.getElementById("roomMenu");
 const roomLockBtn = document.getElementById("roomLockBtn");
 const roomUnlockBtn = document.getElementById("roomUnlockBtn");
 
-const roomLogBtn = document.getElementById("roomLogBtn");
-const radioBtn = document.getElementById("radioBtn");
-const capsuleBtn = document.getElementById("capsuleBtn");
+const selfMuteBtn = document.getElementById("selfMuteBtn");
+const selfUnmuteBtn = document.getElementById("selfUnmuteBtn");
 
 const bg1Btn = document.getElementById("bg1Btn");
 const bg2Btn = document.getElementById("bg2Btn");
 const bg3Btn = document.getElementById("bg3Btn");
-const bg4Btn = document.getElementById("bg4Btn");
-const bg5Btn = document.getElementById("bg5Btn");
 const bg0Btn = document.getElementById("bg0Btn");
 
 const siteBgLayer = document.getElementById("siteBgLayer");
@@ -177,35 +170,12 @@ const RANKS = {
   legend:{ label:"Legendary",emoji:"⚡",  rowClass:"rank-legend" },
   vip:   { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
   root:  { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
-  girl:  { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" },
-  master:{ label:"MASTER",  emoji:"🟩",  rowClass:"rank-master" }
+  girl:  { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" }
 };
 let ranksMap = {}; // uid -> rank
-let capsulesMap = {}; // uid -> {choice}
-
-function capsuleChoiceOf(uid){
-  const v = capsulesMap?.[uid];
-  const n = (typeof v === "number") ? v : Number(v?.choice || 0);
-  return Number.isFinite(n) ? n : 0;
-}
 
 function rankOf(uid){ return ranksMap?.[uid] || "none"; }
 function rankEmoji(r){ return (RANKS[r] || RANKS.none).emoji || ""; }
-function rankNameColor(r){
-  if (r === "legend") return "#f97316"; // orange
-  if (r === "girl") return "#ec4899";   // pink
-  if (r === "root") return "#ef4444";   // red
-  if (r === "vip") return "#2563eb";    // blue
-  if (r === "master") return "#39ff14"; // phosphoric
-  return "#ffffff";
-}
-function displayNameColorFor(uid, isRowAdmin=false, fallback="#ffffff"){
-  if (isRowAdmin) return "#ffffff";
-  const r = rankOf(uid);
-  const c = rankNameColor(r);
-  return c || fallback;
-}
-
 
 // ✅ صلاحيات الرتب (تم تعديل المسح: للأدمن فقط)
 function myRank(){ return rankOf(user?.uid); }
@@ -576,8 +546,8 @@ function hideAppModal(){ appModal.style.display = "none"; }
 appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
 
 /* ✅ color + download open new tabs */
-if (colorBtn) colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
-if (downloadBtn) downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
+colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
+downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
 
 /* ✅ Emoji picker */
 let activeEmojiTarget = null;
@@ -618,10 +588,10 @@ function insertAtCursor(input, text){
 document.addEventListener("click",(e)=>{
   if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) hideEmoji();
   if (!ctxMenu.contains(e.target)) hideCtxMenu();
-  if (!roomMenu.contains(e.target) && e.target !== bgBtn && e.target !== adminMenuBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
+  if (!roomMenu.contains(e.target) && e.target !== bgBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
 });
 
-if (emojiBtn) emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
 
 /* ✅ Ignore */
 function loadIgnoreWindows(){
@@ -683,47 +653,21 @@ function showRoomMenu(x,y){
   roomMenu.style.display = "block";
 
   const showAdmin = !!isAdmin;
-
-  // admin-only items
-  if (roomLockBtn)   roomLockBtn.style.display   = showAdmin ? "block" : "none";
-  if (roomUnlockBtn) roomUnlockBtn.style.display = showAdmin ? "block" : "none";
-  if (roomLogBtn)    roomLogBtn.style.display    = showAdmin ? "block" : "none";
-  if (radioBtn)      radioBtn.style.display      = showAdmin ? "block" : "none";
-
-  if (bg1Btn) bg1Btn.style.display = showAdmin ? "block" : "none";
-  if (bg2Btn) bg2Btn.style.display = showAdmin ? "block" : "none";
-  if (bg3Btn) bg3Btn.style.display = showAdmin ? "block" : "none";
-  if (bg4Btn) bg4Btn.style.display = showAdmin ? "block" : "none";
-  if (bg5Btn) bg5Btn.style.display = showAdmin ? "block" : "none";
-  if (bg0Btn) bg0Btn.style.display = showAdmin ? "block" : "none";
-
-  // rank+admin: capsule selector
-  const showCapsule = !!isAdmin || (user && hasAnyRank(user.uid));
-  if (capsuleBtn) capsuleBtn.style.display = showCapsule ? "block" : "none";
+  selfMuteBtn.style.display   = showAdmin ? "block" : "none";
+  selfUnmuteBtn.style.display = showAdmin ? "block" : "none";
+  bg1Btn.style.display = showAdmin ? "block" : "none";
+  bg2Btn.style.display = showAdmin ? "block" : "none";
+  bg3Btn.style.display = showAdmin ? "block" : "none";
+  bg0Btn.style.display = showAdmin ? "block" : "none";
 }
 function hideRoomMenu(){ roomMenu.style.display = "none"; }
 
-function openAdminMenuFrom(el){
-  if (!el) return;
-  const r = el.getBoundingClientRect();
-  showRoomMenu(Math.round(r.left), Math.round(r.bottom + 8));
-}
-
 bgBtn.addEventListener("click",(e)=>{
   e.preventDefault();
-  e.stopPropagation();
   if (!isAdmin) return;
-  openAdminMenuFrom(bgBtn);
+  const r = bgBtn.getBoundingClientRect();
+  showRoomMenu(Math.round(r.left), Math.round(r.bottom + 8));
 });
-
-if (adminMenuBtn){
-  adminMenuBtn.addEventListener("click",(e)=>{
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isAdmin) return;
-    openAdminMenuFrom(adminMenuBtn);
-  });
-}
 
 async function writeSystemText(text, type="system", actor={}){
   await addDoc(collection(db, "globalMessages"), {
@@ -786,13 +730,6 @@ logBtn.addEventListener("click", async ()=>{
     showLogsModal(["تعذر تحميل السجل (تحقق من صلاحيات Firestore Rules لمجموعة globalLogs)."]);
   }
 });
-
-if (roomLogBtn){
-  roomLogBtn.addEventListener("click", async ()=>{
-    hideRoomMenu();
-    try{ logBtn.click(); }catch{}
-  });
-}
 
 /* ✅ Moderation */
 async function adminKick(targetUid, targetName){
@@ -947,8 +884,7 @@ async function updatePresenceStatus(statusVal, first=false){
     isAdmin,
     isGuest,
     muted:false,
-    rank: rankOf(user.uid),
-    joinedAtMs: joinAtMs || nowMs()
+    rank: rankOf(user.uid)
   };
   await set(onlineRef, payload);
   if (first) onDisconnect(onlineRef).remove();
@@ -1063,6 +999,23 @@ roomUnlockBtn.addEventListener("click", async ()=>{
   await setRoomLocked(false);
 });
 
+selfMuteBtn.addEventListener("click", async ()=>{
+  hideRoomMenu();
+  if (!isAdmin || !user) return;
+  await update(ref(rtdb, `moderation/${user.uid}`), { muted:true, mutedUntil:0, reason:"selfMute", by:user.uid, mutedAt: nowMs() });
+  await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:true });
+  await writeSystemText(`🔇 الأدمن كتم نفسه`, "selfMute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("selfMute", "");
+});
+selfUnmuteBtn.addEventListener("click", async ()=>{
+  hideRoomMenu();
+  if (!isAdmin || !user) return;
+  await update(ref(rtdb, `moderation/${user.uid}`), { muted:false, mutedUntil:0, reason:"selfUnmute", by:user.uid, unmutedAt: nowMs() });
+  await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:false });
+  await writeSystemText(`🔊 الأدمن فك كتم نفسه`, "selfUnmute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("selfUnmute", "");
+});
+
 /* ✅ Global background (admin sets; all users see) */
 const BG_DOC = doc(db, "globalSettings", "ui");
 function bgUrlFromChoice(n){
@@ -1070,8 +1023,6 @@ function bgUrlFromChoice(n){
   if (nn === 1) return 'url("back1.gif")';
   if (nn === 2) return 'url("back2.gif")';
   if (nn === 3) return 'url("back3.gif")';
-  if (nn === 4) return 'url("back4.gif")';
-  if (nn === 5) return 'url("back5.gif")';
   return "none";
 }
 function applySiteBg(choice){
@@ -1098,137 +1049,9 @@ async function setGlobalBg(choice){
 bg1Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(1); });
 bg2Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(2); });
 bg3Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(3); });
-bg4Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(4); });
-bg5Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(5); });
 bg0Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(0); });
 
-/* ✅ Radio (admin -> all users) */
-const RADIO_REF = ref(rtdb, "radio");
-const radioAudio = new Audio();
-radioAudio.preload = "auto";
-radioAudio.loop = true;
-radioAudio.volume = 1.0;
-
-let radioState = { url:"", playing:false, startedAtMs:0 };
-
-function setRadioBtnLabel(){
-  if (!radioBtn) return;
-  radioBtn.textContent = radioState.playing ? "⏹️ إيقاف الراديو" : "📻 تشغيل الراديو";
-}
-
-function applyRadioFromState(st){
-  radioState = st || { url:"", playing:false, startedAtMs:0 };
-  setRadioBtnLabel();
-
-  const url = String(radioState.url || "").trim();
-  if (!radioState.playing || !url){
-    try{ radioAudio.pause(); }catch{}
-    return;
-  }
-
-  const needNewSrc = (radioAudio.src !== url);
-  if (needNewSrc){
-    try{
-      radioAudio.src = url;
-      radioAudio.load();
-    }catch{}
-  }
-
-  // best-effort sync (looped audio)
-  try{
-    const started = Number(radioState.startedAtMs || 0);
-    if (started){
-      const offset = Math.max(0, Math.floor((nowMs() - started) / 1000));
-      if (!Number.isNaN(offset) && Number.isFinite(offset)){
-        // try seek (may fail if not buffered)
-        radioAudio.currentTime = offset;
-      }
-    }
-  }catch{}
-
-  radioAudio.play().catch(()=>{ /* autoplay may be blocked until user interaction */ });
-}
-
-function startRadioListener(){
-  onValue(RADIO_REF, (snap)=>{
-    const st = snap.val() || {};
-    applyRadioFromState({
-      url: st.url || "",
-      playing: st.playing === true,
-      startedAtMs: Number(st.startedAtMs || 0)
-    });
-  }, ()=>{});
-}
-
-if (capsuleBtn){
-  capsuleBtn.addEventListener("click", async ()=>{
-    hideRoomMenu();
-    if (!user) return;
-
-    const myIsAdmin = !!isAdmin;
-    const myR = myIsAdmin ? "admin" : rankOf(user.uid);
-    if (!myIsAdmin && (!myR || myR === "none")) return;
-
-    const current = capsuleChoiceOf(user.uid) || 0;
-
-    const actions = [];
-    for (let i=1;i<=5;i++){
-      actions.push({
-        label: (i === current ? `✅ صورة ${i}` : `صورة ${i}`),
-        onClick: async ()=>{
-          hideAppModal();
-          try{
-            await set(ref(rtdb, `capsules/${user.uid}`), { choice:i, rank: myR, atMs: nowMs() });
-          }catch{}
-          try{ await writeActionLog("capsule", `${myR}#${i}`); }catch{}
-        }
-      });
-    }
-    actions.push({ label:"إغلاق", onClick:()=>hideAppModal() });
-
-    showAppModal({
-      title:"🎴 كبسولة الاسم",
-      text:`اختر صورة الكبسولة الخاصة برتبتك (${myR}).
-(ارفع الصور بالمسار: ./chat/media/ranks/ )
-مثال: ${myR}1.gif ... ${myR}5.gif`,
-      actions
-    });
-  });
-}
-
-if (radioBtn){
-  radioBtn.addEventListener("click", async ()=>{
-    hideRoomMenu();
-    if (!isAdmin || !user) return;
-
-    if (radioState.playing){
-      try{
-        await set(RADIO_REF, { url: radioState.url || "", playing:false, startedAtMs: radioState.startedAtMs || 0, by:user.uid, atMs: nowMs() });
-      }catch{}
-      try{ await writeSystemText(`⏹️ ${ADMIN_DISPLAY_NAME} أوقف الراديو`, "radioStop", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
-      try{ await writeActionLog("radio", "stop"); }catch{}
-      return;
-    }
-
-    const url = prompt("🔗 حط رابط مباشر للأغنية (MP3/Stream):");
-    if (!url) return;
-
-    const startedAtMs = nowMs();
-    try{
-      await set(RADIO_REF, { url: String(url).trim(), playing:true, startedAtMs, by:user.uid, atMs: startedAtMs });
-    }catch{}
-    try{ await writeSystemText(`📻 ${ADMIN_DISPLAY_NAME} شغّل الراديو`, "radioPlay", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
-    try{ await writeActionLog("radio", "play"); }catch{}
-  });
-}
-
 /* ✅ Watch ranks in RTDB */
-function startCapsulesListener(){
-  onValue(ref(rtdb, "capsules"), (snap)=>{
-    capsulesMap = snap.val() || {};
-  }, ()=>{});
-}
-
 function startRanksListener(){
   onValue(ref(rtdb, "ranks"), (snap)=>{
     const v = snap.val() || {};
@@ -1250,5 +1073,629 @@ function startRanksListener(){
   });
 }
 
-/* ... باقي الملف كما أرسلته أنت بدون أي تغيير ... */
+function startOnlineListener(){
+  onValue(ref(rtdb, "onlineUsers"), (snap)=>{
+    const users = snap.val() || {};
+    const arr = Object.values(users);
 
+    onlineCount.textContent = String(arr.length);
+    onlineList.innerHTML = "";
+
+    arr.sort((a,b)=>{
+      const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
+      if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
+      return (a.name||"").localeCompare(b.name||"");
+    }).forEach((u)=>{
+      const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
+      const row = document.createElement("div");
+
+      const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
+      const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
+
+      row.className = "userRow" + (isRowAdmin ? " admin adminCapsule" : "") + (rankRowClass ? (" " + rankRowClass) : "");
+
+      const left = document.createElement("div");
+      left.className = "userMeta";
+
+      const guestHtml = u.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
+      const mutedBadge = (u.muted === true) ? `<span class="mutedEmoji" title="مكتوم">🔇</span>` : "";
+      const flag = countryCodeToFlagEmoji(u.country || "");
+
+      const nameHtml = isRowAdmin
+        ? `${ADMIN_ICONS_HTML}<span class="adminNameBig" style="color:#fff;font-weight:900">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
+        : `
+          ${(!isRowAdmin && ru && ru !== "none") ? rankIconHtml(ru) : ""}
+          <span style="color:${escapeHtml(u.nameColor||"#facc15")};font-weight:900">${escapeHtml(u.name || "مستخدم")}</span>
+          ${guestHtml}
+        `;
+
+      const devIcon = (u.device === "mobile") ? "📱" : "🖥️";
+
+      left.innerHTML = `
+        <b><span title="الدولة">${flag}</span> ${nameHtml} ${mutedBadge}</b>
+        <span>
+          <span class="miniPill">
+            <span class="devIcon" title="الجهاز">${devIcon}</span>
+            <span>${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
+          </span>
+          ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile?.nameColor||"#facc15")};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
+        </span>
+      `;
+      row.appendChild(left);
+
+      const actions = document.createElement("div");
+      actions.className = "actionsRow";
+
+      if (isRowAdmin && isAdmin){
+        const dots = document.createElement("button");
+        dots.type = "button";
+        dots.className = "adminRoomDots";
+        dots.textContent = "⋮";
+        dots.title = "قائمة الأدمن";
+        dots.addEventListener("click",(e)=>{
+          e.stopPropagation();
+          roomLockBtn.style.display = roomLocked ? "none" : "block";
+          roomUnlockBtn.style.display = roomLocked ? "block" : "none";
+          showRoomMenu(e.clientX, e.clientY);
+        });
+        actions.appendChild(dots);
+      }
+
+      if (u.uid !== user.uid){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ignoreBtn";
+
+        const targetIsAdmin = isRowAdmin;
+        const ignored = isCurrentlyIgnored(u.uid);
+
+        btn.textContent = ignored ? "🚫" : "⛔";
+        btn.classList.toggle("ignored", ignored);
+        btn.disabled = targetIsAdmin;
+        btn.title = targetIsAdmin ? "لا يمكن تجاهل الأدمن" : (ignored ? "إلغاء التجاهل" : "تجاهل");
+
+        btn.addEventListener("click",(e)=>{
+          e.stopPropagation();
+          if (targetIsAdmin) return;
+          toggleIgnore(u.uid);
+          const nowIgnored = isCurrentlyIgnored(u.uid);
+          btn.textContent = nowIgnored ? "🚫" : "⛔";
+          btn.classList.toggle("ignored", nowIgnored);
+        });
+
+        actions.appendChild(btn);
+
+        const canSeeDots = isAdmin || canMute() || canKick() || canBan();
+        if (canSeeDots){
+          const more = document.createElement("button");
+          more.type = "button";
+          more.className = "moreBtn";
+          more.textContent = "⋮";
+          more.title = "خيارات";
+
+          more.addEventListener("click",(e)=>{
+            e.stopPropagation();
+            ctxUser = { uid: u.uid, name: u.name, isAdmin: isRowAdmin, isGuest: u.isGuest === true };
+
+            const targetIsAdmin2 = ctxUser.isAdmin === true;
+            const showMod = !targetIsAdmin2 && ctxUser.uid !== user.uid;
+
+            const allowKick = showMod && canKick();
+            const allowMute = showMod && canMute();
+            const allowBan  = showMod && canBan();
+
+            modActions.style.display = (showMod && (allowKick || allowMute || allowBan)) ? "block" : "none";
+            ctxKickBtn.style.display = allowKick ? "block" : "none";
+            ctxMuteBtn.style.display = allowMute ? "block" : "none";
+            ctxUnmuteBtn.style.display = allowMute ? "block" : "none";
+            ctxBanBtn.style.display = allowBan ? "block" : "none";
+            ctxUnbanBtn.style.display = allowBan ? "block" : "none";
+
+            rankActions.style.display = (isAdmin && showMod) ? "block" : "none";
+            showCtxMenu(e.clientX, e.clientY);
+          });
+
+          actions.appendChild(more);
+        }
+      }
+
+      row.appendChild(actions);
+      onlineList.appendChild(row);
+    });
+  });
+}
+
+function renderMsgTextToHtml(text){
+  let esc = escapeHtml(text || "");
+  esc = esc.replace(/:!!10/g, '__EMOJI10__');
+  esc = esc.replace(/:!!9/g,  '__EMOJI9__');
+  esc = esc.replace(/:!!8/g,  '__EMOJI8__');
+  esc = esc.replace(/:!!7/g,  '__EMOJI7__');
+  esc = esc.replace(/:!!6/g,  '__EMOJI6__');
+  esc = esc.replace(/:!!5/g,  '__EMOJI5__');
+  esc = esc.replace(/:!!4/g,  '__EMOJI4__');
+  esc = esc.replace(/:!!3/g,  '__EMOJI3__');
+  esc = esc.replace(/:!!2/g,  '__EMOJI2__');
+  esc = esc.replace(/:!!/g,   '__EMOJI1__');
+
+  for (let i=1;i<=10;i++){
+    esc = esc.replaceAll(`__EMOJI${i}__`, `<img class="chatEmojiImg" src="emoji${i}.gif" alt="emoji${i}">`);
+  }
+  return esc;
+}
+
+// ✅ فصلنا الريندر لدالة حتى نقدر نستدعيها من clear listener
+function renderMessagesFromSnap(snap){
+  messagesDiv.innerHTML = "";
+  const isFirst = !initialLoaded;
+
+  const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
+
+  const items = [];
+  snap.forEach((docx)=>{
+    const m = docx.data();
+    const tServer = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
+    const t = Number(tServer || m.createdAtMs || 0);
+    items.push({ id: docx.id, m, t });
+  });
+
+  items.sort((a,b)=>{
+    if (a.t !== b.t) return a.t - b.t;
+    return a.id.localeCompare(b.id);
+  });
+
+  for (const it of items){
+    const m = it.m;
+    const t = it.t;
+
+    if (t < cutoff) continue;
+
+    if (m.system && m.private === true){
+      const to = Array.isArray(m.to) ? m.to : [];
+      if (!user || !to.includes(user.uid)) continue;
+    }
+
+    if (!m.system && m.uid && isInIgnoreWindow(m.uid, t)) continue;
+
+    if (m.system){
+      const div = document.createElement("div");
+      const isBigBoss = (m.type === "bigBoss");
+      div.className = "system" + (isBigBoss ? " systemBigBoss" : "");
+      div.textContent = m.text || "";
+      messagesDiv.appendChild(div);
+
+      if (!isFirst && (m.type==="join" || m.type==="leave") && m.actorUid && m.actorUid !== user.uid){
+        const now = nowMs();
+        if (now - lastSoundAt > 800){
+          lastSoundAt = now;
+          toastSound.currentTime = 0;
+          toastSound.play().catch(()=>{});
+        }
+      }
+    } else {
+      const row = document.createElement("div");
+      row.className = "msgRow" + (m.uid === user.uid ? " me" : "");
+
+      const div = document.createElement("div");
+      const isMsgAdmin = (m.isAdmin === true) || (m.uid && ADMIN_UIDS.includes(m.uid));
+      div.className = "msg" + (m.uid === user.uid ? " me" : "") + (isMsgAdmin ? " adminMsg" : "");
+      div.dataset.mid = it.id;
+
+      const guestHtml = m.isGuest ? `<span class="guestPill">[ضيف]</span>` : "";
+
+      const r = (m.rank && RANKS[m.rank]) ? m.rank : rankOf(m.uid);
+      const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
+      const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
+
+      const nameHtml = isMsgAdmin
+        ? `${ADMIN_ICONS_HTML}<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
+        : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
+
+      const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
+        ? `<div class="replyQuote"><b>رد على: ${escapeHtml(m.replyTo.name)}</b><div>${escapeHtml(m.replyTo.text)}</div></div>`
+        : "";
+
+      div.innerHTML = `
+        <div class="msgHead">
+          <div class="nameTag ${nameSizeClass} ${isMsgAdmin ? "adminNameTag" : ""}">
+            ${nameHtml}
+          </div>
+        </div>
+        ${replyBlock}
+        <div class="msgText" style="color:${escapeHtml(m.textColor || "#f9fafb")}">${renderMsgTextToHtml(m.text||"")}</div>
+        <div class="msgTimeUnder">${escapeHtml(formatTime(t))}</div>
+        <button class="replyBtn" type="button" title="رد">↩ رد</button>
+      `;
+
+      div.querySelector(".replyBtn").addEventListener("click", ()=>{
+        replyTarget = {
+          id: it.id,
+          uid: m.uid,
+          name: m.name || "مستخدم",
+          text: String(m.text||"").slice(0,160)
+        };
+        replyPreviewName.textContent = `رد على: ${replyTarget.name}`;
+        replyPreviewText.textContent = replyTarget.text;
+        replyPreview.style.display = "flex";
+        msgInput.focus();
+      });
+
+      row.appendChild(div);
+      messagesDiv.appendChild(row);
+    }
+  }
+
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  initialLoaded = true;
+}
+
+function startGlobalMessagesListener(){
+  initialLoaded = false;
+
+  const q = query(
+    collection(db, "globalMessages"),
+    orderBy("createdAtMs", "asc"),
+    limitToLast(600)
+  );
+
+  onSnapshot(q, (snap)=>{
+    __lastMessagesSnap = snap;
+    renderMessagesFromSnap(snap);
+  }, (err)=>{
+    console.error("messages listener error:", err);
+  });
+}
+
+replyCancelBtn.addEventListener("click", ()=>{
+  replyTarget = null;
+  replyPreview.style.display = "none";
+});
+
+ctxKickBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canKick()) return;
+  await adminKick(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+ctxMuteBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canMute()) return;
+  await adminMute(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+ctxUnmuteBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canMute()) return;
+  await adminUnmute(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+ctxBanBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canBan()) return;
+  await adminBan(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+ctxUnbanBtn.addEventListener("click", async ()=>{
+  if (!ctxUser || ctxUser.isAdmin) return;
+  if (!canBan()) return;
+  await adminUnban(ctxUser.uid, ctxUser.name || "مستخدم");
+  hideCtxMenu();
+});
+
+ctxRankLegend.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "legend"); hideCtxMenu(); });
+ctxRankVip.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "vip"); hideCtxMenu(); });
+ctxRankRoot.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "root"); hideCtxMenu(); });
+ctxRankGirl.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "girl"); hideCtxMenu(); });
+ctxRankNone.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "none"); hideCtxMenu(); });
+
+// ✅✅✅ (Mobile-only) إرسال من الكيبورد بدون زر (Enter + دبل-سبيس)
+let __lastSpaceSendAt = 0;
+msgInput.addEventListener("keydown",(e)=>{
+  if (!__MOBILE_DEVICE) return;
+
+  if (e.key === "Enter"){
+    e.preventDefault();
+    if (!msgInput.disabled) chatForm.requestSubmit();
+    return;
+  }
+
+  if (e.key === " "){
+    const v = msgInput.value || "";
+    const now = Date.now();
+    const fast = (now - __lastSpaceSendAt) < 320;
+    __lastSpaceSendAt = now;
+
+    if (fast && collapseSpaces(v).length > 0){
+      e.preventDefault();
+      if (!msgInput.disabled) chatForm.requestSubmit();
+    }
+  }
+});
+
+chatForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  if (!user || !profile) return;
+
+  const text = collapseSpaces(msgInput.value);
+  if (!text) return;
+
+  if (roomLocked && !canWriteWhenLocked()){
+    showAppModal({ title:"🚫 الروم مقفل", text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
+    return;
+  }
+
+  if (msgInput.disabled) return;
+
+  if (!isAdmin && isProfane(text)){
+    showAppModal({ title:"❌ رسالة مرفوضة", text:"الرسالة مرفوضة (كلام غير لائق).", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
+    return;
+  }
+
+  const replyTo = replyTarget ? { uid: replyTarget.uid, name: replyTarget.name, text: replyTarget.text, id: replyTarget.id } : null;
+
+  msgInput.value = "";
+  replyTarget = null;
+  replyPreview.style.display = "none";
+
+  const finalName = isAdmin ? ADMIN_DISPLAY_NAME : profile.name;
+
+  await addDoc(collection(db, "globalMessages"), {
+    system:false, text,
+    uid:user.uid,
+    name: finalName,
+    gender:profile.gender,
+    age:profile.age,
+    country: profile.country || "",
+    nameColor:profile.nameColor,
+    textColor:profile.textColor,
+    isAdmin, isGuest,
+    replyTo,
+    rank: rankOf(user.uid),
+    createdAt: serverTimestamp(),
+    createdAtMs: nowMs()
+  });
+});
+
+function cleanupGuestLocal(){
+  try{
+    if (user?.isAnonymous){
+      localStorage.removeItem(profKey(user.uid));
+      localStorage.removeItem(statusKey(user.uid));
+      localStorage.removeItem(ignoreKey(user.uid));
+      localStorage.removeItem(adminSessionKey(user.uid));
+    }
+  }catch{}
+}
+
+exitBtn.addEventListener("click", async ()=>{
+  try{
+    if (user && profile){
+      await writeJoinLeave("leave");
+      await remove(ref(rtdb, "onlineUsers/" + user.uid));
+    }
+  }catch{}
+  cleanupGuestLocal();
+  location.href = "index.html";
+});
+
+statusSelect.addEventListener("change", async ()=>{
+  if (!user || !profile) return;
+  const s = statusSelect.value || "online";
+  localStorage.setItem(statusKey(user.uid), s);
+  await updatePresenceStatus(s);
+});
+
+adminLoginBtn.addEventListener("click", ()=>{
+  setErr(adminErr, "");
+  if (!user) return;
+  const uidAllowed = ADMIN_UIDS.includes(user.uid);
+  if (!uidAllowed){
+    setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
+    return;
+  }
+  const u = (adminUser.value || "").trim();
+  const p = (adminPass.value || "").trim();
+  if (u !== ADMIN_USERNAME || p !== ADMIN_PASSWORD){
+    setErr(adminErr, "بيانات ADMIN غير صحيحة.");
+    return;
+  }
+  localStorage.setItem(adminSessionKey(user.uid), "1");
+  setErr(adminErr, "✅ تم تفعيل الأدمن.");
+  isAdmin = true;
+
+  logBtn.style.display = "inline-flex";
+  bgBtn.style.display  = "inline-flex";
+  adminClearBtn.style.display = "inline-flex";
+
+  // ✅ admin now can use all themes
+  try{ ensureThemeStillAllowed(); }catch{}
+
+  try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
+});
+
+function showForm(){ formBox.style.display = "block"; }
+
+homeBtn.addEventListener("click", ()=>{
+  cleanupGuestLocal();
+  location.href = "index.html";
+});
+
+backListBtn.addEventListener("click", ()=>{
+  setErr(modalErr,"");
+  formBox.style.display = "none";
+});
+
+chooseLogin.addEventListener("click", ()=>{
+  setErr(modalErr,"");
+  if (!user){ location.href = "login.html"; return; }
+  if (user.isAnonymous){ location.href = "login.html"; return; }
+  isGuest = false;
+  showForm();
+});
+
+chooseGuest.addEventListener("click", async ()=>{
+  setErr(modalErr,"");
+  if (user && !user.isAnonymous){
+    setErr(modalErr, "أنت مسجل دخول بالفعل—استخدم خيار تسجيل دخول.");
+    return;
+  }
+  try{
+    if (!user){
+      await signInAnonymously(auth);
+    }
+    isGuest = true;
+    showForm();
+  }catch(err){
+    setErr(modalErr, "❌ فشل الدخول كضيف. جرّب مرة ثانية.");
+    console.error(err);
+  }
+});
+
+enterBtn.addEventListener("click", async ()=>{
+  setErr(modalErr, "");
+
+  const rawName = collapseSpaces(nameInput.value);
+  const g = genderInput.value;
+  const age = Number(ageInput.value);
+  const country = (countryInput.value || "").trim().toUpperCase();
+
+  if (!rawName || rawName.length < 3){ setErr(modalErr, "الاسم لازم يكون 3 أحرف على الأقل."); return; }
+  if (!g){ setErr(modalErr, "اختار الجنس."); return; }
+  if (!Number.isFinite(age) || age < 10){ setErr(modalErr, "العمر لازم يكون 10 أو أكثر."); return; }
+  if (!country || country.length !== 2){ setErr(modalErr, "اختار الدولة."); return; }
+  if (!user){ setErr(modalErr, "اختر طريقة الدخول أولاً."); return; }
+
+  profile = {
+    name: rawName,
+    gender: g,
+    age,
+    country,
+    nameColor: nameColorInput.value || "#facc15",
+    textColor: textColorInput.value || "#f9fafb"
+  };
+
+  if (!user.isAnonymous){
+    localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
+  }
+
+  const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
+  statusSelect.value = savedStatus;
+
+  try{
+    await enterChat(savedStatus);
+  }catch(err){
+    console.error(err);
+    setErr(modalErr, "❌ صار خطأ بالدخول للشات. جرّب مرة ثانية.");
+  }
+});
+
+async function enterChat(statusVal){
+  isGuest = !!user?.isAnonymous;
+
+  isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
+
+  if (profile && isAdmin){
+    profile.name = ADMIN_DISPLAY_NAME;
+  }
+
+  logBtn.style.display = isAdmin ? "inline-flex" : "none";
+  bgBtn.style.display  = isAdmin ? "inline-flex" : "none";
+  adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+
+  msgInput.disabled = false;
+  sendBtn.disabled = false;
+
+  joinAtMs = nowMs();
+
+  await updatePresenceStatus(statusVal, true);
+  await writeJoinLeave("join");
+
+  modal.style.display = "none";
+
+  // ✅ init themes now (menu + apply saved)
+  initThemeSystem();
+
+  loadIgnoreWindows();
+  startGlobalBgListener();
+  startRanksListener();
+  startClearMetaListener();
+  startRoomLockListener();
+  startOnlineListener();
+  startGlobalMessagesListener();
+  startModerationListener();
+
+  if (roomLocked && !canWriteWhenLocked()){
+    msgInput.disabled = true;
+    sendBtn.disabled = true;
+    msgInput.placeholder = "🚫 الروم مقفل بواسطة الأدمن";
+  }
+
+  startDhikrLoop();
+  closeOnlineDrawer();
+}
+
+onAuthStateChanged(auth, async (u)=>{
+  user = u || null;
+  meBadge.textContent = "أنت";
+  watchConnection();
+
+  let loadedSaved = false;
+  if (user && !user.isAnonymous){
+    const savedProfile = localStorage.getItem(profKey(user.uid));
+    if (savedProfile){
+      try{
+        const p = JSON.parse(savedProfile);
+        nameInput.value = p.name || "";
+        genderInput.value = p.gender || "";
+        ageInput.value = p.age || "";
+        countryInput.value = p.country || "JO";
+        nameColorInput.value = p.nameColor || randHexColor();
+        textColorInput.value = p.textColor || randHexColor();
+        loadedSaved = true;
+      }catch{}
+    }
+  }
+  if (!loadedSaved){
+    nameColorInput.value = randHexColor();
+    textColorInput.value = randHexColor();
+    countryInput.value = "JO";
+  }
+
+  formBox.style.display = "none";
+  setErr(modalErr, "");
+  setErr(adminErr, "");
+  modal.style.display = "flex";
+});
+
+window.addEventListener("beforeunload", ()=>{
+  try{
+    if (user && profile){
+      writeJoinLeave("leave");
+      remove(ref(rtdb, "onlineUsers/" + user.uid));
+    }
+  }catch{}
+  cleanupGuestLocal();
+});
+
+/* ✅ Dhikr notifications */
+const DHIKR = ["صلي على النبي", "سبحان الله", "الحمد لله", "لا اله الا الله", "الله اكبر"];
+let __dhikrStarted = false;
+function showDhikr(){
+  const txt = DHIKR[Math.floor(Math.random()*DHIKR.length)];
+  const side = Math.random() < .5 ? "left" : "right";
+  const top = Math.floor(90 + Math.random() * (window.innerHeight - 200));
+  const el = document.createElement("div");
+  el.className = "dhikrToast";
+  el.textContent = txt;
+  el.style.top = top + "px";
+  el.style[side] = "14px";
+  document.body.appendChild(el);
+  setTimeout(()=>{ try{ el.remove(); }catch{} }, 5200);
+}
+function startDhikrLoop(){
+  if (__dhikrStarted) return;
+  __dhikrStarted = true;
+  setTimeout(showDhikr, 1500);
+  setInterval(showDhikr, 30000);
+}
