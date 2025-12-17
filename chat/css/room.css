@@ -989,4 +989,35 @@ select,input{
 .menu{
   color: var(--mlo5-text, var(--white)) !important;
 }
+/* =========================
+   🎤 Voice / Mic (Speaker)
+========================= */
+#micStatusBadge{
+  border-color: rgba(250,204,21,.55);
+  color: var(--yellow);
+}
+.micBtn{ width:40px; padding:0; border-radius:12px !important; }
+.micBtn.isOn{
+  background: rgba(250,204,21,.18) !important;
+  border-color: rgba(250,204,21,.75) !important;
+  color: #facc15 !important;
+  box-shadow: 0 0 0 1px rgba(250,204,21,.35), 0 10px 26px rgba(0,0,0,.55);
+}
+
+.userRow.speakerNow{
+  outline: 2px solid rgba(250,204,21,.55);
+  box-shadow: 0 10px 26px rgba(0,0,0,.55);
+}
+.userRow.speakerNow::before{
+  content:"🎤 يتحدث الآن";
+  position:absolute;
+  left:12px; top:10px;
+  font-size:.8rem;
+  color: var(--yellow);
+  background: rgba(0,0,0,.55);
+  border:1px solid rgba(250,204,21,.35);
+  padding:3px 8px;
+  border-radius:999px;
+}
+
 
