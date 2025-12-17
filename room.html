@@ -37,13 +37,13 @@
         <!-- ✅ زر خلفية الموقع (للأدمن فقط) - بجانب السجل -->
         <button class="top-chip" id="bgBtn" type="button" title="لوحة الأدمن" style="display:none;">🛡️ إدارة</button>
 
-        <!-- ✅ NEW: زر الكبسولات (للرتب + الأدمن) -->
+        <!-- ✅ زر الكبسولات (للرتب + الأدمن) -->
         <button class="top-chip" id="capsuleBtn" type="button" title="كبسولة الاسم" style="display:none;">🧩 كبسولة</button>
 
-        <!-- ✅ NEW: زر الراديو (للأدمن فقط) -->
+        <!-- ✅ زر الراديو (للأدمن فقط) -->
         <button class="top-chip" id="radioBtn" type="button" title="راديو" style="display:none;">📻 راديو</button>
 
-        <!-- ✅ NEW: زر الثيمات (للجميع) -->
+        <!-- ✅ زر الثيمات (للجميع) -->
         <button class="top-chip" id="themeBtn" type="button" title="ثيمات">🖌️ ثيمات</button>
 
         <!-- ✅ زر الألوان مبين عند الكل -->
@@ -109,7 +109,7 @@
               <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
               <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
 
-              <!-- ✅ NEW: Mic/Cam (UI only) -->
+              <!-- ✅ Mic/Cam (UI only) -->
               <button class="micBtn" id="micBtn" type="button" title="مايك (قريباً)" aria-label="Mic">🎙️</button>
               <button class="camBtn" id="camBtn" type="button" title="كاميرا (قريباً)" aria-label="Camera">📷</button>
 
@@ -254,13 +254,12 @@
       <button id="ctxRankVip">💎 VIP</button>
       <button id="ctxRankRoot">🛡️ ROOT</button>
       <button id="ctxRankGirl">🎀 GIRL</button>
-      <!-- ✅ NEW: MASTER -->
       <button id="ctxRankMaster">🟢 MASTER</button>
       <button id="ctxRankNone">🧽 إزالة الرتبة</button>
     </div>
   </div>
 
-  <!-- ✅ Admin panel popup (PRO) -->
+  <!-- ✅ Admin panel popup -->
   <div class="menu" id="adminPanelMenu" aria-hidden="true">
     <button id="adminPanelLog">📜 السجل</button>
 
@@ -280,13 +279,20 @@
     <button id="adminPanelRadio">📻 الراديو</button>
   </div>
 
-  <!-- ✅ Radio popup -->
+  <!-- ✅ Radio popup (LOCAL FILES) -->
   <div class="menu" id="radioMenu" aria-hidden="true">
     <button id="radioPlayBtn">▶️ تشغيل</button>
     <button id="radioStopBtn">⏹️ إيقاف</button>
     <div class="sep"></div>
-    <button id="radioSetUrlBtn">🔗 تعيين رابط</button>
+    <button id="radioTrack1">🎵 radio1</button>
+    <button id="radioTrack2">🎵 radio2</button>
+    <button id="radioTrack3">🎵 radio3</button>
+    <button id="radioTrack4">🎵 radio4</button>
+    <button id="radioTrack5">🎵 radio5</button>
   </div>
+
+  <!-- ✅ Audio element (hidden) -->
+  <audio id="radioAudio" preload="auto" style="display:none"></audio>
 
   <!-- ✅ Capsule picker popup (rank/admin) -->
   <div class="menu" id="capsuleMenu" aria-hidden="true">
@@ -299,7 +305,7 @@
     <button id="capsuleReset">🧽 افتراضي</button>
   </div>
 
-  <!-- ✅ Keep old roomMenu for backward compatibility (JS will use adminPanelMenu now) -->
+  <!-- ✅ Keep old roomMenu for backward compatibility -->
   <div class="menu" id="roomMenu">
     <button id="roomLockBtn">🔒 قفل الروم</button>
     <button id="roomUnlockBtn">🔓 فتح الروم</button>
@@ -308,19 +314,16 @@
     <button id="selfMuteBtn">🔇 كتم نفسي</button>
     <button id="selfUnmuteBtn">🔊 فك كتم نفسي</button>
 
-    <!-- ✅ global backgrounds (admin only, triggered from top bg button) -->
     <div class="sep"></div>
     <button id="bg1Btn">🖼️ خلفية 1</button>
     <button id="bg2Btn">🖼️ خلفية 2</button>
     <button id="bg3Btn">🖼️ خلفية 3</button>
-    <!-- ✅ NEW -->
     <button id="bg4Btn">🖼️ خلفية 4</button>
     <button id="bg5Btn">🖼️ خلفية 5</button>
-
     <button id="bg0Btn">🧽 إزالة الخلفية</button>
   </div>
 
-  <!-- ✅ NEW: Themes Menu (UI only) -->
+  <!-- ✅ Themes Menu -->
   <div class="menu" id="themeMenu" aria-hidden="true">
     <button class="themePick" data-theme="dark">🌑 Default (Dark)</button>
     <button class="themePick" data-theme="white">⚪ White</button>
