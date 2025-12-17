@@ -54,6 +54,19 @@ const bgBtn  = document.getElementById("bgBtn");
 const colorBtn = document.getElementById("colorBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 
+/* =========================
+   🎤 MIC (UI refs)
+========================= */
+const micBtn = document.getElementById("micBtn");
+const micStatusBadge = document.getElementById("micStatusBadge");
+
+// Admin mic controls (optional)
+const micExtendBtn = document.getElementById("micExtendBtn");
+const micOpenBtn   = document.getElementById("micOpenBtn");
+const micTakeBtn   = document.getElementById("micTakeBtn");
+const ctxGiveMicBtn = document.getElementById("ctxGiveMicBtn");
+
+
 /* ✅ THEMES UI */
 const themeBtn  = document.getElementById("themeBtn");
 const themeMenu = document.getElementById("themeMenu");
@@ -148,6 +161,7 @@ let joinAtMs = null;
 let initialLoaded = false;
 let lastSoundAt = 0;
 let __lastMessagesSnap = null;
+let __lastOnlineUsers = null; // RTDB snapshot cache for mic connections
 
 const adminSessionKey = (uid) => `adminSession_${uid}`;
 let isAdmin = false;
@@ -546,8 +560,8 @@ function hideAppModal(){ appModal.style.display = "none"; }
 appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
 
 /* ✅ color + download open new tabs */
-colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
-downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
+colorBtn?.addEventListener("click", ()=> window.open("color.html", "_blank"));
+downloadBtn?.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
 
 /* ✅ Emoji picker */
 let activeEmojiTarget = null;
@@ -591,7 +605,7 @@ document.addEventListener("click",(e)=>{
   if (!roomMenu.contains(e.target) && e.target !== bgBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
 });
 
-emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+emojiBtn?.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
 
 /* ✅ Ignore */
 function loadIgnoreWindows(){
@@ -703,6 +717,487 @@ async function writeActionLog(action, details=""){
     });
   }catch{}
 }
+
+
+/* =========================================================
+   🎤 MIC SYSTEM (5 minutes + Admin control) + WebRTC Audio
+   - RTDB: mic/current => { uid, name, mode:"timed"|"open", expiresAtMs, updatedAtMs, byUid }
+   - RTDB signaling:
+       webrtc/{toUid}/{fromUid}/offer
+       webrtc/{toUid}/{fromUid}/answer
+       webrtc/{toUid}/{fromUid}/ice/{key}
+========================================================= */
+
+const MIC_PATH = "mic/current";
+const WEBRTC_PATH = "webrtc";
+const MIC_DURATION_MS = 5 * 60 * 1000;
+
+let micState = null;          // current mic object
+let myMicActive = false;
+let myLocalStream = null;
+
+let __micTimerUI = null;
+
+// WebRTC
+const pcMap = new Map();      // peerUid -> RTCPeerConnection
+const audioElMap = new Map(); // peerUid -> HTMLAudioElement
+let __webrtcInboxUnsub = null; // actually RTDB onValue can't unsub easily; we keep ref
+
+const RTC_CFG = {
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" }
+  ]
+};
+
+// ---- UI helpers ----
+function setMicBadge(text){
+  if (micStatusBadge) micStatusBadge.textContent = text;
+}
+function setMicBtnOn(on){
+  if (!micBtn) return;
+  micBtn.classList.toggle("isOn", !!on);
+  micBtn.title = on ? "ترك المايك" : "تحدث";
+}
+function stopMicTimerUI(){
+  if (__micTimerUI){ clearInterval(__micTimerUI); __micTimerUI = null; }
+}
+function startMicTimerUI(){
+  stopMicTimerUI();
+  __micTimerUI = setInterval(()=>{
+    if (!micState || !micState.uid){
+      setMicBadge("🎤 المايك: متاح");
+      return;
+    }
+    if (micState.mode === "open"){
+      setMicBadge(`🎤 المايك: مفتوح (${micState.name || "—"})`);
+      return;
+    }
+    const left = Number(micState.expiresAtMs||0) - nowMs();
+    if (left <= 0){
+      setMicBadge("🎤 المايك: انتهى");
+      return;
+    }
+    const s = Math.floor(left/1000);
+    const mm = String(Math.floor(s/60)).padStart(2,"0");
+    const ss = String(s%60).padStart(2,"0");
+    setMicBadge(`🎤 يتحدث: ${micState.name || "—"} • ${mm}:${ss}`);
+  }, 500);
+}
+
+function reorderSpeakerRowInDOM(){
+  try{
+    if (!onlineList) return;
+    const speakerUid = micState?.uid || null;
+    if (!speakerUid) return;
+    const row = onlineList.querySelector(`.userRow[data-uid="${speakerUid}"]`);
+    if (row && onlineList.firstElementChild !== row){
+      onlineList.insertBefore(row, onlineList.firstElementChild);
+    }
+  }catch{}
+}
+
+// ---- permission helpers ----
+function canControlMic(){
+  return !!isAdmin; // حسب طلبك: الأدمن فقط
+}
+
+// ---- RTDB write mic ----
+async function setMicCurrent(obj){
+  await set(ref(rtdb, MIC_PATH), obj);
+}
+async function clearMicCurrent(){
+  await remove(ref(rtdb, MIC_PATH));
+}
+
+async function requestMicTimed(){
+  if (!user || !profile) return;
+
+  // إذا في متحدث غيري
+  if (micState?.uid && micState.uid !== user.uid){
+    showAppModal({
+      title:"🎤 المايك مشغول",
+      text:`حالياً ${micState.name || "شخص"} يتحدث.`,
+      actions:[{label:"حسناً", onClick:()=>hideAppModal()}]
+    });
+    return;
+  }
+
+  const who = isAdmin ? ADMIN_DISPLAY_NAME : profile.name;
+  const expiresAtMs = nowMs() + MIC_DURATION_MS;
+
+  await setMicCurrent({
+    uid: user.uid,
+    name: who,
+    mode: "timed",
+    expiresAtMs,
+    updatedAtMs: nowMs(),
+    byUid: user.uid
+  });
+}
+
+async function releaseMyMic(){
+  if (!user) return;
+  if (micState?.uid !== user.uid) return;
+  await clearMicCurrent();
+}
+
+// ---- Admin actions ----
+async function adminGiveMicTo(uid, name){
+  if (!canControlMic()) return;
+  const expiresAtMs = nowMs() + MIC_DURATION_MS;
+  await setMicCurrent({
+    uid,
+    name: name || "مستخدم",
+    mode: "timed",
+    expiresAtMs,
+    updatedAtMs: nowMs(),
+    byUid: user.uid
+  });
+}
+async function adminExtendMic5(){
+  if (!canControlMic()) return;
+  if (!micState?.uid) return;
+
+  if (micState.mode === "open"){
+    // تحويله لمؤقت 5 دقائق من الآن
+    await setMicCurrent({
+      ...micState,
+      mode: "timed",
+      expiresAtMs: nowMs() + MIC_DURATION_MS,
+      updatedAtMs: nowMs(),
+      byUid: user.uid
+    });
+    return;
+  }
+
+  const base = Math.max(Number(micState.expiresAtMs||0), nowMs());
+  await setMicCurrent({
+    ...micState,
+    mode: "timed",
+    expiresAtMs: base + MIC_DURATION_MS,
+    updatedAtMs: nowMs(),
+    byUid: user.uid
+  });
+}
+async function adminOpenMic(){
+  if (!canControlMic()) return;
+  if (!micState?.uid) return;
+  await setMicCurrent({
+    ...micState,
+    mode: "open",
+    expiresAtMs: 0,
+    updatedAtMs: nowMs(),
+    byUid: user.uid
+  });
+}
+async function adminTakeMic(){
+  if (!canControlMic()) return;
+  if (!micState?.uid) return;
+  await clearMicCurrent();
+}
+
+// ---- WebRTC helpers ----
+function ensureAudioEl(peerUid){
+  let el = audioElMap.get(peerUid);
+  if (el) return el;
+  el = document.createElement("audio");
+  el.autoplay = true;
+  el.playsInline = true;
+  el.dataset.peer = peerUid;
+  el.style.display = "none";
+  document.body.appendChild(el);
+  audioElMap.set(peerUid, el);
+  return el;
+}
+
+function closePeer(peerUid){
+  try{
+    const pc = pcMap.get(peerUid);
+    if (pc){
+      pc.onicecandidate = null;
+      pc.ontrack = null;
+      pc.onconnectionstatechange = null;
+      pc.close();
+    }
+  }catch{}
+  pcMap.delete(peerUid);
+
+  try{
+    const el = audioElMap.get(peerUid);
+    if (el){
+      el.srcObject = null;
+      el.remove();
+    }
+  }catch{}
+  audioElMap.delete(peerUid);
+}
+
+function closeAllPeers(){
+  Array.from(pcMap.keys()).forEach(closePeer);
+}
+
+async function stopLocalStream(){
+  try{
+    if (myLocalStream){
+      myLocalStream.getTracks().forEach(t=>{ try{ t.stop(); }catch{} });
+    }
+  }catch{}
+  myLocalStream = null;
+}
+
+async function startLocalStream(){
+  if (myLocalStream) return myLocalStream;
+  try{
+    myLocalStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      },
+      video: false
+    });
+    return myLocalStream;
+  }catch(err){
+    showAppModal({
+      title:"🎤 تعذر تشغيل المايك",
+      text:"يرجى السماح بالمايك من المتصفح ثم جرّب مرة ثانية.",
+      actions:[{label:"حسناً", onClick:()=>hideAppModal()}]
+    });
+    throw err;
+  }
+}
+
+function sigPath(toUid, fromUid){ return `${WEBRTC_PATH}/${toUid}/${fromUid}`; }
+
+async function writeOffer(toUid, fromUid, sdp){
+  await set(ref(rtdb, `${sigPath(toUid, fromUid)}/offer`), { sdp, at: nowMs() });
+}
+async function writeAnswer(toUid, fromUid, sdp){
+  await set(ref(rtdb, `${sigPath(toUid, fromUid)}/answer`), { sdp, at: nowMs() });
+}
+async function writeIce(toUid, fromUid, cand){
+  const key = `${nowMs()}_${Math.random().toString(16).slice(2)}`;
+  await set(ref(rtdb, `${sigPath(toUid, fromUid)}/ice/${key}`), {
+    candidate: cand.candidate,
+    sdpMid: cand.sdpMid || null,
+    sdpMLineIndex: (typeof cand.sdpMLineIndex === "number") ? cand.sdpMLineIndex : null,
+    at: nowMs()
+  });
+}
+
+function getOrCreatePC(peerUid){
+  let pc = pcMap.get(peerUid);
+  if (pc) return pc;
+
+  pc = new RTCPeerConnection(RTC_CFG);
+
+  pc.onicecandidate = (e)=>{
+    if (!e.candidate) return;
+    // send candidate to peer (they receive under their uid / from my uid)
+    writeIce(peerUid, user.uid, e.candidate).catch(()=>{});
+  };
+
+  pc.ontrack = (e)=>{
+    const el = ensureAudioEl(peerUid);
+    if (el.srcObject !== e.streams[0]){
+      el.srcObject = e.streams[0];
+      // autoplay may fail on some browsers; ignore
+      el.play?.().catch(()=>{});
+    }
+  };
+
+  pc.onconnectionstatechange = ()=>{
+    const st = pc.connectionState;
+    if (st === "failed" || st === "disconnected" || st === "closed"){
+      // keep minimal cleanup
+    }
+  };
+
+  pcMap.set(peerUid, pc);
+  return pc;
+}
+
+// Speaker initiates calls to each peer
+async function speakerConnectToPeer(peerUid){
+  if (!user) return;
+  const pc = getOrCreatePC(peerUid);
+
+  // add tracks
+  const stream = await startLocalStream();
+  stream.getTracks().forEach(track=>{
+    try{
+      // avoid duplicates
+      const senders = pc.getSenders();
+      const has = senders.some(s=>s.track && s.track.id === track.id);
+      if (!has) pc.addTrack(track, stream);
+    }catch{}
+  });
+
+  const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: false });
+  await pc.setLocalDescription(offer);
+  await writeOffer(peerUid, user.uid, offer.sdp);
+}
+
+// Listener handles offer from speaker
+async function handleOffer(fromUid, offerSdp){
+  const pc = getOrCreatePC(fromUid);
+  await pc.setRemoteDescription({ type:"offer", sdp: offerSdp });
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  await writeAnswer(fromUid, user.uid, answer.sdp);
+}
+
+// Speaker handles answer from listener
+async function handleAnswer(fromUid, answerSdp){
+  const pc = getOrCreatePC(fromUid);
+  // only set if we have local offer
+  await pc.setRemoteDescription({ type:"answer", sdp: answerSdp });
+}
+
+async function handleIce(fromUid, iceObj){
+  try{
+    const pc = getOrCreatePC(fromUid);
+    await pc.addIceCandidate(new RTCIceCandidate({
+      candidate: iceObj.candidate,
+      sdpMid: iceObj.sdpMid,
+      sdpMLineIndex: iceObj.sdpMLineIndex
+    }));
+  }catch{}
+}
+
+// Listen to my signaling inbox
+function startWebRTCInbox(){
+  if (!user) return;
+  onValue(ref(rtdb, `${WEBRTC_PATH}/${user.uid}`), (snap)=>{
+    const all = snap.val() || {};
+    // all[fromUid] = { offer, answer, ice }
+    Object.keys(all).forEach((fromUid)=>{
+      const box = all[fromUid] || {};
+      if (box.offer?.sdp){
+        // offer from speaker
+        handleOffer(fromUid, box.offer.sdp).catch(()=>{});
+      }
+      if (box.answer?.sdp){
+        // answer to my offer
+        handleAnswer(fromUid, box.answer.sdp).catch(()=>{});
+      }
+      if (box.ice){
+        const iceMap = box.ice || {};
+        Object.keys(iceMap).forEach((k)=>{
+          handleIce(fromUid, iceMap[k]).catch(()=>{});
+        });
+      }
+    });
+  });
+}
+
+// Cleanup signaling that targets me (optional)
+async function clearMySignalingInbox(){
+  if (!user) return;
+  try{ await remove(ref(rtdb, `${WEBRTC_PATH}/${user.uid}`)); }catch{}
+}
+
+// When mic state changes, start/stop voice
+async function onMicStateChanged(next){
+  micState = next;
+  startMicTimerUI();
+  reorderSpeakerRowInDOM();
+
+  if (!user || !profile) return;
+
+  const speakerUid = micState?.uid || null;
+
+  // if timed and expired: any client can clear if it's the speaker
+  if (micState?.uid && micState.mode !== "open"){
+    const left = Number(micState.expiresAtMs||0) - nowMs();
+    if (left <= 0){
+      if (speakerUid === user.uid){
+        try{ await clearMicCurrent(); }catch{}
+      }
+      return;
+    }
+  }
+
+  // I am speaker
+  if (speakerUid && speakerUid === user.uid){
+    myMicActive = true;
+    setMicBtnOn(true);
+
+    // start local stream (will prompt for permission)
+    try{ await startLocalStream(); }catch{ return; }
+
+    // start calls to all peers currently online (except me)
+    // (we use lastOnlineUsers snapshot from online listener)
+    try{
+      const peers = Object.keys(__lastOnlineUsers || {}).filter(uid=>uid && uid !== user.uid);
+      for (const pid of peers){
+        speakerConnectToPeer(pid).catch(()=>{});
+      }
+    }catch{}
+
+    return;
+  }
+
+  // I am NOT speaker:
+  myMicActive = false;
+  setMicBtnOn(false);
+
+  // if someone else is speaker, keep peers but ensure I can receive
+  // stop my local stream to avoid capturing mic when not speaker
+  await stopLocalStream();
+
+  // close existing peer connections except to current speaker (optional)
+  try{
+    Array.from(pcMap.keys()).forEach((pid)=>{
+      if (speakerUid && pid === speakerUid) return;
+      closePeer(pid);
+    });
+  }catch{}
+}
+
+// Start mic listener (call after enterChat)
+function startMicListener(){
+  onValue(ref(rtdb, MIC_PATH), (snap)=>{
+    const v = snap.val();
+    if (!v || !v.uid){
+      onMicStateChanged(null).catch(()=>{});
+      return;
+    }
+    onMicStateChanged(v).catch(()=>{});
+  });
+}
+
+// Hook mic button
+function initMicUI(){
+  if (micBtn){
+    micBtn.addEventListener("click", async ()=>{
+      if (!user || !profile) return;
+
+      // if i'm speaker -> leave
+      if (micState?.uid === user.uid){
+        await releaseMyMic();
+        return;
+      }
+      // else request timed
+      await requestMicTimed();
+    });
+  }
+
+  // Admin controls in roomMenu (optional)
+  micExtendBtn?.addEventListener("click", async ()=>{ hideRoomMenu?.(); await adminExtendMic5(); });
+  micOpenBtn?.addEventListener("click",   async ()=>{ hideRoomMenu?.(); await adminOpenMic(); });
+  micTakeBtn?.addEventListener("click",   async ()=>{ hideRoomMenu?.(); await adminTakeMic(); });
+
+  // Admin give mic (ctx menu button)
+  ctxGiveMicBtn?.addEventListener("click", async ()=>{
+    if (!ctxUser || !ctxUser.uid) return;
+    if (!canControlMic()) return;
+    await adminGiveMicTo(ctxUser.uid, ctxUser.name || "مستخدم");
+    hideCtxMenu();
+  });
+}
+
 
 function showLogsModal(lines){
   showAppModal({
@@ -1076,24 +1571,31 @@ function startRanksListener(){
 function startOnlineListener(){
   onValue(ref(rtdb, "onlineUsers"), (snap)=>{
     const users = snap.val() || {};
+    __lastOnlineUsers = users;
     const arr = Object.values(users);
 
     onlineCount.textContent = String(arr.length);
     onlineList.innerHTML = "";
 
     arr.sort((a,b)=>{
+      const speakerUid = micState?.uid || null;
+      const aSpeak = speakerUid && a.uid === speakerUid;
+      const bSpeak = speakerUid && b.uid === speakerUid;
+      if (aSpeak !== bSpeak) return aSpeak ? -1 : 1;
+
       const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid);
       if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
       return (a.name||"").localeCompare(b.name||"");
     }).forEach((u)=>{
       const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
       const row = document.createElement("div");
+      row.dataset.uid = u.uid || "";
 
       const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
       const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
 
-      row.className = "userRow" + (isRowAdmin ? " admin adminCapsule" : "") + (rankRowClass ? (" " + rankRowClass) : "");
+      row.className = "userRow" + (isRowAdmin ? " admin adminCapsule" : "") + (rankRowClass ? (" " + rankRowClass) : "") + ((micState?.uid && u.uid === micState.uid) ? " speakerNow" : "");
 
       const left = document.createElement("div");
       left.className = "userMeta";
@@ -1275,6 +1777,7 @@ function renderMessagesFromSnap(snap){
       }
     } else {
       const row = document.createElement("div");
+      row.dataset.uid = u.uid || "";
       row.className = "msgRow" + (m.uid === user.uid ? " me" : "");
 
       const div = document.createElement("div");
@@ -1624,6 +2127,11 @@ async function enterChat(statusVal){
   startOnlineListener();
   startGlobalMessagesListener();
   startModerationListener();
+  // 🎤 mic init (voice)
+  try{ initMicUI(); }catch{}
+  try{ clearMySignalingInbox(); }catch{}
+  try{ startWebRTCInbox(); }catch{}
+  try{ startMicListener(); }catch{}
 
   if (roomLocked && !canWriteWhenLocked()){
     msgInput.disabled = true;
