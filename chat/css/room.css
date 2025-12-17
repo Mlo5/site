@@ -989,3 +989,119 @@ select,input{
 .menu{
   color: var(--mlo5-text, var(--white)) !important;
 }
+/* =========================
+   🎤 MIC UI (ADD THIS AT THE VERY END)
+   - micBtn: زر "تحدث/ترك"
+   - micStatusBadge: شارة المتحدث + الوقت
+   - micAdminBar: أزرار الأدمن (اختياري)
+========================= */
+
+/* شارة المتحدث/الوقت */
+#micStatusBadge{
+  border-radius:999px;
+  border:1px solid rgba(250,204,21,.55);
+  padding:6px 10px;
+  font-size:.85rem;
+  background:rgba(0,0,0,.45);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+  max-width: 100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* زر المايك الأساسي */
+#micBtn{
+  border-radius:999px;
+  border:1px solid rgba(250,204,21,.75);
+  background:rgba(0,0,0,.75);
+  color:var(--yellow);
+  padding:9px 14px;
+  cursor:pointer;
+  font-weight:900;
+  height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  user-select:none;
+  white-space:nowrap;
+  box-shadow:0 10px 22px rgba(0,0,0,.55);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+#micBtn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(250,204,21,.95);
+  box-shadow: 0 0 0 1px rgba(250,204,21,.20), 0 0 18px rgba(250,204,21,.12), 0 16px 40px rgba(0,0,0,.85);
+}
+
+/* لما يكون المايك شغال عندك */
+#micBtn.isOn{
+  background: rgba(250,204,21,.92);
+  color:#000;
+  border-color: rgba(250,204,21,.95);
+}
+
+/* تمييز خفيف للزر لما يكون Disabled */
+#micBtn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* شريط أزرار الأدمن للمايك (اختياري) */
+.micAdminBar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.micAdminBar .micAdminBtn{
+  border-radius:999px;
+  border:1px solid rgba(250,204,21,.55);
+  background:rgba(0,0,0,.55);
+  color:var(--yellow);
+  padding:8px 12px;
+  cursor:pointer;
+  font-weight:900;
+  height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  user-select:none;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.micAdminBar .micAdminBtn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(250,204,21,.95);
+  box-shadow: 0 0 0 1px rgba(250,204,21,.18), 0 0 16px rgba(250,204,21,.10), 0 16px 38px rgba(0,0,0,.85);
+}
+
+/* زر خطر (سحب المايك/إنهاء) */
+.micAdminBar .micAdminBtn.danger{
+  border-color: rgba(239,68,68,.65);
+  color: rgba(239,68,68,.95);
+}
+
+/* =========================
+   ✅ Mobile tweaks
+========================= */
+@media (max-width:900px){
+  #micStatusBadge{
+    font-size:.8rem;
+    padding:6px 10px;
+  }
+  #micBtn{
+    height:38px;
+    padding:8px 12px;
+  }
+}
+
+
