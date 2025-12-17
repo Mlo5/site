@@ -80,24 +80,10 @@
             <b>الدردشة العامة</b>
             <span id="chatHint">دردش وخلي الشباب <span style="color:#facc15">تستفاد</span></span>
           </div>
-
-          <!-- ✅ Right side controls -->
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
             <button class="badgeBtn" id="openOnlineBtn" type="button" title="عرض المتواجدين">👥 المتواجدين</button>
-
-            <!-- 🎤 Mic status + button -->
-            <div class="badge" id="micStatusBadge" title="حالة المايك">🎤 المايك: متاح</div>
-            <button id="micBtn" type="button" title="تحدث">🎤 تحدث</button>
-
             <div class="badge" id="ignoreCount">تجاهل: 0</div>
           </div>
-        </div>
-
-        <!-- ✅ Admin mic controls (hidden by default; JS can show for admin) -->
-        <div class="micAdminBar" id="micAdminBar" style="display:none;">
-          <button class="micAdminBtn" id="micExtendBtn" type="button" title="زيادة 5 دقائق">⏱️ +5</button>
-          <button class="micAdminBtn" id="micOpenBtn" type="button" title="مفتوح">♾️ مفتوح</button>
-          <button class="micAdminBtn danger" id="micTakeBtn" type="button" title="سحب/إنهاء المايك">🛑 سحب</button>
         </div>
 
         <div class="chatSplit" id="chatSplit">
@@ -243,10 +229,6 @@
       <button id="ctxUnmuteBtn">🔊 إلغاء الكتم</button>
       <button id="ctxBanBtn">⛔ حظر</button>
       <button id="ctxUnbanBtn">✅ إلغاء الحظر</button>
-
-      <!-- 🎤 Admin: Give mic (optional action) -->
-      <button id="ctxGiveMicBtn">🎤 إعطاء المايك</button>
-
       <div class="sep"></div>
     </div>
 
