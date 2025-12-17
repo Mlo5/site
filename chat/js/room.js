@@ -5,7 +5,7 @@ import {
   query, where, orderBy, onSnapshot, doc, setDoc,
   getDocs, limit, limitToLast, writeBatch
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+import { getDatabase, ref, set, onDisconnect, onValue, remove, update, push, onChildAdded, off } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
@@ -44,6 +44,474 @@ function nowMs(){
 }
 /* ✅✅✅ END FIX */
 
+/* =========================
+   🎤 Voice / Mic System
+========================= */
+const VOICE_ROOT = "voice"; // RTDB root
+const MIC_TTL_MS = 5 * 60 * 1000;
+
+let micState = null;          // {uid,name,mode,expiresAt,updatedAt,...}
+let onlineUsersMap = {};      // latest onlineUsers snapshot
+
+let micTickTimer = null;
+let __speaking = false;
+
+let voiceStream = null;
+let voiceTracks = [];
+let pcs = new Map();          // peerUid -> RTCPeerConnection
+let remoteAudios = new Map(); // peerUid -> HTMLAudioElement
+let iceUnsubs = new Map();    // peerUid -> function off()
+
+let handledOffers = new Set(); // "fromUid@ts"
+
+/* STUN only (GitHub Pages friendly) */
+const RTC_CONFIG = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+function micRef(){ return ref(rtdb, `${VOICE_ROOT}/mic`); }
+function signalsRef(uid){ return ref(rtdb, `${VOICE_ROOT}/signals/${uid}`); }
+
+function msToMmSs(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
+  const mm = String(Math.floor(s/60)).padStart(2,"0");
+  const ss = String(s%60).padStart(2,"0");
+  return `${mm}:${ss}`;
+}
+function micActive(st=micState){
+  if (!st || !st.uid) return false;
+  if (st.mode === "open") return true;
+  const exp = Number(st.expiresAt || 0);
+  if (!exp) return false;
+  return nowMs() < exp;
+}
+function micRemainingMs(st=micState){
+  if (!st || !st.uid) return 0;
+  if (st.mode === "open") return Infinity;
+  return Math.max(0, Number(st.expiresAt||0) - nowMs());
+}
+
+async function setMicState(payload){
+  // overwrite mic state atomically enough for our use-case
+  await set(micRef(), payload);
+}
+async function clearMicState(){
+  await remove(micRef());
+}
+
+/* Stop all voice connections */
+function stopVoiceAll(){
+  // stop local stream
+  try{
+    voiceTracks.forEach(t=>{ try{ t.stop(); }catch{} });
+  }catch{}
+  voiceTracks = [];
+  voiceStream = null;
+
+  // close peer connections
+  try{
+    pcs.forEach((pc)=>{ try{ pc.close(); }catch{} });
+  }catch{}
+  pcs.clear();
+
+  // remove remote audios
+  try{
+    remoteAudios.forEach((a)=>{ try{ a.srcObject = null; a.remove(); }catch{} });
+  }catch{}
+  remoteAudios.clear();
+
+  // detach ice listeners
+  try{
+    iceUnsubs.forEach((fn)=>{ try{ fn(); }catch{} });
+  }catch{}
+  iceUnsubs.clear();
+
+  __speaking = false;
+  micBtn?.classList.remove("isOn");
+}
+
+function ensureAudioElement(peerUid){
+  let el = remoteAudios.get(peerUid);
+  if (el) return el;
+  el = document.createElement("audio");
+  el.autoplay = true;
+  el.playsInline = true;
+  el.style.display = "none";
+  document.body.appendChild(el);
+  remoteAudios.set(peerUid, el);
+  return el;
+}
+
+function attachRemoteStream(peerUid, stream){
+  const el = ensureAudioElement(peerUid);
+  el.srcObject = stream;
+  // try to play (some browsers require user gesture; mic button click is a gesture)
+  el.play().catch(()=>{});
+}
+
+function getPc(peerUid){
+  return pcs.get(peerUid) || null;
+}
+
+function setIceListener(selfUid, otherUid, pc){
+  const icePath = ref(rtdb, `${VOICE_ROOT}/signals/${selfUid}/${otherUid}/ice`);
+  const unsub = onChildAdded(icePath, (snap)=>{
+    const v = snap.val() || {};
+    const c = v.c || null;
+    if (!c) return;
+    try{
+      pc.addIceCandidate(new RTCIceCandidate(c)).catch(()=>{});
+    }catch{}
+  });
+  // firebase doesn't return unsubscribe for onChildAdded in v9 compat; we'll use off()
+  iceUnsubs.set(`${selfUid}|${otherUid}`, ()=>{ try{ off(icePath); }catch{} });
+}
+
+async function ensureVoiceStream(){
+  if (voiceStream) return voiceStream;
+  voiceStream = await navigator.mediaDevices.getUserMedia({
+    audio: {
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true
+    }
+  });
+  voiceTracks = voiceStream.getTracks();
+  return voiceStream;
+}
+
+function createPeerConnection(peerUid){
+  let pc = pcs.get(peerUid);
+  if (pc) return pc;
+
+  pc = new RTCPeerConnection(RTC_CONFIG);
+  pcs.set(peerUid, pc);
+
+  pc.onconnectionstatechange = ()=>{
+    const st = pc.connectionState || "";
+    if (st === "failed" || st === "closed" || st === "disconnected"){
+      // cleanup
+      try{ pc.close(); }catch{}
+      pcs.delete(peerUid);
+    }
+  };
+
+  pc.onicecandidate = (e)=>{
+    if (!e.candidate) return;
+    const otherUid = peerUid;
+    const selfUid = user?.uid;
+    if (!selfUid) return;
+    const toWrite = {
+      c: e.candidate.toJSON ? e.candidate.toJSON() : e.candidate,
+      t: nowMs()
+    };
+    // send ICE to the other side inbox
+    push(ref(rtdb, `${VOICE_ROOT}/signals/${otherUid}/${selfUid}/ice`), toWrite).catch(()=>{});
+  };
+
+  // listener side receives remote audio
+  pc.ontrack = (e)=>{
+    const st = e.streams && e.streams[0];
+    if (st) attachRemoteStream(peerUid, st);
+  };
+
+  return pc;
+}
+
+/* Speaker: ensure we have a PC to each online user and send offers */
+async function speakerSyncPeers(){
+  if (!user || !micState || micState.uid !== user.uid || !micActive()) return;
+  const myUid = user.uid;
+
+  const uids = Object.keys(onlineUsersMap || {}).filter(uid=>uid && uid !== myUid);
+  // create / keep
+  for (const uid of uids){
+    if (!pcs.has(uid)){
+      const pc = createPeerConnection(uid);
+      const stream = await ensureVoiceStream();
+      stream.getTracks().forEach(t=>pc.addTrack(t, stream));
+
+      // ICE listener for candidates coming back from listener
+      setIceListener(myUid, uid, pc);
+
+      // watch answer
+      onValue(ref(rtdb, `${VOICE_ROOT}/signals/${myUid}/${uid}/answer`), async (snap)=>{
+        const ans = snap.val();
+        if (!ans || !ans.sdp) return;
+        try{
+          if (pc.currentRemoteDescription) return;
+          await pc.setRemoteDescription(new RTCSessionDescription({type: ans.type || "answer", sdp: ans.sdp}));
+          // optional cleanup
+          try{ remove(ref(rtdb, `${VOICE_ROOT}/signals/${myUid}/${uid}/answer`)); }catch{}
+        }catch{}
+      });
+
+      // create & send offer
+      try{
+        const offer = await pc.createOffer({ offerToReceiveAudio: false, offerToReceiveVideo: false });
+        await pc.setLocalDescription(offer);
+        await set(ref(rtdb, `${VOICE_ROOT}/signals/${uid}/${myUid}/offer`), {
+          sdp: offer.sdp,
+          type: offer.type,
+          t: nowMs()
+        });
+      }catch{}
+    }
+  }
+
+  // remove PCs for users no longer online
+  for (const [uid, pc] of pcs.entries()){
+    if (!uids.includes(uid)){
+      try{ pc.close(); }catch{}
+      pcs.delete(uid);
+      try{ remove(ref(rtdb, `${VOICE_ROOT}/signals/${uid}/${myUid}`)); }catch{}
+      try{ remove(ref(rtdb, `${VOICE_ROOT}/signals/${myUid}/${uid}`)); }catch{}
+    }
+  }
+}
+
+/* Listener: handle offer from current speaker */
+async function handleOffer(fromUid, offer){
+  if (!user || user.uid === fromUid) return;
+  // only accept from the current mic holder
+  if (!micState || micState.uid !== fromUid || !micActive()) return;
+
+  const key = `${fromUid}@${offer.t || offer.ts || ""}`;
+  if (handledOffers.has(key)) return;
+  handledOffers.add(key);
+
+  const pc = createPeerConnection(fromUid);
+
+  // ICE listener for candidates coming from speaker to me
+  setIceListener(user.uid, fromUid, pc);
+
+  try{
+    await pc.setRemoteDescription(new RTCSessionDescription({ type: offer.type || "offer", sdp: offer.sdp }));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    await set(ref(rtdb, `${VOICE_ROOT}/signals/${fromUid}/${user.uid}/answer`), {
+      sdp: answer.sdp,
+      type: answer.type,
+      t: nowMs()
+    });
+
+    // cleanup offer in my inbox (optional)
+    try{ remove(ref(rtdb, `${VOICE_ROOT}/signals/${user.uid}/${fromUid}/offer`)); }catch{}
+  }catch(e){
+    // fail-safe
+  }
+}
+
+function startOfferListener(){
+  if (!user) return;
+  const inbox = signalsRef(user.uid);
+  onValue(inbox, (snap)=>{
+    const v = snap.val() || {};
+    Object.keys(v).forEach((fromUid)=>{
+      const node = v[fromUid] || {};
+      if (node.offer && node.offer.sdp){
+        handleOffer(fromUid, node.offer);
+      }
+    });
+  });
+}
+
+function updateMicBadgeUI(){
+  if (!micStatusBadge) return;
+  if (!micState || !micState.uid){
+    micStatusBadge.textContent = "🎤 المايك: متاح";
+    return;
+  }
+  const name = micState.name || "مستخدم";
+  if (micState.mode === "open"){
+    micStatusBadge.textContent = `🎤 الآن: ${name} (مفتوح)`;
+  } else {
+    const rem = micRemainingMs(micState);
+    micStatusBadge.textContent = `🎤 الآن: ${name} • ${msToMmSs(rem)}`;
+  }
+}
+
+async function enforceMicExpiry(){
+  if (!micState || !micState.uid) return;
+  if (micState.mode === "open") return;
+  if (!micActive(micState)){
+    // expire — allow any client to clear, but write system msg only if admin or holder
+    const wasUid = micState.uid;
+    const wasName = micState.name || "مستخدم";
+    try{ await clearMicState(); }catch{}
+    if (user && (isAdmin || user.uid === wasUid)){
+      try{ await writeSystemText(`⏱️ انتهى وقت المايك لـ ${wasName}`, "micEnd", {uid:user.uid, name: isAdmin ? ADMIN_DISPLAY_NAME : (profile?.name||"")}); }catch{}
+      try{ await writeActionLog("micEnd", wasName); }catch{}
+    }
+  }
+}
+
+function startMicTick(){
+  if (micTickTimer) return;
+  micTickTimer = setInterval(()=>{
+    try{ updateMicBadgeUI(); }catch{}
+    try{ enforceMicExpiry(); }catch{}
+  }, 1000);
+}
+
+function startMicListener(){
+  onValue(micRef(), (snap)=>{
+    const prev = micState;
+    micState = snap.val() || null;
+
+    updateMicBadgeUI();
+
+    // speaker / listener transitions
+    const myUid = user?.uid;
+    const wasSpeaker = prev && prev.uid && myUid && prev.uid === myUid;
+    const isSpeakerNow = micState && micState.uid && myUid && micState.uid === myUid && micActive(micState);
+
+    if (isSpeakerNow){
+      __speaking = true;
+      micBtn?.classList.add("isOn");
+      // start streaming
+      speakerSyncPeers().catch(()=>{});
+    } else if (wasSpeaker && !isSpeakerNow){
+      // lost mic
+      stopVoiceAll();
+    } else {
+      // if someone else got mic, stop my speaking stream if any
+      if (__speaking && !isSpeakerNow){
+        stopVoiceAll();
+      }
+    }
+
+    // if mic holder changed, listeners should reset to receive new offer
+    if (prev?.uid && micState?.uid && prev.uid !== micState.uid){
+      // close existing PCs (old speaker)
+      stopVoiceAll();
+      handledOffers.clear();
+    }
+    if (!micState || !micState.uid){
+      // no mic: stop all voice
+      stopVoiceAll();
+      handledOffers.clear();
+    }
+  });
+}
+
+async function tryTakeMicSelf(){
+  if (!user || !profile) return;
+  if (isGuest){ showAppModal({title:"🎤 المايك", text:"لازم تسجّل دخول عشان تستخدم المايك.", actions:[{label:"تمام",onClick:()=>hideAppModal()}]}); return; }
+
+  if (micState && micState.uid && micActive(micState) && micState.uid !== user.uid){
+    showAppModal({title:"🎤 المايك مشغول", text:`المايك مع ${micState.name || "مستخدم"} حالياً.`, actions:[{label:"تمام",onClick:()=>hideAppModal()}]});
+    return;
+  }
+
+  const payload = {
+    uid: user.uid,
+    name: isAdmin ? ADMIN_DISPLAY_NAME : (profile?.name || "مستخدم"),
+    mode: "timed",
+    expiresAt: nowMs() + MIC_TTL_MS,
+    updatedAt: nowMs(),
+    by: user.uid,
+    byAdmin: false
+  };
+  await setMicState(payload);
+  try{ await writeSystemText(`🎤 أخذ المايك: ${payload.name}`, "micTake", {uid:user.uid, name: isAdmin ? ADMIN_DISPLAY_NAME : (profile?.name||"")}); }catch{}
+  try{ await writeActionLog("micTake", payload.name); }catch{}
+}
+
+async function leaveMicSelf(){
+  if (!user) return;
+  if (!micState || micState.uid !== user.uid) return;
+  const myName = micState.name || (profile?.name||"مستخدم");
+  await clearMicState();
+  stopVoiceAll();
+  try{ await writeSystemText(`⛔ ترك المايك: ${myName}`, "micLeave", {uid:user.uid, name: isAdmin ? ADMIN_DISPLAY_NAME : (profile?.name||"")}); }catch{}
+  try{ await writeActionLog("micLeave", myName); }catch{}
+}
+
+async function adminGiveMic(targetUid, targetName){
+  if (!isAdmin || !user) return;
+  const payload = {
+    uid: targetUid,
+    name: targetName || "مستخدم",
+    mode: "timed",
+    expiresAt: nowMs() + MIC_TTL_MS,
+    updatedAt: nowMs(),
+    by: user.uid,
+    byAdmin: true
+  };
+  await setMicState(payload);
+  await writeSystemText(`🎤 تم إعطاء المايك لـ ${payload.name} بواسطة ${ADMIN_DISPLAY_NAME}`, "micGive", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("micGive", payload.name);
+}
+
+async function adminExtendMic(){
+  if (!isAdmin || !micState || !micState.uid) return;
+  if (micState.mode === "open"){
+    await writeSystemText(`⏱️ المايك مفتوح أصلاً`, "micExtend", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+    return;
+  }
+  const exp = Number(micState.expiresAt || nowMs());
+  await update(micRef(), { expiresAt: exp + MIC_TTL_MS, mode:"timed", updatedAt: nowMs(), by: user.uid, byAdmin:true });
+  await writeSystemText(`⏱️ تم تمديد المايك +5 دقائق بواسطة ${ADMIN_DISPLAY_NAME}`, "micExtend", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("micExtend", micState.name || "");
+}
+
+async function adminOpenMic(){
+  if (!isAdmin || !micState || !micState.uid) return;
+  await update(micRef(), { mode:"open", expiresAt: 0, updatedAt: nowMs(), by: user.uid, byAdmin:true });
+  await writeSystemText(`♾️ تم جعل المايك مفتوح بواسطة ${ADMIN_DISPLAY_NAME}`, "micOpen", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("micOpen", micState.name || "");
+}
+
+async function adminTakeMic(){
+  if (!isAdmin || !micState || !micState.uid) return;
+  const name = micState.name || "مستخدم";
+  await clearMicState();
+  await writeSystemText(`⛔ تم سحب/ترك المايك من ${name} بواسطة ${ADMIN_DISPLAY_NAME}`, "micTakeAdmin", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+  await writeActionLog("micTakeAdmin", name);
+}
+
+function startMicUIHooks(){
+  // user mic button
+  micBtn?.addEventListener("click", async (e)=>{
+    e.preventDefault();
+    if (!user) return;
+
+    // if I already have mic -> leave
+    if (micState && micState.uid === user.uid){
+      await leaveMicSelf();
+      return;
+    }
+    // else try take
+    try{
+      await tryTakeMicSelf();
+    }catch(err){
+      showAppModal({title:"🎤 المايك", text:"تعذر تشغيل المايك. تأكد أنك سمحت للمتصفح بالمايك.", actions:[{label:"تمام",onClick:()=>hideAppModal()}]});
+    }
+  });
+
+  // admin mic controls (in roomMenu)
+  micExtendBtn?.addEventListener("click", async ()=>{ hideRoomMenu(); await adminExtendMic(); });
+  micOpenBtn?.addEventListener("click", async ()=>{ hideRoomMenu(); await adminOpenMic(); });
+  micTakeBtn?.addEventListener("click", async ()=>{ hideRoomMenu(); await adminTakeMic(); });
+
+  // ctx menu give mic
+  ctxGiveMicBtn?.addEventListener("click", async ()=>{
+    hideCtxMenu();
+    if (!isAdmin || !ctxUser?.uid) return;
+    await adminGiveMic(ctxUser.uid, ctxUser.name || "مستخدم");
+  });
+}
+
+function startMicSystem(){
+  startMicTick();
+  startMicListener();
+  startOfferListener();
+  startMicUIHooks();
+}
+/* =========================
+   ✅ END Voice / Mic System
+========================= */
+
 const __MOBILE_DEVICE = window.matchMedia("(pointer: coarse)").matches;
 
 const connDot = document.getElementById("connDot");
@@ -71,6 +539,15 @@ const msgInput = document.getElementById("msgInput");
 const sendBtn = document.getElementById("sendBtn");
 const adminClearBtn = document.getElementById("adminClearBtn");
 const emojiBtn = document.getElementById("emojiBtn");
+
+/* 🎤 Voice / Mic */
+const micBtn = document.getElementById("micBtn");
+const micStatusBadge = document.getElementById("micStatusBadge");
+const ctxGiveMicBtn = document.getElementById("ctxGiveMicBtn");
+const micExtendBtn = document.getElementById("micExtendBtn");
+const micOpenBtn   = document.getElementById("micOpenBtn");
+const micTakeBtn   = document.getElementById("micTakeBtn");
+/* ✅ END */
 
 const replyPreview = document.getElementById("replyPreview");
 const replyPreviewName = document.getElementById("replyPreviewName");
@@ -659,6 +1136,9 @@ function showRoomMenu(x,y){
   bg2Btn.style.display = showAdmin ? "block" : "none";
   bg3Btn.style.display = showAdmin ? "block" : "none";
   bg0Btn.style.display = showAdmin ? "block" : "none";
+  micExtendBtn.style.display = showAdmin ? "block" : "none";
+  micOpenBtn.style.display   = showAdmin ? "block" : "none";
+  micTakeBtn.style.display   = showAdmin ? "block" : "none";
 }
 function hideRoomMenu(){ roomMenu.style.display = "none"; }
 
@@ -1076,15 +1556,21 @@ function startRanksListener(){
 function startOnlineListener(){
   onValue(ref(rtdb, "onlineUsers"), (snap)=>{
     const users = snap.val() || {};
+    onlineUsersMap = users;
     const arr = Object.values(users);
 
     onlineCount.textContent = String(arr.length);
     onlineList.innerHTML = "";
 
     arr.sort((a,b)=>{
+      const aSpeaker = !!(micState && micState.uid && a.uid === micState.uid && micActive(micState));
+      const bSpeaker = !!(micState && micState.uid && b.uid === micState.uid && micActive(micState));
+      if (aSpeaker !== bSpeaker) return aSpeaker ? -1 : 1;
+
       const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid);
       if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
+
       return (a.name||"").localeCompare(b.name||"");
     }).forEach((u)=>{
       const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
@@ -1093,7 +1579,8 @@ function startOnlineListener(){
       const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
       const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
 
-      row.className = "userRow" + (isRowAdmin ? " admin adminCapsule" : "") + (rankRowClass ? (" " + rankRowClass) : "");
+      const isSpeakerRow = !!(micState && micState.uid && micActive(micState) && u.uid === micState.uid);
+      row.className = "userRow" + (isSpeakerRow ? " speakerNow" : "") + (isRowAdmin ? " admin adminCapsule" : "") + (rankRowClass ? (" " + rankRowClass) : "");
 
       const left = document.createElement("div");
       left.className = "userMeta";
@@ -1185,12 +1672,14 @@ function startOnlineListener(){
             const allowMute = showMod && canMute();
             const allowBan  = showMod && canBan();
 
-            modActions.style.display = (showMod && (allowKick || allowMute || allowBan)) ? "block" : "none";
+            const allowGiveMic = isAdmin && showMod;
+            modActions.style.display = (showMod && (allowKick || allowMute || allowBan || allowGiveMic)) ? "block" : "none";
             ctxKickBtn.style.display = allowKick ? "block" : "none";
             ctxMuteBtn.style.display = allowMute ? "block" : "none";
             ctxUnmuteBtn.style.display = allowMute ? "block" : "none";
             ctxBanBtn.style.display = allowBan ? "block" : "none";
             ctxUnbanBtn.style.display = allowBan ? "block" : "none";
+            ctxGiveMicBtn.style.display = (isAdmin && showMod) ? "block" : "none";
 
             rankActions.style.display = (isAdmin && showMod) ? "block" : "none";
             showCtxMenu(e.clientX, e.clientY);
@@ -1622,6 +2111,7 @@ async function enterChat(statusVal){
   startClearMetaListener();
   startRoomLockListener();
   startOnlineListener();
+  startMicSystem();
   startGlobalMessagesListener();
   startModerationListener();
 
