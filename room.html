@@ -102,6 +102,11 @@
               <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
               <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
               <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
+
+              <!-- ✅ NEW: mic + cam (visual only) -->
+              <button class="emojiBtn" id="micBtn" type="button" title="مايك (قريباً)">🎙️</button>
+              <button class="emojiBtn" id="camBtn" type="button" title="كاميرا (قريباً)">📷</button>
+
               <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
             </form>
           </div>
@@ -176,16 +181,7 @@
               </select>
             </div>
 
-            <div class="colorRow">
-              <div class="colorBox">
-                <span>لون الاسم</span>
-                <input id="nameColor" type="color" value="#facc15" />
-              </div>
-              <div class="colorBox">
-                <span>لون النص</span>
-                <input id="textColor" type="color" value="#f9fafb" />
-              </div>
-            </div>
+            <!-- ✅ REMOVED: name/text color pickers -->
 
             <button id="enterBtn" class="modalBtn" type="button">دخول الشات</button>
           </div>
@@ -237,6 +233,7 @@
       <button id="ctxRankVip">💎 VIP</button>
       <button id="ctxRankRoot">🛡️ ROOT</button>
       <button id="ctxRankGirl">🎀 GIRL</button>
+      <button id="ctxRankMaster">🟩 MASTER</button>
       <button id="ctxRankNone">🧽 إزالة الرتبة</button>
     </div>
   </div>
@@ -246,14 +243,20 @@
     <button id="roomUnlockBtn">🔓 فتح الروم</button>
 
     <div class="sep"></div>
-    <button id="selfMuteBtn">🔇 كتم نفسي</button>
-    <button id="selfUnmuteBtn">🔊 فك كتم نفسي</button>
+
+    <!-- ✅ NEW: admin radio (admin only via JS) -->
+    <button id="radioBtn">📻 الراديو</button>
+
+    <!-- ✅ NEW: capsule selector (rank+admin via JS) -->
+    <button id="capsuleBtn">🎴 كبسولة الاسم</button>
 
     <!-- ✅ global backgrounds (admin only, triggered from top bg button) -->
     <div class="sep"></div>
     <button id="bg1Btn">🖼️ خلفية 1</button>
     <button id="bg2Btn">🖼️ خلفية 2</button>
     <button id="bg3Btn">🖼️ خلفية 3</button>
+    <button id="bg4Btn">🖼️ خلفية 4</button>
+    <button id="bg5Btn">🖼️ خلفية 5</button>
     <button id="bg0Btn">🧽 إزالة الخلفية</button>
   </div>
 
