@@ -897,7 +897,7 @@
 
 /* ✅ admin capsule animated background in online list */
 .userRow.admin.adminCapsule{
-  background-image: url("../media/ranks/mshkla.gif");
+  background-image: url("../media/ranks/admin.gif");
   background-size: cover;
   background-position: center;
   border-color: rgba(250,204,21,.35);
@@ -989,3 +989,45 @@ select,input{
 .menu{
   color: var(--mlo5-text, var(--white)) !important;
 }
+/* =========================
+   ✅ PATCH (append at END)
+   - Add MASTER rank
+   - Force admin capsule to admin.gif
+========================= */
+
+/* MASTER color */
+:root{
+  --master:#22c55e;
+}
+
+/* MASTER row style (online list) */
+.userRow.rank-master{
+  background:linear-gradient(135deg, rgba(34,197,94,.30), rgba(0,0,0,.75));
+  border-color:rgba(34,197,94,.38);
+}
+
+/* Optional: if you later add a GIF for MASTER, just uncomment and set the file:
+.userRow.rank-master{
+  background-image:url("../media/ranks/master.gif");
+  background-size:cover;
+  background-position:center;
+}
+*/
+
+/* Keep text readable if you use GIFs */
+.userRow.rank-master::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.65));
+  pointer-events:none;
+}
+.userRow.rank-master > *{ position:relative; z-index:1; }
+
+/* ✅ Force admin animated capsule to admin.gif (final override) */
+.userRow.admin{
+  background-image:url("../media/ranks/admin.gif") !important;
+  background-size:cover !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+}
+
