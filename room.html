@@ -32,9 +32,13 @@
 
       <div style="display:flex;gap:10px;align-items:center">
         <!-- ✅ زر السجل يظهر للأدمن فقط -->
+        <!-- ✅ لوحة الأدمن (يظهر للأدمن فقط) -->
+        <button class="top-chip" id="adminMenuBtn" type="button" title="لوحة الأدمن" style="display:none;">⚙️ إدارة</button>
+
+        <!-- ✅ زر السجل يظهر للأدمن فقط (تم نقله للقائمة المنبثقة) -->
         <button class="top-chip" id="logBtn" type="button" title="سجل الإدارة" style="display:none;">📜 سجل</button>
 
-        <!-- ✅ زر خلفية الموقع (للأدمن فقط) - بجانب السجل -->
+        <!-- ✅ زر خلفية الموقع (للأدمن فقط) - تم نقله للقائمة المنبثقة -->
         <button class="top-chip" id="bgBtn" type="button" title="خلفية الموقع" style="display:none;">🖼️ خلفية</button>
 
         <!-- ✅ NEW: زر الثيمات (للجميع) -->
@@ -102,6 +106,9 @@
               <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
               <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
               <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
+              <!-- ✅ منظر فقط (بدون تفعيل) -->
+              <button class="ghostBtn" id="micBtn" type="button" title="مايك" disabled>🎤</button>
+              <button class="ghostBtn" id="camBtn" type="button" title="كاميرا" disabled>📷</button>
               <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
             </form>
           </div>
@@ -175,19 +182,7 @@
                 <option value="CA">🇨🇦 كندا</option>
               </select>
             </div>
-
-            <div class="colorRow">
-              <div class="colorBox">
-                <span>لون الاسم</span>
-                <input id="nameColor" type="color" value="#facc15" />
-              </div>
-              <div class="colorBox">
-                <span>لون النص</span>
-                <input id="textColor" type="color" value="#f9fafb" />
-              </div>
-            </div>
-
-            <button id="enterBtn" class="modalBtn" type="button">دخول الشات</button>
+<button id="enterBtn" class="modalBtn" type="button">دخول الشات</button>
           </div>
 
           <div class="hintErr" id="modalErr"></div>
@@ -237,6 +232,7 @@
       <button id="ctxRankVip">💎 VIP</button>
       <button id="ctxRankRoot">🛡️ ROOT</button>
       <button id="ctxRankGirl">🎀 GIRL</button>
+      <button id="ctxRankMaster">🟩 MASTER</button>
       <button id="ctxRankNone">🧽 إزالة الرتبة</button>
     </div>
   </div>
@@ -246,14 +242,17 @@
     <button id="roomUnlockBtn">🔓 فتح الروم</button>
 
     <div class="sep"></div>
-    <button id="selfMuteBtn">🔇 كتم نفسي</button>
-    <button id="selfUnmuteBtn">🔊 فك كتم نفسي</button>
+    <button id="roomLogBtn">📜 سجل الإدارة</button>
+    <button id="radioBtn">📻 راديو</button>
+    <button id="capsuleBtn">🎴 كبسولة الاسم</button>
 
-    <!-- ✅ global backgrounds (admin only, triggered from top bg button) -->
+    <!-- ✅ global backgrounds (admin only) -->
     <div class="sep"></div>
     <button id="bg1Btn">🖼️ خلفية 1</button>
     <button id="bg2Btn">🖼️ خلفية 2</button>
     <button id="bg3Btn">🖼️ خلفية 3</button>
+    <button id="bg4Btn">🖼️ خلفية 4</button>
+    <button id="bg5Btn">🖼️ خلفية 5</button>
     <button id="bg0Btn">🧽 إزالة الخلفية</button>
   </div>
 
