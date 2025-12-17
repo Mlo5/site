@@ -590,12 +590,12 @@ if (emojiBtn){
 }
 
 /* ✅ Ignore */
-let ignoreWindows = {};
 function loadIgnoreWindows(){
   try{ ignoreWindows = JSON.parse(localStorage.getItem(ignoreKey(user.uid)) || "{}"); }
   catch{ ignoreWindows = {}; }
   refreshIgnoreCount();
 }
+
 function saveIgnoreWindows(){
   localStorage.setItem(ignoreKey(user.uid), JSON.stringify(ignoreWindows));
   refreshIgnoreCount();
@@ -1735,3 +1735,4 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
