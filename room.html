@@ -35,7 +35,13 @@
         <button class="top-chip" id="logBtn" type="button" title="سجل الإدارة" style="display:none;">📜 سجل</button>
 
         <!-- ✅ زر خلفية الموقع (للأدمن فقط) - بجانب السجل -->
-        <button class="top-chip" id="bgBtn" type="button" title="خلفية الموقع" style="display:none;">🖼️ خلفية</button>
+        <button class="top-chip" id="bgBtn" type="button" title="لوحة الأدمن" style="display:none;">🛡️ إدارة</button>
+
+        <!-- ✅ NEW: زر الكبسولات (للرتب + الأدمن) -->
+        <button class="top-chip" id="capsuleBtn" type="button" title="كبسولة الاسم" style="display:none;">🧩 كبسولة</button>
+
+        <!-- ✅ NEW: زر الراديو (للأدمن فقط) -->
+        <button class="top-chip" id="radioBtn" type="button" title="راديو" style="display:none;">📻 راديو</button>
 
         <!-- ✅ NEW: زر الثيمات (للجميع) -->
         <button class="top-chip" id="themeBtn" type="button" title="ثيمات">🖌️ ثيمات</button>
@@ -102,6 +108,11 @@
               <input id="msgInput" placeholder="اكتب رسالتك..." autocomplete="off" disabled enterkeyhint="send" />
               <button class="adminClearBtn" id="adminClearBtn" type="button" title="مسح الشات للجميع">🧹</button>
               <button class="emojiBtn" id="emojiBtn" type="button" title="إيموجي">😊</button>
+
+              <!-- ✅ NEW: Mic/Cam (UI only) -->
+              <button class="micBtn" id="micBtn" type="button" title="مايك (قريباً)" aria-label="Mic">🎙️</button>
+              <button class="camBtn" id="camBtn" type="button" title="كاميرا (قريباً)" aria-label="Camera">📷</button>
+
               <button class="sendBtn" id="sendBtn" type="submit" disabled>إرسال</button>
             </form>
           </div>
@@ -145,7 +156,7 @@
               <input id="ageInput" type="number" min="10" max="99" placeholder="العمر (10+)" />
             </div>
 
-            <!-- ✅ NEW: manual country select -->
+            <!-- ✅ manual country select -->
             <div class="modalRow one">
               <select id="countryInput" title="الدولة">
                 <option value="">الدولة</option>
@@ -176,16 +187,22 @@
               </select>
             </div>
 
-            <div class="colorRow">
+            <!-- ✅ IMPORTANT:
+                 تم إزالة اختيار لون الاسم/النص من الواجهة،
+                 لكن تركنا inputs (hidden) بنفس الـ IDs حتى لا ينكسر JS أو تختفي نافذة الدخول. -->
+            <div class="colorRow" style="display:none;">
               <div class="colorBox">
                 <span>لون الاسم</span>
-                <input id="nameColor" type="color" value="#facc15" />
+                <input id="nameColor" type="color" value="#ffffff" />
               </div>
               <div class="colorBox">
                 <span>لون النص</span>
-                <input id="textColor" type="color" value="#f9fafb" />
+                <input id="textColor" type="color" value="#ffffff" />
               </div>
             </div>
+            <!-- ✅ Hidden fallbacks for safety -->
+            <input id="nameColorHidden" type="hidden" value="#ffffff" />
+            <input id="textColorHidden" type="hidden" value="#ffffff" />
 
             <button id="enterBtn" class="modalBtn" type="button">دخول الشات</button>
           </div>
@@ -237,10 +254,52 @@
       <button id="ctxRankVip">💎 VIP</button>
       <button id="ctxRankRoot">🛡️ ROOT</button>
       <button id="ctxRankGirl">🎀 GIRL</button>
+      <!-- ✅ NEW: MASTER -->
+      <button id="ctxRankMaster">🟢 MASTER</button>
       <button id="ctxRankNone">🧽 إزالة الرتبة</button>
     </div>
   </div>
 
+  <!-- ✅ Admin panel popup (PRO) -->
+  <div class="menu" id="adminPanelMenu" aria-hidden="true">
+    <button id="adminPanelLog">📜 السجل</button>
+
+    <div class="sep"></div>
+    <button id="adminPanelLock">🔒 قفل الروم</button>
+    <button id="adminPanelUnlock">🔓 فتح الروم</button>
+
+    <div class="sep"></div>
+    <button id="adminPanelBg1">🖼️ خلفية 1</button>
+    <button id="adminPanelBg2">🖼️ خلفية 2</button>
+    <button id="adminPanelBg3">🖼️ خلفية 3</button>
+    <button id="adminPanelBg4">🖼️ خلفية 4</button>
+    <button id="adminPanelBg5">🖼️ خلفية 5</button>
+    <button id="adminPanelBg0">🧽 إزالة الخلفية</button>
+
+    <div class="sep"></div>
+    <button id="adminPanelRadio">📻 الراديو</button>
+  </div>
+
+  <!-- ✅ Radio popup -->
+  <div class="menu" id="radioMenu" aria-hidden="true">
+    <button id="radioPlayBtn">▶️ تشغيل</button>
+    <button id="radioStopBtn">⏹️ إيقاف</button>
+    <div class="sep"></div>
+    <button id="radioSetUrlBtn">🔗 تعيين رابط</button>
+  </div>
+
+  <!-- ✅ Capsule picker popup (rank/admin) -->
+  <div class="menu" id="capsuleMenu" aria-hidden="true">
+    <button id="capsulePick1">🧩 كبسولة 1</button>
+    <button id="capsulePick2">🧩 كبسولة 2</button>
+    <button id="capsulePick3">🧩 كبسولة 3</button>
+    <button id="capsulePick4">🧩 كبسولة 4</button>
+    <button id="capsulePick5">🧩 كبسولة 5</button>
+    <div class="sep"></div>
+    <button id="capsuleReset">🧽 افتراضي</button>
+  </div>
+
+  <!-- ✅ Keep old roomMenu for backward compatibility (JS will use adminPanelMenu now) -->
   <div class="menu" id="roomMenu">
     <button id="roomLockBtn">🔒 قفل الروم</button>
     <button id="roomUnlockBtn">🔓 فتح الروم</button>
@@ -254,6 +313,10 @@
     <button id="bg1Btn">🖼️ خلفية 1</button>
     <button id="bg2Btn">🖼️ خلفية 2</button>
     <button id="bg3Btn">🖼️ خلفية 3</button>
+    <!-- ✅ NEW -->
+    <button id="bg4Btn">🖼️ خلفية 4</button>
+    <button id="bg5Btn">🖼️ خلفية 5</button>
+
     <button id="bg0Btn">🧽 إزالة الخلفية</button>
   </div>
 
