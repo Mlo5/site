@@ -1022,9 +1022,19 @@ function showAppModal({title="تنبيه", text="—", actions=[{label:"حسنا
 function hideAppModal(){ appModal.style.display = "none"; }
 appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
 
-/* ✅ color + download open new tabs */
-colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
-downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
+/* ✅ color + download open new tabs (SAFE) */
+if (colorBtn) {
+  colorBtn.addEventListener("click", () =>
+    window.open("color.html", "_blank")
+  );
+}
+
+if (downloadBtn) {
+  downloadBtn.addEventListener("click", () =>
+    window.open("downloadpc.html", "_blank")
+  );
+}
+
 
 /* ✅ Emoji picker */
 let activeEmojiTarget = null;
@@ -2189,3 +2199,4 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
