@@ -142,6 +142,39 @@ const toastSound = new Audio("./chat/media/sounds/toast.mp3");
 toastSound.preload = "auto";
 toastSound.volume = 1.0;
 
+/* ✅✅✅ RADIO (NEW) — المسار الجديد */
+const RADIO_TRACKS = 5; // عندك 5 ملفات radio1..radio5
+const RADIO_BASE = "./chat/media/radio/";
+const radio = new Audio();
+radio.preload = "auto";
+radio.volume = 0.55;
+radio.loop = false;
+
+let radioEnabled = true;
+
+function randRadioIndex(){
+  return 1 + Math.floor(Math.random() * Math.max(1, RADIO_TRACKS));
+}
+function playRadio(i){
+  if (!radioEnabled) return;
+  const idx = Math.max(1, Math.min(RADIO_TRACKS, Number(i || 1)));
+  radio.src = `${RADIO_BASE}radio${idx}.mp3`;
+  radio.currentTime = 0;
+  radio.play().catch(()=>{});
+}
+function startRadio(){
+  if (!radioEnabled || RADIO_TRACKS <= 0) return;
+  playRadio(randRadioIndex());
+}
+function stopRadio(){
+  try{ radio.pause(); }catch{}
+}
+radio.addEventListener("ended", ()=>{
+  if (!radioEnabled) return;
+  playRadio(randRadioIndex());
+});
+/* ✅✅✅ END RADIO */
+
 let user = null;
 let profile = null;
 let joinAtMs = null;
@@ -202,10 +235,6 @@ function rankIconHtml(r){
 
 /* =========================
    ✅ THEMES (Local per user + gated)
-   - All themes visible to everyone
-   - If user clicks locked theme => redirect to color.html
-   - Saved in localStorage per uid
-   - Gradient generates random mix each time chosen
    ========================= */
 
 const THEME_KEY = (uid)=> `chatTheme_${uid || "anon"}`;
@@ -1083,7 +1112,7 @@ function startOnlineListener(){
 
     arr.sort((a,b)=>{
       const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid); // ✅ FIX
       if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
       return (a.name||"").localeCompare(b.name||"");
     }).forEach((u)=>{
@@ -1475,6 +1504,7 @@ exitBtn.addEventListener("click", async ()=>{
       await remove(ref(rtdb, "onlineUsers/" + user.uid));
     }
   }catch{}
+  stopRadio(); // ✅ NEW
   cleanupGuestLocal();
   location.href = "index.html";
 });
@@ -1613,6 +1643,9 @@ async function enterChat(statusVal){
 
   modal.style.display = "none";
 
+  // ✅ NEW: شغل الراديو بعد الدخول (فيه gesture من زر "دخول الشات")
+  startRadio();
+
   // ✅ init themes now (menu + apply saved)
   initThemeSystem();
 
@@ -1675,6 +1708,7 @@ window.addEventListener("beforeunload", ()=>{
       remove(ref(rtdb, "onlineUsers/" + user.uid));
     }
   }catch{}
+  stopRadio(); // ✅ NEW
   cleanupGuestLocal();
 });
 
