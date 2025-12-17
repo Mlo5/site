@@ -8,11 +8,10 @@
       --vh: 1vh;
 
       /* ✅ Colors for ranks */
-      --legend:#f97316;
-      --girl:#ec4899;
-      --root:#ef4444;
+      --legend:#ef4444;
       --vip:#2563eb;
-      --master:#39ff14;
+      --root:#f97316;
+      --girl:#ec4899;
     }
 
     *{box-sizing:border-box;margin:0;padding:0}
@@ -192,17 +191,11 @@
       background-position:center;
       border-color:rgba(236,72,153,.38);
     }
-     .userRow.rank-master{
-       background:linear-gradient(135deg, rgba(57,255,20,.20), rgba(0,0,0,.78));
-       border-color:rgba(57,255,20,.25);
-     }
-
     /* subtle overlay to keep text readable on GIFs */
     .userRow.rank-legend::after,
     .userRow.rank-vip::after,
     .userRow.rank-root::after,
-    .userRow.rank-girl::after,
-     .userRow.rank-master::after{
+    .userRow.rank-girl::after{
       content:"";
       position:absolute; inset:0;
       background:linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.65));
@@ -259,13 +252,14 @@
       align-items:center;
       justify-content:center;
       font-size:1rem;
+      animation: rankBlink 1.2s infinite;
       filter: drop-shadow(0 0 12px rgba(239,68,68,.18));
     }
 
     /* ✅⬇️ صغّر شوية اشارة التجاهل + الثلاث نقاط */
     .ignoreBtn, .moreBtn{
-      border:none;
-      background:transparent;
+      border:1px solid rgba(250,204,21,.55);
+      background:rgba(0,0,0,.45);
       color:var(--yellow);
       border-radius:999px;
       padding:5px 9px;
@@ -428,20 +422,7 @@
     .composer{display:flex;align-items:center;gap:10px;margin-top:12px;direction:rtl}
     #msgInput{flex:1;border-radius:999px}
 
-    .sendBtn,
-     .ghostBtn{
-       border-radius:999px;
-       border:1px solid rgba(156,163,175,.22);
-       background:rgba(0,0,0,.18);
-       color:var(--muted);
-       padding:6px 10px;
-       cursor:not-allowed;
-       user-select:none;
-       height:40px;
-       display:inline-flex;align-items:center;justify-content:center;
-     }
-     
-.emojiBtn,.adminClearBtn{
+    .sendBtn,.emojiBtn,.adminClearBtn{
       border-radius:999px;
       border:1px solid rgba(250,204,21,.75);
       background:rgba(0,0,0,.75);
