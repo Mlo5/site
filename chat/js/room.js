@@ -37,6 +37,14 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const rtdb = getDatabase(app);
 
+// ✅ Expose minimal Firebase helpers for external modules (radio.js)
+window.MLO5 = window.MLO5 || {};
+window.MLO5.rtdb = rtdb;
+window.MLO5.fb = { ref, onValue, set, update };
+window.MLO5.nowMs = nowMs;
+window.MLO5.getIsAdmin = () => isAdmin;
+window.MLO5.getUid = () => user?.uid || null;
+
 /* ✅✅✅ FIX: Server Time Offset for ALL devices (prevents messages reappearing after clear) */
 let serverOffsetMs = 0;
 onValue(ref(rtdb, ".info/serverTimeOffset"), (snap)=>{
@@ -1861,6 +1869,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
