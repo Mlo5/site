@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2025-12-18T18:57:52Z",
+  "generatedAt": "2025-12-18T19:27:55Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "مبارك للمغرب البطولة 🇲🇦 | بث مباشر",
+      "url": "https://www.youtube.com/watch?v=GzMoDuoBQFo",
+      "type": "long",
+      "duration": "",
+      "date": "2025-12-18",
+      "thumb": "https://i.ytimg.com/vi/GzMoDuoBQFo/hqdefault.jpg",
+      "videoId": "GzMoDuoBQFo"
+    },
     {
       "title": "البطاطس الشريرة! 🥔",
       "url": "https://www.youtube.com/watch?v=dKJ1sR7b4XE",
@@ -127,15 +136,6 @@
       "date": "2025-12-08",
       "thumb": "https://i.ytimg.com/vi/L3YxvIr3aYs/hqdefault.jpg",
       "videoId": "L3YxvIr3aYs"
-    },
-    {
-      "title": "هذا قزم منغولي 😂",
-      "url": "https://www.youtube.com/shorts/LsxtnDnTwVs",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-07",
-      "thumb": "https://i.ytimg.com/vi/LsxtnDnTwVs/hqdefault.jpg",
-      "videoId": "LsxtnDnTwVs"
     }
   ]
 }
