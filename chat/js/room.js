@@ -7,14 +7,16 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
+/* ⚠️ ضع قيمك الأصلية هنا كما هي */
 const firebaseConfig = {
   apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
   authDomain: "mlo5-users.firebaseapp.com",
-  databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
+  databaseURL: "Yhttps://mlo5-users-default-rtdb.firebaseio.com",
   projectId: "mlo5-users",
   appId: "1:142086858806:web:64c50f3a8d6250a2049097"
 };
 
+/* ⚠️ نفس القيم الأصلية عندك */
 const ADMIN_UIDS = ["VFjSs6kH2jcFJnddE7SXIpipzDi2"];
 const ADMIN_USERNAME = "MLO5";
 const ADMIN_PASSWORD = "APRIL3049";
@@ -118,10 +120,14 @@ const ctxRankRoot   = document.getElementById("ctxRankRoot");
 const ctxRankGirl   = document.getElementById("ctxRankGirl");
 const ctxRankNone   = document.getElementById("ctxRankNone");
 
+/* ✅ OPTIONAL: إذا أضفت زر MASTER بالـ HTML */
+const ctxRankMaster = document.getElementById("ctxRankMaster");
+
 const roomMenu = document.getElementById("roomMenu");
 const roomLockBtn = document.getElementById("roomLockBtn");
 const roomUnlockBtn = document.getElementById("roomUnlockBtn");
 
+/* ✅ OPTIONAL: هذه الأزرار قد تكون محذوفة من HTML — ما نخليها تكسر الملف */
 const selfMuteBtn = document.getElementById("selfMuteBtn");
 const selfUnmuteBtn = document.getElementById("selfUnmuteBtn");
 
@@ -129,6 +135,9 @@ const bg1Btn = document.getElementById("bg1Btn");
 const bg2Btn = document.getElementById("bg2Btn");
 const bg3Btn = document.getElementById("bg3Btn");
 const bg0Btn = document.getElementById("bg0Btn");
+/* ✅ NEW optional buttons */
+const bg4Btn = document.getElementById("bg4Btn");
+const bg5Btn = document.getElementById("bg5Btn");
 
 const siteBgLayer = document.getElementById("siteBgLayer");
 const chatHint = document.getElementById("chatHint");
@@ -166,33 +175,56 @@ const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎💓
 
 /* ✅ RANKS */
 const RANKS = {
-  none:  { label:"بدون",     emoji:"",   rowClass:"" },
-  legend:{ label:"Legendary",emoji:"⚡",  rowClass:"rank-legend" },
-  vip:   { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
-  root:  { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
-  girl:  { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" }
+  none:   { label:"بدون",     emoji:"",   rowClass:"" },
+  legend: { label:"Legendary",emoji:"⚡",  rowClass:"rank-legend" },
+  vip:    { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
+  root:   { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
+  girl:   { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" },
+  master: { label:"MASTER",   emoji:"🧪",  rowClass:"rank-master" } // ✅ NEW
 };
-let ranksMap = {}; // uid -> rank
 
+let ranksMap = {}; // uid -> rank
 function rankOf(uid){ return ranksMap?.[uid] || "none"; }
 function rankEmoji(r){ return (RANKS[r] || RANKS.none).emoji || ""; }
 
-// ✅ صلاحيات الرتب (تم تعديل المسح: للأدمن فقط)
 function myRank(){ return rankOf(user?.uid); }
 function hasAnyRank(uid){ return rankOf(uid) && rankOf(uid) !== "none"; }
 function canWriteWhenLocked(){ return isAdmin || hasAnyRank(user?.uid); }
-function canClear(){ return isAdmin; } // ✅ مسح الشات للأدمن فقط
+function canClear(){ return isAdmin; }
 function canKick(){
   const r = myRank();
-  return isAdmin || r === "root" || r === "vip" || r === "girl";
+  return isAdmin || r === "root" || r === "vip" || r === "girl" || r === "master";
 }
 function canMute(){
   const r = myRank();
-  return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl";
+  return isAdmin || r === "root" || r === "vip" || r === "legend" || r === "girl" || r === "master";
 }
 function canBan(){
   const r = myRank();
   return isAdmin || r === "root";
+}
+
+function escapeHtml(s=""){
+  return String(s).replace(/[&<>"']/g, (m)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[m]));
+}
+
+/* ✅ Fixed colors for rank names (ignore user's chosen nameColor for ranked users) */
+function rankNameColor(rank){
+  switch(rank){
+    case "legend": return "#f97316"; // Legendary orange
+    case "girl":   return "#ec4899"; // Girl pink
+    case "root":   return "#ef4444"; // Root red
+    case "vip":    return "#2563eb"; // VIP blue
+    case "master": return "#a3ff12"; // Master phosphoric
+    default:       return null;
+  }
+}
+function effectiveNameColorFor(uid, fallback){
+  const r = rankOf(uid);
+  const c = rankNameColor(r);
+  return c || (fallback || "#facc15");
 }
 
 function rankIconHtml(r){
@@ -201,12 +233,8 @@ function rankIconHtml(r){
 }
 
 /* =========================
-   ✅ THEMES (Local per user + gated)
-   - All themes visible to everyone
-   - If user clicks locked theme => redirect to color.html
-   - Saved in localStorage per uid
-   - Gradient generates random mix each time chosen
-   ========================= */
+   ✅ THEMES
+========================= */
 
 const THEME_KEY = (uid)=> `chatTheme_${uid || "anon"}`;
 const THEME_GRAD_KEY = (uid)=> `chatThemeGradient_${uid || "anon"}`;
@@ -217,18 +245,13 @@ function getUserTier(){
   if (hasAnyRank(user?.uid)) return "rank";
   return "user";
 }
-
 function isThemeAllowedForTier(theme, tier){
-  // supported: dark, white, blue, gradient, pink, anime, rank, adminGlobal
   if (tier === "admin") return true;
-
   const userAllowed = ["dark","white","blue","gradient"];
   const rankAllowed = ["dark","white","blue","gradient","pink","anime","rank","adminGlobal"];
-
   if (tier === "rank") return rankAllowed.includes(theme);
   return userAllowed.includes(theme);
 }
-
 function pickRandomGradient(){
   const stops = [
     ["#0ea5e9","#22c55e"], ["#f97316","#facc15"], ["#a78bfa","#22d3ee"],
@@ -239,7 +262,6 @@ function pickRandomGradient(){
   const angle = Math.floor(Math.random()*360);
   return { a: pair[0], b: pair[1], angle };
 }
-
 function applyTheme(theme, opts={}){
   const rootEl = document.documentElement;
   document.body?.setAttribute("data-theme", theme);
@@ -251,9 +273,7 @@ function applyTheme(theme, opts={}){
   rootEl.style.removeProperty("--mlo5-text");
   rootEl.style.removeProperty("--mlo5-accent");
 
-  if (theme === "dark"){
-    return;
-  }
+  if (theme === "dark") return;
 
   if (theme === "white"){
     rootEl.style.setProperty("--mlo5-bg", "#f7f7f8");
@@ -262,7 +282,6 @@ function applyTheme(theme, opts={}){
     rootEl.style.setProperty("--mlo5-accent", "#111827");
     return;
   }
-
   if (theme === "blue"){
     rootEl.style.setProperty("--mlo5-bg", "#06111f");
     rootEl.style.setProperty("--mlo5-card", "rgba(9, 30, 66, .55)");
@@ -270,7 +289,6 @@ function applyTheme(theme, opts={}){
     rootEl.style.setProperty("--mlo5-accent", "#60a5fa");
     return;
   }
-
   if (theme === "pink"){
     rootEl.style.setProperty("--mlo5-bg", "#1a0510");
     rootEl.style.setProperty("--mlo5-card", "rgba(255, 105, 180, .10)");
@@ -278,7 +296,6 @@ function applyTheme(theme, opts={}){
     rootEl.style.setProperty("--mlo5-accent", "#fb7185");
     return;
   }
-
   if (theme === "anime"){
     rootEl.style.setProperty("--mlo5-bg", "#090a16");
     rootEl.style.setProperty("--mlo5-card", "rgba(124, 58, 237, .14)");
@@ -286,7 +303,6 @@ function applyTheme(theme, opts={}){
     rootEl.style.setProperty("--mlo5-accent", "#a78bfa");
     return;
   }
-
   if (theme === "rank"){
     rootEl.style.setProperty("--mlo5-bg", "#0b0b0b");
     rootEl.style.setProperty("--mlo5-card", "rgba(250, 204, 21, .08)");
@@ -294,7 +310,6 @@ function applyTheme(theme, opts={}){
     rootEl.style.setProperty("--mlo5-accent", "#facc15");
     return;
   }
-
   if (theme === "adminGlobal"){
     rootEl.style.setProperty("--mlo5-bg", "#071a10");
     rootEl.style.setProperty("--mlo5-card", "rgba(34, 197, 94, .12)");
@@ -302,7 +317,6 @@ function applyTheme(theme, opts={}){
     rootEl.style.setProperty("--mlo5-accent", "#22c55e");
     return;
   }
-
   if (theme === "gradient"){
     const g = opts.gradient || pickRandomGradient();
     rootEl.style.setProperty("--mlo5-gradient", `linear-gradient(${g.angle}deg, ${g.a}, ${g.b})`);
@@ -312,7 +326,6 @@ function applyTheme(theme, opts={}){
     return;
   }
 }
-
 function saveThemeForUser(theme, extra=null){
   if (!user) return;
   try{
@@ -322,28 +335,15 @@ function saveThemeForUser(theme, extra=null){
     }
   }catch{}
 }
-
 function loadSavedTheme(){
   if (!user) return { theme:"dark", gradient:null };
   let theme = "dark";
   let gradient = null;
-
-  try{
-    const t = localStorage.getItem(THEME_KEY(user.uid));
-    if (t) theme = t;
-  }catch{}
-
-  try{
-    const g = localStorage.getItem(THEME_GRAD_KEY(user.uid));
-    if (g) gradient = JSON.parse(g);
-  }catch{}
-
+  try{ const t = localStorage.getItem(THEME_KEY(user.uid)); if (t) theme = t; }catch{}
+  try{ const g = localStorage.getItem(THEME_GRAD_KEY(user.uid)); if (g) gradient = JSON.parse(g); }catch{}
   return { theme, gradient };
 }
-
-function redirectToBuy(){
-  location.href = "color.html";
-}
+function redirectToBuy(){ location.href = "color.html"; }
 
 function ensureThemeStillAllowed(){
   if (!user) return;
@@ -362,8 +362,6 @@ function ensureThemeStillAllowed(){
     applyTheme(saved.theme);
   }
 }
-
-/* ✅ Theme menu open/close */
 function showThemeMenu(x,y){
   if (!themeMenu) return;
   themeMenu.style.left = x + "px";
@@ -376,16 +374,12 @@ function hideThemeMenu(){
   themeMenu.style.display = "none";
   themeMenu.setAttribute("aria-hidden","true");
 }
-
 function initThemeSystem(){
   if (!user) return;
-
   ensureThemeStillAllowed();
-
   if (__themeInitBound) return;
   __themeInitBound = true;
 
-  // click on theme button
   if (themeBtn){
     themeBtn.addEventListener("click",(e)=>{
       e.preventDefault();
@@ -398,7 +392,6 @@ function initThemeSystem(){
     });
   }
 
-  // click on any [data-theme] inside themeMenu
   document.addEventListener("click", (e)=>{
     const btn = e.target?.closest?.("#themeMenu [data-theme]");
     if (!btn) return;
@@ -407,7 +400,6 @@ function initThemeSystem(){
     if (!theme) return;
 
     const tierNow = getUserTier();
-
     if (!isThemeAllowedForTier(theme, tierNow)){
       e.preventDefault();
       hideThemeMenu();
@@ -428,7 +420,6 @@ function initThemeSystem(){
     }
   }, { passive:false });
 
-  // close menu on outside click
   document.addEventListener("click",(e)=>{
     if (!themeMenu || themeMenu.style.display !== "block") return;
     if (e.target === themeBtn || e.target?.closest?.("#themeBtn")) return;
@@ -444,7 +435,7 @@ function countryCodeToFlagEmoji(cc){
   return String.fromCodePoint(...[...c].map(ch => 127397 + ch.charCodeAt()));
 }
 
-/* ✅ إصلاح vh بالموبايل */
+/* ✅ Fix vh */
 function setVh(){
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -453,7 +444,6 @@ setVh();
 window.addEventListener("resize", setVh);
 window.addEventListener("orientationchange", setVh);
 
-/* ✅ Drawer المتواجدين (موبايل فقط) */
 const onlineCard = document.getElementById("onlineCard");
 const openOnlineBtn = document.getElementById("openOnlineBtn");
 const onlineOverlay = document.getElementById("onlineOverlay");
@@ -461,16 +451,16 @@ const onlineOverlay = document.getElementById("onlineOverlay");
 function isMobileView(){ return window.matchMedia("(max-width: 900px)").matches; }
 function openOnlineDrawer(){
   if (!isMobileView()) return;
-  onlineCard.classList.add("drawer-open");
-  onlineOverlay.classList.add("show");
+  onlineCard?.classList.add("drawer-open");
+  onlineOverlay?.classList.add("show");
 }
 function closeOnlineDrawer(){
-  onlineCard.classList.remove("drawer-open");
-  onlineOverlay.classList.remove("show");
+  onlineCard?.classList.remove("drawer-open");
+  onlineOverlay?.classList.remove("show");
 }
 if (openOnlineBtn){
   openOnlineBtn.addEventListener("click", ()=>{
-    if (onlineCard.classList.contains("drawer-open")) closeOnlineDrawer();
+    if (onlineCard?.classList.contains("drawer-open")) closeOnlineDrawer();
     else openOnlineDrawer();
   });
 }
@@ -488,15 +478,12 @@ document.addEventListener("mousemove", (e)=>{
 });
 
 function setErr(el, msg){
+  if (!el) return;
   el.style.display = msg ? "block" : "none";
   el.textContent = msg || "";
 }
 function collapseSpaces(s){ return String(s||"").replace(/\s+/g," ").trim(); }
-function escapeHtml(s=""){
-  return String(s).replace(/[&<>"']/g, (m)=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
-  }[m]));
-}
+
 function formatTime(tsMs){
   if (!tsMs || Number.isNaN(tsMs)) return "";
   const d = new Date(tsMs);
@@ -527,6 +514,7 @@ function randHexColor(){
 }
 
 function showAppModal({title="تنبيه", text="—", actions=[{label:"حسناً", onClick:()=>hideAppModal()}]}={}){
+  if (!appModalTitle || !appModalText || !appModalActions || !appModal) return;
   appModalTitle.textContent = title;
   appModalText.textContent = text;
   appModalActions.innerHTML = "";
@@ -542,16 +530,21 @@ function showAppModal({title="تنبيه", text="—", actions=[{label:"حسنا
   });
   appModal.style.display = "flex";
 }
-function hideAppModal(){ appModal.style.display = "none"; }
-appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
+function hideAppModal(){
+  if (appModal) appModal.style.display = "none";
+}
+if (appModal){
+  appModal.addEventListener("click",(e)=>{ if (e.target === appModal) hideAppModal(); });
+}
 
-/* ✅ color + download open new tabs */
-colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
-downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
+/* ✅ color + download open new tabs (safe) */
+if (colorBtn) colorBtn.addEventListener("click", ()=> window.open("color.html", "_blank"));
+if (downloadBtn) downloadBtn.addEventListener("click", ()=> window.open("downloadpc.html", "_blank"));
 
 /* ✅ Emoji picker */
 let activeEmojiTarget = null;
 function buildEmojiGrid(){
+  if (!emojiGrid) return;
   emojiGrid.innerHTML = "";
   EMOJIS.forEach(em=>{
     const b = document.createElement("div");
@@ -567,11 +560,13 @@ function buildEmojiGrid(){
 buildEmojiGrid();
 
 function showEmojiFor(inputEl){
+  if (!emojiPicker) return;
   activeEmojiTarget = inputEl;
   emojiPicker.style.display = "block";
   emojiPicker.setAttribute("aria-hidden","false");
 }
 function hideEmoji(){
+  if (!emojiPicker) return;
   emojiPicker.style.display = "none";
   emojiPicker.setAttribute("aria-hidden","true");
   activeEmojiTarget = null;
@@ -586,12 +581,13 @@ function insertAtCursor(input, text){
 }
 
 document.addEventListener("click",(e)=>{
-  if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) hideEmoji();
-  if (!ctxMenu.contains(e.target)) hideCtxMenu();
-  if (!roomMenu.contains(e.target) && e.target !== bgBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
+  if (emojiPicker && !emojiPicker.contains(e.target) && e.target !== emojiBtn) hideEmoji();
+  if (ctxMenu && !ctxMenu.contains(e.target)) hideCtxMenu();
+  if (roomMenu && !roomMenu.contains(e.target) && e.target !== bgBtn && !e.target.closest?.(".adminRoomDots")) hideRoomMenu();
 });
-
-emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+if (emojiBtn){
+  emojiBtn.addEventListener("click",(e)=>{ e.preventDefault(); showEmojiFor(msgInput); });
+}
 
 /* ✅ Ignore */
 function loadIgnoreWindows(){
@@ -599,11 +595,13 @@ function loadIgnoreWindows(){
   catch{ ignoreWindows = {}; }
   refreshIgnoreCount();
 }
+
 function saveIgnoreWindows(){
   localStorage.setItem(ignoreKey(user.uid), JSON.stringify(ignoreWindows));
   refreshIgnoreCount();
 }
 function refreshIgnoreCount(){
+  if (!ignoreCount) return;
   let count=0;
   for (const k in ignoreWindows){
     const arr = ignoreWindows[k] || [];
@@ -638,36 +636,48 @@ function toggleIgnore(uid){
 /* ✅ Context menu */
 let ctxUser = null;
 function showCtxMenu(x,y){
+  if (!ctxMenu) return;
   ctxMenu.style.left = x + "px";
   ctxMenu.style.top  = y + "px";
   ctxMenu.style.display = "block";
 }
 function hideCtxMenu(){
+  if (!ctxMenu) return;
   ctxMenu.style.display = "none";
   ctxUser = null;
 }
 
+/* ✅ Room menu */
 function showRoomMenu(x,y){
+  if (!roomMenu) return;
   roomMenu.style.left = x + "px";
   roomMenu.style.top  = y + "px";
   roomMenu.style.display = "block";
 
   const showAdmin = !!isAdmin;
-  selfMuteBtn.style.display   = showAdmin ? "block" : "none";
-  selfUnmuteBtn.style.display = showAdmin ? "block" : "none";
-  bg1Btn.style.display = showAdmin ? "block" : "none";
-  bg2Btn.style.display = showAdmin ? "block" : "none";
-  bg3Btn.style.display = showAdmin ? "block" : "none";
-  bg0Btn.style.display = showAdmin ? "block" : "none";
-}
-function hideRoomMenu(){ roomMenu.style.display = "none"; }
 
-bgBtn.addEventListener("click",(e)=>{
-  e.preventDefault();
-  if (!isAdmin) return;
-  const r = bgBtn.getBoundingClientRect();
-  showRoomMenu(Math.round(r.left), Math.round(r.bottom + 8));
-});
+  if (selfMuteBtn) selfMuteBtn.style.display   = showAdmin ? "block" : "none";
+  if (selfUnmuteBtn) selfUnmuteBtn.style.display = showAdmin ? "block" : "none";
+
+  if (bg1Btn) bg1Btn.style.display = showAdmin ? "block" : "none";
+  if (bg2Btn) bg2Btn.style.display = showAdmin ? "block" : "none";
+  if (bg3Btn) bg3Btn.style.display = showAdmin ? "block" : "none";
+  if (bg4Btn) bg4Btn.style.display = showAdmin ? "block" : "none";
+  if (bg5Btn) bg5Btn.style.display = showAdmin ? "block" : "none";
+  if (bg0Btn) bg0Btn.style.display = showAdmin ? "block" : "none";
+}
+function hideRoomMenu(){
+  if (roomMenu) roomMenu.style.display = "none";
+}
+
+if (bgBtn){
+  bgBtn.addEventListener("click",(e)=>{
+    e.preventDefault();
+    if (!isAdmin) return;
+    const r = bgBtn.getBoundingClientRect();
+    showRoomMenu(Math.round(r.left), Math.round(r.bottom + 8));
+  });
+}
 
 async function writeSystemText(text, type="system", actor={}){
   await addDoc(collection(db, "globalMessages"), {
@@ -678,7 +688,6 @@ async function writeSystemText(text, type="system", actor={}){
     createdAtMs: nowMs()
   });
 }
-
 async function writePrivateSystem(text, toUids=[], type="private"){
   await addDoc(collection(db, "globalMessages"), {
     system:true, type,
@@ -689,7 +698,6 @@ async function writePrivateSystem(text, toUids=[], type="private"){
     createdAtMs: nowMs()
   });
 }
-
 async function writeActionLog(action, details=""){
   try{
     await addDoc(collection(db, "globalLogs"), {
@@ -712,24 +720,26 @@ function showLogsModal(lines){
   });
 }
 
-logBtn.addEventListener("click", async ()=>{
-  if (!isAdmin) return;
-  try{
-    const ql = query(collection(db, "globalLogs"), orderBy("atMs","desc"), limit(80));
-    const snap = await getDocs(ql);
-    const lines = [];
-    snap.forEach(d=>{
-      const x = d.data()||{};
-      const t = formatTime(Number(x.atMs||0));
-      const who = x.byName || "—";
-      const rk = x.byRank || "—";
-      lines.push(`${t} • ${who} (${rk}) • ${x.action}${x.details ? " — " + x.details : ""}`);
-    });
-    showLogsModal(lines.reverse());
-  }catch(err){
-    showLogsModal(["تعذر تحميل السجل (تحقق من صلاحيات Firestore Rules لمجموعة globalLogs)."]);
-  }
-});
+if (logBtn){
+  logBtn.addEventListener("click", async ()=>{
+    if (!isAdmin) return;
+    try{
+      const ql = query(collection(db, "globalLogs"), orderBy("atMs","desc"), limit(80));
+      const snap = await getDocs(ql);
+      const lines = [];
+      snap.forEach(d=>{
+        const x = d.data()||{};
+        const t = formatTime(Number(x.atMs||0));
+        const who = x.byName || "—";
+        const rk = x.byRank || "—";
+        lines.push(`${t} • ${who} (${rk}) • ${x.action}${x.details ? " — " + x.details : ""}`);
+      });
+      showLogsModal(lines.reverse());
+    }catch{
+      showLogsModal(["تعذر تحميل السجل (تحقق من صلاحيات Firestore Rules لمجموعة globalLogs)."]);
+    }
+  });
+}
 
 /* ✅ Moderation */
 async function adminKick(targetUid, targetName){
@@ -785,22 +795,17 @@ async function setRank(targetUid, targetName, rank){
 }
 
 /* =========================
-   ✅✅✅ FIX: CLEAR IMMEDIATE + HARD DELETE
-   ========================= */
-
+   ✅✅✅ CLEAR IMMEDIATE + HARD DELETE
+========================= */
 let globalClearedAtMs = 0;
 
-/* ✅ Clear: يمسح فورًا + يحذف الرسائل نهائيًا */
 async function adminClearForAll(){
   if (!isAdmin) return;
 
   const clearedAtMs = nowMs();
-
-  // ✅ 1) Optimistic: فضّي عند الأدمن فورًا
   globalClearedAtMs = clearedAtMs;
   try{ messagesDiv.innerHTML = ""; }catch{}
 
-  // ✅ 2) اعلن المسح للكل فورًا عبر meta (حتى قبل ما يكتمل حذف الرسائل)
   await setDoc(doc(db, "globalMeta", "clear"), {
     clearedAtMs,
     byUid: user.uid,
@@ -808,10 +813,8 @@ async function adminClearForAll(){
     createdAt: serverTimestamp()
   }, { merge: true });
 
-  // ✅ 3) HARD DELETE: حذف نهائي لكل رسائل globalMessages (Batch)
   try{
     const snap = await getDocs(collection(db, "globalMessages"));
-
     let batch = writeBatch(db);
     let n = 0;
     const commits = [];
@@ -819,8 +822,6 @@ async function adminClearForAll(){
     snap.forEach((d)=>{
       batch.delete(doc(db, "globalMessages", d.id));
       n++;
-
-      // ✅ كل 450 عملية نعمل commit (احتياط)
       if (n >= 450){
         commits.push(batch.commit());
         batch = writeBatch(db);
@@ -835,15 +836,17 @@ async function adminClearForAll(){
   }catch(err){
     console.error("HARD CLEAR ERROR:", err);
   }
+
   await writeSystemText(`🧹 ${ADMIN_DISPLAY_NAME} مسح الدردشة`, "clear", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
 }
 
-adminClearBtn.addEventListener("click",(e)=>{
-  e.preventDefault();
-  adminClearForAll();
-});
+if (adminClearBtn){
+  adminClearBtn.addEventListener("click",(e)=>{
+    e.preventDefault();
+    adminClearForAll();
+  });
+}
 
-/* ✅ كل الأجهزة: أول ما meta تتغير، فضّي الواجهة فورًا */
 function startClearMetaListener(){
   let prev = 0;
   onSnapshot(doc(db, "globalMeta", "clear"), (snap)=>{
@@ -862,12 +865,10 @@ function startClearMetaListener(){
 
 /* =========================
    ✅ Presence + Join/Leave
-   ========================= */
-
+========================= */
 async function updatePresenceStatus(statusVal, first=false){
   const onlineRef = ref(rtdb, "onlineUsers/" + user.uid);
   const device = window.matchMedia("(pointer: coarse)").matches ? "mobile" : "pc";
-
   const displayName = (isAdmin ? ADMIN_DISPLAY_NAME : profile.name);
 
   const payload = {
@@ -906,8 +907,8 @@ function watchConnection(){
   const connRef = ref(rtdb, ".info/connected");
   onValue(connRef, (snap)=>{
     const connected = snap.val() === true;
-    connDot.classList.toggle("on", connected);
-    connText.textContent = connected ? "متصل" : "غير متصل";
+    if (connDot) connDot.classList.toggle("on", connected);
+    if (connText) connText.textContent = connected ? "متصل" : "غير متصل";
   });
 }
 
@@ -967,7 +968,9 @@ function forceExitToHome(){
 function startRoomLockListener(){
   onValue(ref(rtdb, "roomState/locked"), (snap)=>{
     roomLocked = snap.val() === true;
-    chatHint.innerHTML = roomLocked ? "🚫 الروم مقفل" : 'دردش وخلي الشباب <span style="color:#facc15">تستفاد</span>';
+    if (chatHint){
+      chatHint.innerHTML = roomLocked ? "🚫 الروم مقفل" : 'دردش وخلي الشباب <span style="color:#facc15">تستفاد</span>';
+    }
 
     if (roomLocked && !canWriteWhenLocked()){
       msgInput.disabled = true;
@@ -990,31 +993,40 @@ async function setRoomLocked(next){
   await writeActionLog(next ? "lock" : "unlock", "");
 }
 
-roomLockBtn.addEventListener("click", async ()=>{
-  hideRoomMenu();
-  await setRoomLocked(true);
-});
-roomUnlockBtn.addEventListener("click", async ()=>{
-  hideRoomMenu();
-  await setRoomLocked(false);
-});
+if (roomLockBtn){
+  roomLockBtn.addEventListener("click", async ()=>{
+    hideRoomMenu();
+    await setRoomLocked(true);
+  });
+}
+if (roomUnlockBtn){
+  roomUnlockBtn.addEventListener("click", async ()=>{
+    hideRoomMenu();
+    await setRoomLocked(false);
+  });
+}
 
-selfMuteBtn.addEventListener("click", async ()=>{
-  hideRoomMenu();
-  if (!isAdmin || !user) return;
-  await update(ref(rtdb, `moderation/${user.uid}`), { muted:true, mutedUntil:0, reason:"selfMute", by:user.uid, mutedAt: nowMs() });
-  await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:true });
-  await writeSystemText(`🔇 الأدمن كتم نفسه`, "selfMute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
-  await writeActionLog("selfMute", "");
-});
-selfUnmuteBtn.addEventListener("click", async ()=>{
-  hideRoomMenu();
-  if (!isAdmin || !user) return;
-  await update(ref(rtdb, `moderation/${user.uid}`), { muted:false, mutedUntil:0, reason:"selfUnmute", by:user.uid, unmutedAt: nowMs() });
-  await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:false });
-  await writeSystemText(`🔊 الأدمن فك كتم نفسه`, "selfUnmute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
-  await writeActionLog("selfUnmute", "");
-});
+/* ✅ OPTIONAL: self mute buttons (won't crash if removed) */
+if (selfMuteBtn){
+  selfMuteBtn.addEventListener("click", async ()=>{
+    hideRoomMenu();
+    if (!isAdmin || !user) return;
+    await update(ref(rtdb, `moderation/${user.uid}`), { muted:true, mutedUntil:0, reason:"selfMute", by:user.uid, mutedAt: nowMs() });
+    await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:true });
+    await writeSystemText(`🔇 الأدمن كتم نفسه`, "selfMute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+    await writeActionLog("selfMute", "");
+  });
+}
+if (selfUnmuteBtn){
+  selfUnmuteBtn.addEventListener("click", async ()=>{
+    hideRoomMenu();
+    if (!isAdmin || !user) return;
+    await update(ref(rtdb, `moderation/${user.uid}`), { muted:false, mutedUntil:0, reason:"selfUnmute", by:user.uid, unmutedAt: nowMs() });
+    await update(ref(rtdb, `onlineUsers/${user.uid}`), { muted:false });
+    await writeSystemText(`🔊 الأدمن فك كتم نفسه`, "selfUnmute", {uid:user.uid,name:ADMIN_DISPLAY_NAME});
+    await writeActionLog("selfUnmute", "");
+  });
+}
 
 /* ✅ Global background (admin sets; all users see) */
 const BG_DOC = doc(db, "globalSettings", "ui");
@@ -1023,10 +1035,13 @@ function bgUrlFromChoice(n){
   if (nn === 1) return 'url("back1.gif")';
   if (nn === 2) return 'url("back2.gif")';
   if (nn === 3) return 'url("back3.gif")';
+  if (nn === 4) return 'url("back4.gif")'; // ✅ NEW
+  if (nn === 5) return 'url("back5.gif")'; // ✅ NEW
   return "none";
 }
 function applySiteBg(choice){
   const css = bgUrlFromChoice(choice);
+  if (!siteBgLayer) return;
   siteBgLayer.style.backgroundImage = css === "none" ? "" : css;
   siteBgLayer.style.display = css === "none" ? "none" : "block";
 }
@@ -1046,10 +1061,12 @@ async function setGlobalBg(choice){
   }, { merge:true });
   await writeActionLog("bg", `bgChoice=${Number(choice||0)}`);
 }
-bg1Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(1); });
-bg2Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(2); });
-bg3Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(3); });
-bg0Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(0); });
+if (bg1Btn) bg1Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(1); });
+if (bg2Btn) bg2Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(2); });
+if (bg3Btn) bg3Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(3); });
+if (bg4Btn) bg4Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(4); });
+if (bg5Btn) bg5Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(5); });
+if (bg0Btn) bg0Btn.addEventListener("click", async ()=>{ hideRoomMenu(); await setGlobalBg(0); });
 
 /* ✅ Watch ranks in RTDB */
 function startRanksListener(){
@@ -1066,9 +1083,8 @@ function startRanksListener(){
       try{ update(ref(rtdb, `onlineUsers/${user.uid}`), { rank: rankOf(user.uid) }); }catch{}
     }
 
-    adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+    if (adminClearBtn) adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
 
-    // ✅ re-check theme when rank info arrives
     try{ ensureThemeStillAllowed(); }catch{}
   });
 }
@@ -1078,12 +1094,12 @@ function startOnlineListener(){
     const users = snap.val() || {};
     const arr = Object.values(users);
 
-    onlineCount.textContent = String(arr.length);
-    onlineList.innerHTML = "";
+    if (onlineCount) onlineCount.textContent = String(arr.length);
+    if (onlineList) onlineList.innerHTML = "";
 
     arr.sort((a,b)=>{
       const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid); // ✅ FIX
       if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
       return (a.name||"").localeCompare(b.name||"");
     }).forEach((u)=>{
@@ -1102,11 +1118,13 @@ function startOnlineListener(){
       const mutedBadge = (u.muted === true) ? `<span class="mutedEmoji" title="مكتوم">🔇</span>` : "";
       const flag = countryCodeToFlagEmoji(u.country || "");
 
+      const nmColor = isRowAdmin ? "#fff" : effectiveNameColorFor(u.uid, u.nameColor || "#facc15");
+
       const nameHtml = isRowAdmin
         ? `${ADMIN_ICONS_HTML}<span class="adminNameBig" style="color:#fff;font-weight:900">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
         : `
           ${(!isRowAdmin && ru && ru !== "none") ? rankIconHtml(ru) : ""}
-          <span style="color:${escapeHtml(u.nameColor||"#facc15")};font-weight:900">${escapeHtml(u.name || "مستخدم")}</span>
+          <span style="color:${escapeHtml(nmColor)};font-weight:900">${escapeHtml(u.name || "مستخدم")}</span>
           ${guestHtml}
         `;
 
@@ -1119,7 +1137,7 @@ function startOnlineListener(){
             <span class="devIcon" title="الجهاز">${devIcon}</span>
             <span>${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
           </span>
-          ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(profile?.nameColor||"#facc15")};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
+          ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(effectiveNameColorFor(user.uid, profile?.nameColor||"#facc15"))};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
         </span>
       `;
       row.appendChild(left);
@@ -1135,8 +1153,8 @@ function startOnlineListener(){
         dots.title = "قائمة الأدمن";
         dots.addEventListener("click",(e)=>{
           e.stopPropagation();
-          roomLockBtn.style.display = roomLocked ? "none" : "block";
-          roomUnlockBtn.style.display = roomLocked ? "block" : "none";
+          if (roomLockBtn) roomLockBtn.style.display = roomLocked ? "none" : "block";
+          if (roomUnlockBtn) roomUnlockBtn.style.display = roomLocked ? "block" : "none";
           showRoomMenu(e.clientX, e.clientY);
         });
         actions.appendChild(dots);
@@ -1185,14 +1203,14 @@ function startOnlineListener(){
             const allowMute = showMod && canMute();
             const allowBan  = showMod && canBan();
 
-            modActions.style.display = (showMod && (allowKick || allowMute || allowBan)) ? "block" : "none";
-            ctxKickBtn.style.display = allowKick ? "block" : "none";
-            ctxMuteBtn.style.display = allowMute ? "block" : "none";
-            ctxUnmuteBtn.style.display = allowMute ? "block" : "none";
-            ctxBanBtn.style.display = allowBan ? "block" : "none";
-            ctxUnbanBtn.style.display = allowBan ? "block" : "none";
+            if (modActions) modActions.style.display = (showMod && (allowKick || allowMute || allowBan)) ? "block" : "none";
+            if (ctxKickBtn) ctxKickBtn.style.display = allowKick ? "block" : "none";
+            if (ctxMuteBtn) ctxMuteBtn.style.display = allowMute ? "block" : "none";
+            if (ctxUnmuteBtn) ctxUnmuteBtn.style.display = allowMute ? "block" : "none";
+            if (ctxBanBtn) ctxBanBtn.style.display = allowBan ? "block" : "none";
+            if (ctxUnbanBtn) ctxUnbanBtn.style.display = allowBan ? "block" : "none";
 
-            rankActions.style.display = (isAdmin && showMod) ? "block" : "none";
+            if (rankActions) rankActions.style.display = (isAdmin && showMod) ? "block" : "none";
             showCtxMenu(e.clientX, e.clientY);
           });
 
@@ -1201,7 +1219,7 @@ function startOnlineListener(){
       }
 
       row.appendChild(actions);
-      onlineList.appendChild(row);
+      onlineList?.appendChild(row);
     });
   });
 }
@@ -1225,11 +1243,10 @@ function renderMsgTextToHtml(text){
   return esc;
 }
 
-// ✅ فصلنا الريندر لدالة حتى نقدر نستدعيها من clear listener
 function renderMessagesFromSnap(snap){
+  if (!messagesDiv) return;
   messagesDiv.innerHTML = "";
   const isFirst = !initialLoaded;
-
   const cutoff = Math.max(joinAtMs || 0, globalClearedAtMs || 0);
 
   const items = [];
@@ -1288,9 +1305,11 @@ function renderMessagesFromSnap(snap){
       const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
       const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
 
+      const nmColor = isMsgAdmin ? "#fff" : (rankNameColor(r) || (m.nameColor || "#facc15"));
+
       const nameHtml = isMsgAdmin
         ? `${ADMIN_ICONS_HTML}<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
-        : `${rankIcon}<span style="color:${escapeHtml(m.nameColor || "#facc15")};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
+        : `${rankIcon}<span style="color:${escapeHtml(nmColor)};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
 
       const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
         ? `<div class="replyQuote"><b>رد على: ${escapeHtml(m.replyTo.name)}</b><div>${escapeHtml(m.replyTo.text)}</div></div>`
@@ -1308,17 +1327,17 @@ function renderMessagesFromSnap(snap){
         <button class="replyBtn" type="button" title="رد">↩ رد</button>
       `;
 
-      div.querySelector(".replyBtn").addEventListener("click", ()=>{
+      div.querySelector(".replyBtn")?.addEventListener("click", ()=>{
         replyTarget = {
           id: it.id,
           uid: m.uid,
           name: m.name || "مستخدم",
           text: String(m.text||"").slice(0,160)
         };
-        replyPreviewName.textContent = `رد على: ${replyTarget.name}`;
-        replyPreviewText.textContent = replyTarget.text;
-        replyPreview.style.display = "flex";
-        msgInput.focus();
+        if (replyPreviewName) replyPreviewName.textContent = `رد على: ${replyTarget.name}`;
+        if (replyPreviewText) replyPreviewText.textContent = replyTarget.text;
+        if (replyPreview) replyPreview.style.display = "flex";
+        msgInput?.focus();
       });
 
       row.appendChild(div);
@@ -1332,7 +1351,6 @@ function renderMessagesFromSnap(snap){
 
 function startGlobalMessagesListener(){
   initialLoaded = false;
-
   const q = query(
     collection(db, "globalMessages"),
     orderBy("createdAtMs", "asc"),
@@ -1347,115 +1365,123 @@ function startGlobalMessagesListener(){
   });
 }
 
-replyCancelBtn.addEventListener("click", ()=>{
-  replyTarget = null;
-  replyPreview.style.display = "none";
-});
+if (replyCancelBtn){
+  replyCancelBtn.addEventListener("click", ()=>{
+    replyTarget = null;
+    if (replyPreview) replyPreview.style.display = "none";
+  });
+}
 
-ctxKickBtn.addEventListener("click", async ()=>{
+/* ctx actions (safe) */
+if (ctxKickBtn) ctxKickBtn.addEventListener("click", async ()=>{
   if (!ctxUser || ctxUser.isAdmin) return;
   if (!canKick()) return;
   await adminKick(ctxUser.uid, ctxUser.name || "مستخدم");
   hideCtxMenu();
 });
-ctxMuteBtn.addEventListener("click", async ()=>{
+if (ctxMuteBtn) ctxMuteBtn.addEventListener("click", async ()=>{
   if (!ctxUser || ctxUser.isAdmin) return;
   if (!canMute()) return;
   await adminMute(ctxUser.uid, ctxUser.name || "مستخدم");
   hideCtxMenu();
 });
-ctxUnmuteBtn.addEventListener("click", async ()=>{
+if (ctxUnmuteBtn) ctxUnmuteBtn.addEventListener("click", async ()=>{
   if (!ctxUser || ctxUser.isAdmin) return;
   if (!canMute()) return;
   await adminUnmute(ctxUser.uid, ctxUser.name || "مستخدم");
   hideCtxMenu();
 });
-ctxBanBtn.addEventListener("click", async ()=>{
+if (ctxBanBtn) ctxBanBtn.addEventListener("click", async ()=>{
   if (!ctxUser || ctxUser.isAdmin) return;
   if (!canBan()) return;
   await adminBan(ctxUser.uid, ctxUser.name || "مستخدم");
   hideCtxMenu();
 });
-ctxUnbanBtn.addEventListener("click", async ()=>{
+if (ctxUnbanBtn) ctxUnbanBtn.addEventListener("click", async ()=>{
   if (!ctxUser || ctxUser.isAdmin) return;
   if (!canBan()) return;
   await adminUnban(ctxUser.uid, ctxUser.name || "مستخدم");
   hideCtxMenu();
 });
 
-ctxRankLegend.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "legend"); hideCtxMenu(); });
-ctxRankVip.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "vip"); hideCtxMenu(); });
-ctxRankRoot.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "root"); hideCtxMenu(); });
-ctxRankGirl.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "girl"); hideCtxMenu(); });
-ctxRankNone.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "none"); hideCtxMenu(); });
+/* rank buttons */
+if (ctxRankLegend) ctxRankLegend.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "legend"); hideCtxMenu(); });
+if (ctxRankVip)    ctxRankVip.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "vip"); hideCtxMenu(); });
+if (ctxRankRoot)   ctxRankRoot.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "root"); hideCtxMenu(); });
+if (ctxRankGirl)   ctxRankGirl.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "girl"); hideCtxMenu(); });
+if (ctxRankMaster) ctxRankMaster.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "master"); hideCtxMenu(); });
+if (ctxRankNone)   ctxRankNone.addEventListener("click", async ()=>{ if (!isAdmin || !ctxUser || ctxUser.isAdmin) return; await setRank(ctxUser.uid, ctxUser.name || "مستخدم", "none"); hideCtxMenu(); });
 
-// ✅✅✅ (Mobile-only) إرسال من الكيبورد بدون زر (Enter + دبل-سبيس)
+/* ✅ Mobile-only send */
 let __lastSpaceSendAt = 0;
-msgInput.addEventListener("keydown",(e)=>{
-  if (!__MOBILE_DEVICE) return;
+if (msgInput){
+  msgInput.addEventListener("keydown",(e)=>{
+    if (!__MOBILE_DEVICE) return;
 
-  if (e.key === "Enter"){
-    e.preventDefault();
-    if (!msgInput.disabled) chatForm.requestSubmit();
-    return;
-  }
-
-  if (e.key === " "){
-    const v = msgInput.value || "";
-    const now = Date.now();
-    const fast = (now - __lastSpaceSendAt) < 320;
-    __lastSpaceSendAt = now;
-
-    if (fast && collapseSpaces(v).length > 0){
+    if (e.key === "Enter"){
       e.preventDefault();
-      if (!msgInput.disabled) chatForm.requestSubmit();
+      if (!msgInput.disabled) chatForm?.requestSubmit();
+      return;
     }
-  }
-});
 
-chatForm.addEventListener("submit", async (e)=>{
-  e.preventDefault();
-  if (!user || !profile) return;
+    if (e.key === " "){
+      const v = msgInput.value || "";
+      const now = Date.now();
+      const fast = (now - __lastSpaceSendAt) < 320;
+      __lastSpaceSendAt = now;
 
-  const text = collapseSpaces(msgInput.value);
-  if (!text) return;
-
-  if (roomLocked && !canWriteWhenLocked()){
-    showAppModal({ title:"🚫 الروم مقفل", text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
-    return;
-  }
-
-  if (msgInput.disabled) return;
-
-  if (!isAdmin && isProfane(text)){
-    showAppModal({ title:"❌ رسالة مرفوضة", text:"الرسالة مرفوضة (كلام غير لائق).", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
-    return;
-  }
-
-  const replyTo = replyTarget ? { uid: replyTarget.uid, name: replyTarget.name, text: replyTarget.text, id: replyTarget.id } : null;
-
-  msgInput.value = "";
-  replyTarget = null;
-  replyPreview.style.display = "none";
-
-  const finalName = isAdmin ? ADMIN_DISPLAY_NAME : profile.name;
-
-  await addDoc(collection(db, "globalMessages"), {
-    system:false, text,
-    uid:user.uid,
-    name: finalName,
-    gender:profile.gender,
-    age:profile.age,
-    country: profile.country || "",
-    nameColor:profile.nameColor,
-    textColor:profile.textColor,
-    isAdmin, isGuest,
-    replyTo,
-    rank: rankOf(user.uid),
-    createdAt: serverTimestamp(),
-    createdAtMs: nowMs()
+      if (fast && collapseSpaces(v).length > 0){
+        e.preventDefault();
+        if (!msgInput.disabled) chatForm?.requestSubmit();
+      }
+    }
   });
-});
+}
+
+if (chatForm){
+  chatForm.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    if (!user || !profile) return;
+
+    const text = collapseSpaces(msgInput.value);
+    if (!text) return;
+
+    if (roomLocked && !canWriteWhenLocked()){
+      showAppModal({ title:"🚫 الروم مقفل", text:"الأدمن قفل الروم، ما بتقدر تكتب الآن.", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
+      return;
+    }
+    if (msgInput.disabled) return;
+
+    if (!isAdmin && isProfane(text)){
+      showAppModal({ title:"❌ رسالة مرفوضة", text:"الرسالة مرفوضة (كلام غير لائق).", actions:[{label:"حسناً", onClick:()=>hideAppModal()}] });
+      return;
+    }
+
+    const replyTo = replyTarget ? { uid: replyTarget.uid, name: replyTarget.name, text: replyTarget.text, id: replyTarget.id } : null;
+
+    msgInput.value = "";
+    replyTarget = null;
+    if (replyPreview) replyPreview.style.display = "none";
+
+    const finalName = isAdmin ? ADMIN_DISPLAY_NAME : profile.name;
+
+    await addDoc(collection(db, "globalMessages"), {
+      system:false, text,
+      uid:user.uid,
+      name: finalName,
+      gender:profile.gender,
+      age:profile.age,
+      country: profile.country || "",
+      nameColor:profile.nameColor,
+      textColor:profile.textColor,
+      isAdmin, isGuest,
+      replyTo,
+      rank: rankOf(user.uid),
+      createdAt: serverTimestamp(),
+      createdAtMs: nowMs()
+    });
+  });
+}
 
 function cleanupGuestLocal(){
   try{
@@ -1468,140 +1494,152 @@ function cleanupGuestLocal(){
   }catch{}
 }
 
-exitBtn.addEventListener("click", async ()=>{
-  try{
-    if (user && profile){
-      await writeJoinLeave("leave");
-      await remove(ref(rtdb, "onlineUsers/" + user.uid));
+if (exitBtn){
+  exitBtn.addEventListener("click", async ()=>{
+    try{
+      if (user && profile){
+        await writeJoinLeave("leave");
+        await remove(ref(rtdb, "onlineUsers/" + user.uid));
+      }
+    }catch{}
+    cleanupGuestLocal();
+    location.href = "index.html";
+  });
+}
+
+if (statusSelect){
+  statusSelect.addEventListener("change", async ()=>{
+    if (!user || !profile) return;
+    const s = statusSelect.value || "online";
+    localStorage.setItem(statusKey(user.uid), s);
+    await updatePresenceStatus(s);
+  });
+}
+
+if (adminLoginBtn){
+  adminLoginBtn.addEventListener("click", ()=>{
+    setErr(adminErr, "");
+    if (!user) return;
+    const uidAllowed = ADMIN_UIDS.includes(user.uid);
+    if (!uidAllowed){
+      setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
+      return;
     }
-  }catch{}
-  cleanupGuestLocal();
-  location.href = "index.html";
-});
-
-statusSelect.addEventListener("change", async ()=>{
-  if (!user || !profile) return;
-  const s = statusSelect.value || "online";
-  localStorage.setItem(statusKey(user.uid), s);
-  await updatePresenceStatus(s);
-});
-
-adminLoginBtn.addEventListener("click", ()=>{
-  setErr(adminErr, "");
-  if (!user) return;
-  const uidAllowed = ADMIN_UIDS.includes(user.uid);
-  if (!uidAllowed){
-    setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
-    return;
-  }
-  const u = (adminUser.value || "").trim();
-  const p = (adminPass.value || "").trim();
-  if (u !== ADMIN_USERNAME || p !== ADMIN_PASSWORD){
-    setErr(adminErr, "بيانات ADMIN غير صحيحة.");
-    return;
-  }
-  localStorage.setItem(adminSessionKey(user.uid), "1");
-  setErr(adminErr, "✅ تم تفعيل الأدمن.");
-  isAdmin = true;
-
-  logBtn.style.display = "inline-flex";
-  bgBtn.style.display  = "inline-flex";
-  adminClearBtn.style.display = "inline-flex";
-
-  // ✅ admin now can use all themes
-  try{ ensureThemeStillAllowed(); }catch{}
-
-  try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
-});
-
-function showForm(){ formBox.style.display = "block"; }
-
-homeBtn.addEventListener("click", ()=>{
-  cleanupGuestLocal();
-  location.href = "index.html";
-});
-
-backListBtn.addEventListener("click", ()=>{
-  setErr(modalErr,"");
-  formBox.style.display = "none";
-});
-
-chooseLogin.addEventListener("click", ()=>{
-  setErr(modalErr,"");
-  if (!user){ location.href = "login.html"; return; }
-  if (user.isAnonymous){ location.href = "login.html"; return; }
-  isGuest = false;
-  showForm();
-});
-
-chooseGuest.addEventListener("click", async ()=>{
-  setErr(modalErr,"");
-  if (user && !user.isAnonymous){
-    setErr(modalErr, "أنت مسجل دخول بالفعل—استخدم خيار تسجيل دخول.");
-    return;
-  }
-  try{
-    if (!user){
-      await signInAnonymously(auth);
+    const u = (adminUser?.value || "").trim();
+    const p = (adminPass?.value || "").trim();
+    if (u !== ADMIN_USERNAME || p !== ADMIN_PASSWORD){
+      setErr(adminErr, "بيانات ADMIN غير صحيحة.");
+      return;
     }
-    isGuest = true;
+    localStorage.setItem(adminSessionKey(user.uid), "1");
+    setErr(adminErr, "✅ تم تفعيل الأدمن.");
+    isAdmin = true;
+
+    if (logBtn) logBtn.style.display = "inline-flex";
+    if (bgBtn)  bgBtn.style.display  = "inline-flex";
+    if (adminClearBtn) adminClearBtn.style.display = "inline-flex";
+
+    try{ ensureThemeStillAllowed(); }catch{}
+    try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
+  });
+}
+
+function showForm(){ if (formBox) formBox.style.display = "block"; }
+
+if (homeBtn){
+  homeBtn.addEventListener("click", ()=>{
+    cleanupGuestLocal();
+    location.href = "index.html";
+  });
+}
+if (backListBtn){
+  backListBtn.addEventListener("click", ()=>{
+    setErr(modalErr,"");
+    if (formBox) formBox.style.display = "none";
+  });
+}
+
+if (chooseLogin){
+  chooseLogin.addEventListener("click", ()=>{
+    setErr(modalErr,"");
+    if (!user){ location.href = "login.html"; return; }
+    if (user.isAnonymous){ location.href = "login.html"; return; }
+    isGuest = false;
     showForm();
-  }catch(err){
-    setErr(modalErr, "❌ فشل الدخول كضيف. جرّب مرة ثانية.");
-    console.error(err);
-  }
-});
+  });
+}
 
-enterBtn.addEventListener("click", async ()=>{
-  setErr(modalErr, "");
+if (chooseGuest){
+  chooseGuest.addEventListener("click", async ()=>{
+    setErr(modalErr,"");
+    if (user && !user.isAnonymous){
+      setErr(modalErr, "أنت مسجل دخول بالفعل—استخدم خيار تسجيل دخول.");
+      return;
+    }
+    try{
+      if (!user){
+        await signInAnonymously(auth);
+      }
+      isGuest = true;
+      showForm();
+    }catch(err){
+      setErr(modalErr, "❌ فشل الدخول كضيف. جرّب مرة ثانية.");
+      console.error(err);
+    }
+  });
+}
 
-  const rawName = collapseSpaces(nameInput.value);
-  const g = genderInput.value;
-  const age = Number(ageInput.value);
-  const country = (countryInput.value || "").trim().toUpperCase();
+if (enterBtn){
+  enterBtn.addEventListener("click", async ()=>{
+    setErr(modalErr, "");
 
-  if (!rawName || rawName.length < 3){ setErr(modalErr, "الاسم لازم يكون 3 أحرف على الأقل."); return; }
-  if (!g){ setErr(modalErr, "اختار الجنس."); return; }
-  if (!Number.isFinite(age) || age < 10){ setErr(modalErr, "العمر لازم يكون 10 أو أكثر."); return; }
-  if (!country || country.length !== 2){ setErr(modalErr, "اختار الدولة."); return; }
-  if (!user){ setErr(modalErr, "اختر طريقة الدخول أولاً."); return; }
+    const rawName = collapseSpaces(nameInput?.value);
+    const g = genderInput?.value;
+    const age = Number(ageInput?.value);
+    const country = (countryInput?.value || "").trim().toUpperCase();
 
-  profile = {
-    name: rawName,
-    gender: g,
-    age,
-    country,
-    nameColor: nameColorInput.value || "#facc15",
-    textColor: textColorInput.value || "#f9fafb"
-  };
+    if (!rawName || rawName.length < 3){ setErr(modalErr, "الاسم لازم يكون 3 أحرف على الأقل."); return; }
+    if (!g){ setErr(modalErr, "اختار الجنس."); return; }
+    if (!Number.isFinite(age) || age < 10){ setErr(modalErr, "العمر لازم يكون 10 أو أكثر."); return; }
+    if (!country || country.length !== 2){ setErr(modalErr, "اختار الدولة."); return; }
+    if (!user){ setErr(modalErr, "اختر طريقة الدخول أولاً."); return; }
 
-  if (!user.isAnonymous){
-    localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
-  }
+    profile = {
+      name: rawName,
+      gender: g,
+      age,
+      country,
+      nameColor: nameColorInput?.value || "#facc15",
+      textColor: textColorInput?.value || "#f9fafb"
+    };
 
-  const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
-  statusSelect.value = savedStatus;
+    if (!user.isAnonymous){
+      localStorage.setItem(profKey(user.uid), JSON.stringify(profile));
+    }
 
-  try{
-    await enterChat(savedStatus);
-  }catch(err){
-    console.error(err);
-    setErr(modalErr, "❌ صار خطأ بالدخول للشات. جرّب مرة ثانية.");
-  }
-});
+    const savedStatus = localStorage.getItem(statusKey(user.uid)) || "online";
+    if (statusSelect) statusSelect.value = savedStatus;
+
+    try{
+      await enterChat(savedStatus);
+    }catch(err){
+      console.error(err);
+      setErr(modalErr, "❌ صار خطأ بالدخول للشات. جرّب مرة ثانية.");
+    }
+  });
+}
 
 async function enterChat(statusVal){
   isGuest = !!user?.isAnonymous;
-
   isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
 
   if (profile && isAdmin){
     profile.name = ADMIN_DISPLAY_NAME;
   }
 
-  logBtn.style.display = isAdmin ? "inline-flex" : "none";
-  bgBtn.style.display  = isAdmin ? "inline-flex" : "none";
-  adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
+  if (logBtn) logBtn.style.display = isAdmin ? "inline-flex" : "none";
+  if (bgBtn)  bgBtn.style.display  = isAdmin ? "inline-flex" : "none";
+  if (adminClearBtn) adminClearBtn.style.display = isAdmin ? "inline-flex" : "none";
 
   msgInput.disabled = false;
   sendBtn.disabled = false;
@@ -1611,11 +1649,9 @@ async function enterChat(statusVal){
   await updatePresenceStatus(statusVal, true);
   await writeJoinLeave("join");
 
-  modal.style.display = "none";
+  if (modal) modal.style.display = "none";
 
-  // ✅ init themes now (menu + apply saved)
   initThemeSystem();
-
   loadIgnoreWindows();
   startGlobalBgListener();
   startRanksListener();
@@ -1637,7 +1673,7 @@ async function enterChat(statusVal){
 
 onAuthStateChanged(auth, async (u)=>{
   user = u || null;
-  meBadge.textContent = "أنت";
+  if (meBadge) meBadge.textContent = "أنت";
   watchConnection();
 
   let loadedSaved = false;
@@ -1646,26 +1682,26 @@ onAuthStateChanged(auth, async (u)=>{
     if (savedProfile){
       try{
         const p = JSON.parse(savedProfile);
-        nameInput.value = p.name || "";
-        genderInput.value = p.gender || "";
-        ageInput.value = p.age || "";
-        countryInput.value = p.country || "JO";
-        nameColorInput.value = p.nameColor || randHexColor();
-        textColorInput.value = p.textColor || randHexColor();
+        if (nameInput) nameInput.value = p.name || "";
+        if (genderInput) genderInput.value = p.gender || "";
+        if (ageInput) ageInput.value = p.age || "";
+        if (countryInput) countryInput.value = p.country || "JO";
+        if (nameColorInput) nameColorInput.value = p.nameColor || randHexColor();
+        if (textColorInput) textColorInput.value = p.textColor || randHexColor();
         loadedSaved = true;
       }catch{}
     }
   }
   if (!loadedSaved){
-    nameColorInput.value = randHexColor();
-    textColorInput.value = randHexColor();
-    countryInput.value = "JO";
+    if (nameColorInput) nameColorInput.value = randHexColor();
+    if (textColorInput) textColorInput.value = randHexColor();
+    if (countryInput) countryInput.value = "JO";
   }
 
-  formBox.style.display = "none";
+  if (formBox) formBox.style.display = "none";
   setErr(modalErr, "");
   setErr(adminErr, "");
-  modal.style.display = "flex";
+  if (modal) modal.style.display = "flex";
 });
 
 window.addEventListener("beforeunload", ()=>{
@@ -1699,3 +1735,4 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
