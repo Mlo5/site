@@ -1745,26 +1745,14 @@ function startDhikrLoop(){
    ضعه آخر room.js (تم تثبيته هنا بشكل صحيح)
 ========================================================= */
 
-const CAPSULE_PREVIEW_IMAGES_BY_RANK = {
-  vip: [
-    "../media/ranks/vip1.gif",
-    "../media/ranks/vip2.gif",
-  ],
-  girl: [
-    "../media/ranks/girl1.gif",
-    "../media/ranks/girl2.gif",
-  ],
-  legend: [
-    "../media/ranks/legend1.gif",
-    "../media/ranks/legend2.gif",
-  ],
-  root: [
-    "../media/ranks/root1.gif",
-  ],
-  master: [
-    "../media/ranks/master1.gif",
-  ],
-};
+const CAPSULE_PREVIEW_IMAGES = [
+  "../media/ranks/capsule1.gif",
+  "../media/ranks/capsule2.gif",
+  "../media/ranks/capsule3.gif",
+  "../media/ranks/capsule4.gif",
+  "../media/ranks/capsule5.gif",
+];
+
 
 let capDropEl = null;
 
@@ -1868,4 +1856,5 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
