@@ -1,0 +1,34 @@
+/* chat/radio/radio.css */
+
+#radioMenu{
+  min-width: 240px;
+}
+
+#radioMenu .radioUrlRow{
+  display:flex;
+  gap:8px;
+  margin-top:8px;
+}
+
+#radioMenu input{
+  flex:1;
+  border-radius:999px;
+  border:1px solid rgba(250,204,21,.55);
+  background:#000;
+  color:#fff;
+  padding:8px 12px;
+  outline:none;
+  font-size:.9rem;
+}
+
+#radioMenu .radioState{
+  margin-top:8px;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(250,204,21,.25);
+  background:rgba(0,0,0,.35);
+  color:rgba(249,250,251,.9);
+  font-size:.85rem;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
