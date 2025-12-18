@@ -181,7 +181,7 @@ const RANKS = {
   vip:    { label:"VIP",      emoji:"💎",  rowClass:"rank-vip" },
   root:   { label:"ROOT",     emoji:"🛡️",  rowClass:"rank-root" },
   girl:   { label:"GIRL",     emoji:"🎀",  rowClass:"rank-girl" },
-  master: { label:"MASTER",   emoji:"🧪",  rowClass:"rank-master" }
+  master: { label:"MASTER",   emoji:"🧪",  rowClass:"rank-master" } // ✅ NEW
 };
 
 let ranksMap = {}; // uid -> rank
@@ -214,11 +214,11 @@ function escapeHtml(s=""){
 /* ✅ Fixed colors for rank names (ignore user's chosen nameColor for ranked users) */
 function rankNameColor(rank){
   switch(rank){
-    case "legend": return "#f97316";
-    case "girl":   return "#ec4899";
-    case "root":   return "#ef4444";
-    case "vip":    return "#2563eb";
-    case "master": return "#a3ff12";
+    case "legend": return "#f97316"; // Legendary orange
+    case "girl":   return "#ec4899"; // Girl pink
+    case "root":   return "#ef4444"; // Root red
+    case "vip":    return "#2563eb"; // VIP blue
+    case "master": return "#a3ff12"; // Master phosphoric
     default:       return null;
   }
 }
@@ -596,6 +596,7 @@ function loadIgnoreWindows(){
   catch{ ignoreWindows = {}; }
   refreshIgnoreCount();
 }
+
 function saveIgnoreWindows(){
   localStorage.setItem(ignoreKey(user.uid), JSON.stringify(ignoreWindows));
   refreshIgnoreCount();
@@ -1089,237 +1090,6 @@ function startRanksListener(){
   });
 }
 
-/* =========================================================
-   ✅✅✅ CAPSULES (PRO PATCH)
-   - per rank folder
-   - persists in RTDB under: capsules/{uid}
-   - visible to all
-   - MASTER has NO arrow
-========================================================= */
-
-const CAPSULES_PATH = "capsules"; // RTDB root
-let capsulesMap = {}; // uid -> { idx, file, rank, atMs }
-
-function rankKeyForCaps(uid, isRowAdmin){
-  if (isRowAdmin) return "admin";
-  const r = rankOf(uid) || "none";
-  return r;
-}
-
-function buildCapsuleList(rankKey){
-  // 5 images per rank, naming: <rank>/<rank>1.gif ... <rank>5.gif
-  // paths are relative to chat/js/room.js -> ../media/ranks/...
-  if (!rankKey || rankKey === "none") return [];
-  if (rankKey === "master") return []; // no capsules for master
-  const base = `../media/ranks/${rankKey}`;
-  const prefix = rankKey;
-  const out = [];
-  for (let i=1;i<=5;i++){
-    out.push(`${base}/${prefix}${i}.gif`);
-  }
-  return out;
-}
-
-function startCapsulesListener(){
-  onValue(ref(rtdb, CAPSULES_PATH), (snap)=>{
-    capsulesMap = snap.val() || {};
-    // بعد ما تجينا كبسولات، نعيد رسم الأونلاين (لأنها بتتولد من listener onlineUsers)
-    // ما نعمل onValue تاني، بس نطبق على DOM الحالي
-    try{ applyCapsulesToOnlineDom(); }catch{}
-  });
-}
-
-function getCapsuleIdx(uid){
-  const x = capsulesMap?.[uid];
-  const idx = Number(x?.idx ?? 0);
-  return Number.isFinite(idx) ? idx : 0;
-}
-
-async function setMyCapsule(idx){
-  if (!user) return;
-  const isMineAdmin = isAdmin === true;
-  const rk = rankKeyForCaps(user.uid, isMineAdmin);
-
-  // MASTER ممنوع
-  if (rk === "master" || rk === "none") return;
-
-  const list = buildCapsuleList(rk);
-  const i = Math.max(0, Math.min(list.length, Number(idx||0)));
-  await set(ref(rtdb, `${CAPSULES_PATH}/${user.uid}`), {
-    idx: i,                 // 0 = reset
-    rank: rk,
-    atMs: nowMs()
-  });
-
-  // اختياري: نخزنها في onlineUsers لتسهيل debug (مش ضروري)
-  try{ await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsuleIdx: i }); }catch{}
-}
-
-let capDropEl = null;
-let capDropForUid = null;
-
-function ensureCapDropdown(){
-  if (capDropEl) return capDropEl;
-
-  capDropEl = document.createElement("div");
-  capDropEl.className = "capDropdown";
-  capDropEl.style.display = "none";
-  capDropEl.innerHTML = `
-    <div class="capGrid" id="capGrid"></div>
-    <button class="capReset" type="button">🧽 افتراضي</button>
-  `;
-  document.body.appendChild(capDropEl);
-
-  // close on outside click
-  document.addEventListener("mousedown", (e)=>{
-    if (!capDropEl) return;
-    if (capDropEl.style.display !== "block") return;
-    if (capDropEl.contains(e.target)) return;
-    if (e.target?.closest?.(".capArrow")) return;
-    hideCapDropdown();
-  });
-
-  // close on ESC
-  document.addEventListener("keydown", (e)=>{
-    if (e.key === "Escape") hideCapDropdown();
-  });
-
-  // close on scroll/resize (prevents weird positioning)
-  window.addEventListener("scroll", ()=>{ if (capDropEl?.style.display === "block") hideCapDropdown(); }, { passive:true });
-  window.addEventListener("resize", ()=>{ if (capDropEl?.style.display === "block") hideCapDropdown(); });
-
-  return capDropEl;
-}
-
-function fillCapDropdownForRank(rankKey){
-  const el = ensureCapDropdown();
-  const grid = el.querySelector("#capGrid");
-  if (!grid) return;
-
-  grid.innerHTML = "";
-
-  const list = buildCapsuleList(rankKey);
-  list.forEach((src, idx0)=>{
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "capOpt";
-    btn.innerHTML = `<img src="${src}" alt="capsule-${idx0+1}" loading="lazy">`;
-    btn.addEventListener("click", async ()=>{
-      // idx in db is 1..5, 0 reset
-      await setMyCapsule(idx0 + 1);
-      hideCapDropdown();
-    });
-    grid.appendChild(btn);
-  });
-
-  el.querySelector(".capReset")?.addEventListener("click", async ()=>{
-    await setMyCapsule(0);
-    hideCapDropdown();
-  }, { once:true });
-}
-
-function showCapDropdown(anchorBtn, rankKey){
-  const el = ensureCapDropdown();
-  fillCapDropdownForRank(rankKey);
-
-  // open
-  el.style.display = "block";
-
-  // position fixed near button
-  const r = anchorBtn.getBoundingClientRect();
-  const w = el.offsetWidth || 280;
-  const h = el.offsetHeight || 120;
-
-  const left = Math.max(12, Math.min(window.innerWidth - 12 - w, r.left));
-  const top  = Math.max(12, Math.min(window.innerHeight - 12 - h, r.bottom + 10));
-
-  el.style.left = Math.round(left) + "px";
-  el.style.top  = Math.round(top) + "px";
-}
-function hideCapDropdown(){
-  if (!capDropEl) return;
-  capDropEl.style.display = "none";
-  capDropForUid = null;
-}
-
-/* ✅ apply capsule preview inside online list DOM */
-function applyCapsulesToOnlineDom(){
-  const rows = Array.from(document.querySelectorAll("#onlineList .userRow"));
-  if (!rows.length) return;
-
-  rows.forEach(row=>{
-    const uid = row.dataset?.uid;
-    if (!uid) return;
-
-    const isRowAdmin = row.classList.contains("admin") || ADMIN_UIDS.includes(uid);
-    const rk = rankKeyForCaps(uid, isRowAdmin);
-
-    // MASTER / none: remove capsule ui if exists
-    if (!rk || rk === "none" || rk === "master"){
-      row.querySelector(".capsuleMini")?.remove();
-      row.querySelector(".capArrow")?.remove();
-      return;
-    }
-
-    // status line
-    const statusLine = row.querySelector(".userMeta > span");
-    if (!statusLine) return;
-
-    // add/refresh capsule image
-    const idx = getCapsuleIdx(uid); // 0..5
-    const list = buildCapsuleList(rk);
-    const src = (idx >= 1 && idx <= list.length) ? list[idx-1] : null;
-
-    let img = statusLine.querySelector(".capsuleMini");
-    if (!src){
-      if (img) img.remove();
-    } else {
-      if (!img){
-        img = document.createElement("img");
-        img.className = "capsuleMini";
-        img.alt = "capsule";
-        img.style.width = "34px";
-        img.style.height = "18px";
-        img.style.objectFit = "cover";
-        img.style.borderRadius = "8px";
-        img.style.border = "1px solid rgba(250,204,21,.25)";
-        img.style.boxShadow = "0 8px 18px rgba(0,0,0,.35)";
-        img.style.marginInlineStart = "8px";
-        statusLine.appendChild(img);
-      }
-      if (img.getAttribute("src") !== src) img.src = src;
-    }
-
-    // arrow only for MY row (and admin if admin)
-    const isMyRow = (user && uid === user.uid);
-    const shouldHaveArrow = isMyRow && (isAdmin || hasAnyRank(user.uid)) && (rk !== "master");
-
-    let arrow = statusLine.querySelector(".capArrow");
-    if (!shouldHaveArrow){
-      if (arrow) arrow.remove();
-      return;
-    }
-
-    if (!arrow){
-      arrow = document.createElement("button");
-      arrow.type = "button";
-      arrow.className = "capArrow";
-      arrow.title = "تغيير الكبسولة";
-      arrow.textContent = "🔽";
-      arrow.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        if (capDropEl && capDropEl.style.display === "block") hideCapDropdown();
-        else showCapDropdown(arrow, rk);
-      });
-      statusLine.appendChild(arrow);
-    }
-  });
-}
-
-/* =========================
-   ✅ Online Users
-========================= */
-
 function startOnlineListener(){
   onValue(ref(rtdb, "onlineUsers"), (snap)=>{
     const users = snap.val() || {};
@@ -1337,6 +1107,7 @@ function startOnlineListener(){
       const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
       const row = document.createElement("div");
 
+      // ✅ FIX: مهم لسهم الكبسولة
       row.dataset.uid = u.uid;
 
       const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
@@ -1370,7 +1141,7 @@ function startOnlineListener(){
             <span class="devIcon" title="الجهاز">${devIcon}</span>
             <span>${escapeHtml(u.statusText || statusLabel(u.status || "online"))}</span>
           </span>
-          ${u.uid === user?.uid ? `<span class="miniPill" style="color:${escapeHtml(effectiveNameColorFor(user.uid, profile?.nameColor||"#facc15"))};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
+          ${u.uid === user.uid ? `<span class="miniPill" style="color:${escapeHtml(effectiveNameColorFor(user.uid, profile?.nameColor||"#facc15"))};border-color:rgba(250,204,21,.55)">أنت</span>` : ""}
         </span>
       `;
       row.appendChild(left);
@@ -1393,7 +1164,7 @@ function startOnlineListener(){
         actions.appendChild(dots);
       }
 
-      if (user && u.uid !== user.uid){
+      if (u.uid !== user.uid){
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "ignoreBtn";
@@ -1454,15 +1225,8 @@ function startOnlineListener(){
       row.appendChild(actions);
       onlineList?.appendChild(row);
     });
-
-    // ✅ after render: apply capsule UI + preview
-    try{ applyCapsulesToOnlineDom(); }catch{}
   });
 }
-
-/* =========================
-   ✅ Messages rendering
-========================= */
 
 function renderMsgTextToHtml(text){
   let esc = escapeHtml(text || "");
@@ -1895,7 +1659,6 @@ async function enterChat(statusVal){
   loadIgnoreWindows();
   startGlobalBgListener();
   startRanksListener();
-  startCapsulesListener();     // ✅ NEW
   startClearMetaListener();
   startRoomLockListener();
   startOnlineListener();
@@ -1976,3 +1739,122 @@ function startDhikrLoop(){
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
 }
+
+/* =========================================================
+   ✅ Capsule Arrow (Online List) - SAFE PATCH
+   ضعه آخر room.js (تم تثبيته هنا بشكل صحيح)
+========================================================= */
+
+const CAPSULE_PREVIEW_IMAGES = [
+  "../media/ranks/capsule1.gif",
+  "../media/ranks/capsule2.gif",
+  "../media/ranks/capsule3.gif",
+  "../media/ranks/capsule4.gif",
+  "../media/ranks/capsule5.gif",
+];
+
+
+let capDropEl = null;
+
+function ensureCapDropdown(){
+  if (capDropEl) return capDropEl;
+
+  capDropEl = document.createElement("div");
+  capDropEl.className = "capDropdown";
+  capDropEl.innerHTML = `
+    <div class="capGrid" id="capGrid"></div>
+    <button class="capReset" type="button">🧽 افتراضي</button>
+  `;
+  document.body.appendChild(capDropEl);
+
+  // build images
+  const grid = capDropEl.querySelector("#capGrid");
+  CAPSULE_PREVIEW_IMAGES.forEach((src, idx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "capOpt";
+    btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
+    btn.addEventListener("click", () => {
+      const target = document.getElementById(`capsulePick${idx+1}`);
+      if (target) target.click();
+      hideCapDropdown();
+    });
+    grid.appendChild(btn);
+  });
+
+  // reset
+  capDropEl.querySelector(".capReset")?.addEventListener("click", () => {
+    const target = document.getElementById("capsuleReset");
+    if (target) target.click();
+    hideCapDropdown();
+  });
+
+  // close on outside click
+  document.addEventListener("mousedown", (e) => {
+    if (!capDropEl) return;
+    if (capDropEl.style.display !== "block") return;
+    if (capDropEl.contains(e.target)) return;
+    // لو كبست على السهم نفسه لا تسكر فوراً
+    if (e.target && e.target.classList && e.target.classList.contains("capArrow")) return;
+    hideCapDropdown();
+  });
+
+  // close on ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") hideCapDropdown();
+  });
+
+  return capDropEl;
+}
+
+function showCapDropdown(anchorBtn){
+  const el = ensureCapDropdown();
+  const r = anchorBtn.getBoundingClientRect();
+  el.style.display = "block"; // أولاً عشان offsetWidth يكون صحيح
+  const w = el.offsetWidth || 280;
+  el.style.left = Math.max(12, Math.min(window.innerWidth - 12 - w, r.left)) + "px";
+  el.style.top  = (r.bottom + 10) + "px";
+}
+function hideCapDropdown(){
+  if (!capDropEl) return;
+  capDropEl.style.display = "none";
+}
+
+// ✅ نضيف السهم بجانب “الحالة تحت الاسم” لصفّك أنت فقط
+function attachCapsuleArrowToMyRow(){
+  if (!user || !user.uid) return;
+
+  const rows = Array.from(document.querySelectorAll("#onlineList .userRow"));
+  if (!rows.length) return;
+
+  // يعتمد على dataset.uid (أضفناه بالأعلى)
+  const myRow = rows.find(r => r.dataset && r.dataset.uid === user.uid);
+  if (!myRow) return;
+
+  // سطر الحالة: .userMeta > span (هو الثاني)
+  const statusLine = myRow.querySelector(".userMeta > span");
+  if (!statusLine) return;
+
+  // لا تكرر
+  if (statusLine.querySelector(".capArrow")) return;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "capArrow";
+  btn.title = "تغيير الكبسولة";
+  btn.textContent = "🔽";
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const el = ensureCapDropdown();
+    if (el.style.display === "block") hideCapDropdown();
+    else showCapDropdown(btn);
+  });
+
+  statusLine.appendChild(btn);
+}
+
+// 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
+setInterval(attachCapsuleArrowToMyRow, 800);
+
+
