@@ -179,7 +179,7 @@ body{
 }
 .userRow.rank-vip{
   background:linear-gradient(135deg, rgba(37,99,235,.38), rgba(0,0,0,.75));
-  background-image: url("../media/ranks/vip.gif");
+  background-image: url("../media/ranks/vip1.gif");
   background-size:cover;
   background-position:center;
   border-color:rgba(37,99,235,.35);
@@ -970,3 +970,4 @@ select,input{
 
 /* (JS will set proper colors per rank; CSS here is safety net)
    For MASTER we’ll color via JS when added; this CSS is reserved. */
+
