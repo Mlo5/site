@@ -172,21 +172,21 @@ body{
 /* ✅ Rank backgrounds apply to the WHOLE ROW (not only name) */
 .userRow.rank-legend{
   background:linear-gradient(135deg, rgba(239,68,68,.38), rgba(0,0,0,.75));
-  background-image: url("../media/ranks/legend.gif");
+  background-image: url("../media/ranks/legend1.gif");
   background-size:cover;
   background-position:center;
   border-color:rgba(239,68,68,.35);
 }
 .userRow.rank-vip{
   background:linear-gradient(135deg, rgba(37,99,235,.38), rgba(0,0,0,.75));
-  background-image: url("../media/ranks/vip.gif");
+  background-image: url("../media/ranks/vip1.gif");
   background-size:cover;
   background-position:center;
   border-color:rgba(37,99,235,.35);
 }
 .userRow.rank-root{
   background:linear-gradient(135deg, rgba(249,115,22,.38), rgba(0,0,0,.75));
-  background-image: url("../media/ranks/root.gif");
+  background-image: url("../media/ranks/root1.gif");
   background-size:cover;
   background-position:center;
   border-color:rgba(249,115,22,.35);
@@ -970,3 +970,4 @@ select,input{
 
 /* (JS will set proper colors per rank; CSS here is safety net)
    For MASTER we’ll color via JS when added; this CSS is reserved. */
+
