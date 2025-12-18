@@ -11,7 +11,8 @@ import { getDatabase, ref, set, onDisconnect, onValue, remove, update } from "ht
 const firebaseConfig = {
   apiKey: "AIzaSyBnxruqFdBHEHTSVXl-QK848lsGvwBBH9U",
   authDomain: "mlo5-users.firebaseapp.com",
-  databaseURL: "Yhttps://mlo5-users-default-rtdb.firebaseio.com",
+  // ✅ FIX: كان فيها Y بالغلط
+  databaseURL: "https://mlo5-users-default-rtdb.firebaseio.com",
   projectId: "mlo5-users",
   appId: "1:142086858806:web:64c50f3a8d6250a2049097"
 };
@@ -1035,8 +1036,8 @@ function bgUrlFromChoice(n){
   if (nn === 1) return 'url("back1.gif")';
   if (nn === 2) return 'url("back2.gif")';
   if (nn === 3) return 'url("back3.gif")';
-  if (nn === 4) return 'url("back4.gif")'; // ✅ NEW
-  if (nn === 5) return 'url("back5.gif")'; // ✅ NEW
+  if (nn === 4) return 'url("back4.gif")';
+  if (nn === 5) return 'url("back5.gif")';
   return "none";
 }
 function applySiteBg(choice){
@@ -1099,12 +1100,15 @@ function startOnlineListener(){
 
     arr.sort((a,b)=>{
       const aAdmin = (a.isAdmin === true) || ADMIN_UIDS.includes(a.uid);
-      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid); // ✅ FIX
+      const bAdmin = (b.isAdmin === true) || ADMIN_UIDS.includes(b.uid);
       if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
       return (a.name||"").localeCompare(b.name||"");
     }).forEach((u)=>{
       const isRowAdmin = (u.isAdmin === true) || ADMIN_UIDS.includes(u.uid);
       const row = document.createElement("div");
+
+      // ✅ FIX: مهم لسهم الكبسولة
+      row.dataset.uid = u.uid;
 
       const ru = isRowAdmin ? "none" : (u.rank || rankOf(u.uid));
       const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
@@ -1734,10 +1738,12 @@ function startDhikrLoop(){
   __dhikrStarted = true;
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
-  // =========================
-// Capsule Arrow (Online List) - SAFE PATCH
-// ضعه آخر room.js
-// =========================
+}
+
+/* =========================================================
+   ✅ Capsule Arrow (Online List) - SAFE PATCH
+   ضعه آخر room.js (تم تثبيته هنا بشكل صحيح)
+========================================================= */
 
 // 👇 عدّل روابط الصور هون لتطابق صور كبسولاتك الفعلية (مهم)
 const CAPSULE_PREVIEW_IMAGES = [
@@ -1749,6 +1755,7 @@ const CAPSULE_PREVIEW_IMAGES = [
 ];
 
 let capDropEl = null;
+
 function ensureCapDropdown(){
   if (capDropEl) return capDropEl;
 
@@ -1776,7 +1783,7 @@ function ensureCapDropdown(){
   });
 
   // reset
-  capDropEl.querySelector(".capReset").addEventListener("click", () => {
+  capDropEl.querySelector(".capReset")?.addEventListener("click", () => {
     const target = document.getElementById("capsuleReset");
     if (target) target.click();
     hideCapDropdown();
@@ -1803,9 +1810,10 @@ function ensureCapDropdown(){
 function showCapDropdown(anchorBtn){
   const el = ensureCapDropdown();
   const r = anchorBtn.getBoundingClientRect();
-  el.style.left = Math.max(12, Math.min(window.innerWidth - 12 - el.offsetWidth, r.left)) + "px";
+  el.style.display = "block"; // أولاً عشان offsetWidth يكون صحيح
+  const w = el.offsetWidth || 280;
+  el.style.left = Math.max(12, Math.min(window.innerWidth - 12 - w, r.left)) + "px";
   el.style.top  = (r.bottom + 10) + "px";
-  el.style.display = "block";
 }
 function hideCapDropdown(){
   if (!capDropEl) return;
@@ -1814,27 +1822,17 @@ function hideCapDropdown(){
 
 // ✅ نضيف السهم بجانب “الحالة تحت الاسم” لصفّك أنت فقط
 function attachCapsuleArrowToMyRow(){
-  // لازم يكون عندك متغير user (Firebase auth user) موجود أصلاً في room.js
-  if (!window.user && typeof user === "undefined") return;
-  const me = window.user || user;
-  if (!me || !me.uid) return;
+  if (!user || !user.uid) return;
 
-  // دور على صفّي (افتراض: اليوزررو فيه data-uid أو id.. إذا مش موجود بنحاول طريقة ثانية)
   const rows = Array.from(document.querySelectorAll("#onlineList .userRow"));
   if (!rows.length) return;
 
-  // أفضلية: data-uid
-  let myRow = rows.find(r => r.dataset && r.dataset.uid === me.uid);
-
-  // fallback: إذا عندك كلاس "me" أو badge "أنت"
-  if (!myRow){
-    myRow = rows.find(r => r.querySelector("#meBadge")) || null;
-  }
-
+  // يعتمد على dataset.uid (أضفناه بالأعلى)
+  const myRow = rows.find(r => r.dataset && r.dataset.uid === user.uid);
   if (!myRow) return;
 
-  // المكان: سطر الحالة تحت الاسم (عادة داخل .userMeta span)
-  const statusLine = myRow.querySelector(".userMeta span");
+  // سطر الحالة: .userMeta > span (هو الثاني)
+  const statusLine = myRow.querySelector(".userMeta > span");
   if (!statusLine) return;
 
   // لا تكرر
@@ -1858,7 +1856,3 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
-
-}
-
-
