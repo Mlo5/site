@@ -1734,5 +1734,131 @@ function startDhikrLoop(){
   __dhikrStarted = true;
   setTimeout(showDhikr, 1500);
   setInterval(showDhikr, 30000);
+  // =========================
+// Capsule Arrow (Online List) - SAFE PATCH
+// ضعه آخر room.js
+// =========================
+
+// 👇 عدّل روابط الصور هون لتطابق صور كبسولاتك الفعلية (مهم)
+const CAPSULE_PREVIEW_IMAGES = [
+  "../media/ranks/capsule1.gif",
+  "../media/ranks/capsule2.gif",
+  "../media/ranks/capsule3.gif",
+  "../media/ranks/capsule4.gif",
+  "../media/ranks/capsule5.gif",
+];
+
+let capDropEl = null;
+function ensureCapDropdown(){
+  if (capDropEl) return capDropEl;
+
+  capDropEl = document.createElement("div");
+  capDropEl.className = "capDropdown";
+  capDropEl.innerHTML = `
+    <div class="capGrid" id="capGrid"></div>
+    <button class="capReset" type="button">🧽 افتراضي</button>
+  `;
+  document.body.appendChild(capDropEl);
+
+  // build images
+  const grid = capDropEl.querySelector("#capGrid");
+  CAPSULE_PREVIEW_IMAGES.forEach((src, idx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "capOpt";
+    btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
+    btn.addEventListener("click", () => {
+      const target = document.getElementById(`capsulePick${idx+1}`);
+      if (target) target.click();
+      hideCapDropdown();
+    });
+    grid.appendChild(btn);
+  });
+
+  // reset
+  capDropEl.querySelector(".capReset").addEventListener("click", () => {
+    const target = document.getElementById("capsuleReset");
+    if (target) target.click();
+    hideCapDropdown();
+  });
+
+  // close on outside click
+  document.addEventListener("mousedown", (e) => {
+    if (!capDropEl) return;
+    if (capDropEl.style.display !== "block") return;
+    if (capDropEl.contains(e.target)) return;
+    // لو كبست على السهم نفسه لا تسكر فوراً
+    if (e.target && e.target.classList && e.target.classList.contains("capArrow")) return;
+    hideCapDropdown();
+  });
+
+  // close on ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") hideCapDropdown();
+  });
+
+  return capDropEl;
 }
+
+function showCapDropdown(anchorBtn){
+  const el = ensureCapDropdown();
+  const r = anchorBtn.getBoundingClientRect();
+  el.style.left = Math.max(12, Math.min(window.innerWidth - 12 - el.offsetWidth, r.left)) + "px";
+  el.style.top  = (r.bottom + 10) + "px";
+  el.style.display = "block";
+}
+function hideCapDropdown(){
+  if (!capDropEl) return;
+  capDropEl.style.display = "none";
+}
+
+// ✅ نضيف السهم بجانب “الحالة تحت الاسم” لصفّك أنت فقط
+function attachCapsuleArrowToMyRow(){
+  // لازم يكون عندك متغير user (Firebase auth user) موجود أصلاً في room.js
+  if (!window.user && typeof user === "undefined") return;
+  const me = window.user || user;
+  if (!me || !me.uid) return;
+
+  // دور على صفّي (افتراض: اليوزررو فيه data-uid أو id.. إذا مش موجود بنحاول طريقة ثانية)
+  const rows = Array.from(document.querySelectorAll("#onlineList .userRow"));
+  if (!rows.length) return;
+
+  // أفضلية: data-uid
+  let myRow = rows.find(r => r.dataset && r.dataset.uid === me.uid);
+
+  // fallback: إذا عندك كلاس "me" أو badge "أنت"
+  if (!myRow){
+    myRow = rows.find(r => r.querySelector("#meBadge")) || null;
+  }
+
+  if (!myRow) return;
+
+  // المكان: سطر الحالة تحت الاسم (عادة داخل .userMeta span)
+  const statusLine = myRow.querySelector(".userMeta span");
+  if (!statusLine) return;
+
+  // لا تكرر
+  if (statusLine.querySelector(".capArrow")) return;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "capArrow";
+  btn.title = "تغيير الكبسولة";
+  btn.textContent = "⌄";
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const el = ensureCapDropdown();
+    if (el.style.display === "block") hideCapDropdown();
+    else showCapDropdown(btn);
+  });
+
+  statusLine.appendChild(btn);
+}
+
+// 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
+setInterval(attachCapsuleArrowToMyRow, 800);
+
+}
+
 
