@@ -6,7 +6,7 @@
 */
 
 (function () {
-  const radioBtn = document.getElementById("radioBtn");
+  const radioBtn = document.getElementById("adminPanelRadio") || document.getElementById("radioBtn");
   const radioMenu = document.getElementById("radioMenu");
 
   const playBtn = document.getElementById("radioPlayBtn");
@@ -148,7 +148,7 @@
   document.addEventListener("click",(e)=>{
     if (!radioMenu || radioMenu.style.display !== "block") return;
     if (e.target?.closest?.("#radioMenu")) return;
-    if (e.target?.closest?.("#radioBtn")) return;
+    if (e.target?.closest?.("#adminPanelRadio") || e.target?.closest?.("#radioBtn")) return;
     hideMenu();
   });
 
@@ -160,3 +160,4 @@
   // Default volume init
   audio.volume = getSavedVol();
 })();
+
