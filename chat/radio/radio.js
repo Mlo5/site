@@ -1,163 +1,177 @@
-/* chat/radio/radio.js
-   يعتمد على وجود عناصر بالـ HTML:
-   - #radioBtn
-   - #radioMenu
-   - #radioPlayBtn #radioStopBtn #radioSetUrlBtn
-*/
+// chat/radio/radio.js
+(() => {
+  "use strict";
 
-(function () {
-  const radioBtn = document.getElementById("adminPanelRadio") || document.getElementById("radioBtn");
-  const radioMenu = document.getElementById("radioMenu");
+  const STORAGE_KEY = "mlo5_radio_url";
+  const DEFAULT_URL = ""; // اتركه فاضي، أو حط رابط افتراضي لو بدك
 
-  const playBtn = document.getElementById("radioPlayBtn");
-  const stopBtn = document.getElementById("radioStopBtn");
-  const setUrlBtn = document.getElementById("radioSetUrlBtn");
+  let audio = null;
 
-  // audio element (hidden)
-  const audio = new Audio();
-  audio.preload = "none";
-  audio.crossOrigin = "anonymous";
-  audio.volume = 1.0;
+  function $(sel) { return document.querySelector(sel); }
 
-  // Local storage keys
-  const URL_KEY = "mlo5_radio_url";
-  const VOL_KEY = "mlo5_radio_vol";
-
-  function getSavedUrl(){
-    return localStorage.getItem(URL_KEY) || "";
-  }
-  function setSavedUrl(url){
-    localStorage.setItem(URL_KEY, url);
-  }
-  function getSavedVol(){
-    const v = Number(localStorage.getItem(VOL_KEY));
-    return Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 1.0;
-  }
-  function setSavedVol(v){
-    localStorage.setItem(VOL_KEY, String(v));
+  function getRadioButtons() {
+    // ✅ يدعم الزر اللي فوق + الزر داخل قائمة الأدمن
+    const a = document.getElementById("radioBtn");
+    const b = document.getElementById("adminPanelRadio");
+    return [a, b].filter(Boolean);
   }
 
-  function showMenuAt(x,y){
-    if (!radioMenu) return;
-    radioMenu.style.left = x + "px";
-    radioMenu.style.top  = y + "px";
-    radioMenu.style.display = "block";
-    radioMenu.setAttribute("aria-hidden","false");
-  }
-  function hideMenu(){
-    if (!radioMenu) return;
-    radioMenu.style.display = "none";
-    radioMenu.setAttribute("aria-hidden","true");
+  function getMenu() {
+    return document.getElementById("radioMenu");
   }
 
-  // inject simple status UI inside menu once
-  function ensureStatusUI(){
-    if (!radioMenu) return;
-    if (radioMenu.querySelector(".radioState")) return;
+  function showMenu(anchorEl) {
+    const menu = getMenu();
+    if (!menu || !anchorEl) return;
 
-    const state = document.createElement("div");
-    state.className = "radioState";
-    state.textContent = "الراديو: جاهز";
+    const r = anchorEl.getBoundingClientRect();
+    menu.style.display = "block";
+    menu.setAttribute("aria-hidden", "false");
 
-    radioMenu.appendChild(state);
+    // تموضع ذكي
+    const w = menu.offsetWidth || 220;
+    const left = Math.max(12, Math.min(window.innerWidth - w - 12, Math.round(r.left)));
+    const top = Math.round(r.bottom + 10);
 
-    // optional: volume slider
-    const row = document.createElement("div");
-    row.className = "radioUrlRow";
-    row.innerHTML = `
-      <input id="radioUrlInput" placeholder="ضع رابط بث الراديو هنا..." autocomplete="off" />
-      <input id="radioVolInput" type="number" min="0" max="100" step="1" style="width:90px" title="الصوت %" />
-    `;
-    radioMenu.appendChild(row);
-
-    const urlInput = radioMenu.querySelector("#radioUrlInput");
-    const volInput = radioMenu.querySelector("#radioVolInput");
-
-    if (urlInput) urlInput.value = getSavedUrl();
-    if (volInput) volInput.value = String(Math.round(getSavedVol()*100));
-
-    // live update volume
-    volInput?.addEventListener("change", ()=>{
-      const v = Math.min(100, Math.max(0, Number(volInput.value || 100)));
-      const vv = v/100;
-      audio.volume = vv;
-      setSavedVol(vv);
-      state.textContent = `الصوت: ${v}%`;
-    });
-
-    // expose helper to update state
-    radioMenu.__setRadioState = (txt)=>{ state.textContent = txt; };
-    radioMenu.__getUrlInput = ()=> urlInput;
+    menu.style.left = left + "px";
+    menu.style.top = top + "px";
   }
 
-  function setState(txt){
-    if (radioMenu?.__setRadioState) radioMenu.__setRadioState(txt);
+  function hideMenu() {
+    const menu = getMenu();
+    if (!menu) return;
+    menu.style.display = "none";
+    menu.setAttribute("aria-hidden", "true");
   }
 
-  async function play(){
-    const url = getSavedUrl().trim();
-    if (!url){
-      setState("❌ لا يوجد رابط.\nاضغط (تعيين رابط) وضع رابط البث.");
+  function toggleMenu(anchorEl) {
+    const menu = getMenu();
+    if (!menu) return;
+    const open = menu.style.display === "block";
+    if (open) hideMenu();
+    else showMenu(anchorEl);
+  }
+
+  function getSavedUrl() {
+    try {
+      return localStorage.getItem(STORAGE_KEY) || DEFAULT_URL;
+    } catch {
+      return DEFAULT_URL;
+    }
+  }
+
+  function saveUrl(url) {
+    try { localStorage.setItem(STORAGE_KEY, url); } catch {}
+  }
+
+  function ensureAudio() {
+    if (audio) return audio;
+    audio = new Audio();
+    audio.crossOrigin = "anonymous";
+    audio.preload = "none";
+    audio.volume = 1.0;
+    return audio;
+  }
+
+  async function playRadio() {
+    const url = getSavedUrl();
+    if (!url) {
+      alert("حط رابط الراديو أولاً من (تعيين رابط).");
       return;
     }
-    try{
-      audio.src = url;
-      audio.volume = getSavedVol();
-      await audio.play();
-      setState("✅ يعمل الآن");
-    }catch(e){
-      setState("❌ فشل التشغيل.\nتأكد أن الرابط مباشر للبث (mp3/aac/stream) ومسموح من المتصفح.");
+    const a = ensureAudio();
+    if (a.src !== url) a.src = url;
+
+    try {
+      await a.play();
+    } catch (e) {
       console.error(e);
+      alert("تعذّر التشغيل. جرّب رابط مختلف أو تأكد أنه Stream مباشر (mp3/aac).");
     }
   }
 
-  function stop(){
-    try{ audio.pause(); }catch{}
-    try{ audio.currentTime = 0; }catch{}
-    setState("⏹️ تم الإيقاف");
+  function stopRadio() {
+    if (!audio) return;
+    try {
+      audio.pause();
+      audio.currentTime = 0;
+    } catch {}
   }
 
-  function promptSetUrl(){
-    ensureStatusUI();
-    const urlInput = radioMenu?.__getUrlInput?.();
-    const current = (urlInput?.value || getSavedUrl() || "").trim();
-    const next = prompt("ضع رابط بث الراديو (Stream URL):", current);
-    if (!next) return;
-    const clean = String(next).trim();
-    setSavedUrl(clean);
-    if (urlInput) urlInput.value = clean;
-    setState("🔗 تم حفظ الرابط");
+  function setUrlFlow() {
+    const current = getSavedUrl() || "";
+    const url = prompt("حط رابط الراديو (Stream URL):", current);
+    if (!url) return;
+
+    const cleaned = String(url).trim();
+    saveUrl(cleaned);
+
+    // لو شغال، بدّل الرابط فورًا
+    if (audio && !audio.paused) {
+      audio.pause();
+      audio.src = cleaned;
+      audio.play().catch(()=>{});
+    }
   }
 
-  // Events
-  radioBtn?.addEventListener("click", (e)=>{
-    e.preventDefault();
-    e.stopPropagation();
-    ensureStatusUI();
-    const r = radioBtn.getBoundingClientRect();
-    const open = radioMenu?.style.display === "block";
-    if (open) hideMenu();
-    else showMenuAt(Math.round(r.left), Math.round(r.bottom + 8));
+  function bindMenuActions() {
+    const playBtn = document.getElementById("radioPlayBtn");
+    const stopBtn = document.getElementById("radioStopBtn");
+    const setUrlBtn = document.getElementById("radioSetUrlBtn");
+
+    playBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      playRadio();
+      hideMenu();
+    });
+
+    stopBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      stopRadio();
+      hideMenu();
+    });
+
+    setUrlBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      setUrlFlow();
+      hideMenu();
+    });
+  }
+
+  function bindButtons() {
+    const btns = getRadioButtons();
+    btns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMenu(btn);
+      });
+    });
+  }
+
+  function bindGlobalClose() {
+    document.addEventListener("click", (e) => {
+      const menu = getMenu();
+      if (!menu || menu.style.display !== "block") return;
+
+      if (e.target?.closest?.("#radioMenu")) return;
+
+      // لو كبست على أي زر من أزرار الراديو لا تسكر فوراً
+      const btns = getRadioButtons();
+      if (btns.some(b => e.target === b || e.target?.closest?.("#" + b.id))) return;
+
+      hideMenu();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") hideMenu();
+    });
+  }
+
+  // ✅ ابدأ بعد ما الصفحة تجهز
+  window.addEventListener("DOMContentLoaded", () => {
+    bindButtons();
+    bindMenuActions();
+    bindGlobalClose();
   });
-
-  playBtn?.addEventListener("click", (e)=>{ e.preventDefault(); play(); });
-  stopBtn?.addEventListener("click", (e)=>{ e.preventDefault(); stop(); });
-  setUrlBtn?.addEventListener("click", (e)=>{ e.preventDefault(); promptSetUrl(); });
-
-  // close on outside
-  document.addEventListener("click",(e)=>{
-    if (!radioMenu || radioMenu.style.display !== "block") return;
-    if (e.target?.closest?.("#radioMenu")) return;
-    if (e.target?.closest?.("#adminPanelRadio") || e.target?.closest?.("#radioBtn")) return;
-    hideMenu();
-  });
-
-  // close on ESC
-  document.addEventListener("keydown",(e)=>{
-    if (e.key === "Escape") hideMenu();
-  });
-
-  // Default volume init
-  audio.volume = getSavedVol();
 })();
-
