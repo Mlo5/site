@@ -14,7 +14,7 @@
   const setUrlBtn = document.getElementById("radioSetUrlBtn");
 
   // ✅ فيديو واحد (بدّل الـ ID يدوي)
-  const DEFAULT_VIDEO_ID = "dQw4w9WgXcQ"; // <-- غيّره لأي فيديو
+  const DEFAULT_VIDEO_ID = "aM2kTHpZnsM"; // <-- غيّره لأي فيديو
 
   // RTDB path
   const RADIO_PATH = "roomState/radio";
@@ -306,3 +306,4 @@
   // ✅ Start
   startRadioListener();
 })();
+
