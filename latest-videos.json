@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2025-12-18T11:32:38Z",
+  "generatedAt": "2025-12-18T13:50:01Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "الكأس أردني 🇯🇴 #كأس_العرب",
+      "url": "https://www.youtube.com/shorts/v9thnUMgVFo",
+      "type": "long",
+      "duration": "",
+      "date": "2025-12-18",
+      "thumb": "https://i.ytimg.com/vi/v9thnUMgVFo/hqdefault.jpg",
+      "videoId": "v9thnUMgVFo"
+    },
     {
       "title": "بنيت موقع كامل بالذكاء الاصطناعي!",
       "url": "https://www.youtube.com/watch?v=ALoi9t-OVN8",
@@ -127,15 +136,6 @@
       "date": "2025-12-06",
       "thumb": "https://i.ytimg.com/vi/Oqz18fuu0eo/hqdefault.jpg",
       "videoId": "Oqz18fuu0eo"
-    },
-    {
-      "title": "بنيت أطول بيت في العالم! 😲",
-      "url": "https://www.youtube.com/watch?v=iz10e6Ed0nw",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-06",
-      "thumb": "https://i.ytimg.com/vi/iz10e6Ed0nw/hqdefault.jpg",
-      "videoId": "iz10e6Ed0nw"
     }
   ]
 }
