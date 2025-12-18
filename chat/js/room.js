@@ -1856,3 +1856,161 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+// =========================
+// Capsule Arrow (Online List) - RANK FILTERED
+// ضعه آخر room.js
+// =========================
+
+const CAPSULE_DIR = "../media/ranks/";
+
+// كل رتبة -> أسماء صورها (داخل نفس المجلد ranks)
+const CAPSULES_BY_RANK = {
+  vip:    ["vip1.gif","vip2.gif","vip3.gif"],
+  legend: ["legend1.gif","legend2.gif"],
+  root:   ["root1.gif","root2.gif"],
+  girl:   ["girl1.gif","girl2.gif"],
+  master: ["master1.gif","master2.gif"],
+
+  // اختياري: للناس بدون رتبة
+  user:   ["user1.gif","user2.gif"]
+};
+
+function myTierCapsules(){
+  // رتبتك من نظام الرتب الموجود عندك
+  const r = (typeof myRank === "function") ? myRank() : "none";
+
+  // الأدمن (اختياري): يشوف كل الكبسولات
+  if (typeof isAdmin !== "undefined" && isAdmin){
+    const all = [];
+    Object.values(CAPSULES_BY_RANK).forEach(arr => all.push(...arr));
+    return all.map(f => CAPSULE_DIR + f);
+  }
+
+  // لو رتبة معروفة
+  if (CAPSULES_BY_RANK[r]) return CAPSULES_BY_RANK[r].map(f => CAPSULE_DIR + f);
+
+  // بدون رتبة: يا إما user أو لا شيء
+  if (CAPSULES_BY_RANK.user) return CAPSULES_BY_RANK.user.map(f => CAPSULE_DIR + f);
+
+  return [];
+}
+
+let capDropEl = null;
+
+function ensureCapDropdown(){
+  if (capDropEl) return capDropEl;
+
+  capDropEl = document.createElement("div");
+  capDropEl.className = "capDropdown";
+  capDropEl.innerHTML = `
+    <div class="capGrid" id="capGrid"></div>
+    <button class="capReset" type="button">🧽 افتراضي</button>
+  `;
+  document.body.appendChild(capDropEl);
+
+  // reset
+  capDropEl.querySelector(".capReset").addEventListener("click", () => {
+    const target = document.getElementById("capsuleReset");
+    if (target) target.click();
+    hideCapDropdown();
+  });
+
+  // close on outside click
+  document.addEventListener("mousedown", (e) => {
+    if (!capDropEl) return;
+    if (capDropEl.style.display !== "block") return;
+    if (capDropEl.contains(e.target)) return;
+    if (e.target?.classList?.contains("capArrow")) return;
+    hideCapDropdown();
+  });
+
+  // close on ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") hideCapDropdown();
+  });
+
+  return capDropEl;
+}
+
+function rebuildCapsuleGrid(){
+  const el = ensureCapDropdown();
+  const grid = el.querySelector("#capGrid");
+  if (!grid) return;
+
+  const imgs = myTierCapsules();
+  grid.innerHTML = "";
+
+  imgs.forEach((src, idx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "capOpt";
+    btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
+
+    btn.addEventListener("click", () => {
+      // أنت عندك أزرار/inputs مخفية مثل capsulePick1,2,3...
+      // هنا نضغط على رقم الاختيار حسب idx+1
+      const target = document.getElementById(`capsulePick${idx+1}`);
+      if (target) target.click();
+      hideCapDropdown();
+    });
+
+    grid.appendChild(btn);
+  });
+}
+
+function showCapDropdown(anchorBtn){
+  const el = ensureCapDropdown();
+  rebuildCapsuleGrid(); // ✅ يعيد بناء القائمة حسب الرتبة الحالية
+
+  const r = anchorBtn.getBoundingClientRect();
+  el.style.display = "block";
+
+  // بعد display عشان offsetWidth يطلع صح
+  const w = el.offsetWidth || 260;
+  el.style.left = Math.max(12, Math.min(window.innerWidth - 12 - w, r.left)) + "px";
+  el.style.top  = (r.bottom + 10) + "px";
+}
+
+function hideCapDropdown(){
+  if (!capDropEl) return;
+  capDropEl.style.display = "none";
+}
+
+// ✅ السهم يظهر فقط إذا عندك كبسولات متاحة (رتبة/يوزر/أدمن)
+function attachCapsuleArrowToMyRow(){
+  const me = (window.user || (typeof user !== "undefined" ? user : null));
+  if (!me?.uid) return;
+
+  const rows = Array.from(document.querySelectorAll("#onlineList .userRow"));
+  if (!rows.length) return;
+
+  let myRow = rows.find(r => r.dataset?.uid === me.uid);
+  if (!myRow) return;
+
+  const statusLine = myRow.querySelector(".userMeta span");
+  if (!statusLine) return;
+
+  const allowed = myTierCapsules().length > 0;
+  if (!allowed) return;
+
+  if (statusLine.querySelector(".capArrow")) return;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "capArrow";
+  btn.title = "تغيير الكبسولة";
+  btn.textContent = "⌄";
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const el = ensureCapDropdown();
+    if (el.style.display === "block") hideCapDropdown();
+    else showCapDropdown(btn);
+  });
+
+  statusLine.appendChild(btn);
+}
+
+// لأن قائمة المتواجدين بتنعاد رسمها عندك
+setInterval(attachCapsuleArrowToMyRow, 800);
+
