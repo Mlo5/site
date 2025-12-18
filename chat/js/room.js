@@ -224,10 +224,6 @@ function rankNameColor(rank){
 }
 function effectiveNameColorFor(uid, fallback){
   const r = rankOf(uid);
-
-  // ✅ إذا بدون رتبة: خلي اللون أصفر دائمًا
-  if (!r || r === "none") return "#facc15";
-
   const c = rankNameColor(r);
   return c || (fallback || "#facc15");
 }
@@ -1313,7 +1309,7 @@ function renderMessagesFromSnap(snap){
       const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
       const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
 
-      const nmColor = isMsgAdmin ? "#fff" : effectiveNameColorFor(m.uid, m.nameColor || "#facc15");
+      const nmColor = isMsgAdmin ? "#fff" : (rankNameColor(r) || (m.nameColor || "#facc15"));
 
       const nameHtml = isMsgAdmin
         ? `${ADMIN_ICONS_HTML}<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
