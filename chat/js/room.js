@@ -1842,7 +1842,7 @@ function attachCapsuleArrowToMyRow(){
   btn.type = "button";
   btn.className = "capArrow";
   btn.title = "تغيير الكبسولة";
-  btn.textContent = "⌄";
+  btn.textContent = "🔽";
 
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -1856,5 +1856,6 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
