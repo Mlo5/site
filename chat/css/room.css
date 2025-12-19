@@ -1114,11 +1114,8 @@ select,input{
   50%{ transform:scale(0.88); opacity:.35; }
   100%{ transform:scale(1); opacity:1; }
 }
-#radioBtn{ display:inline-flex !important; }
 
-#radioSetUrlBtn{ display:none !important; }
 
-body[data-admin="1"] #radioSetUrlBtn{ display:block !important; }
 
 
 
