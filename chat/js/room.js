@@ -1889,7 +1889,7 @@ function ensureCapDropdown(){
   });
 
   return capDropEl;
-}
+
 
 function showCapDropdown(anchorBtn){
   const el = ensureCapDropdown();
@@ -1946,6 +1946,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
