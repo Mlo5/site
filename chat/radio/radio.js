@@ -17,15 +17,26 @@
   }
 
   // ✅ نحدد "هل هذا المستخدم أدمن؟" من واجهة الأدمن نفسها (بدون الاعتماد على room.js)
- function isAdminNow(){
-  return window.__MLO5_IS_ADMIN__ === true;
-}
+  function isAdminNow(){
+    if (window.__MLO5_IS_ADMIN__ === true) return true;
+    // لو زر السجل أو إدارة ظاهرين => أدمن
+    const logBtn = document.getElementById("logBtn");
+    const bgBtn  = document.getElementById("bgBtn");
+    if (isVisible(logBtn) || isVisible(bgBtn)) return true;
 
-function getRadioButtons() {
-  const a = document.getElementById("radioBtn");
-  const b = document.getElementById("adminPanelRadio");
-  return [a, b].filter(Boolean);
-}
+    // أو زر الراديو داخل لوحة الأدمن إذا كان ظاهر
+    const adminPanelRadio = document.getElementById("adminPanelRadio");
+    if (isVisible(adminPanelRadio)) return true;
+
+    return false;
+  }
+
+  function getRadioButtons() {
+    // ✅ يدعم الزر اللي فوق + الزر داخل قائمة الأدمن
+    const a = document.getElementById("radioBtn");
+    const b = document.getElementById("adminPanelRadio");
+    return [a, b].filter(Boolean);
+  }
 
   function getMenu() {
     return document.getElementById("radioMenu");
@@ -36,21 +47,16 @@ function getRadioButtons() {
   });
 }
 
-  function updateMenuPermissions() {
-  const menu = getMenu();
-  if (!menu) return;
-
-  const setUrlBtn = document.getElementById("radioSetUrlBtn");
-  if (setUrlBtn) setUrlBtn.style.display = isAdminNow() ? "block" : "none";
-}
+  function updateMenuPermissions(){
+    const setUrlBtn = document.getElementById("radioSetUrlBtn");
+    if (setUrlBtn){
+      setUrlBtn.style.display = isAdminNow() ? "block" : "none";
+    }
   }
 
   function showMenu(anchorEl) {
     const menu = getMenu();
     if (!menu || !anchorEl) return;
-     const setUrlBtn = document.getElementById("radioSetUrlBtn");
-  if (setUrlBtn) setUrlBtn.style.display = isAdminNow() ? "block" : "none";
-}
 
     // ✅ قبل الإظهار: اخفي/اظهر خيار تعيين الرابط حسب الأدمن
     updateMenuPermissions();
@@ -226,8 +232,4 @@ function getRadioButtons() {
     updateMenuPermissions();
   });
 })();
-
-
-
-
 
