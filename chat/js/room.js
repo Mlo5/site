@@ -1536,6 +1536,7 @@ if (adminLoginBtn){
     if (!uidAllowed){
       setErr(adminErr, "هذه الصلاحية غير متاحة لهذا الحساب.");
       return;
+      document.body.classList.add("isAdmin");
     }
     const u = (adminUser?.value || "").trim();
     const p = (adminPass?.value || "").trim();
@@ -1870,6 +1871,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
