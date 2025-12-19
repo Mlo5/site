@@ -1796,7 +1796,7 @@ function startDhikrLoop(){
 const CAPSULE_PREVIEW_IMAGES = []; // previews are built dynamically per rank/admin
 
 function getCapsulePreviewImagesForMe(){
-  const base = "../media/ranks/";
+  const base = "./chat/media/ranks/";
   // ✅ Admin
   if (isAdmin) return [
     base + "admin.gif",
@@ -1841,20 +1841,32 @@ function ensureCapDropdown(){
       btn.type = "button";
       btn.className = "capOpt";
       btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
-      btn.addEventListener("click", () => {
-        const target = document.getElementById(`capsulePick${idx+1}`);
-        if (target) target.click();
-        hideCapDropdown();
-      });
+     btn.addEventListener("click", async () => {
+  // 1) حفظ الاختيار في Firebase (عشان يبين عند الكل)
+  try{
+    await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsule: src });
+  }catch(e){}
+
+  // 2) تطبيق فوري عندك (حتى لو تأخر Firebase)
+  try{
+    const myRow = document.querySelector(`.userRow[data-uid="${user.uid}"]`);
+    if (myRow) myRow.style.backgroundImage = `url("${src}")`;
+  }catch(e){}
+
+  // 3) (اختياري) إذا عندك أزرار مخفية قديمة خليه زي ما هو
+  btn.addEventListener("click", () => {
+  const target = document.getElementById(`capsulePick${idx+1}`);
+  if (target) target.click();
+  hideCapDropdown();
+});
+
       grid.appendChild(btn);
     });
   }
   // expose for showCapDropdown
   capDropEl.__rebuildCapGrid = rebuildCapGrid;
   rebuildCapGrid();
-
-    grid.appendChild(btn);
-  
+     
   // reset
   capDropEl.querySelector(".capReset")?.addEventListener("click", () => {
     const target = document.getElementById("capsuleReset");
@@ -1935,6 +1947,10 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
+
+
+
 
 
 
