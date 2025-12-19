@@ -1862,8 +1862,7 @@ function ensureCapDropdown(){
 
       grid.appendChild(btn);
     });
-  }
-  // expose for showCapDropdown
+    // expose for showCapDropdown
   capDropEl.__rebuildCapGrid = rebuildCapGrid;
   rebuildCapGrid();
      
@@ -1947,6 +1946,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
