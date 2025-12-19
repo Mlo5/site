@@ -9,6 +9,27 @@
 
   function $(sel) { return document.querySelector(sel); }
 
+  function isVisible(el){
+    if (!el) return false;
+    const cs = window.getComputedStyle(el);
+    if (!cs) return false;
+    return cs.display !== "none" && cs.visibility !== "hidden" && cs.opacity !== "0";
+  }
+
+  // ✅ نحدد "هل هذا المستخدم أدمن؟" من واجهة الأدمن نفسها (بدون الاعتماد على room.js)
+  function isAdminNow(){
+    // لو زر السجل أو إدارة ظاهرين => أدمن
+    const logBtn = document.getElementById("logBtn");
+    const bgBtn  = document.getElementById("bgBtn");
+    if (isVisible(logBtn) || isVisible(bgBtn)) return true;
+
+    // أو زر الراديو داخل لوحة الأدمن إذا كان ظاهر
+    const adminPanelRadio = document.getElementById("adminPanelRadio");
+    if (isVisible(adminPanelRadio)) return true;
+
+    return false;
+  }
+
   function getRadioButtons() {
     // ✅ يدعم الزر اللي فوق + الزر داخل قائمة الأدمن
     const a = document.getElementById("radioBtn");
@@ -20,9 +41,19 @@
     return document.getElementById("radioMenu");
   }
 
+  function updateMenuPermissions(){
+    const setUrlBtn = document.getElementById("radioSetUrlBtn");
+    if (setUrlBtn){
+      setUrlBtn.style.display = isAdminNow() ? "block" : "none";
+    }
+  }
+
   function showMenu(anchorEl) {
     const menu = getMenu();
     if (!menu || !anchorEl) return;
+
+    // ✅ قبل الإظهار: اخفي/اظهر خيار تعيين الرابط حسب الأدمن
+    updateMenuPermissions();
 
     const r = anchorEl.getBoundingClientRect();
     menu.style.display = "block";
@@ -76,7 +107,7 @@
   async function playRadio() {
     const url = getSavedUrl();
     if (!url) {
-      alert("حط رابط الراديو أولاً من (تعيين رابط).");
+      alert("الراديو غير مفعّل بعد. اطلب من الأدمن يحدد رابط الراديو.");
       return;
     }
     const a = ensureAudio();
@@ -99,6 +130,12 @@
   }
 
   function setUrlFlow() {
+    // ✅ حماية أكيدة: حتى لو الزر ظهر بالغلط
+    if (!isAdminNow()){
+      alert("هذا الخيار للأدمن فقط.");
+      return;
+    }
+
     const current = getSavedUrl() || "";
     const url = prompt("حط رابط الراديو (Stream URL):", current);
     if (!url) return;
@@ -173,5 +210,8 @@
     bindButtons();
     bindMenuActions();
     bindGlobalClose();
+
+    // ✅ أول تحديث للصلاحيات (لو الأدمن كان مفعل من قبل)
+    updateMenuPermissions();
   });
 })();
