@@ -1841,48 +1841,14 @@ function ensureCapDropdown(){
       btn.type = "button";
       btn.className = "capOpt";
       btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
-     btn.addEventListener("click", async () => {
-  // 1) حفظ الاختيار في Firebase (عشان يبين عند الكل)
-  try{
-    await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsule: src });
-  }catch(e){}
-
-  // 2) تطبيق فوري عندك (حتى لو تأخر Firebase)
-  btn.addEventListener("click", async () => {
-  try{
-    // 1) حفظ دائم
-    await set(ref(rtdb, `capsules/${user.uid}`), { src, at: nowMs() });
-
-    // 2) تحديث وجودك الحالي (ليظهر عند الجميع)
-    await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsule: src });
-  }catch(e){}
-
-  hideCapDropdown();
-});
-
-  // 3) (اختياري) إذا عندك أزرار مخفية قديمة خليه زي ما هو
- btn.addEventListener("click", async () => {
-  // ✅ احفظ الاختيار بشكل دائم
-  try{
-    await set(ref(rtdb, `capsules/${user.uid}`), { src, at: nowMs() });
-  }catch(e){}
-
-  // ✅ حدّث وجودك الحالي (ليظهر فورًا لمن يسمع onlineUsers)
-  try{
-    await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsule: src });
-  }catch(e){}
-
-  // (اتركها زي ما هي لو عندك عناصر مخفية)
-  const target = document.getElementById(`capsulePick${idx+1}`);
-  if (target) target.click();
-
-  hideCapDropdown();
-});
-
-
+      btn.addEventListener("click", () => {
+        const target = document.getElementById(`capsulePick${idx+1}`);
+        if (target) target.click();
+        hideCapDropdown();
+      });
       grid.appendChild(btn);
     });
-  
+  }
   // expose for showCapDropdown
   capDropEl.__rebuildCapGrid = rebuildCapGrid;
   rebuildCapGrid();
@@ -1908,7 +1874,9 @@ function ensureCapDropdown(){
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") hideCapDropdown();
   });
+
   return capDropEl;
+}
 
 function showCapDropdown(anchorBtn){
   const el = ensureCapDropdown();
@@ -1965,11 +1933,6 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
-
-
-
-
-
 
 
 
