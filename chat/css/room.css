@@ -1093,4 +1093,26 @@ select,input{
   object-fit:cover;
   display:block;
 }
+/* ✅ Radio ON indicator (top-right, subtle blink) */
+.top-chip.radio-on{ position:relative; }
+
+.top-chip.radio-on::after{
+  content:"";
+  position:absolute;
+  top:6px;
+  right:8px;           /* ✅ ثابتة فوق يمين عند الكل */
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background: rgba(34,197,94,.95);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.55), 0 0 14px rgba(34,197,94,.35);
+  animation: radioPulse 1.05s infinite;
+}
+
+@keyframes radioPulse{
+  0%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(0.88); opacity:.35; }
+  100%{ transform:scale(1); opacity:1; }
+}
+
 
