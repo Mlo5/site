@@ -23,7 +23,7 @@ const ADMIN_USERNAME = "MLO5";
 const ADMIN_PASSWORD = "APRIL3049";
 
 /* ✅✅✅ ADMIN DISPLAY (NEW) */
-const ADMIN_DISPLAY_NAME = "𝕄𝕃𝕆𝟝 ヅ®";
+const ADMIN_DISPLAY_NAME = "®𝕄𝕃𝕆𝟝 ヅ";
 const ADMIN_ICONS_HTML = `
   <span class="adminIcons" aria-hidden="true">
     <span class="adminIcon blink" title="تاج">⭐</span>
@@ -1869,6 +1869,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
