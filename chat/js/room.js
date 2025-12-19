@@ -1796,7 +1796,7 @@ function startDhikrLoop(){
 const CAPSULE_PREVIEW_IMAGES = []; // previews are built dynamically per rank/admin
 
 function getCapsulePreviewImagesForMe(){
-  const base = "./chat/media/ranks/";
+  const base = "../media/ranks/";
   // ✅ Admin
   if (isAdmin) return [
     base + "admin.gif",
@@ -1933,7 +1933,6 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
-
 
 
 
