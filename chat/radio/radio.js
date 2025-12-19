@@ -3,7 +3,7 @@
   "use strict";
 
   const STORAGE_KEY = "mlo5_radio_url";
-  const DEFAULT_URL = ""; // اتركه فاضي، أو حط رابط افتراضي لو بدك
+  const DEFAULT_URL = "https://mlo5.github.io/site/chat/media/radio/radio4.mp3"; // اتركه فاضي، أو حط رابط افتراضي لو بدك
 
   let audio = null;
 
@@ -232,4 +232,5 @@
     updateMenuPermissions();
   });
 })();
+
 
