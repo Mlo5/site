@@ -1852,9 +1852,7 @@ function ensureCapDropdown(){
   // expose for showCapDropdown
   capDropEl.__rebuildCapGrid = rebuildCapGrid;
   rebuildCapGrid();
-
-    grid.appendChild(btn);
-  
+     
   // reset
   capDropEl.querySelector(".capReset")?.addEventListener("click", () => {
     const target = document.getElementById("capsuleReset");
@@ -1935,6 +1933,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
