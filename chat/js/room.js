@@ -1553,6 +1553,8 @@ if (adminLoginBtn){
     if (bgBtn)  bgBtn.style.display  = "inline-flex";
     if (adminClearBtn) adminClearBtn.style.display = "inline-flex";
     document.body.dataset.admin = "1";
+     console.log("ADMIN DATASET SET", document.body.dataset.admin);
+});
 
     try{ ensureThemeStillAllowed(); }catch{}
     try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
@@ -1872,6 +1874,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
