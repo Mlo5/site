@@ -1582,7 +1582,7 @@ if (adminLoginBtn){
 
      
     try{ ensureThemeStillAllowed(); }catch{}
-    try{ writeSystemText("أجاكم ملوخ 💀🔪!", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
+    try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
   });
 }
 
@@ -1793,13 +1793,28 @@ function startDhikrLoop(){
    ضعه آخر room.js (تم تثبيته هنا بشكل صحيح)
 ========================================================= */
 
-const CAPSULE_PREVIEW_IMAGES = [
-  "../media/ranks/capsule1.gif",
-  "../media/ranks/capsule2.gif",
-  "../media/ranks/capsule3.gif",
-  "../media/ranks/capsule4.gif",
-  "../media/ranks/capsule5.gif",
-];
+const CAPSULE_PREVIEW_IMAGES = []; // previews are built dynamically per rank/admin
+
+function getCapsulePreviewImagesForMe(){
+  const base = "../media/ranks/";
+  // ✅ Admin
+  if (isAdmin) return [
+    base + "admin.gif",
+    base + "admin1.gif",
+    base + "admin2.gif",
+    base + "admin3.gif",
+    base + "admin4.gif",
+  ];
+
+  const r = myRank();
+  if (r === "legend") return [base+"legend1.gif", base+"legend2.gif", base+"legend3.gif", base+"legend4.gif", base+"legend5.gif"];
+  if (r === "vip")    return [base+"vip1.gif",    base+"vip2.gif",    base+"vip3.gif",    base+"vip4.gif"];
+  if (r === "root")   return [base+"root1.gif",   base+"root2.gif",   base+"root3.gif"];
+  if (r === "girl")   return [base+"girl1.gif",   base+"girl2.gif",   base+"girl3.gif",   base+"girl4.gif",   base+"girl5.gif"];
+  // Master/guest/normal => none
+  return [];
+}
+
 
 
 let capDropEl = null;
@@ -1815,11 +1830,29 @@ function ensureCapDropdown(){
   `;
   document.body.appendChild(capDropEl);
 
-  // build images
+  // build images (dynamic per rank/admin)
   const grid = capDropEl.querySelector("#capGrid");
-  CAPSULE_PREVIEW_IMAGES.forEach((src, idx) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
+  function rebuildCapGrid(){
+    if (!grid) return;
+    grid.innerHTML = "";
+    const imgs = getCapsulePreviewImagesForMe();
+    imgs.forEach((src, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "capOpt";
+      btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
+      btn.addEventListener("click", () => {
+        const target = document.getElementById(`capsulePick${idx+1}`);
+        if (target) target.click();
+        hideCapDropdown();
+      });
+      grid.appendChild(btn);
+    });
+  }
+  // expose for showCapDropdown
+  capDropEl.__rebuildCapGrid = rebuildCapGrid;
+  rebuildCapGrid();
+btn.type = "button";
     btn.className = "capOpt";
     btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
     btn.addEventListener("click", () => {
@@ -1857,6 +1890,7 @@ function ensureCapDropdown(){
 
 function showCapDropdown(anchorBtn){
   const el = ensureCapDropdown();
+  try{ el.__rebuildCapGrid && el.__rebuildCapGrid(); }catch{}
   const r = anchorBtn.getBoundingClientRect();
   el.style.display = "block"; // أولاً عشان offsetWidth يكون صحيح
   const w = el.offsetWidth || 280;
@@ -1871,6 +1905,11 @@ function hideCapDropdown(){
 // ✅ نضيف السهم بجانب “الحالة تحت الاسم” لصفّك أنت فقط
 function attachCapsuleArrowToMyRow(){
   if (!user || !user.uid) return;
+  // ✅ Only Admin + (Legend/VIP/ROOT/GIRL). Master/guest/normal => no arrow
+  const _r = myRank();
+  const allowed = isAdmin || _r === "legend" || _r === "vip" || _r === "root" || _r === "girl";
+  if (!allowed) return;
+
 
   const rows = Array.from(document.querySelectorAll("#onlineList .userRow"));
   if (!rows.length) return;
@@ -1904,7 +1943,6 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
-
 
 
 
