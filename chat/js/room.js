@@ -1122,6 +1122,41 @@ function startRanksListener(){
   });
 }
 
+/* =========================
+   ✅ Capsules (RTDB) sync
+========================= */
+let capsulesMap = {}; // { uid: { url, updatedAt, by } }
+
+function applyCapsuleToRowByUid(uid){
+  const row = document.querySelector(`#onlineList .userRow[data-uid="${uid}"]`);
+  if (!row) return;
+
+  const picked = String(capsulesMap?.[uid]?.url || "").trim();
+
+  if (picked){
+    row.style.backgroundImage = `url("${picked}")`;
+    row.style.backgroundSize = "cover";
+    row.style.backgroundPosition = "center";
+  } else {
+    // ارجع للـ CSS الافتراضي (gif1 حسب الرتبة)
+    row.style.backgroundImage = "";
+    row.style.backgroundSize = "";
+    row.style.backgroundPosition = "";
+  }
+}
+
+function startCapsulesListener(){
+  onValue(ref(rtdb, "capsules"), (snap)=>{
+    capsulesMap = snap.val() || {};
+
+    // طبّق على كل الصفوف الموجودة حالياً
+    document.querySelectorAll("#onlineList .userRow").forEach((row)=>{
+      const uid = row?.dataset?.uid;
+      if (uid) applyCapsuleToRowByUid(uid);
+    });
+  });
+}
+
 function startOnlineListener(){
   onValue(ref(rtdb, "onlineUsers"), (snap)=>{
     const users = snap.val() || {};
@@ -1146,6 +1181,9 @@ function startOnlineListener(){
       const rankRowClass = (ru && ru !== "none") ? (RANKS[ru]?.rowClass || "") : "";
 
       row.className = "userRow" + (isRowAdmin ? " admin adminCapsule" : "") + (rankRowClass ? (" " + rankRowClass) : "");
+      // ✅ apply capsule from /capsules (not onlineUsers)
+      applyCapsuleToRowByUid(u.uid);
+
 
       const left = document.createElement("div");
       left.className = "userMeta";
@@ -1710,7 +1748,8 @@ async function enterChat(statusVal){
   startClearMetaListener();
   startRoomLockListener();
   startOnlineListener();
-  startGlobalMessagesListener();
+    startCapsulesListener();
+startGlobalMessagesListener();
   startModerationListener();
 
   if (roomLocked && !canWriteWhenLocked()){
@@ -1843,14 +1882,9 @@ function ensureCapDropdown(){
       btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
      btn.addEventListener("click", async () => {
   // 1) حفظ الاختيار في Firebase (عشان يبين عند الكل)
- try{
-  await set(ref(rtdb, `capsules/${user.uid}`), {
-    url: src,
-    updatedAt: nowMs(),
-    by: user.uid
-  });
-}catch(e){}
-
+  try{
+    await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsule: src });
+  }catch(e){}
 
   // 2) تطبيق فوري عندك (حتى لو تأخر Firebase)
   try{
@@ -1873,13 +1907,26 @@ function ensureCapDropdown(){
   rebuildCapGrid();
      
   // reset
-  capDropEl.querySelector(".capReset")?.addEventListener("click", () => {
+  capDropEl.querySelector(".capReset")?.addEventListener("click", async () => {
+    // ✅ امسح الاختيار من Firebase
+    try{
+      await set(ref(rtdb, `capsules/${user.uid}`), {
+        url: "",
+        updatedAt: nowMs(),
+        by: user.uid
+      });
+    }catch(e){}
+
+    // ✅ طبّق فوراً عليك
+    try{ applyCapsuleToRowByUid(user.uid); }catch(e){}
+
+    // (اختياري) لو عندك النظام القديم خليه
     const target = document.getElementById("capsuleReset");
     if (target) target.click();
+
     hideCapDropdown();
   });
-
-  // close on outside click
+// close on outside click
   document.addEventListener("mousedown", (e) => {
     if (!capDropEl) return;
     if (capDropEl.style.display !== "block") return;
@@ -1952,7 +1999,6 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
-
 
 
 
