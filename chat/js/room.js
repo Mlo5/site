@@ -1843,9 +1843,14 @@ function ensureCapDropdown(){
       btn.innerHTML = `<img src="${src}" alt="capsule-${idx+1}">`;
      btn.addEventListener("click", async () => {
   // 1) حفظ الاختيار في Firebase (عشان يبين عند الكل)
-  try{
-    await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsule: src });
-  }catch(e){}
+ try{
+  await set(ref(rtdb, `capsules/${user.uid}`), {
+    url: src,
+    updatedAt: nowMs(),
+    by: user.uid
+  });
+}catch(e){}
+
 
   // 2) تطبيق فوري عندك (حتى لو تأخر Firebase)
   try{
@@ -1947,6 +1952,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
