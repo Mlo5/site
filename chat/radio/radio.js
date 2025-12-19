@@ -18,18 +18,12 @@
 
   // ✅ نحدد "هل هذا المستخدم أدمن؟" من واجهة الأدمن نفسها (بدون الاعتماد على room.js)
   function isAdminNow(){
-    if (window.__MLO5_IS_ADMIN__ === true) return true;
-    // لو زر السجل أو إدارة ظاهرين => أدمن
-    const logBtn = document.getElementById("logBtn");
-    const bgBtn  = document.getElementById("bgBtn");
-    if (isVisible(logBtn) || isVisible(bgBtn)) return true;
-
-    // أو زر الراديو داخل لوحة الأدمن إذا كان ظاهر
-    const adminPanelRadio = document.getElementById("adminPanelRadio");
-    if (isVisible(adminPanelRadio)) return true;
-
-    return false;
+  if (window.MLO5 && typeof window.MLO5.getIsAdmin === "function") {
+    return window.MLO5.getIsAdmin() === true;
   }
+  return window.__MLO5_IS_ADMIN__ === true;
+}
+
 
   function getRadioButtons() {
     // ✅ يدعم الزر اللي فوق + الزر داخل قائمة الأدمن
@@ -232,5 +226,6 @@
     updateMenuPermissions();
   });
 })();
+
 
 
