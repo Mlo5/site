@@ -1119,7 +1119,9 @@ select,input{
 #radioSetUrlBtn{ display:none !important; }
 
 /* ✅ للأدمن فقط */
-body.isAdmin #radioSetUrlBtn{ display:block !important; }
+body[data-admin="1"] #radioSetUrlBtn{ display:block !important; }
+
+
 
 
 
