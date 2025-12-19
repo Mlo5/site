@@ -1908,9 +1908,7 @@ function ensureCapDropdown(){
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") hideCapDropdown();
   });
-
   return capDropEl;
-
 
 function showCapDropdown(anchorBtn){
   const el = ensureCapDropdown();
@@ -1967,6 +1965,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
