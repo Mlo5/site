@@ -20,21 +20,12 @@
  function isAdminNow(){
   return window.__MLO5_IS_ADMIN__ === true;
 }
-    // لو زر السجل أو إدارة ظاهرين => أدمن
-    
-    // أو زر الراديو داخل لوحة الأدمن إذا كان ظاهر
-    const adminPanelRadio = document.getElementById("adminPanelRadio");
-    if (isVisible(adminPanelRadio)) return true;
 
-    return false;
-  }
-
-  function getRadioButtons() {
-    // ✅ يدعم الزر اللي فوق + الزر داخل قائمة الأدمن
-    const a = document.getElementById("radioBtn");
-    const b = document.getElementById("adminPanelRadio");
-    return [a, b].filter(Boolean);
-  }
+function getRadioButtons() {
+  const a = document.getElementById("radioBtn");
+  const b = document.getElementById("adminPanelRadio");
+  return [a, b].filter(Boolean);
+}
 
   function getMenu() {
     return document.getElementById("radioMenu");
@@ -235,6 +226,7 @@
     updateMenuPermissions();
   });
 })();
+
 
 
 
