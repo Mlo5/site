@@ -1648,6 +1648,7 @@ async function enterChat(statusVal){
   document.getElementById("radioBtn")?.style?.setProperty(
   "display",
   isAdmin ? "inline-flex" : "none"
+    document.body.dataset.isAdmin = isAdmin ? "1" : "0";
 );
 
   if (profile && isAdmin){
@@ -1869,6 +1870,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
