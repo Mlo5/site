@@ -45,10 +45,9 @@
 }
 
   function updateMenuPermissions(){
-    const setUrlBtn = document.getElementById("radioSetUrlBtn");
-    if (setUrlBtn){
-      setUrlBtn.style.display = isAdminNow() ? "block" : "none";
-    }
+  const setUrlBtn = document.getElementById("radioSetUrlBtn");
+  if (setUrlBtn) setUrlBtn.style.display = isAdminNow() ? "block" : "none";
+}
   }
 
   function showMenu(anchorEl) {
@@ -232,5 +231,6 @@
     updateMenuPermissions();
   });
 })();
+
 
 
