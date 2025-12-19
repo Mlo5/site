@@ -1582,7 +1582,7 @@ if (adminLoginBtn){
 
      
     try{ ensureThemeStillAllowed(); }catch{}
-    try{ writeSystemText("✨ دخل كبيرهم ✨", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
+    try{ writeSystemText("أجاكم ملوخ 💀🔪!", "bigBoss", {uid:user.uid,name:ADMIN_DISPLAY_NAME}); }catch{}
   });
 }
 
@@ -1904,6 +1904,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
