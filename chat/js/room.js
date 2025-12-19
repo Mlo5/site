@@ -1848,17 +1848,37 @@ function ensureCapDropdown(){
   }catch(e){}
 
   // 2) تطبيق فوري عندك (حتى لو تأخر Firebase)
+  btn.addEventListener("click", async () => {
   try{
-    const myRow = document.querySelector(`.userRow[data-uid="${user.uid}"]`);
-    if (myRow) myRow.style.backgroundImage = `url("${src}")`;
+    // 1) حفظ دائم
+    await set(ref(rtdb, `capsules/${user.uid}`), { src, at: nowMs() });
+
+    // 2) تحديث وجودك الحالي (ليظهر عند الجميع)
+    await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsule: src });
   }catch(e){}
 
+  hideCapDropdown();
+});
+
   // 3) (اختياري) إذا عندك أزرار مخفية قديمة خليه زي ما هو
+ btn.addEventListener("click", async () => {
+  // ✅ احفظ الاختيار بشكل دائم
+  try{
+    await set(ref(rtdb, `capsules/${user.uid}`), { src, at: nowMs() });
+  }catch(e){}
+
+  // ✅ حدّث وجودك الحالي (ليظهر فورًا لمن يسمع onlineUsers)
+  try{
+    await update(ref(rtdb, `onlineUsers/${user.uid}`), { capsule: src });
+  }catch(e){}
+
+  // (اتركها زي ما هي لو عندك عناصر مخفية)
   const target = document.getElementById(`capsulePick${idx+1}`);
   if (target) target.click();
 
   hideCapDropdown();
 });
+
 
       grid.appendChild(btn);
     });
@@ -1947,6 +1967,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
