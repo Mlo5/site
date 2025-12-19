@@ -40,6 +40,11 @@
   function getMenu() {
     return document.getElementById("radioMenu");
   }
+  function setRadioOnUI(on){
+  getRadioButtons().forEach(btn => {
+    btn.classList.toggle("radio-on", !!on);
+  });
+}
 
   function updateMenuPermissions(){
     const setUrlBtn = document.getElementById("radioSetUrlBtn");
@@ -96,30 +101,40 @@
   }
 
   function ensureAudio() {
-    if (audio) return audio;
-    audio = new Audio();
-    audio.crossOrigin = "anonymous";
-    audio.preload = "none";
-    audio.volume = 1.0;
-    return audio;
-  }
+  if (audio) return audio;
+
+  audio = new Audio();
+
+  // ✅ إذا توقف الصوت لأي سبب → رجّع الزر OFF
+  audio.addEventListener("pause", () => setRadioOnUI(false));
+  audio.addEventListener("ended", () => setRadioOnUI(false));
+  audio.addEventListener("error", () => setRadioOnUI(false));
+
+  audio.crossOrigin = "anonymous";
+  audio.preload = "none";
+  audio.volume = 1.0;
+
+  return audio;
+}
+
 
   async function playRadio() {
-    const url = getSavedUrl();
-    if (!url) {
-      alert("الراديو غير مفعّل بعد. اطلب من الأدمن يحدد رابط الراديو.");
-      return;
-    }
-    const a = ensureAudio();
-    if (a.src !== url) a.src = url;
-
-    try {
-      await a.play();
-    } catch (e) {
-      console.error(e);
-      alert("تعذّر التشغيل. جرّب رابط مختلف أو تأكد أنه Stream مباشر (mp3/aac).");
-    }
+  const url = getSavedUrl();
+  if (!url) {
+    alert("الراديو غير مفعّل بعد. اطلب من الأدمن يحدد رابط الراديو.");
+    return;
   }
+  const a = ensureAudio();
+  if (a.src !== url) a.src = url;
+
+  try {
+    await a.play();
+    setRadioOnUI(true); // ✅ ON هنا
+  } catch (e) {
+    console.error(e);
+    alert("تعذّر التشغيل. جرّب رابط مختلف أو تأكد أنه Stream مباشر (mp3/aac).");
+  }
+}
 
   function stopRadio() {
     if (!audio) return;
@@ -127,6 +142,7 @@
       audio.pause();
       audio.currentTime = 0;
     } catch {}
+      setRadioOnUI(false);
   }
 
   function setUrlFlow() {
@@ -215,3 +231,4 @@
     updateMenuPermissions();
   });
 })();
+
