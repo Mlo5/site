@@ -20,10 +20,7 @@
   function isAdminNow(){
     if (window.__MLO5_IS_ADMIN__ === true) return true;
     // لو زر السجل أو إدارة ظاهرين => أدمن
-    const logBtn = document.getElementById("logBtn");
-    const bgBtn  = document.getElementById("bgBtn");
-    if (isVisible(logBtn) || isVisible(bgBtn)) return true;
-
+    
     // أو زر الراديو داخل لوحة الأدمن إذا كان ظاهر
     const adminPanelRadio = document.getElementById("adminPanelRadio");
     if (isVisible(adminPanelRadio)) return true;
@@ -57,6 +54,9 @@
   function showMenu(anchorEl) {
     const menu = getMenu();
     if (!menu || !anchorEl) return;
+     const setUrlBtn = document.getElementById("radioSetUrlBtn");
+  if (setUrlBtn) setUrlBtn.style.display = isAdminNow() ? "block" : "none";
+}
 
     // ✅ قبل الإظهار: اخفي/اظهر خيار تعيين الرابط حسب الأدمن
     updateMenuPermissions();
@@ -232,5 +232,6 @@
     updateMenuPermissions();
   });
 })();
+
 
 
