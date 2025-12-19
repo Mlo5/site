@@ -1115,11 +1115,13 @@ select,input{
   100%{ transform:scale(1); opacity:1; }
 }
 #radioBtn{ display:inline-flex !important; }
-/* ✅ اخفاء زر تعيين الرابط عن الجميع افتراضياً */
+
 #radioSetUrlBtn{ display:none !important; }
 
-/* ✅ للأدمن فقط */
 body[data-admin="1"] #radioSetUrlBtn{ display:block !important; }
+
+
+
 
 
 
