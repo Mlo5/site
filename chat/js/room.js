@@ -23,10 +23,10 @@ const ADMIN_USERNAME = "MLO5";
 const ADMIN_PASSWORD = "APRIL3049";
 
 /* ✅✅✅ ADMIN DISPLAY (NEW) */
-const ADMIN_DISPLAY_NAME = "®𝕄𝕃𝕆𝟝 ヅ";
+const ADMIN_DISPLAY_NAME = "𝕄𝕃𝕆𝟝 ヅ";
 const ADMIN_ICONS_HTML = `
   <span class="adminIcons" aria-hidden="true">
-    <span class="adminIcon blink" title="تاج">⭐</span>
+    <span class="adminIcon blink" title="تاج">👑</span>
     <span class="adminIcon blink" title="جمجمة">💀</span>
   </span>
 `;
@@ -230,10 +230,10 @@ function rankNameColor(rank){
     default:       return null;
   }
 }
-function effectiveNameColorFor(uid, fallback){
+function effectiveNameColorFor(uid){
   const r = rankOf(uid);
   const c = rankNameColor(r);
-  return c || (fallback || "#facc15");
+  return c || "#facc15";
 }
 
 function rankIconHtml(r){
@@ -492,6 +492,30 @@ function setErr(el, msg){
   el.textContent = msg || "";
 }
 function collapseSpaces(s){ return String(s||"").replace(/\s+/g," ").trim(); }
+
+function normalizeNameForCompare(s){
+  return collapseSpaces(String(s||"")).toLowerCase();
+}
+function isProtectedAdminName(name){
+  const n = normalizeNameForCompare(name);
+  return n === String(ADMIN_USERNAME||"").toLowerCase() || n === normalizeNameForCompare(ADMIN_DISPLAY_NAME);
+}
+async function isNameTakenInRoom(name, myUid){
+  try{
+    const snap = await new Promise((resolve, reject)=>{
+      onValue(ref(rtdb, "onlineUsers"), resolve, reject, { onlyOnce:true });
+    });
+    const v = snap.val() || {};
+    const target = normalizeNameForCompare(name);
+    for (const uid of Object.keys(v)){
+      if (uid === myUid) continue;
+      const nm = normalizeNameForCompare(v[uid]?.name || "");
+      if (nm && nm === target) return true;
+    }
+  }catch{}
+  return false;
+}
+
 
 function formatTime(tsMs){
   if (!tsMs || Number.isNaN(tsMs)) return "";
@@ -1316,14 +1340,16 @@ function renderMessagesFromSnap(snap){
       const r = (m.rank && RANKS[m.rank]) ? m.rank : rankOf(m.uid);
       const rankIcon = (!isMsgAdmin && r && r !== "none") ? rankIconHtml(r) : "";
       const nameSizeClass = (!isMsgAdmin && r && r !== "none") ? "rankBig" : "";
+      const nameSpanClass = (!isMsgAdmin && r && r !== "none") ? "rankName" : "userName";
 
-      const nmColor = isMsgAdmin ? "#fff" : (rankNameColor(r) || (m.nameColor || "#facc15"));
+      // ✅ Chat: guest/normal name = white, rank name = rank color
+      const nmColor = isMsgAdmin ? "#fff" : (rankNameColor(r) || "#fff");
 
       const nameHtml = isMsgAdmin
         ? `${ADMIN_ICONS_HTML}<span class="adminNameInChat">${escapeHtml(ADMIN_DISPLAY_NAME)}</span> ${guestHtml}`
-        : `${rankIcon}<span style="color:${escapeHtml(nmColor)};font-weight:900;font-size:${(r&&r!=="none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
+        : `${rankIcon}<span class="${nameSpanClass}" style="color:${escapeHtml(nmColor)};font-weight:900;font-size:${(!isMsgAdmin && r && r !== "none") ? "1.15rem" : "1rem"}">${escapeHtml(m.name||"مستخدم")}</span> ${guestHtml}`;
 
-      const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
+const replyBlock = m.replyTo && m.replyTo.name && m.replyTo.text
         ? `<div class="replyQuote"><b>رد على: ${escapeHtml(m.replyTo.name)}</b><div>${escapeHtml(m.replyTo.text)}</div></div>`
         : "";
 
@@ -1620,6 +1646,15 @@ if (enterBtn){
     if (!country || country.length !== 2){ setErr(modalErr, "اختار الدولة."); return; }
     if (!user){ setErr(modalErr, "اختر طريقة الدخول أولاً."); return; }
 
+    if (isProtectedAdminName(rawName) && !ADMIN_UIDS.includes(user.uid)){
+      setErr(modalErr, "⛔ هذا الاسم محمي.");
+      return;
+    }
+    if (await isNameTakenInRoom(rawName, user.uid)){
+      setErr(modalErr, "❌ هذا الاسم موجود في الروم. جرّب اسم ثاني.");
+      return;
+    }
+
     profile = {
       name: rawName,
       gender: g,
@@ -1869,9 +1904,6 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
-
-
-
 
 
 
