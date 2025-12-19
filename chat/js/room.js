@@ -1854,15 +1854,16 @@ function ensureCapDropdown(){
   }catch(e){}
 
   // 3) (اختياري) إذا عندك أزرار مخفية قديمة خليه زي ما هو
-  btn.addEventListener("click", () => {
   const target = document.getElementById(`capsulePick${idx+1}`);
   if (target) target.click();
+
   hideCapDropdown();
 });
 
       grid.appendChild(btn);
     });
-    // expose for showCapDropdown
+  }
+  // expose for showCapDropdown
   capDropEl.__rebuildCapGrid = rebuildCapGrid;
   rebuildCapGrid();
      
@@ -1946,8 +1947,6 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
-
-
 
 
 
