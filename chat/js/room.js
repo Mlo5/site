@@ -1648,11 +1648,7 @@ if (enterBtn){
 async function enterChat(statusVal){
   isGuest = !!user?.isAnonymous;
   isAdmin = ADMIN_UIDS.includes(user.uid) && (localStorage.getItem(adminSessionKey(user.uid)) === "1") && !isGuest;
-  document.getElementById("radioBtn")?.style?.setProperty(
-  "display",
-  isAdmin ? "inline-flex" : "none"
-    
-);
+  
 
   if (profile && isAdmin){
     profile.name = ADMIN_DISPLAY_NAME;
@@ -1873,6 +1869,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
