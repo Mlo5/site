@@ -1,114 +1,177 @@
+// chat/radio/radio.js
 (() => {
-  // Elements
-  const radioMenu = document.getElementById("radioMenu");
-  const radioBtn  = document.getElementById("adminPanelRadio") || document.getElementById("radioBtn");
-  const playBtn   = document.getElementById("radioPlayBtn");
-  const stopBtn   = document.getElementById("radioStopBtn");
-  const setUrlBtn = document.getElementById("radioSetUrlBtn");
+  "use strict";
 
-  // Audio
-  const audio = new Audio();
-  audio.preload = "none";
-  audio.crossOrigin = "anonymous"; // يساعد ببعض الروابط
+  const STORAGE_KEY = "mlo5_radio_url";
+  const DEFAULT_URL = ""; // اتركه فاضي، أو حط رابط افتراضي لو بدك
 
-  // Storage keys
-  const KEY_URL = "mlo5_radio_url";
-  const KEY_VOL = "mlo5_radio_vol";
+  let audio = null;
 
-  function getSavedUrl(){
-    try { return localStorage.getItem(KEY_URL) || ""; } catch { return ""; }
+  function $(sel) { return document.querySelector(sel); }
+
+  function getRadioButtons() {
+    // ✅ يدعم الزر اللي فوق + الزر داخل قائمة الأدمن
+    const a = document.getElementById("radioBtn");
+    const b = document.getElementById("adminPanelRadio");
+    return [a, b].filter(Boolean);
   }
-  function setSavedUrl(url){
-    try { localStorage.setItem(KEY_URL, url); } catch {}
+
+  function getMenu() {
+    return document.getElementById("radioMenu");
   }
-  function getSavedVol(){
+
+  function showMenu(anchorEl) {
+    const menu = getMenu();
+    if (!menu || !anchorEl) return;
+
+    const r = anchorEl.getBoundingClientRect();
+    menu.style.display = "block";
+    menu.setAttribute("aria-hidden", "false");
+
+    // تموضع ذكي
+    const w = menu.offsetWidth || 220;
+    const left = Math.max(12, Math.min(window.innerWidth - w - 12, Math.round(r.left)));
+    const top = Math.round(r.bottom + 10);
+
+    menu.style.left = left + "px";
+    menu.style.top = top + "px";
+  }
+
+  function hideMenu() {
+    const menu = getMenu();
+    if (!menu) return;
+    menu.style.display = "none";
+    menu.setAttribute("aria-hidden", "true");
+  }
+
+  function toggleMenu(anchorEl) {
+    const menu = getMenu();
+    if (!menu) return;
+    const open = menu.style.display === "block";
+    if (open) hideMenu();
+    else showMenu(anchorEl);
+  }
+
+  function getSavedUrl() {
     try {
-      const v = Number(localStorage.getItem(KEY_VOL));
-      return Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 1;
-    } catch { return 1; }
+      return localStorage.getItem(STORAGE_KEY) || DEFAULT_URL;
+    } catch {
+      return DEFAULT_URL;
+    }
   }
 
-  function showMenuAt(x, y){
-    if (!radioMenu) return;
-    radioMenu.style.left = x + "px";
-    radioMenu.style.top  = y + "px";
-    radioMenu.style.display = "block";
-    radioMenu.setAttribute("aria-hidden","false");
-  }
-  function hideMenu(){
-    if (!radioMenu) return;
-    radioMenu.style.display = "none";
-    radioMenu.setAttribute("aria-hidden","true");
+  function saveUrl(url) {
+    try { localStorage.setItem(STORAGE_KEY, url); } catch {}
   }
 
-  function ensureUrl(){
+  function ensureAudio() {
+    if (audio) return audio;
+    audio = new Audio();
+    audio.crossOrigin = "anonymous";
+    audio.preload = "none";
+    audio.volume = 1.0;
+    return audio;
+  }
+
+  async function playRadio() {
     const url = getSavedUrl();
-    if (!url){
-      alert("حط رابط راديو (MP3/ICECAST) أولاً من زر: تعيين رابط");
-      return "";
+    if (!url) {
+      alert("حط رابط الراديو أولاً من (تعيين رابط).");
+      return;
     }
-    return url;
-  }
+    const a = ensureAudio();
+    if (a.src !== url) a.src = url;
 
-  async function play(){
-    const url = ensureUrl();
-    if (!url) return;
-    try{
-      audio.src = url;
-      audio.volume = getSavedVol();
-      await audio.play();
-    }catch(err){
-      console.error("Radio play error:", err);
-      alert("تعذر تشغيل الرابط. جرّب رابط ثاني (يفضل mp3/icecast مباشر).");
+    try {
+      await a.play();
+    } catch (e) {
+      console.error(e);
+      alert("تعذّر التشغيل. جرّب رابط مختلف أو تأكد أنه Stream مباشر (mp3/aac).");
     }
   }
 
-  function stop(){
-    try{
+  function stopRadio() {
+    if (!audio) return;
+    try {
       audio.pause();
       audio.currentTime = 0;
-    }catch{}
+    } catch {}
   }
 
-  function promptSetUrl(){
-    const current = getSavedUrl();
-    const next = prompt("ضع رابط الراديو المباشر (mp3/icecast):", current || "https://icecast.omroep.nl/radio1-bb-mp3");
-    if (!next) return;
-    const url = String(next).trim();
-    setSavedUrl(url);
-    alert("✅ تم حفظ رابط الراديو.");
+  function setUrlFlow() {
+    const current = getSavedUrl() || "";
+    const url = prompt("حط رابط الراديو (Stream URL):", current);
+    if (!url) return;
+
+    const cleaned = String(url).trim();
+    saveUrl(cleaned);
+
+    // لو شغال، بدّل الرابط فورًا
+    if (audio && !audio.paused) {
+      audio.pause();
+      audio.src = cleaned;
+      audio.play().catch(()=>{});
+    }
   }
 
-  // Bind events
-  if (radioBtn){
-    radioBtn.addEventListener("click", (e)=>{
+  function bindMenuActions() {
+    const playBtn = document.getElementById("radioPlayBtn");
+    const stopBtn = document.getElementById("radioStopBtn");
+    const setUrlBtn = document.getElementById("radioSetUrlBtn");
+
+    playBtn?.addEventListener("click", (e) => {
       e.preventDefault();
-      e.stopPropagation();
-      const r = radioBtn.getBoundingClientRect();
-      const open = radioMenu?.style.display === "block";
-      if (open) hideMenu();
-      else showMenuAt(Math.round(r.left), Math.round(r.bottom + 8));
+      playRadio();
+      hideMenu();
+    });
+
+    stopBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      stopRadio();
+      hideMenu();
+    });
+
+    setUrlBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      setUrlFlow();
+      hideMenu();
     });
   }
 
-  playBtn?.addEventListener("click", (e)=>{ e.preventDefault(); e.stopPropagation(); play(); });
-  stopBtn?.addEventListener("click", (e)=>{ e.preventDefault(); e.stopPropagation(); stop(); });
-  setUrlBtn?.addEventListener("click", (e)=>{ e.preventDefault(); e.stopPropagation(); promptSetUrl(); });
+  function bindButtons() {
+    const btns = getRadioButtons();
+    btns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMenu(btn);
+      });
+    });
+  }
 
-  // Close on outside click
-  document.addEventListener("click",(e)=>{
-    if (!radioMenu || radioMenu.style.display !== "block") return;
-    if (e.target?.closest?.("#radioMenu")) return;
-    if (e.target?.closest?.("#radioBtn")) return;
-    if (e.target?.closest?.("#adminPanelRadio")) return;
-    hideMenu();
+  function bindGlobalClose() {
+    document.addEventListener("click", (e) => {
+      const menu = getMenu();
+      if (!menu || menu.style.display !== "block") return;
+
+      if (e.target?.closest?.("#radioMenu")) return;
+
+      // لو كبست على أي زر من أزرار الراديو لا تسكر فوراً
+      const btns = getRadioButtons();
+      if (btns.some(b => e.target === b || e.target?.closest?.("#" + b.id))) return;
+
+      hideMenu();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") hideMenu();
+    });
+  }
+
+  // ✅ ابدأ بعد ما الصفحة تجهز
+  window.addEventListener("DOMContentLoaded", () => {
+    bindButtons();
+    bindMenuActions();
+    bindGlobalClose();
   });
-
-  // Close on ESC
-  document.addEventListener("keydown",(e)=>{
-    if (e.key === "Escape") hideMenu();
-  });
-
-  // Init
-  audio.volume = getSavedVol();
 })();
