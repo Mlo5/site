@@ -18,6 +18,7 @@
 
   // ✅ نحدد "هل هذا المستخدم أدمن؟" من واجهة الأدمن نفسها (بدون الاعتماد على room.js)
   function isAdminNow(){
+    if (window.__MLO5_IS_ADMIN__ === true) return true;
     // لو زر السجل أو إدارة ظاهرين => أدمن
     const logBtn = document.getElementById("logBtn");
     const bgBtn  = document.getElementById("bgBtn");
@@ -231,4 +232,5 @@
     updateMenuPermissions();
   });
 })();
+
 
