@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2025-12-24T17:36:10Z",
+  "generatedAt": "2025-12-24T18:55:30Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "المرحلة الاولى من التطبيق جاهزة؟",
+      "url": "https://www.youtube.com/shorts/7eqkrPfVxDY",
+      "type": "long",
+      "duration": "",
+      "date": "2025-12-24",
+      "thumb": "https://i.ytimg.com/vi/7eqkrPfVxDY/hqdefault.jpg",
+      "videoId": "7eqkrPfVxDY"
+    },
     {
       "title": "عملت تطبيق دردشة!",
       "url": "https://www.youtube.com/shorts/siCubpWE_Ck",
@@ -127,15 +136,6 @@
       "date": "2025-12-11",
       "thumb": "https://i.ytimg.com/vi/F4ReNHSz6o4/hqdefault.jpg",
       "videoId": "F4ReNHSz6o4"
-    },
-    {
-      "title": "كم تحتاج لتوصل 10 آلاف مشترك؟",
-      "url": "https://www.youtube.com/shorts/gAOP26KepNc",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-10",
-      "thumb": "https://i.ytimg.com/vi/gAOP26KepNc/hqdefault.jpg",
-      "videoId": "gAOP26KepNc"
     }
   ]
 }
