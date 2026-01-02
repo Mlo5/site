@@ -1,7 +1,25 @@
 {
-  "generatedAt": "2026-01-02T17:38:43Z",
+  "generatedAt": "2026-01-02T18:54:07Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "نكمل بدايتنا الاسسطورية 😎 | Live Streming",
+      "url": "https://www.youtube.com/watch?v=ZB1-T-nkZFw",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-02",
+      "thumb": "https://i.ytimg.com/vi/ZB1-T-nkZFw/hqdefault.jpg",
+      "videoId": "ZB1-T-nkZFw"
+    },
+    {
+      "title": "My zone #shorts",
+      "url": "https://www.youtube.com/shorts/i8gvy-e-6A4",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-02",
+      "thumb": "https://i.ytimg.com/vi/i8gvy-e-6A4/hqdefault.jpg",
+      "videoId": "i8gvy-e-6A4"
+    },
     {
       "title": "سنة جديدة وبداية جديدة 😎 | Live Streaming",
       "url": "https://www.youtube.com/watch?v=hAymd2axfqE",
@@ -118,24 +136,6 @@
       "date": "2025-12-18",
       "thumb": "https://i.ytimg.com/vi/v9thnUMgVFo/hqdefault.jpg",
       "videoId": "v9thnUMgVFo"
-    },
-    {
-      "title": "بنيت موقع كامل بالذكاء الاصطناعي!",
-      "url": "https://www.youtube.com/watch?v=ALoi9t-OVN8",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-16",
-      "thumb": "https://i.ytimg.com/vi/ALoi9t-OVN8/hqdefault.jpg",
-      "videoId": "ALoi9t-OVN8"
-    },
-    {
-      "title": "Ronaldo 2D 😂",
-      "url": "https://www.youtube.com/shorts/WpAADcCBQSc",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-15",
-      "thumb": "https://i.ytimg.com/vi/WpAADcCBQSc/hqdefault.jpg",
-      "videoId": "WpAADcCBQSc"
     }
   ]
 }
