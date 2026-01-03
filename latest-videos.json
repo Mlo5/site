@@ -1,7 +1,25 @@
 {
-  "generatedAt": "2026-01-03T18:52:59Z",
+  "generatedAt": "2026-01-03T19:27:35Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بث اليوم غير 😎🔥",
+      "url": "https://www.youtube.com/watch?v=zGSpue2wl8Y",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-03",
+      "thumb": "https://i.ytimg.com/vi/zGSpue2wl8Y/hqdefault.jpg",
+      "videoId": "zGSpue2wl8Y"
+    },
+    {
+      "title": "بث اليوم غير 😎🔥 | Live treaming",
+      "url": "https://www.youtube.com/watch?v=dDrapG13AP4",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-03",
+      "thumb": "https://i.ytimg.com/vi/dDrapG13AP4/hqdefault.jpg",
+      "videoId": "dDrapG13AP4"
+    },
     {
       "title": "شو حيصير لو وقع عليك نيزك؟",
       "url": "https://www.youtube.com/shorts/t2BuRCFNr6w",
@@ -118,24 +136,6 @@
       "date": "2025-12-23",
       "thumb": "https://i.ytimg.com/vi/siCubpWE_Ck/hqdefault.jpg",
       "videoId": "siCubpWE_Ck"
-    },
-    {
-      "title": "ليش وقفت لعب Rise Of Kingdoms؟ 🤔",
-      "url": "https://www.youtube.com/watch?v=XUNk4WmYENc",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-23",
-      "thumb": "https://i.ytimg.com/vi/XUNk4WmYENc/hqdefault.jpg",
-      "videoId": "XUNk4WmYENc"
-    },
-    {
-      "title": "أكثر لعبة مستفزة بالعالم! 🥵",
-      "url": "https://www.youtube.com/watch?v=YBkFOIi4cUk",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-20",
-      "thumb": "https://i.ytimg.com/vi/YBkFOIi4cUk/hqdefault.jpg",
-      "videoId": "YBkFOIi4cUk"
     }
   ]
 }
