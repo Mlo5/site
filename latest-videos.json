@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-03T17:37:52Z",
+  "generatedAt": "2026-01-03T18:52:59Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "شو حيصير لو وقع عليك نيزك؟",
+      "url": "https://www.youtube.com/shorts/t2BuRCFNr6w",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-03",
+      "thumb": "https://i.ytimg.com/vi/t2BuRCFNr6w/hqdefault.jpg",
+      "videoId": "t2BuRCFNr6w"
+    },
     {
       "title": "هاي اللعبة بتجيب الجلطة! 🤬",
       "url": "https://www.youtube.com/watch?v=gg3STTLdOSw",
@@ -127,15 +136,6 @@
       "date": "2025-12-20",
       "thumb": "https://i.ytimg.com/vi/YBkFOIi4cUk/hqdefault.jpg",
       "videoId": "YBkFOIi4cUk"
-    },
-    {
-      "title": "مبارك للمغرب البطولة 🇲🇦 | بث مباشر",
-      "url": "https://www.youtube.com/watch?v=GzMoDuoBQFo",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-18",
-      "thumb": "https://i.ytimg.com/vi/GzMoDuoBQFo/hqdefault.jpg",
-      "videoId": "GzMoDuoBQFo"
     }
   ]
 }
