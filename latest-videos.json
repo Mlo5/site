@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-04T17:41:18Z",
+  "generatedAt": "2026-01-04T18:57:28Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "لو صرت بنت شو بتعمل؟",
+      "url": "https://www.youtube.com/shorts/nVvB4pHoDbU",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-04",
+      "thumb": "https://i.ytimg.com/vi/nVvB4pHoDbU/hqdefault.jpg",
+      "videoId": "nVvB4pHoDbU"
+    },
     {
       "title": "بث اليوم غير 😎🔥",
       "url": "https://www.youtube.com/watch?v=zGSpue2wl8Y",
@@ -127,15 +136,6 @@
       "date": "2025-12-24",
       "thumb": "https://i.ytimg.com/vi/7eqkrPfVxDY/hqdefault.jpg",
       "videoId": "7eqkrPfVxDY"
-    },
-    {
-      "title": "عملت تطبيق دردشة!",
-      "url": "https://www.youtube.com/shorts/siCubpWE_Ck",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-23",
-      "thumb": "https://i.ytimg.com/vi/siCubpWE_Ck/hqdefault.jpg",
-      "videoId": "siCubpWE_Ck"
     }
   ]
 }
