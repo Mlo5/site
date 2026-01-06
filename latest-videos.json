@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-06T14:51:45Z",
+  "generatedAt": "2026-01-06T15:45:08Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "التطبيق صار جاهز! 😍",
+      "url": "https://www.youtube.com/watch?v=gO5zuhE0Kms",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-06",
+      "thumb": "https://i.ytimg.com/vi/gO5zuhE0Kms/hqdefault.jpg",
+      "videoId": "gO5zuhE0Kms"
+    },
     {
       "title": "دموع النساء على المجهر!",
       "url": "https://www.youtube.com/shorts/b7maE_dI1KI",
@@ -127,15 +136,6 @@
       "date": "2025-12-30",
       "thumb": "https://i.ytimg.com/vi/FwmYVgPDlS4/hqdefault.jpg",
       "videoId": "FwmYVgPDlS4"
-    },
-    {
-      "title": "فتحت 660 مفتاح ذهبي! 😮 Rise Of Kingdoms",
-      "url": "https://www.youtube.com/watch?v=-CkDA7qTx74",
-      "type": "long",
-      "duration": "",
-      "date": "2025-12-30",
-      "thumb": "https://i.ytimg.com/vi/-CkDA7qTx74/hqdefault.jpg",
-      "videoId": "-CkDA7qTx74"
     }
   ]
 }
