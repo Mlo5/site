@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-07T17:55:44Z",
+  "generatedAt": "2026-01-07T18:59:13Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "أقوى جهاز في العالم",
+      "url": "https://www.youtube.com/shorts/qJMG3NBL_DY",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-07",
+      "thumb": "https://i.ytimg.com/vi/qJMG3NBL_DY/hqdefault.jpg",
+      "videoId": "qJMG3NBL_DY"
+    },
     {
       "title": "الرسوب يتصل بكة",
       "url": "https://www.youtube.com/shorts/57-rUhNmUOM",
@@ -127,15 +136,6 @@
       "date": "2026-01-01",
       "thumb": "https://i.ytimg.com/vi/IE3bRtXCISY/hqdefault.jpg",
       "videoId": "IE3bRtXCISY"
-    },
-    {
-      "title": "بلشت من جديد ومن الصفر Rise Of Kingdoms",
-      "url": "https://www.youtube.com/watch?v=Wf2y8UVtTMs",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-01",
-      "thumb": "https://i.ytimg.com/vi/Wf2y8UVtTMs/hqdefault.jpg",
-      "videoId": "Wf2y8UVtTMs"
     }
   ]
 }
