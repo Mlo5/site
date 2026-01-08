@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-08T14:55:55Z",
+  "generatedAt": "2026-01-08T15:52:30Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "المحاولة الثانية مع مسرحية Hollow Knight",
+      "url": "https://www.youtube.com/watch?v=z9CZWbJUsYs",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-08",
+      "thumb": "https://i.ytimg.com/vi/z9CZWbJUsYs/hqdefault.jpg",
+      "videoId": "z9CZWbJUsYs"
+    },
     {
       "title": "أقوى جهاز في العالم",
       "url": "https://www.youtube.com/shorts/qJMG3NBL_DY",
@@ -127,15 +136,6 @@
       "date": "2026-01-02",
       "thumb": "https://i.ytimg.com/vi/hAymd2axfqE/hqdefault.jpg",
       "videoId": "hAymd2axfqE"
-    },
-    {
-      "title": "قربنا!",
-      "url": "https://www.youtube.com/shorts/IE3bRtXCISY",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-01",
-      "thumb": "https://i.ytimg.com/vi/IE3bRtXCISY/hqdefault.jpg",
-      "videoId": "IE3bRtXCISY"
     }
   ]
 }
