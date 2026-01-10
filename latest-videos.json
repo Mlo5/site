@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-10T14:41:11Z",
+  "generatedAt": "2026-01-10T15:14:49Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بداية جديدة مع Hollow Knight Silksong",
+      "url": "https://www.youtube.com/watch?v=UBS05vNzIg0",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-10",
+      "thumb": "https://i.ytimg.com/vi/UBS05vNzIg0/hqdefault.jpg",
+      "videoId": "UBS05vNzIg0"
+    },
     {
       "title": "يا انا يا هولو نايت | Live Streaming (Portrait)",
       "url": "https://www.youtube.com/watch?v=31wIx1BIrQk",
@@ -127,15 +136,6 @@
       "date": "2026-01-03",
       "thumb": "https://i.ytimg.com/vi/t2BuRCFNr6w/hqdefault.jpg",
       "videoId": "t2BuRCFNr6w"
-    },
-    {
-      "title": "هاي اللعبة بتجيب الجلطة! 🤬",
-      "url": "https://www.youtube.com/watch?v=gg3STTLdOSw",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-03",
-      "thumb": "https://i.ytimg.com/vi/gg3STTLdOSw/hqdefault.jpg",
-      "videoId": "gg3STTLdOSw"
     }
   ]
 }
