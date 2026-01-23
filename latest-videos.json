@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-23T17:22:21Z",
+  "generatedAt": "2026-01-23T17:46:21Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "آخر بوس باللعبة وبختمهااااااا 🥶 | (Full Screen) Hollow Knight",
+      "url": "https://www.youtube.com/watch?v=y4p75N3hb-A",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-23",
+      "thumb": "https://i.ytimg.com/vi/y4p75N3hb-A/hqdefault.jpg",
+      "videoId": "y4p75N3hb-A"
+    },
     {
       "title": "بث متأخر حتى الصباح الباكر 🥶 | Live Streaming",
       "url": "https://www.youtube.com/watch?v=49NRsdAXOy0",
@@ -127,15 +136,6 @@
       "date": "2026-01-09",
       "thumb": "https://i.ytimg.com/vi/g-IafuOquUo/hqdefault.jpg",
       "videoId": "g-IafuOquUo"
-    },
-    {
-      "title": "المحاولة الثانية مع مسرحية Hollow Knight",
-      "url": "https://www.youtube.com/watch?v=z9CZWbJUsYs",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-08",
-      "thumb": "https://i.ytimg.com/vi/z9CZWbJUsYs/hqdefault.jpg",
-      "videoId": "z9CZWbJUsYs"
     }
   ]
 }
