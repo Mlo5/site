@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-23T12:35:11Z",
+  "generatedAt": "2026-01-23T13:38:35Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
     {
@@ -28,15 +28,6 @@
       "date": "2026-01-20",
       "thumb": "https://i.ytimg.com/vi/zBWheXS-vlE/hqdefault.jpg",
       "videoId": "zBWheXS-vlE"
-    },
-    {
-      "title": "ليش؟",
-      "url": "https://www.youtube.com/shorts/SXrBm6kwHSE",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-18",
-      "thumb": "https://i.ytimg.com/vi/SXrBm6kwHSE/hqdefault.jpg",
-      "videoId": "SXrBm6kwHSE"
     },
     {
       "title": "فوت خلي الشباب تستفاد 😎 | Live Streaming",
@@ -102,24 +93,6 @@
       "videoId": "3yfvp0jYqyw"
     },
     {
-      "title": "شو تعمل بهاي الحالة؟",
-      "url": "https://www.youtube.com/shorts/o2AHXMhgmqs",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-12",
-      "thumb": "https://i.ytimg.com/vi/o2AHXMhgmqs/hqdefault.jpg",
-      "videoId": "o2AHXMhgmqs"
-    },
-    {
-      "title": "Don’t do that! 💔",
-      "url": "https://www.youtube.com/shorts/CK5FkjDh_2g",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-11",
-      "thumb": "https://i.ytimg.com/vi/CK5FkjDh_2g/hqdefault.jpg",
-      "videoId": "CK5FkjDh_2g"
-    },
-    {
       "title": "معقول اوصلها؟ | Hollow Knight",
       "url": "https://www.youtube.com/watch?v=3GDsed-4lzI",
       "type": "long",
@@ -129,13 +102,40 @@
       "videoId": "3GDsed-4lzI"
     },
     {
-      "title": "Women ✨",
-      "url": "https://www.youtube.com/shorts/q43quj0bID4",
+      "title": "بداية جديدة مع Hollow Knight Silksong",
+      "url": "https://www.youtube.com/watch?v=UBS05vNzIg0",
       "type": "long",
       "duration": "",
       "date": "2026-01-10",
-      "thumb": "https://i.ytimg.com/vi/q43quj0bID4/hqdefault.jpg",
-      "videoId": "q43quj0bID4"
+      "thumb": "https://i.ytimg.com/vi/UBS05vNzIg0/hqdefault.jpg",
+      "videoId": "UBS05vNzIg0"
+    },
+    {
+      "title": "يا انا يا هولو نايت | Live Streaming (Portrait)",
+      "url": "https://www.youtube.com/watch?v=31wIx1BIrQk",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-09",
+      "thumb": "https://i.ytimg.com/vi/31wIx1BIrQk/hqdefault.jpg",
+      "videoId": "31wIx1BIrQk"
+    },
+    {
+      "title": "يا انا يا هولو نايت | Live Streaming",
+      "url": "https://www.youtube.com/watch?v=g-IafuOquUo",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-09",
+      "thumb": "https://i.ytimg.com/vi/g-IafuOquUo/hqdefault.jpg",
+      "videoId": "g-IafuOquUo"
+    },
+    {
+      "title": "المحاولة الثانية مع مسرحية Hollow Knight",
+      "url": "https://www.youtube.com/watch?v=z9CZWbJUsYs",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-08",
+      "thumb": "https://i.ytimg.com/vi/z9CZWbJUsYs/hqdefault.jpg",
+      "videoId": "z9CZWbJUsYs"
     }
   ]
 }
