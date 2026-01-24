@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-24T17:40:30Z",
+  "generatedAt": "2026-01-24T18:22:34Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "البوس الأخير | هولو نايت",
+      "url": "https://www.youtube.com/shorts/ejSqIRE7l30",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-24",
+      "thumb": "https://i.ytimg.com/vi/ejSqIRE7l30/hqdefault.jpg",
+      "videoId": "ejSqIRE7l30"
+    },
     {
       "title": "كيف تحصل على رداء الظل في هولو نايت؟",
       "url": "https://www.youtube.com/watch?v=iLsNkJuhq9U",
@@ -127,15 +136,6 @@
       "date": "2026-01-10",
       "thumb": "https://i.ytimg.com/vi/3GDsed-4lzI/hqdefault.jpg",
       "videoId": "3GDsed-4lzI"
-    },
-    {
-      "title": "بداية جديدة مع Hollow Knight Silksong",
-      "url": "https://www.youtube.com/watch?v=UBS05vNzIg0",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-10",
-      "thumb": "https://i.ytimg.com/vi/UBS05vNzIg0/hqdefault.jpg",
-      "videoId": "UBS05vNzIg0"
     }
   ]
 }
