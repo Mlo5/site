@@ -1,7 +1,25 @@
 {
-  "generatedAt": "2026-01-26T19:29:29Z",
+  "generatedAt": "2026-01-26T19:45:39Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "سهرة حتى الصباح الباكر 👽 | Live Streaming (Full Screen)",
+      "url": "https://www.youtube.com/watch?v=s6-mkzXrIQc",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-26",
+      "thumb": "https://i.ytimg.com/vi/s6-mkzXrIQc/hqdefault.jpg",
+      "videoId": "s6-mkzXrIQc"
+    },
+    {
+      "title": "سهرة حتى الصباح الباكر 👽 | Live Streaming  (Portrait)",
+      "url": "https://www.youtube.com/watch?v=V8SEgaiVIHc",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-26",
+      "thumb": "https://i.ytimg.com/vi/V8SEgaiVIHc/hqdefault.jpg",
+      "videoId": "V8SEgaiVIHc"
+    },
     {
       "title": "القائد الجديد في رايز | سون تزو برايم 😲",
       "url": "https://www.youtube.com/shorts/EL8r2wVBupQ",
@@ -118,24 +136,6 @@
       "date": "2026-01-15",
       "thumb": "https://i.ytimg.com/vi/cViwaHn4Bv0/hqdefault.jpg",
       "videoId": "cViwaHn4Bv0"
-    },
-    {
-      "title": "لا تدخل تحالفات عربية! 😪 | Rise Of Kingdoms",
-      "url": "https://www.youtube.com/watch?v=N1-2LJVoEfQ",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-15",
-      "thumb": "https://i.ytimg.com/vi/N1-2LJVoEfQ/hqdefault.jpg",
-      "videoId": "N1-2LJVoEfQ"
-    },
-    {
-      "title": "هاي اللعبة هلكتني هلكان 🥶 | Live Streaming",
-      "url": "https://www.youtube.com/watch?v=_K8Wqh-MM2E",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-14",
-      "thumb": "https://i.ytimg.com/vi/_K8Wqh-MM2E/hqdefault.jpg",
-      "videoId": "_K8Wqh-MM2E"
     }
   ]
 }
