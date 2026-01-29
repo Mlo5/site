@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-29T18:00:19Z",
+  "generatedAt": "2026-01-29T19:07:41Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "شو حل هذا اللغز؟",
+      "url": "https://www.youtube.com/shorts/LX7IhSgki9E",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-29",
+      "thumb": "https://i.ytimg.com/vi/LX7IhSgki9E/hqdefault.jpg",
+      "videoId": "LX7IhSgki9E"
+    },
     {
       "title": "رحلة البحث عن الحالمين (1) | Hollow Knight",
       "url": "https://www.youtube.com/watch?v=7wn1gSfcxAI",
@@ -127,15 +136,6 @@
       "date": "2026-01-22",
       "thumb": "https://i.ytimg.com/vi/9luAc6KINFc/hqdefault.jpg",
       "videoId": "9luAc6KINFc"
-    },
-    {
-      "title": "أسوء خريطة في هولو نايت حطمت أعصابي! 🤬",
-      "url": "https://www.youtube.com/watch?v=zBWheXS-vlE",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-20",
-      "thumb": "https://i.ytimg.com/vi/zBWheXS-vlE/hqdefault.jpg",
-      "videoId": "zBWheXS-vlE"
     }
   ]
 }
