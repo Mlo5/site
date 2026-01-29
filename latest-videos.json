@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-29T15:30:04Z",
+  "generatedAt": "2026-01-29T16:04:11Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "رحلة البحث عن الحالمين (1) | Hollow Knight",
+      "url": "https://www.youtube.com/watch?v=7wn1gSfcxAI",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-29",
+      "thumb": "https://i.ytimg.com/vi/7wn1gSfcxAI/hqdefault.jpg",
+      "videoId": "7wn1gSfcxAI"
+    },
     {
       "title": "سبيد رن اونيكورا | محاولة 3",
       "url": "https://www.youtube.com/shorts/IhYFnLR7blo",
@@ -127,15 +136,6 @@
       "date": "2026-01-20",
       "thumb": "https://i.ytimg.com/vi/zBWheXS-vlE/hqdefault.jpg",
       "videoId": "zBWheXS-vlE"
-    },
-    {
-      "title": "فوت خلي الشباب تستفاد 😎 | Live Streaming",
-      "url": "https://www.youtube.com/watch?v=_vl6VyEoRzE",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-18",
-      "thumb": "https://i.ytimg.com/vi/_vl6VyEoRzE/hqdefault.jpg",
-      "videoId": "_vl6VyEoRzE"
     }
   ]
 }
