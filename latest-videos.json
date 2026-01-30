@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-01-30T18:00:28Z",
+  "generatedAt": "2026-01-30T19:06:41Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "أغبى لاعب هولو نايت 😂🔪!",
+      "url": "https://www.youtube.com/shorts/kQWCZ2ELy4o",
+      "type": "long",
+      "duration": "",
+      "date": "2026-01-30",
+      "thumb": "https://i.ytimg.com/vi/kQWCZ2ELy4o/hqdefault.jpg",
+      "videoId": "kQWCZ2ELy4o"
+    },
     {
       "title": "شو حل هذا اللغز؟",
       "url": "https://www.youtube.com/shorts/LX7IhSgki9E",
@@ -127,15 +136,6 @@
       "date": "2026-01-23",
       "thumb": "https://i.ytimg.com/vi/49NRsdAXOy0/hqdefault.jpg",
       "videoId": "49NRsdAXOy0"
-    },
-    {
-      "title": "بقدر انافس؟ 😤 | onikura",
-      "url": "https://www.youtube.com/watch?v=9luAc6KINFc",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-22",
-      "thumb": "https://i.ytimg.com/vi/9luAc6KINFc/hqdefault.jpg",
-      "videoId": "9luAc6KINFc"
     }
   ]
 }
