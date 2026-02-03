@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-02-03T14:13:32Z",
+  "generatedAt": "2026-02-03T15:08:34Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "رحلة البحث عن الحالمين (2) | Hollow Knight",
+      "url": "https://www.youtube.com/watch?v=oi4bEAqoyJM",
+      "type": "long",
+      "duration": "",
+      "date": "2026-02-03",
+      "thumb": "https://i.ytimg.com/vi/oi4bEAqoyJM/hqdefault.jpg",
+      "videoId": "oi4bEAqoyJM"
+    },
     {
       "title": "القائد الجديد سون تزو  برايم هل يستحق؟ | Rise Of Kingdoms",
       "url": "https://www.youtube.com/watch?v=xenY6M_ML0Y",
@@ -127,15 +136,6 @@
       "date": "2026-01-23",
       "thumb": "https://i.ytimg.com/vi/y4p75N3hb-A/hqdefault.jpg",
       "videoId": "y4p75N3hb-A"
-    },
-    {
-      "title": "سبيد رن اونيكورا | محاولة 1",
-      "url": "https://www.youtube.com/shorts/JGpo4-I2jCc",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-23",
-      "thumb": "https://i.ytimg.com/vi/JGpo4-I2jCc/hqdefault.jpg",
-      "videoId": "JGpo4-I2jCc"
     }
   ]
 }
