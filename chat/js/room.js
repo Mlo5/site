@@ -179,7 +179,7 @@ let ignoreWindows = {};
 let replyTarget = null;
 let roomLocked = false;
 
-const BAD_WORDS = ["fuck","shit","bitch","asshole","","","","","","",""];
+const BAD_WORDS = ["fuck","shit","bitch","asshole","sw","sw","sa","so","ls","zb","ks"];
 const EMOJIS = "😀😅😂🤣😊😍😘😎🤩🥳😡😭😱👍👎💓🙏🔥💛⭐💛🎮💀".split("");
 
 /* ✅ RANKS */
@@ -1999,6 +1999,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
