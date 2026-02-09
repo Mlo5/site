@@ -1303,10 +1303,10 @@ function renderMsgTextToHtml(text){
   esc = esc.replace(/:!!10/g, '__EMOJI10__');
   esc = esc.replace(/:!!9/g,  '__EMOJI9__');
   esc = esc.replace(/:!!8/g,  '__EMOJI8__');
-  esc = esc.replace(/:!!7/g,  '__EMOJI7__');
+  esc = esc.replace(/:9/g,  '__EMOJI7__');
   esc = esc.replace(/:!!6/g,  '__EMOJI6__');
   esc = esc.replace(/:!!5/g,  '__EMOJI5__');
-  esc = esc.replace(/:9/g,  '__EMOJI4__');
+  esc = esc.replace(/:4/g,  '__EMOJI4__');
   esc = esc.replace(/:!!3/g,  '__EMOJI3__');
   esc = esc.replace(/:!!2/g,  '__EMOJI2__');
   esc = esc.replace(/:!!/g,   '__EMOJI1__');
@@ -1999,6 +1999,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
