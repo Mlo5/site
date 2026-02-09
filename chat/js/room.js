@@ -1305,7 +1305,7 @@ function renderMsgTextToHtml(text){
   esc = esc.replace(/:!!8/g,  '__EMOJI8__');
   esc = esc.replace(/:9/g,  '__EMOJI7__');
   esc = esc.replace(/:!!6/g,  '__EMOJI6__');
-  esc = esc.replace(/:!!5/g,  '__EMOJI5__');
+  esc = esc.replace(/:#/g,  '__EMOJI5__');
   esc = esc.replace(/:4/g,  '__EMOJI4__');
   esc = esc.replace(/:!!3/g,  '__EMOJI3__');
   esc = esc.replace(/:!!2/g,  '__EMOJI2__');
@@ -1999,6 +1999,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
