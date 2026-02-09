@@ -1301,8 +1301,8 @@ function startOnlineListener(){
 function renderMsgTextToHtml(text){
   let esc = escapeHtml(text || "");
   esc = esc.replace(/:!@/g, '__EMOJI10__');
-  esc = esc.replace(/:!$/g,  '__EMOJI9__');
-  esc = esc.replace(/:!!8/g,  '__EMOJI8__');
+  esc = esc.replace(/:1/g,  '__EMOJI9__');
+  esc = esc.replace(/:%/g,  '__EMOJI8__');
   esc = esc.replace(/:9/g,  '__EMOJI7__');
   esc = esc.replace(/:!!6/g,  '__EMOJI6__');
   esc = esc.replace(/:#/g,  '__EMOJI5__');
