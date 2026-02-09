@@ -1301,7 +1301,7 @@ function startOnlineListener(){
 function renderMsgTextToHtml(text){
   let esc = escapeHtml(text || "");
   esc = esc.replace(/:!@/g, '__EMOJI10__');
-  esc = esc.replace(/:$/g,  '__EMOJI9__');
+  esc = esc.replace(/:!$/g,  '__EMOJI9__');
   esc = esc.replace(/:!!8/g,  '__EMOJI8__');
   esc = esc.replace(/:9/g,  '__EMOJI7__');
   esc = esc.replace(/:!!6/g,  '__EMOJI6__');
@@ -1999,6 +1999,7 @@ function attachCapsuleArrowToMyRow(){
 
 // 🔁 شغّلها كل شوي بشكل “لطيف” لأن قائمة المتواجدين بتنعاد رسمها
 setInterval(attachCapsuleArrowToMyRow, 800);
+
 
 
 
