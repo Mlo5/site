@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-02-11T16:59:35Z",
+  "generatedAt": "2026-02-11T18:01:25Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بطاطا اليوم طالب راسي 💔🔪",
+      "url": "https://www.youtube.com/watch?v=cVL64knc_Q8",
+      "type": "long",
+      "duration": "",
+      "date": "2026-02-11",
+      "thumb": "https://i.ytimg.com/vi/cVL64knc_Q8/hqdefault.jpg",
+      "videoId": "cVL64knc_Q8"
+    },
     {
       "title": "بث العودة 😍",
       "url": "https://www.youtube.com/watch?v=20a8piDbxDI",
@@ -127,15 +136,6 @@
       "date": "2026-01-26",
       "thumb": "https://i.ytimg.com/vi/EL8r2wVBupQ/hqdefault.jpg",
       "videoId": "EL8r2wVBupQ"
-    },
-    {
-      "title": "سبيد رن اونيكورا | محاولة 2",
-      "url": "https://www.youtube.com/shorts/PcmALgt25BI",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-25",
-      "thumb": "https://i.ytimg.com/vi/PcmALgt25BI/hqdefault.jpg",
-      "videoId": "PcmALgt25BI"
     }
   ]
 }
