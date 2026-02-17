@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-02-17T18:49:43Z",
+  "generatedAt": "2026-02-17T19:42:52Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "انتوا صايمين واحنا لا 😂",
+      "url": "https://www.youtube.com/watch?v=FpJWnQyICX8",
+      "type": "long",
+      "duration": "",
+      "date": "2026-02-17",
+      "thumb": "https://i.ytimg.com/vi/FpJWnQyICX8/hqdefault.jpg",
+      "videoId": "FpJWnQyICX8"
+    },
     {
       "title": "حررت الدريمر الثاني في هولو نايت! 👽",
       "url": "https://www.youtube.com/watch?v=Ui1tZTBjGR0",
@@ -127,15 +136,6 @@
       "date": "2026-02-03",
       "thumb": "https://i.ytimg.com/vi/oi4bEAqoyJM/hqdefault.jpg",
       "videoId": "oi4bEAqoyJM"
-    },
-    {
-      "title": "القائد الجديد سون تزو  برايم هل يستحق؟ | Rise Of Kingdoms",
-      "url": "https://www.youtube.com/watch?v=xenY6M_ML0Y",
-      "type": "long",
-      "duration": "",
-      "date": "2026-01-31",
-      "thumb": "https://i.ytimg.com/vi/xenY6M_ML0Y/hqdefault.jpg",
-      "videoId": "xenY6M_ML0Y"
     }
   ]
 }
