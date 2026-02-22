@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-02-22T14:20:51Z",
+  "generatedAt": "2026-02-22T14:51:00Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بث خفيف لطيف قبل الافطار ✨",
+      "url": "https://www.youtube.com/watch?v=c-stqXBrBaw",
+      "type": "long",
+      "duration": "",
+      "date": "2026-02-22",
+      "thumb": "https://i.ytimg.com/vi/c-stqXBrBaw/hqdefault.jpg",
+      "videoId": "c-stqXBrBaw"
+    },
     {
       "title": "حملة افطار صائم مع هولو نايت😂 | رمضان كريم ✨",
       "url": "https://www.youtube.com/watch?v=ojEp36QugcY",
@@ -127,15 +136,6 @@
       "date": "2026-02-10",
       "thumb": "https://i.ytimg.com/vi/20a8piDbxDI/hqdefault.jpg",
       "videoId": "20a8piDbxDI"
-    },
-    {
-      "title": "حررت أول دريمر في هولو نايت! 🔪",
-      "url": "https://www.youtube.com/watch?v=SHMnGAU12Z8",
-      "type": "long",
-      "duration": "",
-      "date": "2026-02-07",
-      "thumb": "https://i.ytimg.com/vi/SHMnGAU12Z8/hqdefault.jpg",
-      "videoId": "SHMnGAU12Z8"
     }
   ]
 }
