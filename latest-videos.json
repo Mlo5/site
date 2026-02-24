@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-02-24T12:52:51Z",
+  "generatedAt": "2026-02-24T14:08:01Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "لايف الفطووور سريع سريع ✨",
+      "url": "https://www.youtube.com/watch?v=f_NIjcaJ_UQ",
+      "type": "long",
+      "duration": "",
+      "date": "2026-02-24",
+      "thumb": "https://i.ytimg.com/vi/f_NIjcaJ_UQ/hqdefault.jpg",
+      "videoId": "f_NIjcaJ_UQ"
+    },
     {
       "title": "بث خفيف لطيف قبل الافطار ✨",
       "url": "https://www.youtube.com/watch?v=c-stqXBrBaw",
@@ -127,15 +136,6 @@
       "date": "2026-02-12",
       "thumb": "https://i.ytimg.com/vi/cVL64knc_Q8/hqdefault.jpg",
       "videoId": "cVL64knc_Q8"
-    },
-    {
-      "title": "بث العودة 😍",
-      "url": "https://www.youtube.com/watch?v=20a8piDbxDI",
-      "type": "long",
-      "duration": "",
-      "date": "2026-02-10",
-      "thumb": "https://i.ytimg.com/vi/20a8piDbxDI/hqdefault.jpg",
-      "videoId": "20a8piDbxDI"
     }
   ]
 }
