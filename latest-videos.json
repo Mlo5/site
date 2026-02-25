@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-02-25T12:52:10Z",
+  "generatedAt": "2026-02-25T14:06:39Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "ليش مش صايم؟ 👽",
+      "url": "https://www.youtube.com/watch?v=KTK8y7LUCHQ",
+      "type": "long",
+      "duration": "",
+      "date": "2026-02-25",
+      "thumb": "https://i.ytimg.com/vi/KTK8y7LUCHQ/hqdefault.jpg",
+      "videoId": "KTK8y7LUCHQ"
+    },
     {
       "title": "لايف الفطووور سريع سريع ✨",
       "url": "https://www.youtube.com/watch?v=f_NIjcaJ_UQ",
@@ -127,15 +136,6 @@
       "date": "2026-02-12",
       "thumb": "https://i.ytimg.com/vi/Gad5TyD7CaY/hqdefault.jpg",
       "videoId": "Gad5TyD7CaY"
-    },
-    {
-      "title": "بطاطا اليوم طالب راسي 💔🔪",
-      "url": "https://www.youtube.com/watch?v=cVL64knc_Q8",
-      "type": "long",
-      "duration": "",
-      "date": "2026-02-12",
-      "thumb": "https://i.ytimg.com/vi/cVL64knc_Q8/hqdefault.jpg",
-      "videoId": "cVL64knc_Q8"
     }
   ]
 }
