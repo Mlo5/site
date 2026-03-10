@@ -1,7 +1,25 @@
 {
-  "generatedAt": "2026-03-10T17:41:48Z",
+  "generatedAt": "2026-03-10T18:39:22Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "مريض وفاتح بث 💔!",
+      "url": "https://www.youtube.com/watch?v=jrMNZZTxcr8",
+      "type": "long",
+      "duration": "",
+      "date": "2026-03-10",
+      "thumb": "https://i.ytimg.com/vi/jrMNZZTxcr8/hqdefault.jpg",
+      "videoId": "jrMNZZTxcr8"
+    },
+    {
+      "title": "مريض وفاتح بث 💔! (Portrait)",
+      "url": "https://www.youtube.com/watch?v=Itze6rYbsvI",
+      "type": "long",
+      "duration": "",
+      "date": "2026-03-10",
+      "thumb": "https://i.ytimg.com/vi/Itze6rYbsvI/hqdefault.jpg",
+      "videoId": "Itze6rYbsvI"
+    },
     {
       "title": "المرض لا يرحم 💔!",
       "url": "https://www.youtube.com/watch?v=cO4FSnfESgQ",
@@ -118,24 +136,6 @@
       "date": "2026-02-26",
       "thumb": "https://i.ytimg.com/vi/Lv0aCFOITak/hqdefault.jpg",
       "videoId": "Lv0aCFOITak"
-    },
-    {
-      "title": "ليش مش صايم؟ 👽",
-      "url": "https://www.youtube.com/watch?v=KTK8y7LUCHQ",
-      "type": "long",
-      "duration": "",
-      "date": "2026-02-26",
-      "thumb": "https://i.ytimg.com/vi/KTK8y7LUCHQ/hqdefault.jpg",
-      "videoId": "KTK8y7LUCHQ"
-    },
-    {
-      "title": "لايف الفطووور سريع سريع ✨",
-      "url": "https://www.youtube.com/watch?v=f_NIjcaJ_UQ",
-      "type": "long",
-      "duration": "",
-      "date": "2026-02-25",
-      "thumb": "https://i.ytimg.com/vi/f_NIjcaJ_UQ/hqdefault.jpg",
-      "videoId": "f_NIjcaJ_UQ"
     }
   ]
 }
