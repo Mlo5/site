@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-03T17:28:53Z",
+  "generatedAt": "2026-04-03T18:02:09Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "كيف تفتح قنية مي",
+      "url": "https://www.youtube.com/shorts/lnBgEaPlXwI",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-03",
+      "thumb": "https://i.ytimg.com/vi/lnBgEaPlXwI/hqdefault.jpg",
+      "videoId": "lnBgEaPlXwI"
+    },
     {
       "title": "الجو بدو حبيب 💔",
       "url": "https://www.youtube.com/shorts/MDSnV9f9zRY",
@@ -127,15 +136,6 @@
       "date": "2026-03-10",
       "thumb": "https://i.ytimg.com/vi/jrMNZZTxcr8/hqdefault.jpg",
       "videoId": "jrMNZZTxcr8"
-    },
-    {
-      "title": "المرض لا يرحم 💔!",
-      "url": "https://www.youtube.com/watch?v=cO4FSnfESgQ",
-      "type": "long",
-      "duration": "",
-      "date": "2026-03-10",
-      "thumb": "https://i.ytimg.com/vi/cO4FSnfESgQ/hqdefault.jpg",
-      "videoId": "cO4FSnfESgQ"
     }
   ]
 }
