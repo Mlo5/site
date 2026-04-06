@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-06T17:12:08Z",
+  "generatedAt": "2026-04-06T18:10:01Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "شغل نظيف نظيف 🤣",
+      "url": "https://www.youtube.com/shorts/F73lLtWf5QA",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-06",
+      "thumb": "https://i.ytimg.com/vi/F73lLtWf5QA/hqdefault.jpg",
+      "videoId": "F73lLtWf5QA"
+    },
     {
       "title": "شعار مين هذا؟",
       "url": "https://www.youtube.com/shorts/ytIjnGE_qiI",
@@ -127,15 +136,6 @@
       "date": "2026-03-25",
       "thumb": "https://i.ytimg.com/vi/_pTn13SHfYw/hqdefault.jpg",
       "videoId": "_pTn13SHfYw"
-    },
-    {
-      "title": "مريض وفاتح بث 💔! (Portrait)",
-      "url": "https://www.youtube.com/watch?v=Itze6rYbsvI",
-      "type": "long",
-      "duration": "",
-      "date": "2026-03-10",
-      "thumb": "https://i.ytimg.com/vi/Itze6rYbsvI/hqdefault.jpg",
-      "videoId": "Itze6rYbsvI"
     }
   ]
 }
