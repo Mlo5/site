@@ -1,7 +1,25 @@
 {
-  "generatedAt": "2026-04-07T16:06:59Z",
+  "generatedAt": "2026-04-07T17:30:50Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بث مباشر | مباراة ريال مدريد وبايرن ميونخ (Portrait)",
+      "url": "https://www.youtube.com/watch?v=_gTtnqb7RrU",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-07",
+      "thumb": "https://i.ytimg.com/vi/_gTtnqb7RrU/hqdefault.jpg",
+      "videoId": "_gTtnqb7RrU"
+    },
+    {
+      "title": "بث مباشر | مباراة ريال مدريد وبايرن ميونخ",
+      "url": "https://www.youtube.com/watch?v=90e4VQQ3kWE",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-07",
+      "thumb": "https://i.ytimg.com/vi/90e4VQQ3kWE/hqdefault.jpg",
+      "videoId": "90e4VQQ3kWE"
+    },
     {
       "title": "شغل نظيف نظيف 🤣",
       "url": "https://www.youtube.com/shorts/F73lLtWf5QA",
@@ -118,24 +136,6 @@
       "date": "2026-03-29",
       "thumb": "https://i.ytimg.com/vi/84Czn0SU7m4/hqdefault.jpg",
       "videoId": "84Czn0SU7m4"
-    },
-    {
-      "title": "ليش سحبت على القناة؟",
-      "url": "https://www.youtube.com/watch?v=5JoAtzsXDS8",
-      "type": "long",
-      "duration": "",
-      "date": "2026-03-26",
-      "thumb": "https://i.ytimg.com/vi/5JoAtzsXDS8/hqdefault.jpg",
-      "videoId": "5JoAtzsXDS8"
-    },
-    {
-      "title": "عدنا من جديد 😈",
-      "url": "https://www.youtube.com/watch?v=_pTn13SHfYw",
-      "type": "long",
-      "duration": "",
-      "date": "2026-03-25",
-      "thumb": "https://i.ytimg.com/vi/_pTn13SHfYw/hqdefault.jpg",
-      "videoId": "_pTn13SHfYw"
     }
   ]
 }
