@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-09T13:12:36Z",
+  "generatedAt": "2026-04-09T15:04:43Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "هل رايز أوف كينجدومز انتهت؟! 😢",
+      "url": "https://www.youtube.com/watch?v=aC2-9nzwux8",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-09",
+      "thumb": "https://i.ytimg.com/vi/aC2-9nzwux8/hqdefault.jpg",
+      "videoId": "aC2-9nzwux8"
+    },
     {
       "title": "الطريق إلى 2000 مشترك 😈🔪! (Portrait)",
       "url": "https://www.youtube.com/watch?v=I1dzbkm55Bk",
@@ -127,15 +136,6 @@
       "date": "2026-03-31",
       "thumb": "https://i.ytimg.com/vi/vtzIFGTrQZ8/hqdefault.jpg",
       "videoId": "vtzIFGTrQZ8"
-    },
-    {
-      "title": "ذليتهم عشان وجبة شاورما 😂",
-      "url": "https://www.youtube.com/shorts/V_ckbUYkpcg",
-      "type": "long",
-      "duration": "",
-      "date": "2026-03-30",
-      "thumb": "https://i.ytimg.com/vi/V_ckbUYkpcg/hqdefault.jpg",
-      "videoId": "V_ckbUYkpcg"
     }
   ]
 }
