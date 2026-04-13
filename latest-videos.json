@@ -1,9 +1,18 @@
 {
-  "generatedAt": "2026-04-13T14:58:58Z",
+  "generatedAt": "2026-04-13T16:17:43Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
     {
-      "title": "I Will Do It",
+      "title": "I Will Do It | Day 3",
+      "url": "https://www.youtube.com/watch?v=6Q_FYyv_c_E",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-13",
+      "thumb": "https://i.ytimg.com/vi/6Q_FYyv_c_E/hqdefault.jpg",
+      "videoId": "6Q_FYyv_c_E"
+    },
+    {
+      "title": "I Will Do It | Day 2",
       "url": "https://www.youtube.com/watch?v=56KX9wkh5SU",
       "type": "long",
       "duration": "",
@@ -12,7 +21,7 @@
       "videoId": "56KX9wkh5SU"
     },
     {
-      "title": "I Will Do It",
+      "title": "I Will Do It | Day 1",
       "url": "https://www.youtube.com/watch?v=nizODFMryPc",
       "type": "long",
       "duration": "",
@@ -127,15 +136,6 @@
       "date": "2026-04-02",
       "thumb": "https://i.ytimg.com/vi/XfE8y9aXL-w/hqdefault.jpg",
       "videoId": "XfE8y9aXL-w"
-    },
-    {
-      "title": "تحدينا المارد الأزرق طلع هكر 😮",
-      "url": "https://www.youtube.com/watch?v=kCwrvrMlu0o",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-02",
-      "thumb": "https://i.ytimg.com/vi/kCwrvrMlu0o/hqdefault.jpg",
-      "videoId": "kCwrvrMlu0o"
     }
   ]
 }
