@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-16T13:18:50Z",
+  "generatedAt": "2026-04-16T15:10:57Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "أنا أدمنت هاي اللعبة! 😈 | BLOOD STRIKE",
+      "url": "https://www.youtube.com/watch?v=PsEIcbUQI58",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-16",
+      "thumb": "https://i.ytimg.com/vi/PsEIcbUQI58/hqdefault.jpg",
+      "videoId": "PsEIcbUQI58"
+    },
     {
       "title": "I Will Do It | Day 5",
       "url": "https://www.youtube.com/watch?v=DSLTq5SFgPM",
@@ -127,15 +136,6 @@
       "date": "2026-04-05",
       "thumb": "https://i.ytimg.com/vi/ytIjnGE_qiI/hqdefault.jpg",
       "videoId": "ytIjnGE_qiI"
-    },
-    {
-      "title": "كيف تفتح قنية مي",
-      "url": "https://www.youtube.com/shorts/lnBgEaPlXwI",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-03",
-      "thumb": "https://i.ytimg.com/vi/lnBgEaPlXwI/hqdefault.jpg",
-      "videoId": "lnBgEaPlXwI"
     }
   ]
 }
