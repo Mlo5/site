@@ -1,7 +1,25 @@
 {
-  "generatedAt": "2026-04-17T17:43:43Z",
+  "generatedAt": "2026-04-17T18:52:12Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "I Will Do It | Day 7",
+      "url": "https://www.youtube.com/watch?v=p_cXbBZY1QM",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-17",
+      "thumb": "https://i.ytimg.com/vi/p_cXbBZY1QM/hqdefault.jpg",
+      "videoId": "p_cXbBZY1QM"
+    },
+    {
+      "title": "هاي اللعبة أقوى من ببجي 😈",
+      "url": "https://www.youtube.com/shorts/lha1hORGRLA",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-17",
+      "thumb": "https://i.ytimg.com/vi/lha1hORGRLA/hqdefault.jpg",
+      "videoId": "lha1hORGRLA"
+    },
     {
       "title": "I Will Do It | Day 6",
       "url": "https://www.youtube.com/watch?v=RSIDzHVfwQo",
@@ -118,24 +136,6 @@
       "date": "2026-04-08",
       "thumb": "https://i.ytimg.com/vi/Ewb07o9EEkQ/hqdefault.jpg",
       "videoId": "Ewb07o9EEkQ"
-    },
-    {
-      "title": "أنا بكره الجامعة",
-      "url": "https://www.youtube.com/shorts/PmjadKh7Pio",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-07",
-      "thumb": "https://i.ytimg.com/vi/PmjadKh7Pio/hqdefault.jpg",
-      "videoId": "PmjadKh7Pio"
-    },
-    {
-      "title": "شغل نظيف نظيف 🤣",
-      "url": "https://www.youtube.com/shorts/F73lLtWf5QA",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-06",
-      "thumb": "https://i.ytimg.com/vi/F73lLtWf5QA/hqdefault.jpg",
-      "videoId": "F73lLtWf5QA"
     }
   ]
 }
