@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-20T16:38:52Z",
+  "generatedAt": "2026-04-20T17:52:30Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "اليوم Blood Strike للصبح 😈",
+      "url": "https://www.youtube.com/watch?v=atov4seenQE",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-20",
+      "thumb": "https://i.ytimg.com/vi/atov4seenQE/hqdefault.jpg",
+      "videoId": "atov4seenQE"
+    },
     {
       "title": "اليوم Blood Strike للصبح 😈",
       "url": "https://www.youtube.com/watch?v=XRt8ky2t4bM",
@@ -127,15 +136,6 @@
       "date": "2026-04-09",
       "thumb": "https://i.ytimg.com/vi/N5zukwxaptI/hqdefault.jpg",
       "videoId": "N5zukwxaptI"
-    },
-    {
-      "title": "هل رايز أوف كينجدومز انتهت؟! 😢",
-      "url": "https://www.youtube.com/watch?v=aC2-9nzwux8",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-09",
-      "thumb": "https://i.ytimg.com/vi/aC2-9nzwux8/hqdefault.jpg",
-      "videoId": "aC2-9nzwux8"
     }
   ]
 }
