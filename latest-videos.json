@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-21T17:32:50Z",
+  "generatedAt": "2026-04-21T19:03:42Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "لكي لا ننسى",
+      "url": "https://www.youtube.com/shorts/Ztpz2fzOG4U",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-21",
+      "thumb": "https://i.ytimg.com/vi/Ztpz2fzOG4U/hqdefault.jpg",
+      "videoId": "Ztpz2fzOG4U"
+    },
     {
       "title": "جربت المود الجديد في بلود سترايك Blood Strike! 😲",
       "url": "https://www.youtube.com/watch?v=6tXytq4W9BA",
@@ -127,15 +136,6 @@
       "date": "2026-04-12",
       "thumb": "https://i.ytimg.com/vi/56KX9wkh5SU/hqdefault.jpg",
       "videoId": "56KX9wkh5SU"
-    },
-    {
-      "title": "I Will Do It | Day 1",
-      "url": "https://www.youtube.com/watch?v=nizODFMryPc",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-11",
-      "thumb": "https://i.ytimg.com/vi/nizODFMryPc/hqdefault.jpg",
-      "videoId": "nizODFMryPc"
     }
   ]
 }
