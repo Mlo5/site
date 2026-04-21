@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-21T14:56:26Z",
+  "generatedAt": "2026-04-21T16:08:37Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "جربت المود الجديد في بلود سترايك Blood Strike! 😲",
+      "url": "https://www.youtube.com/watch?v=6tXytq4W9BA",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-21",
+      "thumb": "https://i.ytimg.com/vi/6tXytq4W9BA/hqdefault.jpg",
+      "videoId": "6tXytq4W9BA"
+    },
     {
       "title": "اليوم Blood Strike للصبح 😈",
       "url": "https://www.youtube.com/watch?v=atov4seenQE",
@@ -127,15 +136,6 @@
       "date": "2026-04-11",
       "thumb": "https://i.ytimg.com/vi/nizODFMryPc/hqdefault.jpg",
       "videoId": "nizODFMryPc"
-    },
-    {
-      "title": "بث مباشر | الصمت لغة العظماء 💀",
-      "url": "https://www.youtube.com/watch?v=YtRetsvKe24",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-10",
-      "thumb": "https://i.ytimg.com/vi/YtRetsvKe24/hqdefault.jpg",
-      "videoId": "YtRetsvKe24"
     }
   ]
 }
