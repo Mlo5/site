@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-23T16:57:51Z",
+  "generatedAt": "2026-04-23T18:05:32Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "عودة بطاطا للبثوث 😎",
+      "url": "https://www.youtube.com/watch?v=L5zurAoFjIE",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-23",
+      "thumb": "https://i.ytimg.com/vi/L5zurAoFjIE/hqdefault.jpg",
+      "videoId": "L5zurAoFjIE"
+    },
     {
       "title": "هل في أمل ارجع العب Rise Of Kingdoms؟ 🤔",
       "url": "https://www.youtube.com/watch?v=qxt5sok5qAw",
@@ -127,15 +136,6 @@
       "date": "2026-04-14",
       "thumb": "https://i.ytimg.com/vi/a6EmPn1DLSA/hqdefault.jpg",
       "videoId": "a6EmPn1DLSA"
-    },
-    {
-      "title": "I Will Do It | Day 3",
-      "url": "https://www.youtube.com/watch?v=6Q_FYyv_c_E",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-13",
-      "thumb": "https://i.ytimg.com/vi/6Q_FYyv_c_E/hqdefault.jpg",
-      "videoId": "6Q_FYyv_c_E"
     }
   ]
 }
