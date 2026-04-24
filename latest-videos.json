@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-04-24T17:27:40Z",
+  "generatedAt": "2026-04-24T18:05:06Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بث خارق حارق متفجر 💀",
+      "url": "https://www.youtube.com/watch?v=rXC8xXa0KCg",
+      "type": "long",
+      "duration": "",
+      "date": "2026-04-24",
+      "thumb": "https://i.ytimg.com/vi/rXC8xXa0KCg/hqdefault.jpg",
+      "videoId": "rXC8xXa0KCg"
+    },
     {
       "title": "فصل البث من وجه حنان",
       "url": "https://www.youtube.com/watch?v=1IyVbuqpIBI",
@@ -127,15 +136,6 @@
       "date": "2026-04-16",
       "thumb": "https://i.ytimg.com/vi/PsEIcbUQI58/hqdefault.jpg",
       "videoId": "PsEIcbUQI58"
-    },
-    {
-      "title": "I Will Do It | Day 5",
-      "url": "https://www.youtube.com/watch?v=DSLTq5SFgPM",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-15",
-      "thumb": "https://i.ytimg.com/vi/DSLTq5SFgPM/hqdefault.jpg",
-      "videoId": "DSLTq5SFgPM"
     }
   ]
 }
