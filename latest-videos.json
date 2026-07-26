@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-07-26T17:57:20Z",
+  "generatedAt": "2026-07-26T19:08:33Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "انداري يلا عادي",
+      "url": "https://www.youtube.com/watch?v=oJTDTlLQjUQ",
+      "type": "long",
+      "duration": "",
+      "date": "2026-07-26",
+      "thumb": "https://i.ytimg.com/vi/oJTDTlLQjUQ/hqdefault.jpg",
+      "videoId": "oJTDTlLQjUQ"
+    },
     {
       "title": "رجع الغالي يامو",
       "url": "https://www.youtube.com/watch?v=KIIJOVr69G8",
@@ -127,15 +136,6 @@
       "date": "2026-04-17",
       "thumb": "https://i.ytimg.com/vi/lha1hORGRLA/hqdefault.jpg",
       "videoId": "lha1hORGRLA"
-    },
-    {
-      "title": "I Will Do It | Day 6",
-      "url": "https://www.youtube.com/watch?v=RSIDzHVfwQo",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-16",
-      "thumb": "https://i.ytimg.com/vi/RSIDzHVfwQo/hqdefault.jpg",
-      "videoId": "RSIDzHVfwQo"
     }
   ]
 }
