@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-07-27T18:54:01Z",
+  "generatedAt": "2026-07-27T20:17:06Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "الذكاء الاصطناعي احتلنا 😏",
+      "url": "https://www.youtube.com/watch?v=2PnfaJ8VHVI",
+      "type": "long",
+      "duration": "",
+      "date": "2026-07-27",
+      "thumb": "https://i.ytimg.com/vi/2PnfaJ8VHVI/hqdefault.jpg",
+      "videoId": "2PnfaJ8VHVI"
+    },
     {
       "title": "انداري يلا عادي",
       "url": "https://www.youtube.com/watch?v=oJTDTlLQjUQ",
@@ -127,15 +136,6 @@
       "date": "2026-04-18",
       "thumb": "https://i.ytimg.com/vi/p_cXbBZY1QM/hqdefault.jpg",
       "videoId": "p_cXbBZY1QM"
-    },
-    {
-      "title": "هاي اللعبة أقوى من ببجي 😈",
-      "url": "https://www.youtube.com/shorts/lha1hORGRLA",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-17",
-      "thumb": "https://i.ytimg.com/vi/lha1hORGRLA/hqdefault.jpg",
-      "videoId": "lha1hORGRLA"
     }
   ]
 }
