@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-07-28T15:14:48Z",
+  "generatedAt": "2026-07-28T16:56:43Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "تعلّم البرمجة أحسنلك من الألعاب 🙂!",
+      "url": "https://www.youtube.com/watch?v=l_cQQDeRQKQ",
+      "type": "long",
+      "duration": "",
+      "date": "2026-07-28",
+      "thumb": "https://i.ytimg.com/vi/l_cQQDeRQKQ/hqdefault.jpg",
+      "videoId": "l_cQQDeRQKQ"
+    },
     {
       "title": "الذكاء الاصطناعي احتلنا 😏",
       "url": "https://www.youtube.com/watch?v=2PnfaJ8VHVI",
@@ -127,15 +136,6 @@
       "date": "2026-04-20",
       "thumb": "https://i.ytimg.com/vi/nqFwYU6VYbM/hqdefault.jpg",
       "videoId": "nqFwYU6VYbM"
-    },
-    {
-      "title": "I Will Do It | Day 7",
-      "url": "https://www.youtube.com/watch?v=p_cXbBZY1QM",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-18",
-      "thumb": "https://i.ytimg.com/vi/p_cXbBZY1QM/hqdefault.jpg",
-      "videoId": "p_cXbBZY1QM"
     }
   ]
 }
