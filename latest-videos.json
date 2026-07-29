@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-07-29T15:27:04Z",
+  "generatedAt": "2026-07-29T16:48:53Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "كيف تستغل وقتك بشكل مفيد؟😃",
+      "url": "https://www.youtube.com/watch?v=98u8t6jQ4ds",
+      "type": "long",
+      "duration": "",
+      "date": "2026-07-29",
+      "thumb": "https://i.ytimg.com/vi/98u8t6jQ4ds/hqdefault.jpg",
+      "videoId": "98u8t6jQ4ds"
+    },
     {
       "title": "تعلّم الفايب أحسنلك من الألعاب 🙂!",
       "url": "https://www.youtube.com/watch?v=l_cQQDeRQKQ",
@@ -127,15 +136,6 @@
       "date": "2026-04-20",
       "thumb": "https://i.ytimg.com/vi/XRt8ky2t4bM/hqdefault.jpg",
       "videoId": "XRt8ky2t4bM"
-    },
-    {
-      "title": "I Will Do It | Day 8",
-      "url": "https://www.youtube.com/watch?v=nqFwYU6VYbM",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-20",
-      "thumb": "https://i.ytimg.com/vi/nqFwYU6VYbM/hqdefault.jpg",
-      "videoId": "nqFwYU6VYbM"
     }
   ]
 }
