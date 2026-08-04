@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-08-04T15:20:20Z",
+  "generatedAt": "2026-08-04T17:10:37Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "رحلة بناء نظامي الخاص | SaaS 😎",
+      "url": "https://www.youtube.com/watch?v=wFKiAlBGyDM",
+      "type": "long",
+      "duration": "",
+      "date": "2026-08-04",
+      "thumb": "https://i.ytimg.com/vi/wFKiAlBGyDM/hqdefault.jpg",
+      "videoId": "wFKiAlBGyDM"
+    },
     {
       "title": "كيف تستغل وقتك بشكل مفيد؟😃",
       "url": "https://www.youtube.com/watch?v=98u8t6jQ4ds",
@@ -127,15 +136,6 @@
       "date": "2026-04-20",
       "thumb": "https://i.ytimg.com/vi/eJTF-_TmSRI/hqdefault.jpg",
       "videoId": "eJTF-_TmSRI"
-    },
-    {
-      "title": "اليوم Blood Strike للصبح 😈",
-      "url": "https://www.youtube.com/watch?v=XRt8ky2t4bM",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-20",
-      "thumb": "https://i.ytimg.com/vi/XRt8ky2t4bM/hqdefault.jpg",
-      "videoId": "XRt8ky2t4bM"
     }
   ]
 }
