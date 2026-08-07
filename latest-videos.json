@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-08-07T12:06:14Z",
+  "generatedAt": "2026-08-07T13:47:10Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "تعالوا نجرب Rise Of Kingdoms عالنظام الجديد 😋.",
+      "url": "https://www.youtube.com/watch?v=3jIc761W2xE",
+      "type": "long",
+      "duration": "",
+      "date": "2026-08-07",
+      "thumb": "https://i.ytimg.com/vi/3jIc761W2xE/hqdefault.jpg",
+      "videoId": "3jIc761W2xE"
+    },
     {
       "title": "رحلة بناء نظامي الخاص | SaaS 😎",
       "url": "https://www.youtube.com/watch?v=wFKiAlBGyDM",
@@ -127,15 +136,6 @@
       "date": "2026-04-21",
       "thumb": "https://i.ytimg.com/vi/atov4seenQE/hqdefault.jpg",
       "videoId": "atov4seenQE"
-    },
-    {
-      "title": "تسليك",
-      "url": "https://www.youtube.com/shorts/eJTF-_TmSRI",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-20",
-      "thumb": "https://i.ytimg.com/vi/eJTF-_TmSRI/hqdefault.jpg",
-      "videoId": "eJTF-_TmSRI"
     }
   ]
 }
