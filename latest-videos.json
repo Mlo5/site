@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-08-15T08:52:55Z",
+  "generatedAt": "2026-08-15T09:19:15Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بقدرش أعيش بدونه 💔😔!",
+      "url": "https://www.youtube.com/shorts/xiJjmWYmnX8",
+      "type": "long",
+      "duration": "",
+      "date": "2026-08-15",
+      "thumb": "https://i.ytimg.com/vi/xiJjmWYmnX8/hqdefault.jpg",
+      "videoId": "xiJjmWYmnX8"
+    },
     {
       "title": "تعالوا نجرب Rise Of Kingdoms عالنظام الجديد 😋.",
       "url": "https://www.youtube.com/watch?v=3jIc761W2xE",
@@ -127,15 +136,6 @@
       "date": "2026-04-21",
       "thumb": "https://i.ytimg.com/vi/6tXytq4W9BA/hqdefault.jpg",
       "videoId": "6tXytq4W9BA"
-    },
-    {
-      "title": "اليوم Blood Strike للصبح 😈",
-      "url": "https://www.youtube.com/watch?v=atov4seenQE",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-21",
-      "thumb": "https://i.ytimg.com/vi/atov4seenQE/hqdefault.jpg",
-      "videoId": "atov4seenQE"
     }
   ]
 }
