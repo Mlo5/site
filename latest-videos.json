@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-08-30T14:28:19Z",
+  "generatedAt": "2026-08-30T18:08:43Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بعديش؟",
+      "url": "https://www.youtube.com/watch?v=wF-xv5TdHZo",
+      "type": "long",
+      "duration": "",
+      "date": "2026-08-30",
+      "thumb": "https://i.ytimg.com/vi/wF-xv5TdHZo/hqdefault.jpg",
+      "videoId": "wF-xv5TdHZo"
+    },
     {
       "title": "سبب تركي للقناة! 😪",
       "url": "https://www.youtube.com/watch?v=iSzxCYhZfFg",
@@ -127,15 +136,6 @@
       "date": "2026-04-24",
       "thumb": "https://i.ytimg.com/vi/L5zurAoFjIE/hqdefault.jpg",
       "videoId": "L5zurAoFjIE"
-    },
-    {
-      "title": "اذا فصل مش راجع 🥵",
-      "url": "https://www.youtube.com/watch?v=DCgQBDIKy1s",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-23",
-      "thumb": "https://i.ytimg.com/vi/DCgQBDIKy1s/hqdefault.jpg",
-      "videoId": "DCgQBDIKy1s"
     }
   ]
 }
