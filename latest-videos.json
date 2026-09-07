@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-09-07T12:51:09Z",
+  "generatedAt": "2026-09-07T18:01:42Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "البث الثاني على التوالي 😎!",
+      "url": "https://www.youtube.com/watch?v=tD5i44rvvXc",
+      "type": "long",
+      "duration": "",
+      "date": "2026-09-07",
+      "thumb": "https://i.ytimg.com/vi/tD5i44rvvXc/hqdefault.jpg",
+      "videoId": "tD5i44rvvXc"
+    },
     {
       "title": "البث رقم #1 | اكو عرب بالطيارة 😎.",
       "url": "https://www.youtube.com/watch?v=-MPoFFJr26w",
@@ -127,15 +136,6 @@
       "date": "2026-07-23",
       "thumb": "https://i.ytimg.com/vi/KIIJOVr69G8/hqdefault.jpg",
       "videoId": "KIIJOVr69G8"
-    },
-    {
-      "title": "بث خارق حارق متفجر 💀",
-      "url": "https://www.youtube.com/watch?v=rXC8xXa0KCg",
-      "type": "long",
-      "duration": "",
-      "date": "2026-04-25",
-      "thumb": "https://i.ytimg.com/vi/rXC8xXa0KCg/hqdefault.jpg",
-      "videoId": "rXC8xXa0KCg"
     }
   ]
 }
