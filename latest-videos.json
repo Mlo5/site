@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-09-19T14:35:31Z",
+  "generatedAt": "2026-09-19T17:40:12Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "الرجعة!",
+      "url": "https://www.youtube.com/watch?v=vIN5wYBJOrY",
+      "type": "long",
+      "duration": "",
+      "date": "2026-09-19",
+      "thumb": "https://i.ytimg.com/vi/vIN5wYBJOrY/hqdefault.jpg",
+      "videoId": "vIN5wYBJOrY"
+    },
     {
       "title": "أنا هسا رايق مع هولو نايت 😉!",
       "url": "https://www.youtube.com/watch?v=Vf-6RxIgLU0",
@@ -127,15 +136,6 @@
       "date": "2026-07-28",
       "thumb": "https://i.ytimg.com/vi/l_cQQDeRQKQ/hqdefault.jpg",
       "videoId": "l_cQQDeRQKQ"
-    },
-    {
-      "title": "الذكاء الاصطناعي احتلنا 😏",
-      "url": "https://www.youtube.com/watch?v=2PnfaJ8VHVI",
-      "type": "long",
-      "duration": "",
-      "date": "2026-07-28",
-      "thumb": "https://i.ytimg.com/vi/2PnfaJ8VHVI/hqdefault.jpg",
-      "videoId": "2PnfaJ8VHVI"
     }
   ]
 }
