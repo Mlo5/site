@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-09-25T08:59:07Z",
+  "generatedAt": "2026-09-25T14:30:12Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بدايتي الجديدة في رايز اوف كينجدومز",
+      "url": "https://www.youtube.com/watch?v=_Oxa5E5qdr8",
+      "type": "long",
+      "duration": "",
+      "date": "2026-09-25",
+      "thumb": "https://i.ytimg.com/vi/_Oxa5E5qdr8/hqdefault.jpg",
+      "videoId": "_Oxa5E5qdr8"
+    },
     {
       "title": "الرجعة!",
       "url": "https://www.youtube.com/watch?v=vIN5wYBJOrY",
@@ -127,15 +136,6 @@
       "date": "2026-07-29",
       "thumb": "https://i.ytimg.com/vi/98u8t6jQ4ds/hqdefault.jpg",
       "videoId": "98u8t6jQ4ds"
-    },
-    {
-      "title": "تعلّم الفايب أحسنلك من الألعاب 🙂!",
-      "url": "https://www.youtube.com/watch?v=l_cQQDeRQKQ",
-      "type": "long",
-      "duration": "",
-      "date": "2026-07-28",
-      "thumb": "https://i.ytimg.com/vi/l_cQQDeRQKQ/hqdefault.jpg",
-      "videoId": "l_cQQDeRQKQ"
     }
   ]
 }
