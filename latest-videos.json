@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-02T19:04:42Z",
+  "generatedAt": "2026-10-02T23:07:24Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
     {
@@ -37,15 +37,6 @@
       "date": "2026-09-18",
       "thumb": "https://i.ytimg.com/vi/Vf-6RxIgLU0/hqdefault.jpg",
       "videoId": "Vf-6RxIgLU0"
-    },
-    {
-      "title": "اوكتان عمك",
-      "url": "https://www.youtube.com/watch?v=PXw9swue1o8",
-      "type": "long",
-      "duration": "",
-      "date": "2026-09-18",
-      "thumb": "https://i.ytimg.com/vi/PXw9swue1o8/hqdefault.jpg",
-      "videoId": "PXw9swue1o8"
     },
     {
       "title": "البث الثاني على التوالي 😎!",
@@ -136,6 +127,15 @@
       "date": "2026-08-04",
       "thumb": "https://i.ytimg.com/vi/wFKiAlBGyDM/hqdefault.jpg",
       "videoId": "wFKiAlBGyDM"
+    },
+    {
+      "title": "كيف تستغل وقتك بشكل مفيد؟😃",
+      "url": "https://www.youtube.com/watch?v=98u8t6jQ4ds",
+      "type": "long",
+      "duration": "",
+      "date": "2026-07-29",
+      "thumb": "https://i.ytimg.com/vi/98u8t6jQ4ds/hqdefault.jpg",
+      "videoId": "98u8t6jQ4ds"
     }
   ]
 }
