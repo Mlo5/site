@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-02T13:59:27Z",
+  "generatedAt": "2026-10-02T19:04:42Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "الا يستحق أخاك؟",
+      "url": "https://www.youtube.com/watch?v=lR_4GWCkiWw",
+      "type": "long",
+      "duration": "",
+      "date": "2026-10-02",
+      "thumb": "https://i.ytimg.com/vi/lR_4GWCkiWw/hqdefault.jpg",
+      "videoId": "lR_4GWCkiWw"
+    },
     {
       "title": "بدايتي الجديدة في رايز اوف كينجدومز",
       "url": "https://www.youtube.com/watch?v=_Oxa5E5qdr8",
@@ -127,15 +136,6 @@
       "date": "2026-08-04",
       "thumb": "https://i.ytimg.com/vi/wFKiAlBGyDM/hqdefault.jpg",
       "videoId": "wFKiAlBGyDM"
-    },
-    {
-      "title": "كيف تستغل وقتك بشكل مفيد؟😃",
-      "url": "https://www.youtube.com/watch?v=98u8t6jQ4ds",
-      "type": "long",
-      "duration": "",
-      "date": "2026-07-29",
-      "thumb": "https://i.ytimg.com/vi/98u8t6jQ4ds/hqdefault.jpg",
-      "videoId": "98u8t6jQ4ds"
     }
   ]
 }
