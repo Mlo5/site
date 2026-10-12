@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-12T10:05:26Z",
+  "generatedAt": "2026-10-12T19:54:45Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "سريع ولالا؟",
+      "url": "https://www.youtube.com/shorts/L8Deaobk9N8",
+      "type": "long",
+      "duration": "",
+      "date": "2026-10-12",
+      "thumb": "https://i.ytimg.com/vi/L8Deaobk9N8/hqdefault.jpg",
+      "videoId": "L8Deaobk9N8"
+    },
     {
       "title": "الانفصال عن شخص احببته 😢",
       "url": "https://www.youtube.com/shorts/YYym4kcfY8k",
@@ -127,15 +136,6 @@
       "date": "2026-09-08",
       "thumb": "https://i.ytimg.com/vi/tD5i44rvvXc/hqdefault.jpg",
       "videoId": "tD5i44rvvXc"
-    },
-    {
-      "title": "البث رقم #1 | اكو عرب بالطيارة 😎.",
-      "url": "https://www.youtube.com/watch?v=-MPoFFJr26w",
-      "type": "long",
-      "duration": "",
-      "date": "2026-09-07",
-      "thumb": "https://i.ytimg.com/vi/-MPoFFJr26w/hqdefault.jpg",
-      "videoId": "-MPoFFJr26w"
     }
   ]
 }
