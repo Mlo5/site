@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-17T16:04:08Z",
+  "generatedAt": "2026-10-17T18:40:18Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "اليوم البث رايق 🤗.",
+      "url": "https://www.youtube.com/watch?v=8VEkzNruRsU",
+      "type": "long",
+      "duration": "",
+      "date": "2026-10-17",
+      "thumb": "https://i.ytimg.com/vi/8VEkzNruRsU/hqdefault.jpg",
+      "videoId": "8VEkzNruRsU"
+    },
     {
       "title": "اقوى قنبلة نووية في التاريخ (هيروشيما)",
       "url": "https://www.youtube.com/shorts/rbdGxS22e4s",
@@ -127,15 +136,6 @@
       "date": "2026-10-06",
       "thumb": "https://i.ytimg.com/vi/3A-x0s2PhGk/hqdefault.jpg",
       "videoId": "3A-x0s2PhGk"
-    },
-    {
-      "title": "Easy Ace💀 #csgo",
-      "url": "https://www.youtube.com/shorts/QBepVv3N9bY",
-      "type": "long",
-      "duration": "",
-      "date": "2026-10-06",
-      "thumb": "https://i.ytimg.com/vi/QBepVv3N9bY/hqdefault.jpg",
-      "videoId": "QBepVv3N9bY"
     }
   ]
 }
