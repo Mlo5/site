@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-22T08:12:42Z",
+  "generatedAt": "2026-10-22T13:58:20Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "شو حيصير لو قطع الانترنت؟",
+      "url": "https://www.youtube.com/shorts/NxfJL-iOdUY",
+      "type": "long",
+      "duration": "",
+      "date": "2026-10-22",
+      "thumb": "https://i.ytimg.com/vi/NxfJL-iOdUY/hqdefault.jpg",
+      "videoId": "NxfJL-iOdUY"
+    },
     {
       "title": "ليش بتنسى كثير؟",
       "url": "https://www.youtube.com/shorts/w2Y7lXx1AkY",
@@ -127,15 +136,6 @@
       "date": "2026-10-14",
       "thumb": "https://i.ytimg.com/vi/dYEMb08hDYM/hqdefault.jpg",
       "videoId": "dYEMb08hDYM"
-    },
-    {
-      "title": "ومن هنا بدأت حكاية اليابان والمغول 😈 | Ghost Of Tsushima #1",
-      "url": "https://www.youtube.com/watch?v=rJRQjdxnxIQ",
-      "type": "long",
-      "duration": "",
-      "date": "2026-10-13",
-      "thumb": "https://i.ytimg.com/vi/rJRQjdxnxIQ/hqdefault.jpg",
-      "videoId": "rJRQjdxnxIQ"
     }
   ]
 }
