@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-22T18:23:26Z",
+  "generatedAt": "2026-10-22T21:48:57Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "دبل فيس كام مع موجا 💀.",
+      "url": "https://www.youtube.com/watch?v=zxHDJ7eVEAw",
+      "type": "long",
+      "duration": "",
+      "date": "2026-10-22",
+      "thumb": "https://i.ytimg.com/vi/zxHDJ7eVEAw/hqdefault.jpg",
+      "videoId": "zxHDJ7eVEAw"
+    },
     {
       "title": "شو حيصير لو قطع الانترنت؟",
       "url": "https://www.youtube.com/shorts/NxfJL-iOdUY",
@@ -127,15 +136,6 @@
       "date": "2026-10-15",
       "thumb": "https://i.ytimg.com/vi/6z-lJoG1-2o/hqdefault.jpg",
       "videoId": "6z-lJoG1-2o"
-    },
-    {
-      "title": "وهذا ما حصل #shorts",
-      "url": "https://www.youtube.com/shorts/dYEMb08hDYM",
-      "type": "long",
-      "duration": "",
-      "date": "2026-10-14",
-      "thumb": "https://i.ytimg.com/vi/dYEMb08hDYM/hqdefault.jpg",
-      "videoId": "dYEMb08hDYM"
     }
   ]
 }
