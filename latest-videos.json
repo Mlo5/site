@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-24T13:46:30Z",
+  "generatedAt": "2026-10-24T17:08:26Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "هل الشاشات تسبب العمى؟",
+      "url": "https://www.youtube.com/shorts/OfopNnvaas4",
+      "type": "long",
+      "duration": "",
+      "date": "2026-10-24",
+      "thumb": "https://i.ytimg.com/vi/OfopNnvaas4/hqdefault.jpg",
+      "videoId": "OfopNnvaas4"
+    },
     {
       "title": "هل الاندومي يسبب السرطان؟",
       "url": "https://www.youtube.com/shorts/zdVx-HeNqr8",
@@ -127,15 +136,6 @@
       "date": "2026-10-17",
       "thumb": "https://i.ytimg.com/vi/-SYIaP7H0Dg/hqdefault.jpg",
       "videoId": "-SYIaP7H0Dg"
-    },
-    {
-      "title": "الانفصام",
-      "url": "https://www.youtube.com/shorts/IuUCzk5XWo8",
-      "type": "long",
-      "duration": "",
-      "date": "2026-10-16",
-      "thumb": "https://i.ytimg.com/vi/IuUCzk5XWo8/hqdefault.jpg",
-      "videoId": "IuUCzk5XWo8"
     }
   ]
 }
