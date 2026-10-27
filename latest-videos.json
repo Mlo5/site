@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-27T07:09:52Z",
+  "generatedAt": "2026-10-27T13:26:59Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "ما هو البرزخ؟",
+      "url": "https://www.youtube.com/shorts/cErQzO89O2k",
+      "type": "long",
+      "duration": "",
+      "date": "2026-10-27",
+      "thumb": "https://i.ytimg.com/vi/cErQzO89O2k/hqdefault.jpg",
+      "videoId": "cErQzO89O2k"
+    },
     {
       "title": "تارك الصلاة",
       "url": "https://www.youtube.com/shorts/3tmF-8vHPO8",
@@ -127,15 +136,6 @@
       "date": "2026-10-18",
       "thumb": "https://i.ytimg.com/vi/avFmew2mWyY/hqdefault.jpg",
       "videoId": "avFmew2mWyY"
-    },
-    {
-      "title": "اليوم البث رايق 🤗.",
-      "url": "https://www.youtube.com/watch?v=8VEkzNruRsU",
-      "type": "long",
-      "duration": "",
-      "date": "2026-10-17",
-      "thumb": "https://i.ytimg.com/vi/8VEkzNruRsU/hqdefault.jpg",
-      "videoId": "8VEkzNruRsU"
     }
   ]
 }
