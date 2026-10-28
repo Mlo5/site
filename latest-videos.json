@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-10-28T07:58:50Z",
+  "generatedAt": "2026-10-28T14:56:17Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "الجاثوم",
+      "url": "https://www.youtube.com/shorts/J-acAvOgjhw",
+      "type": "long",
+      "duration": "",
+      "date": "2026-10-28",
+      "thumb": "https://i.ytimg.com/vi/J-acAvOgjhw/hqdefault.jpg",
+      "videoId": "J-acAvOgjhw"
+    },
     {
       "title": "ما هو البرزخ؟",
       "url": "https://www.youtube.com/shorts/cErQzO89O2k",
@@ -127,15 +136,6 @@
       "date": "2026-10-19",
       "thumb": "https://i.ytimg.com/vi/Yn8QKrYiXQc/hqdefault.jpg",
       "videoId": "Yn8QKrYiXQc"
-    },
-    {
-      "title": "هل يدخل المسلم النار؟",
-      "url": "https://www.youtube.com/shorts/avFmew2mWyY",
-      "type": "long",
-      "duration": "",
-      "date": "2026-10-18",
-      "thumb": "https://i.ytimg.com/vi/avFmew2mWyY/hqdefault.jpg",
-      "videoId": "avFmew2mWyY"
     }
   ]
 }
