@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-11-05T17:01:01Z",
+  "generatedAt": "2026-11-05T22:44:16Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "القرين",
+      "url": "https://www.youtube.com/shorts/gbkJeXibMqk",
+      "type": "long",
+      "duration": "",
+      "date": "2026-11-05",
+      "thumb": "https://i.ytimg.com/vi/gbkJeXibMqk/hqdefault.jpg",
+      "videoId": "gbkJeXibMqk"
+    },
     {
       "title": "أبو جهل",
       "url": "https://www.youtube.com/shorts/KIMBcgzm84A",
@@ -127,15 +136,6 @@
       "date": "2026-10-22",
       "thumb": "https://i.ytimg.com/vi/NxfJL-iOdUY/hqdefault.jpg",
       "videoId": "NxfJL-iOdUY"
-    },
-    {
-      "title": "ليش بتنسى كثير؟",
-      "url": "https://www.youtube.com/shorts/w2Y7lXx1AkY",
-      "type": "long",
-      "duration": "",
-      "date": "2026-10-21",
-      "thumb": "https://i.ytimg.com/vi/w2Y7lXx1AkY/hqdefault.jpg",
-      "videoId": "w2Y7lXx1AkY"
     }
   ]
 }
