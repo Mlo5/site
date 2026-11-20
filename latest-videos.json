@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-11-20T12:23:58Z",
+  "generatedAt": "2026-11-20T20:37:20Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "مدمن روب رن 😈",
+      "url": "https://www.youtube.com/watch?v=gWEyjrWoPGY",
+      "type": "long",
+      "duration": "",
+      "date": "2026-11-20",
+      "thumb": "https://i.ytimg.com/vi/gWEyjrWoPGY/hqdefault.jpg",
+      "videoId": "gWEyjrWoPGY"
+    },
     {
       "title": "كيف تبني بيتك في روب ران 🤠| Rob Run",
       "url": "https://www.youtube.com/watch?v=O2w9OXQQkBs",
@@ -127,15 +136,6 @@
       "date": "2025-10-25",
       "thumb": "https://i.ytimg.com/vi/REft--8xOMo/hqdefault.jpg",
       "videoId": "REft--8xOMo"
-    },
-    {
-      "title": "افضل حضارة للمبتدئين | Rise Of Kingdoms",
-      "url": "https://www.youtube.com/watch?v=cQpqcy5lJlA",
-      "type": "long",
-      "duration": "",
-      "date": "2025-10-23",
-      "thumb": "https://i.ytimg.com/vi/cQpqcy5lJlA/hqdefault.jpg",
-      "videoId": "cQpqcy5lJlA"
     }
   ]
 }
