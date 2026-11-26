@@ -1,7 +1,16 @@
 {
-  "generatedAt": "2026-11-26T05:16:42Z",
+  "generatedAt": "2026-11-26T15:32:47Z",
   "channelId": "UCJ7ltkpYPM7xI3DgMR1vvbg",
   "videos": [
+    {
+      "title": "بساعة وحدة بس 🤯! | Rob Run",
+      "url": "https://www.youtube.com/watch?v=I6bPk99olPQ",
+      "type": "long",
+      "duration": "",
+      "date": "2026-11-26",
+      "thumb": "https://i.ytimg.com/vi/I6bPk99olPQ/hqdefault.jpg",
+      "videoId": "I6bPk99olPQ"
+    },
     {
       "title": "بث مباشر 🔴 | فلوس لا تنتهي 🤑 | Rob Run",
       "url": "https://www.youtube.com/watch?v=WqquzMcnu18",
@@ -127,15 +136,6 @@
       "date": "2026-10-09",
       "thumb": "https://i.ytimg.com/vi/dYPOxLVfZjc/hqdefault.jpg",
       "videoId": "dYPOxLVfZjc"
-    },
-    {
-      "title": "Easy Ace💀 #csgo",
-      "url": "https://www.youtube.com/shorts/QBepVv3N9bY",
-      "type": "long",
-      "duration": "",
-      "date": "2026-10-06",
-      "thumb": "https://i.ytimg.com/vi/QBepVv3N9bY/hqdefault.jpg",
-      "videoId": "QBepVv3N9bY"
     }
   ]
 }
